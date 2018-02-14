@@ -15,6 +15,7 @@
 #import "FLEViewController.h"
 
 #import <FlutterEmbedder/FlutterEmbedder.h>
+#import "FLEColorPanelPlugin.h"
 #import "FLEReshapeListener.h"
 #import "FLETextInputPlugin.h"
 #import "FLEView.h"
@@ -278,8 +279,11 @@ static uint32_t HeadlessOnFBO(FLEViewController *controller) { return kDefaultWi
 - (void)initPlugins {
   _plugins = [[NSMutableDictionary alloc] init];
 
-  FLETextInputPlugin *plugin = [[FLETextInputPlugin alloc] init];
-  [self _addPlugin:plugin];
+  FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
+  [self _addPlugin:textPlugin];
+
+  FLEColorPanelPlugin *colorPlugin = [[FLEColorPanelPlugin alloc] init];
+  [self _addPlugin:colorPlugin];
 }
 
 - (BOOL)acceptsFirstResponder {

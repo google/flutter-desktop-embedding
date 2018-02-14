@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEColorPanelPlugin.h"
-#import "FLEOpenGLContextHandling.h"
+#import <AppKit/AppKit.h>
+
 #import "FLEPlugin.h"
-#import "FLEReshapeListener.h"
-#import "FLETextInputPlugin.h"
-#import "FLEView.h"
-#import "FLEViewController.h"
+
+/**
+ * A FlutterPlugin to manage macOS's shared NSColorPanel singleton. Owned by
+ * the FlutterViewController. Responsible for managing the panel's display state
+ * and sending selected color data to Flutter, via system channels.
+ */
+@interface FLEColorPanelPlugin : NSObject<FLEPlugin>
+
+@end
