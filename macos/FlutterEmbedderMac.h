@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #import "FLEColorPanelPlugin.h"
+#import "FLEFileChooserPlugin.h"
 #import "FLEOpenGLContextHandling.h"
 #import "FLEPlugin.h"
 #import "FLEReshapeListener.h"
