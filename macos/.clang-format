@@ -1,0 +1,6 @@
+BasedOnStyle: Google
+---
+# Note that Cpp covers Objective-C as well
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Right
