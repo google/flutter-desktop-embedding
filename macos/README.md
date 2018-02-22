@@ -8,6 +8,16 @@ Flutter view into a macOS application:
 
 ## How to use this code
 
+_Note:_ For the below steps to work, the https://github.com/google/flutter-desktop-embedding
+repo must be cloned into the same parent directory as the
+http://github.com/flutter/flutter repo.
+
+```
+<parent dir>
+  ├─ flutter/ (from http://github.com/flutter/flutter)
+  └─ flutter-desktop-embedding/ (from https://github.com/google/flutter-desktop-embedding)
+```
+
 Build the included Xcode project, then link the resulting framework
 into your application. See the headers for FLEView and FLEViewController
 for details on how to use them.
