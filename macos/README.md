@@ -32,4 +32,10 @@ so you do not need to include that framework in your project.
 * FlutterEmbedderMac.framework is the output of this project. It wraps
   FlutterEmbedder and implements the embedding API.
 
+## Caveats
+
+Many features that would be useful for desktop development (e.g., the ability to
+interact with the menu bar) do not yet exist. More platform plugins that provide
+additional functionality will be added over time.
+
 Stay tuned for more documentation, and a sample project using the framework.
