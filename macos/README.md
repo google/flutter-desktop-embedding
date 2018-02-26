@@ -18,7 +18,7 @@ http://github.com/flutter/flutter repo.
   └─ flutter-desktop-embedding/ (from https://github.com/google/flutter-desktop-embedding)
 ```
 
-Build the included Xcode project, then link the resulting framework
+Build the Xcode project under library/, then link the resulting framework
 into your application. See the headers for FLEView and FLEViewController
 for details on how to use them.
 
