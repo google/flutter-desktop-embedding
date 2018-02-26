@@ -14,6 +14,12 @@ embedders in the future.
 
 See the README file in the directory corresponding to your platform.
 
+## Discussion
+
+For bug reports and specific feature requests, you can file GitHub issues.
+For general discussion and questions there's a [project mailing
+list](https://groups.google.com/forum/#!forum/flutter-desktop-embedding-dev).
+
 ## Caveats
 
 This is not an officially supported Google product.
