@@ -29,13 +29,15 @@ if [ "$SRCROOT" != "" ]; then
 else
   PROJECT_DIR="$(dirname "$0")"
 fi
-JIRI_ROOT="${PROJECT_DIR}/../.."
+# Path to the folder containing this repository and the flutter tree (see
+# note above).
+REPO_PARENT="${PROJECT_DIR}/../../.."
 FLUTTER_ENGINE_VERSION_FILE=flutter/bin/internal/engine.version
 # By default, match the embedder engine version to the current flutter tree.
 # This can be manually overridden with FLUTTER_ENGINE_VERSION_OVERRIDE (e.g.,
 # to roll the embedder to a newer-but-still-compatible version).
 if [ "$FLUTTER_ENGINE_VERSION_OVERRIDE" == "" ]; then
-  FLUTTER_EMBEDDER_SHA=`cat $JIRI_ROOT/$FLUTTER_ENGINE_VERSION_FILE`
+  FLUTTER_EMBEDDER_SHA=`cat $REPO_PARENT/$FLUTTER_ENGINE_VERSION_FILE`
 else
   FLUTTER_EMBEDDER_SHA="${FLUTTER_ENGINE_VERSION_OVERRIDE}"
 fi
@@ -44,7 +46,7 @@ FRAMEWORK_FILENAME=FlutterEmbedder.framework
 
 # Everything from here on assumes that the current path is $ENGINE_DIRECTORY.
 # This avoids having to worry about paths being relative vs. absolute.
-ENGINE_DIRECTORY="${JIRI_ROOT}/flutter_engine_framework"
+ENGINE_DIRECTORY="${REPO_PARENT}/flutter_engine_framework"
 mkdir -p "$ENGINE_DIRECTORY"
 cd "$ENGINE_DIRECTORY"
 
