@@ -14,11 +14,11 @@
 FLUTTER_ENGINE_LIB=flutter_engine
 CXX=g++ -std=c++0x
 CXXFLAGS= \
-				 -Wall -Werror \
-				 -I$(CURDIR) \
-				 -L$(CURDIR) \
-				 -lGL -lglfw -l$(FLUTTER_ENGINE_LIB) \
-				 -Wl,-rpath=$(CURDIR) \
+	-Wall -Werror \
+	-I$(CURDIR) \
+	-L$(CURDIR) \
+	-lGL -lglfw -l$(FLUTTER_ENGINE_LIB) \
+	-Wl,-rpath=$(CURDIR) \
 
 all: flutter_embedder
 
