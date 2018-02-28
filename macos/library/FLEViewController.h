@@ -33,10 +33,28 @@
 @property(nullable) NSView<FLEOpenGLContextHandling> *view;
 
 /**
- * Launches the Flutter engine with the provided configuration. The path arguments are used
- * to identify the Flutter application the engine should be configured with. See
+ * Launches the Flutter engine in snapshot mode with the provided configuration. The path argument
+ * is used to identify the Flutter application the engine should be configured with. See
  * https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for more information
  * on embedding, including the meaning of various possible arguments.
+ *
+ * In snapshot mode, the snapshot in the assets directory will be used instead of the original
+ * dart sources.
+ */
+- (BOOL)launchEngineWithAssetsPath:(nonnull NSURL *)assets
+                        asHeadless:(BOOL)headless
+              commandLineArguments:(nonnull NSArray<NSString *> *)arguments;
+
+/**
+ * Launches the Flutter engine in source mode with the provided configuration. The path arguments
+ * are used to identify the Flutter application the engine should be configured with. See
+ * https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for more information
+ * on embedding, including the meaning of various possible arguments.
+ *
+ * In source mode, the Dart source and its dependencies will be read directly from their locations
+ * on disk.
+ * TODO: Evaluate whether this mode needs to be present in the long term, and if so reconsider this
+ * API structure.
  */
 - (BOOL)launchEngineWithMainPath:(nonnull NSURL *)main
                       assetsPath:(nonnull NSURL *)assets
