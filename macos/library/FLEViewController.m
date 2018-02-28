@@ -111,45 +111,21 @@ static uint32_t HeadlessOnFBO(FLEViewController *controller) { return kDefaultWi
                     packagesPath:(nonnull NSURL *)packages
                       asHeadless:(BOOL)headless
             commandLineArguments:(nonnull NSArray<NSString *> *)arguments {
-  if (_engine != NULL) {
-    return NO;
-  }
+  return [self launchEngineInternalWithAssetsPath:assets
+                                         mainPath:main
+                                     packagesPath:packages
+                                       asHeadless:headless
+                             commandLineArguments:arguments];
+}
 
-  const FlutterRendererConfig config = [FLEViewController createRenderConfigHeadless:headless];
-
-  // Strip out the Xcode-added -NSDocumentRevisionsDebugMode YES.
-  // TODO: Improve command line argument handling.
-  const unsigned long argc = arguments.count;
-  unsigned long unused = 0;
-  const char **command_line_args = (const char **)malloc(argc * sizeof(const char *));
-  for (int i = 0; i < argc; ++i) {
-    if ([arguments[i] isEqualToString:kXcodeExtraArgumentOne] && (i + 1 < argc) &&
-        [arguments[i + 1] isEqualToString:kXcodeExtraArgumentTwo]) {
-      unused += 2;
-      ++i;
-      continue;
-    }
-    command_line_args[i - unused] = [arguments[i] UTF8String];
-  }
-
-  NSString *icuData =
-      [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath ofType:nil];
-
-  const FlutterProjectArgs args = {
-      .struct_size = sizeof(FlutterProjectArgs),
-      .assets_path = assets.fileSystemRepresentation,
-      .main_path = main.fileSystemRepresentation,
-      .packages_path = packages.fileSystemRepresentation,
-      .icu_data_path = icuData.UTF8String,
-      .command_line_argc = (int)(argc - unused),
-      .command_line_argv = command_line_args,
-      .platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage,
-  };
-
-  BOOL result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &args, (__bridge void *)(self),
-                                 &_engine) == kSuccess;
-  free(command_line_args);
-  return result;
+- (BOOL)launchEngineWithAssetsPath:(nonnull NSURL *)assets
+                        asHeadless:(BOOL)headless
+              commandLineArguments:(nonnull NSArray<NSString *> *)arguments {
+  return [self launchEngineInternalWithAssetsPath:assets
+                                         mainPath:nil
+                                     packagesPath:nil
+                                       asHeadless:headless
+                             commandLineArguments:arguments];
 }
 
 /**
@@ -185,6 +161,60 @@ static uint32_t HeadlessOnFBO(FLEViewController *controller) { return kDefaultWi
 }
 
 #pragma mark - Private methods.
+
+/**
+ * Identical to the public API except that |main| and |packages| are nullable (and assets and main
+ * are swapped to make it clearer that they are the nullable pair; the public API is staying the
+ * same for now to avoid needless thrashing for code using it). Per the TODO in the header, this API
+ * should be reworked once we have decided whether both versions will stay.
+ *
+ * If main is nil, the engine will run in snapshot mode.
+ */
+- (BOOL)launchEngineInternalWithAssetsPath:(nonnull NSURL *)assets
+                                  mainPath:(nullable NSURL *)main
+                              packagesPath:(nullable NSURL *)packages
+                                asHeadless:(BOOL)headless
+                      commandLineArguments:(nonnull NSArray<NSString *> *)arguments {
+  if (_engine != NULL) {
+    return NO;
+  }
+
+  const FlutterRendererConfig config = [FLEViewController createRenderConfigHeadless:headless];
+
+  // Strip out the Xcode-added -NSDocumentRevisionsDebugMode YES.
+  // TODO: Improve command line argument handling.
+  const unsigned long argc = arguments.count;
+  unsigned long unused = 0;
+  const char **command_line_args = (const char **)malloc(argc * sizeof(const char *));
+  for (int i = 0; i < argc; ++i) {
+    if ([arguments[i] isEqualToString:kXcodeExtraArgumentOne] && (i + 1 < argc) &&
+        [arguments[i + 1] isEqualToString:kXcodeExtraArgumentTwo]) {
+      unused += 2;
+      ++i;
+      continue;
+    }
+    command_line_args[i - unused] = [arguments[i] UTF8String];
+  }
+
+  NSString *icuData =
+      [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath ofType:nil];
+
+  const FlutterProjectArgs args = {
+      .struct_size = sizeof(FlutterProjectArgs),
+      .assets_path = assets.fileSystemRepresentation,
+      .main_path = (main != nil) ? main.fileSystemRepresentation : "",
+      .packages_path = (packages != nil) ? packages.fileSystemRepresentation : "",
+      .icu_data_path = icuData.UTF8String,
+      .command_line_argc = (int)(argc - unused),
+      .command_line_argv = command_line_args,
+      .platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage,
+  };
+
+  BOOL result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &args, (__bridge void *)(self),
+                                 &_engine) == kSuccess;
+  free(command_line_args);
+  return result;
+}
 
 /**
  * Creates a render config with callbacks based on whether the embedder is being run as a headless

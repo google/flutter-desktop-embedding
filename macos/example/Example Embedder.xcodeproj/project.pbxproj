@@ -27,6 +27,7 @@
 		33CC110D2044A8790003C045 /* FlutterEmbedderMac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33CC11042044A7620003C045 /* FlutterEmbedderMac.framework */; };
 		33CC110F2044A8940003C045 /* FlutterEmbedderMac.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 33CC11042044A7620003C045 /* FlutterEmbedderMac.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33CC11132044BFA00003C045 /* ExampleWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* ExampleWindow.swift */; };
+		33CC112F204626C80003C045 /* flutter_assets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC112C20461AD40003C045 /* flutter_assets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +77,7 @@
 		33CC10FE2044A7620003C045 /* FlutterEmbedderMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMac.xcodeproj; path = ../library/FlutterEmbedderMac.xcodeproj; sourceTree = "<group>"; };
 		33CC11122044BFA00003C045 /* ExampleWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleWindow.swift; sourceTree = "<group>"; };
 		33CC11162044C3600003C045 /* Example Embedder-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Example Embedder-Bridging-Header.h"; sourceTree = "<group>"; };
+		33CC112C20461AD40003C045 /* flutter_assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = flutter_assets; path = ../../example_flutter/build/flutter_assets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 				33CC10F22044A3C60003C045 /* Assets.xcassets */,
 				33CC10F42044A3C60003C045 /* MainMenu.xib */,
 				33CC10F72044A3C60003C045 /* Info.plist */,
+				33CC112C20461AD40003C045 /* flutter_assets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -214,6 +217,7 @@
 			files = (
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
+				33CC112F204626C80003C045 /* flutter_assets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,16 +18,9 @@ class ExampleWindow: NSWindow {
   @IBOutlet weak var flutterViewController: FLEViewController!
 
   override func awakeFromNib() {
-    // TODO: Package all the Flutter resources, and use bundle-relative paths. For now, the path to
-    // the sample Flutter app in the source tree is passed as a command-line argument.
-    let baseURL = NSURL.fileURL(withPath: CommandLine.arguments.remove(at: 1))
-    let assets = NSURL.fileURL(withPath: "build/flutter_assets", relativeTo: baseURL)
-    let main = NSURL.fileURL(withPath: "lib/main.dart", relativeTo: baseURL)
-    let packages = NSURL.fileURL(withPath: ".packages", relativeTo: baseURL)
+    let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
     flutterViewController.launchEngine(
-      withMainPath: main,
-      assetsPath: assets,
-      packagesPath: packages,
+      withAssetsPath: assets,
       asHeadless: false,
       commandLineArguments: [CommandLine.arguments[0], "--dart-non-checked-mode"])
 
