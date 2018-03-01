@@ -11,20 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
-
-#include <assert.h>
-#include <embedder.h>
-#include <getopt.h>
-
 #include <chrono>
 #include <iostream>
 
+#include <GL/gl.h>
+
+#include <assert.h>
+#include <embedder.h>
+#include <flutter_embedder.h>
+#include <getopt.h>
+
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
-static constexpr size_t kInitialWindowWidth = 640;
-static constexpr size_t kInitialWindowHeight = 480;
+static constexpr char kDefaultWindowTitle[] = "Flutter";
 
 static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
                                               FlutterPointerPhase phase,
@@ -120,14 +119,15 @@ static void GLFWClearCanvas(GLFWwindow *window) {
 // Spins up an instance of the Flutter Engine.
 //
 // This function launches the Flutter Engine in a background thread, supplying
-// the necessary callbacks for rendering within the GLFWwindow passed under
-// |window|. If this function returns true, the static instance of the Flutter
-// Engine |engine| is set to non-null, and upon termination,
-// FlutterEngineShutdown must be called.
-static bool RunFlutterEngine(GLFWwindow *window,
-                             const std::string &flutter_app_directory,
-                             const std::string &main_path,
-                             const std::string &icu_data_path) {
+// the necessary callbacks for rendering within a GLFWwindow.
+//
+// Returns a caller-owned pointer to the engine.
+static FlutterEngine RunFlutterEngine(GLFWwindow *window,
+                                      const std::string &main_path,
+                                      const std::string &assets_path,
+                                      const std::string &packages_path,
+                                      const std::string &icu_data_path,
+                                      int argc, char **argv) {
   FlutterRendererConfig config = {};
   config.type = kOpenGL;
   config.open_gl.struct_size = sizeof(config.open_gl);
@@ -135,130 +135,65 @@ static bool RunFlutterEngine(GLFWwindow *window,
   config.open_gl.clear_current = GLFWClearContext;
   config.open_gl.present = GLFWPresent;
   config.open_gl.fbo_callback = GLFWGetActiveFbo;
-  std::string assets_path = flutter_app_directory + "/build/flutter_assets";
-  std::string full_main_path = flutter_app_directory + "/" + main_path;
-  std::string packages_path = flutter_app_directory + "/.packages";
   FlutterProjectArgs args = {};
   args.struct_size = sizeof(FlutterProjectArgs);
   args.assets_path = assets_path.c_str();
-  args.main_path =
-      main_path.empty() ? main_path.c_str() : full_main_path.c_str();
-  // Packages path is ignored if main_path is empty, so this can be added in
-  // as-is.
+  args.main_path = main_path.c_str();
   args.packages_path = packages_path.c_str();
   args.icu_data_path = icu_data_path.c_str();
+  args.command_line_argc = argc;
+  args.command_line_argv = argv;
   FlutterEngine engine = nullptr;
   auto result =
       FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &args, window, &engine);
   if (result != kSuccess || engine == nullptr) {
-    return false;
+    return nullptr;
+  }
+  return engine;
+}
+
+GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
+                                              size_t initial_height,
+                                              const std::string &assets_path,
+                                              const std::string &icu_data_path,
+                                              int argc, char **argv) {
+  return CreateFlutterWindow(initial_width, initial_height, "", assets_path, "",
+                             icu_data_path, argc, argv);
+}
+
+GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
+                                const std::string &main_path,
+                                const std::string &assets_path,
+                                const std::string &packages_path,
+                                const std::string &icu_data_path, int argc,
+                                char **argv) {
+  auto window = glfwCreateWindow(initial_width, initial_height,
+                                 kDefaultWindowTitle, NULL, NULL);
+  if (window == nullptr) {
+    return nullptr;
   }
   GLFWClearCanvas(window);
-  glfwSetWindowUserPointer(window, engine);
-  GLFWwindowSizeCallback(window, kInitialWindowWidth, kInitialWindowHeight);
-  return true;
-}
-
-static void printUsage(char *app_name) {
-  std::cout << "Usage: " << app_name
-            << " --flutter_app_directory=<path_to_dart_app_root> " << std::endl;
-  std::cout << "\t\t--main_path=<path_to_main_dart_file>" << std::endl;
-  std::cout << "\t\t--icu_data_path=<path_to_icu_file>" << std::endl;
-  std::cout << std::endl;
-  std::cout << "Required Arguments:" << std::endl;
-  std::cout
-      << "\t--flutter_app_directory\t Path to your flutter app's main directory"
-      << std::endl;
-  std::cout
-      << "\t--icu_data_path\t\t Path to an icudtl.dat file. If you've built "
-         "the "
-      << std::endl;
-  std::cout << "\t\t\t\t flutter engine source this can be found in, for "
-            << std::endl;
-  std::cout << "\t\t\t\t example: " << std::endl;
-  std::cout
-      << "\t\t\t\t <flutter_engine_root>/src/out/host_debug_unopt/icudtl.dat"
-      << std::endl;
-  std::cout << "Optional Arguments:" << std::endl;
-  std::cout << "\t--main_path\t\t Path to the flutter app's main dart file "
-               "relative "
-            << std::endl;
-  std::cout << "\t\t\t\t to `--flutter_app_directory` (typically lib/main.dart)"
-            << std::endl;
-}
-
-int main(int argc, char **argv) {
-  const struct option long_options[] = {
-      {"flutter_app_directory", required_argument, nullptr, 0},
-      {"main_path", required_argument, nullptr, 0},
-      {"icu_data_path", required_argument, nullptr, 0},
-      {0, 0, 0, 0},
-  };
-  std::string flutter_app_directory;
-  const int flutter_app_directory_index = 0;
-  std::string main_path;
-  const int main_path_index = 1;
-  std::string icu_data_path;
-  const int icu_data_path_index = 2;
-
-  while (true) {
-    int option_index = 0;
-    int opt = getopt_long(argc, argv, "", long_options, &option_index);
-    if (opt == -1) {
-      break;
-    }
-    switch (opt) {
-      case 0:
-        // Flag was set. Don't need to do anything.
-        break;
-      case '?':
-        printUsage(argv[0]);
-        return EXIT_FAILURE;
-        break;
-      default:
-        printUsage(argv[0]);
-        return EXIT_FAILURE;
-    }
-    if (option_index == flutter_app_directory_index) {
-      flutter_app_directory.assign(optarg);
-    }
-    if (option_index == main_path_index) {
-      main_path.assign(optarg);
-    }
-    if (option_index == icu_data_path_index) {
-      icu_data_path.assign(optarg);
-    }
+  auto flutter_engine_run_result = RunFlutterEngine(
+      window, main_path, assets_path, packages_path, icu_data_path, argc, argv);
+  if (flutter_engine_run_result == nullptr) {
+    glfwDestroyWindow(window);
+    return nullptr;
   }
-  if (flutter_app_directory.empty() || icu_data_path.empty()) {
-    printUsage(argv[0]);
-    return EXIT_FAILURE;
-  }
-  auto result = glfwInit();
-  if (result != GLFW_TRUE) {
-    std::cout << "Error: could not initialize GLFW" << std::endl;
-    return EXIT_FAILURE;
-  }
-  auto window = glfwCreateWindow(kInitialWindowWidth, kInitialWindowHeight,
-                                 "Flutter", NULL, NULL);
-  if (window == nullptr) {
-    std::cout << "Error: could not create window" << std::endl;
-    return EXIT_FAILURE;
-  }
-  bool engine_result =
-      RunFlutterEngine(window, flutter_app_directory, main_path, icu_data_path);
-  if (!engine_result) {
-    std::cout << "Error: unable to start Flutter Engine" << std::endl;
-    return EXIT_FAILURE;
-  }
+  glfwSetWindowUserPointer(window, flutter_engine_run_result);
+  int width, height;
+  glfwGetWindowSize(window, &width, &height);
+  GLFWwindowSizeCallback(window, width, height);
   glfwSetKeyCallback(window, GLFWKeyCallback);
   glfwSetWindowSizeCallback(window, GLFWwindowSizeCallback);
   glfwSetMouseButtonCallback(window, GLFWmouseButtonCallback);
-  while (!glfwWindowShouldClose(window)) {
+  return window;
+}
+
+void FlutterWindowLoop(GLFWwindow *flutter_window) {
+  while (!glfwWindowShouldClose(flutter_window)) {
     glfwWaitEvents();
   }
-  FlutterEngineShutdown(
-      reinterpret_cast<FlutterEngine>(glfwGetWindowUserPointer(window)));
-  glfwDestroyWindow(window);
-  glfwTerminate();
-  return EXIT_SUCCESS;
+  FlutterEngineShutdown(reinterpret_cast<FlutterEngine>(
+      glfwGetWindowUserPointer(flutter_window)));
+  glfwDestroyWindow(flutter_window);
 }

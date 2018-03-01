@@ -11,11 +11,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-TARGETS=all clean
-SUBDIRS=library example
+FLUTTER_EMBEDDER_LIB=flutter_embedder
+BIN_OUT=flutter_embedder_example
+CXX=g++ -std=c++0x
+CXXFLAGS= \
+	-Wall -Werror \
+	-I$(CURDIR)/../library/include \
+	-L$(CURDIR)/../library \
+	-lGL -lglfw -l$(FLUTTER_EMBEDDER_LIB) \
+	-Wl,-rpath=$(CURDIR)/../library \
 
-$(TARGETS): $(SUBDIRS)
-$(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+LIBRARIES=$(CURDIR)/../library/lib$(FLUTTER_EMBEDDER_LIB).so
+SOURCES=flutter_embedder_example.cc
 
-.PHONY: $(TARGETS) $(SUBDIRS)
+all: $(BIN_OUT)
+
+$(BIN_OUT): $(SOURCES) $(LIBRARIES)
+	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
+
+.PHONY: clean
+clean:
+	rm -f $(BIN_OUT)

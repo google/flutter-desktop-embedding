@@ -11,11 +11,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-TARGETS=all clean
-SUBDIRS=library example
+FLUTTER_ENGINE_LIB=flutter_engine
+LIBRARY_OUT=libflutter_embedder.so
+CXX=g++ -std=c++0x
+CXXFLAGS= \
+	-Wall -Werror -shared -fPIC \
+	-I$(CURDIR)/include \
+	-L$(CURDIR) \
+	-lGL -lglfw -l$(FLUTTER_ENGINE_LIB) \
+	-Wl,-rpath=$(CURDIR) \
 
-$(TARGETS): $(SUBDIRS)
-$(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+LIBRARIES=lib$(FLUTTER_ENGINE_LIB).so
+SOURCES=flutter_embedder.cc
 
-.PHONY: $(TARGETS) $(SUBDIRS)
+all: $(LIBRARY_OUT)
+
+$(LIBRARY_OUT): $(SOURCES) $(LIBRARIES)
+	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
+
+.PHONY: clean
+clean:
+	rm -f $(LIBRARY_OUT)
