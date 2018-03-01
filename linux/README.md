@@ -1,7 +1,7 @@
-# The Flutter Ubuntu Desktop Embedder
+# The Flutter Linux Desktop Embedder
 
 This framework provides the basic functionality for embedding a Flutter app on
-the Ubuntu platform. This currently includes support for:
+the Linux desktop. This currently includes support for:
 
 *  Drawing a Flutter view.
 *  Mouse event handling.
@@ -16,6 +16,8 @@ First you will need to install the relevant dependencies.
 
 ## Dependencies
 
+Requires GLFW3 on your system (example for debian-based systems):
+
 ```
 $ sudo apt-get install libglfw3-dev
 ```
@@ -24,22 +26,21 @@ Next you will need to follow the steps outlined on the flutter engine's
 [contributing](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
 document so that you can build a copy of `libflutter_engine.so`.
 
-Then copy it in the `ubuntu/` directory.
+Then copy it in the `linux/` directory.
 
 ```
 $ cp <path_to_flutter_engine>/src/out/host_debug_unopt/libflutter_engine.so \
-       <path_to_flutter_desktop_embedding_repo>/ubuntu/
+       <path_to_flutter_desktop_embedding_repo>/linux/
 ```
 
-Then copy `embedder.h` into the same directory (the link can be found on [this
+Then copy `embedder.h` into the same directory (the file can be found on [this
 page](https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders),
 under [this
-link](https://github.com/flutter/engine/blob/4733e3373789894aa4f593137c6d440891d492a2/shell/platform/embedder/embedder.h)).
+link](https://github.com/flutter/engine/blob/4733e3373789894aa4f593137c6d440891d492a2/shell/platform/embedder/embedder.h), or you can copy it from the flutter engine checkout)
 
 ```
-$ cd <path_to_flutter_desktop_embedding_repo>
-$ wget
-https://raw.githubusercontent.com/flutter/engine/4733e3373789894aa4f593137c6d440891d492a2/shell/platform/embedder/embedder.h
+$ cp <path_to_flutter_engine>/src/flutter/shell/platform/embedder/embedder.h \
+     <path_to_flutter_desktop_embedding_repo>/linux
 ```
 
 After that's all done you should be able to run `make` and have access to a
@@ -72,14 +73,14 @@ This should generate all the files necessary to run your application.
 
 ## Running the application
 
-Go back to the `ubuntu/` directory in the repo and you can then run the example
+Go back to the `linux/` directory in the repo and you can then run the example
 app like so:
 
 ```
 $ ./flutter_embedder --flutter_app_directory \
         <path_to_flutter_repo>/examples/flutter_gallery \
         --icu_data_path \
-        <path_to_flutter_engine_repo>/src/out/host_debug_unopt/icudtl.dat
+        <path_to_flutter_engine>/src/out/host_debug_unopt/icudtl.dat
 ```
 
 # Caveats
