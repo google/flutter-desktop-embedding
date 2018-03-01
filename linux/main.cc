@@ -117,6 +117,13 @@ static void GLFWClearCanvas(GLFWwindow *window) {
   glfwMakeContextCurrent(nullptr);
 }
 
+// Spins up an instance of the Flutter Engine.
+//
+// This function launches the Flutter Engine in a background thread, supplying
+// the necessary callbacks for rendering within the GLFWwindow passed under
+// |window|. If this function returns true, the static instance of the Flutter
+// Engine |engine| is set to non-null, and upon termination,
+// FlutterEngineShutdown must be called.
 static bool RunFlutterEngine(GLFWwindow *window,
                              const std::string &flutter_app_directory,
                              const std::string &main_path,

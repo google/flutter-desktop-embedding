@@ -88,5 +88,8 @@ $ ./flutter_embedder --flutter_app_directory \
 Platform-specific features like a file chooser, menu bar interaction, etc, are
 not yet present, but will be added over time.
 
+While GLFW is in use in the current iteration, this is not going to be the final
+state for Linux support.
+
 Stay tuned for more documentation.
 
