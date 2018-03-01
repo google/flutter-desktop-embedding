@@ -18,8 +18,7 @@
 
 int main(int argc, char **argv) {
   // Edit this as needed.
-  std::string flutter_example_root =
-      "../../../flutter/examples/flutter_gallery";
+  std::string flutter_example_root = "../../flutter/examples/flutter_gallery";
   if (!glfwInit()) {
     std::cout << "Couldn't init GLFW";
   }
@@ -27,7 +26,7 @@ int main(int argc, char **argv) {
       640, 480, flutter_example_root + "/lib/main.dart",
       flutter_example_root + "/build/flutter_assets",
       flutter_example_root + "/.packages",
-      "../../../flutter/bin/cache/artifacts/engine/linux-x64/icudtl.dat", argc,
+      "../../flutter/bin/cache/artifacts/engine/linux-x64/icudtl.dat", argc,
       argv);
   if (window == nullptr) {
     glfwTerminate();

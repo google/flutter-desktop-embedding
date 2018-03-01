@@ -43,8 +43,8 @@ $ cp <path_to_flutter_engine>/src/flutter/shell/platform/embedder/embedder.h \
      <path_to_flutter_desktop_embedding_repo>/linux/library/include
 ```
 
-After that's all done you should be able to run `make` and have access to a
-`flutter_embedder_example` binary.
+After that's all done you should be able to run `make` within the `linux`
+directory and have access to a `flutter_embedder_example` binary.
 
 ```
 $ make
@@ -84,6 +84,16 @@ directory with this repository, like this:
 
 And have run `flutter build flx` in the `flutter_gallery` example app under
 `flutter/examples`.
+
+## Running the Example Code
+
+Once you've built everything, and the directories are setup as outlined above,
+the `flutter_embedder_example` code expects to be run from the `linux/`
+directory like so:
+
+```
+$ ./example/flutter_embedder_example
+```
 
 # Caveats
 
