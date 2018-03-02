@@ -11,16 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <chrono>
-#include <iostream>
+#include "include/flutter_embedder.h"
 
 #include <GL/gl.h>
-
 #include <assert.h>
-#include <getopt.h>
+#include <chrono>
 
 #include "include/embedder.h"
-#include "include/flutter_embedder.h"
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 

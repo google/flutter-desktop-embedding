@@ -14,6 +14,7 @@
 #ifndef LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_
 #define LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_
 #include <GLFW/glfw3.h>
+#include <string>
 
 // Creates a GLFW Window running a Flutter Application.
 //
@@ -59,4 +60,5 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
 // After this function the user must eventually call glfwTerminate() if doing
 // cleanup.
 void FlutterWindowLoop(GLFWwindow *flutter_window);
+
 #endif  // LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_
