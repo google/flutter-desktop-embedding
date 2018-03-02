@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
   if (!glfwInit()) {
     std::cout << "Couldn't init GLFW";
   }
+  // Arguments for the Flutter Engine.
   int arg_count = 1;
   const char *args_arr[] = {
       "--dart-non-checked-mode",
