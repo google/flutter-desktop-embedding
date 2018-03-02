@@ -18,16 +18,22 @@
 
 int main(int argc, char **argv) {
   // Edit this as needed.
-  std::string flutter_example_root = "../../flutter/examples/flutter_gallery";
+  std::string flutter_example_root = "../example_flutter";
+  std::string flutter_git_root = "../../flutter";
   if (!glfwInit()) {
     std::cout << "Couldn't init GLFW";
   }
+  int arg_count = 1;
+  const char *args_arr[] = {
+      "--dart-non-checked-mode",
+      NULL,
+  };
   auto window = CreateFlutterWindow(
       640, 480, flutter_example_root + "/lib/main.dart",
       flutter_example_root + "/build/flutter_assets",
       flutter_example_root + "/.packages",
-      "../../flutter/bin/cache/artifacts/engine/linux-x64/icudtl.dat", argc,
-      argv);
+      flutter_git_root + "/bin/cache/artifacts/engine/linux-x64/icudtl.dat",
+      arg_count, const_cast<char **>(args_arr));
   if (window == nullptr) {
     glfwTerminate();
     return EXIT_FAILURE;

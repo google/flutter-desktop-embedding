@@ -22,12 +22,13 @@ CXXFLAGS= \
 	-Wl,-rpath=$(CURDIR) \
 
 LIBRARIES=lib$(FLUTTER_ENGINE_LIB).so
+HEADERS=$(wildcard include/*.h)
 SOURCES=flutter_embedder.cc
 
 all: $(LIBRARY_OUT)
 
-$(LIBRARY_OUT): $(SOURCES) $(LIBRARIES)
-	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
+$(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
+	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES); \
 
 .PHONY: clean
 clean:

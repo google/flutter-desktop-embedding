@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 FLUTTER_EMBEDDER_LIB=flutter_embedder
+FLUTTER_EXAMPLE_DIR=../../example_flutter
+FLUTTER_BIN_FROM_EXAMPLE_DIR=../../flutter/bin/flutter
 BIN_OUT=flutter_embedder_example
 CXX=g++ -std=c++0x
 CXXFLAGS= \
@@ -24,11 +26,17 @@ CXXFLAGS= \
 LIBRARIES=$(CURDIR)/../library/lib$(FLUTTER_EMBEDDER_LIB).so
 SOURCES=flutter_embedder_example.cc
 
-all: $(BIN_OUT)
+all: $(FLUTTER_EXAMPLE_DIR)/build $(BIN_OUT)
+
+$(FLUTTER_EXAMPLE_DIR)/build:
+	cd $(FLUTTER_EXAMPLE_DIR); \
+	$(FLUTTER_BIN_FROM_EXAMPLE_DIR) build flx; \
 
 $(BIN_OUT): $(SOURCES) $(LIBRARIES)
 	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
 
 .PHONY: clean
 clean:
-	rm -f $(BIN_OUT)
+	rm -f $(BIN_OUT); \
+	cd $(FLUTTER_EXAMPLE_DIR); \
+	$(FLUTTER_BIN_FROM_EXAMPLE_DIR) clean

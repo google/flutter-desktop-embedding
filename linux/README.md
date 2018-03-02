@@ -33,14 +33,27 @@ $ cp <path_to_flutter_engine>/src/out/host_debug_unopt/libflutter_engine.so \
        <path_to_flutter_desktop_embedding_repo>/linux/library
 ```
 
-Then copy `embedder.h` into the include directory (the file can be found on [this
-page](https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders),
-under [this
-link](https://github.com/flutter/engine/blob/4733e3373789894aa4f593137c6d440891d492a2/shell/platform/embedder/embedder.h), or you can copy it from the flutter engine checkout)
+Then copy `embedder.h` into the include directory (the file can be found under
+the the flutter engine checkout).
 
 ```
 $ cp <path_to_flutter_engine>/src/flutter/shell/platform/embedder/embedder.h \
      <path_to_flutter_desktop_embedding_repo>/linux/library/include
+```
+
+## Building and Running a Flutter App
+
+There are already [examples](https://flutter.io/get-started/) on building
+Flutter apps out there. This assumes you're using the existing example app
+contained in the repo.
+
+For this example, you should have a checkout of the flutter repo with the same
+parent directory as the `flutter-desktop-embedding` repository, like so:
+
+```
+<parent dir>
+  ├─ flutter/ (from http://github.com/flutter/flutter)
+  └─ flutter-desktop-embedding/ (from https://github.com/google/flutter-desktop-embedding)
 ```
 
 After that's all done you should be able to run `make` within the `linux`
@@ -50,44 +63,11 @@ directory and have access to a `flutter_embedder_example` binary.
 $ make
 ```
 
-
-## Building and Running a Flutter App
-
-
-There are already [examples](https://flutter.io/get-started/) on building
-Flutter apps out there. This assumes you've already got an example somewhere.
-
-For this you'll need a working `flutter` binary. An easy way to get both the
-`flutter` binary and an example app is to clone the [flutter
-repo](https://github.com/flutter/flutter), and you can then build, for example,
-the demo gallery.
-
-```
-$ git clone https://github.com/flutter/flutter.git
-$ cd flutter/examples/flutter_gallery
-$ ../../bin/flutter build flx
-```
-
 This should generate all the files necessary to run your application.
-
-Note that the `flutter_embedder_example` binary is hard coded with the
-assumption that you've checked out the `flutter` source in a common root
-directory with this repository, like this:
-
-```
-  root_dir> --
-              \
-              +--- [ flutter/ ]
-              |
-              +--- [ flutter-desktop-embedding/ ]
-```
-
-And have run `flutter build flx` in the `flutter_gallery` example app under
-`flutter/examples`.
 
 ## Running the Example Code
 
-Once you've built everything, and the directories are setup as outlined above,
+Once the directories are setup like above and you've built everything,
 the `flutter_embedder_example` code expects to be run from the `linux/`
 directory like so:
 

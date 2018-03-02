@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef __FLUTTER_EMBEDDER_H__
-#define __FLUTTER_EMBEDDER_H__
+#ifndef LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_
+#define LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_
 #include <GLFW/glfw3.h>
 
 // Creates a GLFW Window running a Flutter Application.
@@ -59,4 +59,4 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
 // After this function the user must eventually call glfwTerminate() if doing
 // cleanup.
 void FlutterWindowLoop(GLFWwindow *flutter_window);
-#endif  // __FLUTTER_EMBEDDER_H__
+#endif  // LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_
