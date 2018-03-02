@@ -17,9 +17,10 @@
 #include <GL/gl.h>
 
 #include <assert.h>
-#include <embedder.h>
-#include <flutter_embedder.h>
 #include <getopt.h>
+
+#include "include/embedder.h"
+#include "include/flutter_embedder.h"
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 

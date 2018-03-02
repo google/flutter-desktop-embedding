@@ -16,7 +16,6 @@ LIBRARY_OUT=libflutter_embedder.so
 CXX=g++ -std=c++0x
 CXXFLAGS= \
 	-Wall -Werror -shared -fPIC \
-	-I$(CURDIR)/include \
 	-L$(CURDIR) \
 	-lGL -lglfw -l$(FLUTTER_ENGINE_LIB) \
 	-Wl,-rpath=$(CURDIR) \
