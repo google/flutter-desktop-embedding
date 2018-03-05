@@ -24,10 +24,10 @@ int main(int argc, char **argv) {
   }
   // Arguments for the Flutter Engine.
   int arg_count = 2;
-  // First argument is the empty string since the engine is expecting real
-  // command line arguments, where argv[0] is the path to the binary being run.
+  // First argument is argv[0] since the engine is expecting real command line
+  // args.
   const char *args_arr[] = {
-      "",
+      argv[0],
       "--dart-non-checked-mode",
       NULL,
   };
