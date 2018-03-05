@@ -24,8 +24,11 @@ int main(int argc, char **argv) {
     std::cout << "Couldn't init GLFW";
   }
   // Arguments for the Flutter Engine.
-  int arg_count = 1;
+  int arg_count = 2;
+  // First argument is the empty string since the engine is expecting real
+  // command line arguments, where argv[0] is the path to the binary being run.
   const char *args_arr[] = {
+      "",
       "--dart-non-checked-mode",
       NULL,
   };
