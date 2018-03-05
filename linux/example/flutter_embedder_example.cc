@@ -29,10 +29,8 @@ int main(int argc, char **argv) {
       "--dart-non-checked-mode",
       NULL,
   };
-  auto window = CreateFlutterWindow(
-      640, 480, flutter_example_root + "/lib/main.dart",
-      flutter_example_root + "/build/flutter_assets",
-      flutter_example_root + "/.packages",
+  auto window = CreateFlutterWindowInSnapshotMode(
+      640, 480, flutter_example_root + "/build/flutter_assets",
       flutter_git_root + "/bin/cache/artifacts/engine/linux-x64/icudtl.dat",
       arg_count, const_cast<char **>(args_arr));
   if (window == nullptr) {

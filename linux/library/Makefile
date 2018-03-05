@@ -27,7 +27,7 @@ SOURCES=flutter_embedder.cc
 all: $(LIBRARY_OUT)
 
 $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
-	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES); \
+	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
 
 .PHONY: clean
 clean:

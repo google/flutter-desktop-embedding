@@ -22,6 +22,18 @@ Requires GLFW3 on your system (example for debian-based systems):
 $ sudo apt-get install libglfw3-dev
 ```
 
+Also requires a checkout of the Flutter repo and Flutter Engine repo. For the
+most straightforward build make sure to set up all checkouts with the same
+parent directory like so:
+
+```
+<parent dir>
+  ├─ flutter/ (from http://github.com/flutter/flutter)
+  ├─ engine/ (from https://github.com/flutter/engine)
+  └─ flutter-desktop-embedding/ (from https://github.com/google/flutter-desktop-embedding)
+```
+
+
 Next you will need to follow the steps outlined on the flutter engine's
 [contributing](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
 document so that you can build a copy of `libflutter_engine.so`.
@@ -47,16 +59,7 @@ There are already [examples](https://flutter.io/get-started/) on building
 Flutter apps out there. This assumes you're using the existing example app
 contained in the repo.
 
-For this example, you should have a checkout of the flutter repo with the same
-parent directory as the `flutter-desktop-embedding` repository, like so:
-
-```
-<parent dir>
-  ├─ flutter/ (from http://github.com/flutter/flutter)
-  └─ flutter-desktop-embedding/ (from https://github.com/google/flutter-desktop-embedding)
-```
-
-After that's all done you should be able to run `make` within the `linux`
+You should be able to run `make` within the `linux`
 directory and have access to a `flutter_embedder_example` binary.
 
 ```
