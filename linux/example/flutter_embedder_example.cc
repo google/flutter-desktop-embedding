@@ -17,7 +17,6 @@
 #include <flutter_embedder.h>
 
 int main(int argc, char **argv) {
-  // Edit this as needed.
   std::string flutter_example_root = "../example_flutter";
   std::string flutter_git_root = "../../flutter";
   if (!glfwInit()) {

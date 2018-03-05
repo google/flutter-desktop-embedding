@@ -65,6 +65,7 @@ CXXFLAGS= \
 LIBRARIES=$(CURDIR)/../library/lib$(FLUTTER_EMBEDDER_LIB).so
 SOURCES=flutter_embedder_example.cc
 
+.PHONY: all
 all: $(FLUTTER_EXAMPLE_DIR)/build $(BIN_OUT)
 
 $(FLUTTER_EXAMPLE_DIR)/build:

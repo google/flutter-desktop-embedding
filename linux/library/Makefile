@@ -24,6 +24,7 @@ LIBRARIES=lib$(FLUTTER_ENGINE_LIB).so
 HEADERS=$(wildcard include/*.h)
 SOURCES=flutter_embedder.cc
 
+.PHONY: all
 all: $(LIBRARY_OUT)
 
 $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)

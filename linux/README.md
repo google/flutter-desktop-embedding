@@ -55,9 +55,7 @@ $ cp <path_to_flutter_engine>/src/flutter/shell/platform/embedder/embedder.h \
 
 ## Building and Running a Flutter App
 
-There are already [examples](https://flutter.io/get-started/) on building
-Flutter apps out there. This assumes you're using the existing example app
-contained in the repo.
+This assumes you're using the existing example app contained in the repo.
 
 You should be able to run `make` within the `linux`
 directory and have access to a `flutter_embedder_example` binary.
@@ -66,7 +64,7 @@ directory and have access to a `flutter_embedder_example` binary.
 $ make
 ```
 
-This should generate all the files necessary to run your application.
+This should generate all the files necessary to run the example application.
 
 ## Running the Example Code
 
