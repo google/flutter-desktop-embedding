@@ -34,7 +34,9 @@ static const int kDefaultWindowFramebuffer = 0;
 /**
  * Private interface declaration for FLEViewController.
  */
-@interface FLEViewController ()<FLEReshapeListener>
+@interface FLEViewController ()<FLEReshapeListener> {
+  NSOpenGLContext* _resourceContext;
+}
 
 /**
  * Responds to system messages sent to this controller from the Flutter engine.
@@ -42,6 +44,12 @@ static const int kDefaultWindowFramebuffer = 0;
  * explicitly declared.
  */
 - (void)handlePlatformMessage:(const FlutterPlatformMessage *)message;
+
+/**
+ * Makes the OpenGL context used by the engine for rendering optimization the
+ * current context.
+ */
+- (void)makeResourceContextCurrent;
 
 @property NSMutableDictionary<NSString *, id<FLEPlugin>> *plugins;
 
@@ -61,7 +69,7 @@ static bool OnMakeCurrent(FLEViewController *controller) {
  * Clears the current context.
  */
 static bool OnClearCurrent(FLEViewController *controller) {
-  [controller.view clearCurrentContext];
+  [NSOpenGLContext clearCurrentContext];
   return true;
 }
 
@@ -86,6 +94,14 @@ static void OnPlatformMessage(const FlutterPlatformMessage *message,
   [controller handlePlatformMessage:message];
 }
 
+/**
+ * Makes the resource context the current context.
+ */
+static bool OnMakeResourceCurrent(FLEViewController *controller) {
+  [controller makeResourceContextCurrent];
+  return true;
+}
+
 #pragma mark - Static methods provided for headless engine configuration.
 
 static bool HeadlessOnMakeCurrent(FLEViewController *controller) { return false; }
@@ -95,6 +111,8 @@ static bool HeadlessOnClearCurrent(FLEViewController *controller) { return false
 static bool HeadlessOnPresent(FLEViewController *controller) { return false; }
 
 static uint32_t HeadlessOnFBO(FLEViewController *controller) { return kDefaultWindowFramebuffer; }
+
+static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { return false; }
 
 #pragma mark - FLEViewController implementation.
 
@@ -179,6 +197,8 @@ static uint32_t HeadlessOnFBO(FLEViewController *controller) { return kDefaultWi
     return NO;
   }
 
+  [self createResourceContext];
+
   const FlutterRendererConfig config = [FLEViewController createRenderConfigHeadless:headless];
 
   // Strip out the Xcode-added -NSDocumentRevisionsDebugMode YES.
@@ -228,7 +248,8 @@ static uint32_t HeadlessOnFBO(FLEViewController *controller) { return kDefaultWi
         .open_gl.make_current = (BoolCallback)HeadlessOnMakeCurrent,
         .open_gl.clear_current = (BoolCallback)HeadlessOnClearCurrent,
         .open_gl.present = (BoolCallback)HeadlessOnPresent,
-        .open_gl.fbo_callback = (UIntCallback)HeadlessOnFBO};
+        .open_gl.fbo_callback = (UIntCallback)HeadlessOnFBO,
+        .open_gl.make_resource_current = (BoolCallback)HeadlessOnMakeResourceCurrent};
     return config;
   } else {
     const FlutterRendererConfig config = {
@@ -237,7 +258,8 @@ static uint32_t HeadlessOnFBO(FLEViewController *controller) { return kDefaultWi
         .open_gl.make_current = (BoolCallback)OnMakeCurrent,
         .open_gl.clear_current = (BoolCallback)OnClearCurrent,
         .open_gl.present = (BoolCallback)OnPresent,
-        .open_gl.fbo_callback = (UIntCallback)OnFBO};
+        .open_gl.fbo_callback = (UIntCallback)OnFBO,
+        .open_gl.make_resource_current = (BoolCallback)OnMakeResourceCurrent};
     return config;
   }
 }
@@ -266,6 +288,22 @@ static uint32_t HeadlessOnFBO(FLEViewController *controller) { return kDefaultWi
     FlutterEngineSendPlatformMessageResponse(_engine, message->response_handle, responseData.bytes,
                                              responseData.length);
   }
+}
+
+/**
+ * Creates the OpenGL context used as the resource context by the engine.
+ *
+ * This is done explicitly rather than in viewDidLoad as there's no guarantee that viewDidLoad
+ * will be called before the engine is started, and the context must be valid by then.
+ */
+- (void)createResourceContext {
+  NSOpenGLContext *viewContext = ((NSOpenGLView*)self.view).openGLContext;
+  _resourceContext = [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat
+                                                shareContext:viewContext];
+}
+
+- (void)makeResourceContextCurrent {
+  [_resourceContext makeCurrentContext];
 }
 
 /*
