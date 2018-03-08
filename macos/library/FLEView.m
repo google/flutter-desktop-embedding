@@ -19,10 +19,6 @@
 #pragma mark -
 #pragma mark FLEContextHandlingProtocol
 
-- (void)clearCurrentContext {
-  [NSOpenGLContext clearCurrentContext];
-}
-
 - (void)makeCurrentContext {
   [self.openGLContext makeCurrentContext];
 }

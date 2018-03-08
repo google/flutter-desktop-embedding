@@ -24,11 +24,6 @@
 - (void)makeCurrentContext;
 
 /**
- * Clears the current receiver, setting the OpenGL context to nil.
- */
-- (void)clearCurrentContext;
-
-/**
  * Called when the display is updated. In an NSOpenGLView this is best handled via a flushBuffer
  * call.
  */
