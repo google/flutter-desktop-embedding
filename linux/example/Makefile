@@ -75,7 +75,7 @@ $(FLUTTER_EXAMPLE_DIR)/build:
 		--local-engine=$(FLUTTER_ENGINE_BUILD);
 
 $(BIN_OUT): $(SOURCES) $(LIBRARIES)
-	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
+	$(CXX) $(SOURCES) $(CXXFLAGS) -o $@
 
 .PHONY: clean
 clean:
