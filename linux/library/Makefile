@@ -14,11 +14,10 @@
 FLUTTER_ENGINE_LIB=flutter_engine
 LIBRARY_OUT=libflutter_embedder.so
 CXX=g++ -std=c++0x
-CXXFLAGS= \
-	-Wall -Werror -shared -fPIC \
-	-L$(CURDIR) \
-	-lGL -lglfw -l$(FLUTTER_ENGINE_LIB) \
-	-Wl,-rpath=$(CURDIR) \
+CXXFLAGS= -Wall -Werror -shared -fPIC
+LDFLAGS= -L$(CURDIR) \
+	-lglfw -lGL -l$(FLUTTER_ENGINE_LIB) \
+	-Wl,-rpath=$(CURDIR)
 
 LIBRARIES=lib$(FLUTTER_ENGINE_LIB).so
 HEADERS=$(wildcard include/*.h)
@@ -28,7 +27,7 @@ SOURCES=flutter_embedder.cc
 all: $(LIBRARY_OUT)
 
 $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
-	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
+	$(CXX) $(CXXFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
 .PHONY: clean
 clean:
