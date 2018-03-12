@@ -26,4 +26,4 @@ This is not an officially supported Google product.
 
 This is an exploratory effort, and is not part of the Flutter project. See the
 [Flutter FAQ](https://flutter.io/faq/#can-i-use-flutter-to-build-desktop-apps)
-for Flutter's official stance on dekstop development.
+for Flutter's official stance on desktop development.
