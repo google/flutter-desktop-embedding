@@ -55,12 +55,13 @@ FLUTTER_EXAMPLE_DIR=../../example_flutter
 FLUTTER_BIN_FROM_EXAMPLE_DIR=../../flutter/bin/flutter
 BIN_OUT=flutter_embedder_example
 CXX=g++ -std=c++0x
-CXXFLAGS= \
-	-Wall -Werror \
-	-I$(CURDIR)/../library/include \
-	-L$(CURDIR)/../library \
-	-lGL -lglfw -l$(FLUTTER_EMBEDDER_LIB) \
-	-Wl,-rpath=$(CURDIR)/../library
+CXXFLAGS=-Wall -Werror
+CPPFLAGS=-I$(CURDIR)/../library/include
+LDFLAGS=-L$(CURDIR)/../library/ \
+	-lglfw \
+	-lGL \
+	-l$(FLUTTER_EMBEDDER_LIB) \
+	-Wl,-rpath=$(CURDIR)/../library/
 
 LIBRARIES=$(CURDIR)/../library/lib$(FLUTTER_EMBEDDER_LIB).so
 SOURCES=flutter_embedder_example.cc
@@ -75,7 +76,7 @@ $(FLUTTER_EXAMPLE_DIR)/build:
 		--local-engine=$(FLUTTER_ENGINE_BUILD);
 
 $(BIN_OUT): $(SOURCES) $(LIBRARIES)
-	$(CXX) $(SOURCES) $(CXXFLAGS) -o $@
+	$(CXX) $(SOURCES) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@
 
 .PHONY: clean
 clean:
