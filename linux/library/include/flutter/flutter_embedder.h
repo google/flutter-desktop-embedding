@@ -13,8 +13,18 @@
 // limitations under the License.
 #ifndef LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_
 #define LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_
+
+// Epoxy must be included before any graphics-related code.
+#include <epoxy/gl.h>
+
 #include <GLFW/glfw3.h>
+
+#include <memory>
 #include <string>
+
+#include <flutter/plugin.h>
+
+namespace flutter {
 
 // Creates a GLFW Window running a Flutter Application.
 //
@@ -52,6 +62,12 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
                                               const std::string &icu_data_path,
                                               int argc, char **argv);
 
+// Adds a plugin to the flutter_window.
+//
+// If a plugin already exists for this plugin's channel, returns false.
+// Otherwise returns true.
+bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin);
+
 // Loops on flutter window events until termination.
 //
 // Must be used instead of glfwWindowShouldClose as it cleans up engine state
@@ -60,5 +76,7 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
 // After this function the user must eventually call glfwTerminate() if doing
 // cleanup.
 void FlutterWindowLoop(GLFWwindow *flutter_window);
+
+}  // namespace flutter
 
 #endif  // LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_

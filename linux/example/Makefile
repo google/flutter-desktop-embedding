@@ -55,11 +55,11 @@ FLUTTER_EXAMPLE_DIR=../../example_flutter
 FLUTTER_BIN_FROM_EXAMPLE_DIR=../../flutter/bin/flutter
 BIN_OUT=flutter_embedder_example
 CXX=g++ -std=c++0x
-CXXFLAGS=-Wall -Werror
+CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp)
 CPPFLAGS=-I$(CURDIR)/../library/include
 LDFLAGS=-L$(CURDIR)/../library/ \
 	-lglfw \
-	-lGL \
+	$(shell pkg-config --libs jsoncpp) \
 	-l$(FLUTTER_EMBEDDER_LIB) \
 	-Wl,-rpath=$(CURDIR)/../library/
 

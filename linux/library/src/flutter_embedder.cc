@@ -11,17 +11,78 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "include/flutter_embedder.h"
+#include <flutter/flutter_embedder.h>
 
-#include <GL/gl.h>
+#include <X11/Xlib.h>
 #include <assert.h>
-#include <chrono>
+#include <gtk/gtk.h>
+#include <json/json.h>
 
-#include "include/embedder.h"
+#include <chrono>
+#include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <string>
+
+#include <flutter/embedder_extensions.h>
+#include <flutter/file_chooser_plugin.h>
+#include <flutter/plugin_handler.h>
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
+// Struct for storing state within an instance of the GLFW Window.
+struct FlutterEmbedderState {
+  FlutterEngine engine;
+  std::unique_ptr<flutter::PluginHandler> plugin_handler;
+};
+typedef FlutterEmbedderState *FlutterEmbedderStatePtr;
+
 static constexpr char kDefaultWindowTitle[] = "Flutter";
+
+static void GLFWClearEventCallbacks(GLFWwindow *window);
+static void GLFWAssignEventCallbacks(GLFWwindow *window);
+static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height);
+
+static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
+                                         void *user_data) {
+  if (message->struct_size != sizeof(FlutterPlatformMessage)) {
+    std::cerr << "Invalid message size received. Expected: "
+              << sizeof(FlutterPlatformMessage) << " but received "
+              << message->struct_size << std::endl;
+    return;
+  }
+  GLFWwindow *window = reinterpret_cast<GLFWwindow *>(user_data);
+  Json::Reader parser;
+  Json::Value json;
+  std::string channel(message->channel);
+  std::string raw_string(reinterpret_cast<const char *>(message->message), 0,
+                         message->message_size);
+  bool parsing_successful = parser.parse(raw_string, json);
+  if (!parsing_successful) {
+    std::cerr << "Unable to parse platform message" << std::endl;
+    return;
+  }
+  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
+      glfwGetWindowUserPointer(window));
+  Json::Value response = state->plugin_handler->HandlePlatformMessage(
+      channel, json, [window] { GLFWClearEventCallbacks(window); },
+      [window] { GLFWAssignEventCallbacks(window); });
+  if (response.isNull()) {
+    return;
+  }
+
+  Json::FastWriter writer;
+  std::string output = writer.write(response);
+  FlutterPlatformMessage platform_message_response = {
+      .struct_size = sizeof(FlutterPlatformMessage),
+      .channel = channel.c_str(),
+      .message = reinterpret_cast<const uint8_t *>(output.c_str()),
+      .message_size = output.size(),
+  };
+  FlutterEngineSendPlatformMessage(state->engine, &platform_message_response);
+  FlutterEngineSendPlatformMessageResponse(
+      state->engine, message->response_handle, nullptr, 0);
+}
 
 static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
                                               FlutterPointerPhase phase,
@@ -35,9 +96,9 @@ static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
       std::chrono::duration_cast<std::chrono::microseconds>(
           std::chrono::high_resolution_clock::now().time_since_epoch())
           .count();
-  FlutterEngineSendPointerEvent(
-      reinterpret_cast<FlutterEngine>(glfwGetWindowUserPointer(window)), &event,
-      1);
+  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
+      glfwGetWindowUserPointer(window));
+  FlutterEngineSendPointerEvent(state->engine, &event, 1);
 }
 
 static void GLFWcursorPositionCallback(GLFWwindow *window, double x, double y) {
@@ -72,9 +133,9 @@ static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
   event.width = width;
   event.height = height;
   event.pixel_ratio = 1.0;
-  FlutterEngineSendWindowMetricsEvent(
-      reinterpret_cast<FlutterEngine>(glfwGetWindowUserPointer(window)),
-      &event);
+  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
+      glfwGetWindowUserPointer(window));
+  FlutterEngineSendWindowMetricsEvent(state->engine, &event);
 }
 
 static bool GLFWMakeContextCurrent(void *user_data) {
@@ -141,6 +202,7 @@ static FlutterEngine RunFlutterEngine(GLFWwindow *window,
   args.icu_data_path = icu_data_path.c_str();
   args.command_line_argc = argc;
   args.command_line_argv = argv;
+  args.platform_message_callback = GLFWOnFlutterPlatformMessage;
   FlutterEngine engine = nullptr;
   auto result =
       FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &args, window, &engine);
@@ -148,6 +210,25 @@ static FlutterEngine RunFlutterEngine(GLFWwindow *window,
     return nullptr;
   }
   return engine;
+}
+
+static void GLFWAssignEventCallbacks(GLFWwindow *window) {
+  glfwPollEvents();
+  glfwSetKeyCallback(window, GLFWKeyCallback);
+  glfwSetMouseButtonCallback(window, GLFWmouseButtonCallback);
+}
+
+static void GLFWClearEventCallbacks(GLFWwindow *window) {
+  glfwSetKeyCallback(window, nullptr);
+  glfwSetMouseButtonCallback(window, nullptr);
+}
+
+namespace flutter {
+
+bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
+  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
+      glfwGetWindowUserPointer(flutter_window));
+  return state->plugin_handler->AddPlugin(std::move(plugin));
 }
 
 GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
@@ -165,6 +246,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
                                 const std::string &packages_path,
                                 const std::string &icu_data_path, int argc,
                                 char **argv) {
+  gtk_init(0, nullptr);
   auto window = glfwCreateWindow(initial_width, initial_height,
                                  kDefaultWindowTitle, NULL, NULL);
   if (window == nullptr) {
@@ -177,21 +259,35 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
     glfwDestroyWindow(window);
     return nullptr;
   }
-  glfwSetWindowUserPointer(window, flutter_engine_run_result);
+  FlutterEmbedderStatePtr state = new FlutterEmbedderState();
+  state->plugin_handler = std::make_unique<PluginHandler>();
+  state->plugin_handler->AddPlugin(std::make_unique<FileChooserPlugin>());
+  state->engine = flutter_engine_run_result;
+  glfwSetWindowUserPointer(window, state);
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   GLFWwindowSizeCallback(window, width, height);
-  glfwSetKeyCallback(window, GLFWKeyCallback);
   glfwSetWindowSizeCallback(window, GLFWwindowSizeCallback);
-  glfwSetMouseButtonCallback(window, GLFWmouseButtonCallback);
+  GLFWAssignEventCallbacks(window);
   return window;
 }
 
 void FlutterWindowLoop(GLFWwindow *flutter_window) {
+  // Necessary for GTK thread safety.
+  XInitThreads();
   while (!glfwWindowShouldClose(flutter_window)) {
-    glfwWaitEvents();
+    glfwPollEvents();
+    if (gtk_events_pending()) {
+      gtk_main_iteration();
+    }
+    // TODO(awdavies): This will be deprecated soon.
+    __FlutterEngineFlushPendingTasksNow();
   }
-  FlutterEngineShutdown(reinterpret_cast<FlutterEngine>(
-      glfwGetWindowUserPointer(flutter_window)));
+  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
+      glfwGetWindowUserPointer(flutter_window));
+  FlutterEngineShutdown(state->engine);
+  delete state;
   glfwDestroyWindow(flutter_window);
 }
+
+}  // namespace flutter

@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <flutter_embedder.h>
+#include <flutter/flutter_embedder.h>
 
 int main(int argc, char **argv) {
   std::string flutter_example_root = "../example_flutter";
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
       "--dart-non-checked-mode",
       NULL,
   };
-  auto window = CreateFlutterWindowInSnapshotMode(
+  auto window = flutter::CreateFlutterWindowInSnapshotMode(
       640, 480, flutter_example_root + "/build/flutter_assets",
       flutter_git_root + "/bin/cache/artifacts/engine/linux-x64/icudtl.dat",
       arg_count, const_cast<char **>(args_arr));
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     glfwTerminate();
     return EXIT_FAILURE;
   }
-  FlutterWindowLoop(window);
+  flutter::FlutterWindowLoop(window);
   glfwTerminate();
   return EXIT_SUCCESS;
 }

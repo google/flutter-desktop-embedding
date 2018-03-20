@@ -13,15 +13,18 @@
 # limitations under the License.
 FLUTTER_ENGINE_LIB=flutter_engine
 LIBRARY_OUT=libflutter_embedder.so
-CXX=g++ -std=c++0x
-CXXFLAGS= -Wall -Werror -shared -fPIC
+CXX=g++ -std=c++14
+CXXFLAGS= -Wall -Werror -shared -fPIC \
+	-I$(CURDIR)/include \
+	$(shell pkg-config --cflags gtk+-3.0 epoxy x11 jsoncpp)
 LDFLAGS= -L$(CURDIR) \
+	$(shell pkg-config --libs gtk+-3.0 epoxy x11 jsoncpp) \
 	-lglfw -lGL -l$(FLUTTER_ENGINE_LIB) \
 	-Wl,-rpath=$(CURDIR)
 
 LIBRARIES=lib$(FLUTTER_ENGINE_LIB).so
 HEADERS=$(wildcard include/*.h)
-SOURCES=flutter_embedder.cc
+SOURCES=$(wildcard src/*.cc)
 
 .PHONY: all
 all: $(LIBRARY_OUT)
