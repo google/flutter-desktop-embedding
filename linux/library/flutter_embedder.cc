@@ -107,7 +107,7 @@ static uint32_t GLFWGetActiveFbo(void *user_data) { return 0; }
 static void GLFWClearCanvas(GLFWwindow *window) {
   glfwMakeContextCurrent(window);
   // This color is Material Blue Grey.
-  glClearColor(236, 239, 241, 0);
+  glClearColor(0.92549, 0.93725, 0.9451, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
   glfwSwapBuffers(window);
