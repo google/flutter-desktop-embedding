@@ -22,8 +22,9 @@ LDFLAGS= -L$(CURDIR) \
 	-lglfw -lGL -l$(FLUTTER_ENGINE_LIB) \
 	-Wl,-rpath=$(CURDIR)
 
+
 LIBRARIES=lib$(FLUTTER_ENGINE_LIB).so
-HEADERS=$(wildcard include/*.h)
+HEADERS=$(shell find include/ -type f -name '*.h')
 SOURCES=$(wildcard src/*.cc)
 
 .PHONY: all
