@@ -14,6 +14,8 @@
 TARGETS=all clean
 SUBDIRS=library example
 
+example: library
+
 $(TARGETS): $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
