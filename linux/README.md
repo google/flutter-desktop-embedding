@@ -34,11 +34,21 @@ parent directory like so:
 ```
 
 
-Next you will need to follow the steps outlined on the flutter engine's
-[contributing](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
-document so that you can build a copy of `libflutter_engine.so`.
+Next you will need to build the flutter engine. First, after you've checked out
+the engine code, make sure to build the version appropriate for your checkout of
+Flutter. This can be done using the `engine.version` file. Here is how you can
+check out the correct version of the engine when inside the `engine/` repo.
 
-Then copy it in the `linux/library/` directory.
+```
+$ git checkout $(cat ../flutter/bin/internal/engine.version)
+```
+
+Then, follow the steps outlined on the flutter engine's
+[contributing](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
+page so that you can build a copy of `libflutter_engine.so`.
+
+Then copy it from `out/host_debug_unopt/` (if you built the unoptimized binary)
+into the `flutter-desktop-embedding/linux/library/` directory.
 
 ```
 $ cp <path_to_flutter_engine>/src/out/host_debug_unopt/libflutter_engine.so \
