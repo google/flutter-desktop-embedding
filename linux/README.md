@@ -3,23 +3,33 @@
 This framework provides the basic functionality for embedding a Flutter app on
 the Linux desktop. This currently includes support for:
 
-*  Drawing a Flutter view.
-*  Mouse event handling.
+*   Drawing a Flutter view.
+*   Mouse event handling.
 
 # How to Use This Code
 
 Note that the example build here is `host_debug_unopt` (you'll find more info on
-what that means in this section). This can be changed to whatever version of
-the Flutter Engine you end up building.
+what that means in this section). This can be changed to whatever version of the
+Flutter Engine you end up building.
 
 First you will need to install the relevant dependencies.
 
 ## Dependencies
 
-Requires GLFW3 on your system (example for debian-based systems):
+Requires:
+
+*   GLFW3
+*   GTK 3
+*   jsoncpp
+*   epoxy
+*   X11 development libs
+*   pkg-config
+
+Installation example for debian-based systems:
 
 ```
-$ sudo apt-get install libglfw3-dev
+$ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
+      libx11-dev pkg-config
 ```
 
 Also requires a checkout of the Flutter repo and Flutter Engine repo. For the
@@ -32,7 +42,6 @@ parent directory like so:
   ├─ engine/ (from https://github.com/flutter/engine)
   └─ flutter-desktop-embedding/ (from https://github.com/google/flutter-desktop-embedding)
 ```
-
 
 Next you will need to build the flutter engine. First, after you've checked out
 the engine code, make sure to build the version appropriate for your checkout of
@@ -67,8 +76,8 @@ $ cp <path_to_flutter_engine>/src/flutter/shell/platform/embedder/embedder.h \
 
 This assumes you're using the existing example app contained in the repo.
 
-You should be able to run `make` within the `linux`
-directory and have access to a `flutter_embedder_example` binary.
+You should be able to run `make` within the `linux` directory and have access to
+a `flutter_embedder_example` binary.
 
 ```
 $ make
@@ -78,9 +87,9 @@ This should generate all the files necessary to run the example application.
 
 ## Running the Example Code
 
-Once the directories are setup like above and you've built everything,
-the `flutter_embedder_example` code expects to be run from the `linux/`
-directory like so:
+Once the directories are setup like above and you've built everything, the
+`flutter_embedder_example` code expects to be run from the `linux/` directory
+like so:
 
 ```
 $ ./example/flutter_embedder_example
@@ -95,4 +104,3 @@ While GLFW is in use in the current iteration, this is not going to be the final
 state for Linux support.
 
 Stay tuned for more documentation.
-
