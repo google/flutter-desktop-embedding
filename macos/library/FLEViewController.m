@@ -310,11 +310,12 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
  * Responds to view reshape by notifying the engine of the change in dimensions.
  */
 - (void)viewDidReshape:(NSOpenGLView *)view {
+  CGRect scaledBounds = [view convertRectToBacking:view.bounds];
   const FlutterWindowMetricsEvent event = {
       .struct_size = sizeof(event),
-      .width = view.bounds.size.width,
-      .height = view.bounds.size.height,
-      .pixel_ratio = 1.0,
+      .width = scaledBounds.size.width,
+      .height = scaledBounds.size.height,
+      .pixel_ratio = scaledBounds.size.width / view.bounds.size.width,
   };
   FlutterEngineSendWindowMetricsEvent(_engine, &event);
 }
@@ -375,12 +376,13 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 }
 
 - (void)dispatchEvent:(NSEvent *)theEvent phase:(FlutterPointerPhase)phase {
-  NSPoint loc = [self.view convertPoint:theEvent.locationInWindow fromView:nil];
+  NSPoint locationInView = [self.view convertPoint:theEvent.locationInWindow fromView:nil];
+  NSPoint locationInBackingCoordinates = [self.view convertPointToBacking:locationInView];
   const FlutterPointerEvent event = {
       .struct_size = sizeof(event),
       .phase = phase,
-      .x = loc.x,
-      .y = loc.y,
+      .x = locationInBackingCoordinates.x,
+      .y = -locationInBackingCoordinates.y,  // convertPointToBacking makes this negative.
       .timestamp = theEvent.timestamp * NSEC_PER_MSEC,
   };
   FlutterEngineSendPointerEvent(_engine, &event, 1);
