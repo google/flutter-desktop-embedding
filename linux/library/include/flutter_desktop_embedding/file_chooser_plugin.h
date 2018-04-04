@@ -15,7 +15,7 @@
 #define LINUX_INCLUDE_FILE_CHOOSER_PLUGIN_H_
 #include "plugin.h"
 
-namespace flutter {
+namespace flutter_desktop_embedding {
 
 // Implements a file chooser plugin.
 class FileChooserPlugin : public Plugin {
@@ -26,6 +26,6 @@ class FileChooserPlugin : public Plugin {
   Json::Value HandlePlatformMessage(const Json::Value &message) override;
 };
 
-}  // namespace flutter
+}  // namespace flutter_desktop_embedding
 
 #endif  // LINUX_INCLUDE_FILE_CHOOSER_PLUGIN_H_

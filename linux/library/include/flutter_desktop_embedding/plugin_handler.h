@@ -22,7 +22,7 @@
 
 #include "plugin.h"
 
-namespace flutter {
+namespace flutter_desktop_embedding {
 
 // A class for managing a set of plugins.
 //
@@ -36,8 +36,6 @@ class PluginHandler {
   //
   // Returns true if the plugin could be registered, false if there is already
   // a plugin registered under the same channel.
-  //
-  // If true is returned, this object owns plugin.
   bool AddPlugin(std::unique_ptr<Plugin> plugin);
 
   // Sends a JSON message for the plugin on |channel|.
@@ -50,7 +48,7 @@ class PluginHandler {
   //
   // If there is no plugin under |channel| Json::nullValue is returned.
   Json::Value HandlePlatformMessage(
-      std::string channel, const Json::Value& message,
+      const std::string& channel, const Json::Value& message,
       std::function<void(void)> input_block_cb = [] {},
       std::function<void(void)> input_unblock_cb = [] {});
 
@@ -58,6 +56,6 @@ class PluginHandler {
   std::map<std::string, std::unique_ptr<Plugin>> plugins_;
 };
 
-}  // namespace flutter
+}  // namespace flutter_desktop_embedding
 
 #endif  // LINUX_INCLUDE_PLUGIN_HANDLER_H_

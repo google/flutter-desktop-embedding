@@ -17,11 +17,11 @@
 
 #include <string>
 
-namespace flutter {
+namespace flutter_desktop_embedding {
 
 // Represents a plugin that can be registered with the Flutter Embedder.
 //
-// A plugin listen on a platform channel and processes JSON requests that come
+// A plugin listens on a platform channel and processes JSON requests that come
 // in on said channel.  See https://flutter.io/platform-channels/ for more
 // details on what these channels look like.
 class Plugin {
@@ -41,8 +41,13 @@ class Plugin {
   // must return a Json::nullValue object.
   virtual Json::Value HandlePlatformMessage(const Json::Value &message) = 0;
 
+  // Returns the channel on which this plugin listens.
   virtual std::string channel() const { return channel_; }
 
+  // Determines whether this plugin blocks on input while it is running.
+  //
+  // If this is true, then the parent window should  disable input callbacks
+  // while waiting for this plugin to handle its platform message.
   virtual bool input_blocking() const { return input_blocking_; }
 
  private:
@@ -50,6 +55,6 @@ class Plugin {
   bool input_blocking_;
 };
 
-}  // namespace flutter
+}  // namespace flutter_desktop_embedding
 
 #endif  // LINUX_INCLUDE_FLUTTER_EMBEDDER_PLUGIN_H_

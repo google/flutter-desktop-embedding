@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter/flutter_embedder.h>
+#include <flutter_desktop_embedding/flutter_embedder.h>
 
 #include <X11/Xlib.h>
 #include <assert.h>
@@ -25,23 +25,52 @@
 #include <string>
 
 #include <embedder.h>
-#include <flutter/file_chooser_plugin.h>
-#include <flutter/plugin_handler.h>
+#include <flutter_desktop_embedding/file_chooser_plugin.h>
+#include <flutter_desktop_embedding/plugin_handler.h>
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
 // Struct for storing state within an instance of the GLFW Window.
 struct FlutterEmbedderState {
   FlutterEngine engine;
-  std::unique_ptr<flutter::PluginHandler> plugin_handler;
+  std::unique_ptr<flutter_desktop_embedding::PluginHandler> plugin_handler;
 };
-typedef FlutterEmbedderState *FlutterEmbedderStatePtr;
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
 
-static void GLFWClearEventCallbacks(GLFWwindow *window);
-static void GLFWAssignEventCallbacks(GLFWwindow *window);
-static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height);
+// Callback forward declarations.
+static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
+                            int action, int mods);
+static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
+                                    int mods);
+
+static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
+  return reinterpret_cast<FlutterEmbedderState *>(
+      glfwGetWindowUserPointer(window));
+}
+
+// Flushes event queue and then assigns default window callbacks.
+static void GLFWAssignEventCallbacks(GLFWwindow *window) {
+  glfwPollEvents();
+  glfwSetKeyCallback(window, GLFWKeyCallback);
+  glfwSetMouseButtonCallback(window, GLFWmouseButtonCallback);
+}
+
+// Clears default window events.
+static void GLFWClearEventCallbacks(GLFWwindow *window) {
+  glfwSetKeyCallback(window, nullptr);
+  glfwSetMouseButtonCallback(window, nullptr);
+}
+
+static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
+  FlutterWindowMetricsEvent event = {};
+  event.struct_size = sizeof(event);
+  event.width = width;
+  event.height = height;
+  event.pixel_ratio = 1.0;
+  auto state = GetSavedEmbedderState(window);
+  FlutterEngineSendWindowMetricsEvent(state->engine, &event);
+}
 
 static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
                                          void *user_data) {
@@ -54,7 +83,6 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
   GLFWwindow *window = reinterpret_cast<GLFWwindow *>(user_data);
   Json::Reader parser;
   Json::Value json;
-  std::string channel(message->channel);
   std::string raw_string(reinterpret_cast<const char *>(message->message), 0,
                          message->message_size);
   bool parsing_successful = parser.parse(raw_string, json);
@@ -62,8 +90,8 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
     std::cerr << "Unable to parse platform message" << std::endl;
     return;
   }
-  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
-      glfwGetWindowUserPointer(window));
+  auto state = GetSavedEmbedderState(window);
+  std::string channel(message->channel);
   Json::Value response = state->plugin_handler->HandlePlatformMessage(
       channel, json, [window] { GLFWClearEventCallbacks(window); },
       [window] { GLFWAssignEventCallbacks(window); });
@@ -96,8 +124,7 @@ static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
       std::chrono::duration_cast<std::chrono::microseconds>(
           std::chrono::high_resolution_clock::now().time_since_epoch())
           .count();
-  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
-      glfwGetWindowUserPointer(window));
+  auto state = GetSavedEmbedderState(window);
   FlutterEngineSendPointerEvent(state->engine, &event, 1);
 }
 
@@ -125,17 +152,6 @@ static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
-}
-
-static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
-  FlutterWindowMetricsEvent event = {};
-  event.struct_size = sizeof(event);
-  event.width = width;
-  event.height = height;
-  event.pixel_ratio = 1.0;
-  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
-      glfwGetWindowUserPointer(window));
-  FlutterEngineSendWindowMetricsEvent(state->engine, &event);
 }
 
 static bool GLFWMakeContextCurrent(void *user_data) {
@@ -212,22 +228,10 @@ static FlutterEngine RunFlutterEngine(GLFWwindow *window,
   return engine;
 }
 
-static void GLFWAssignEventCallbacks(GLFWwindow *window) {
-  glfwPollEvents();
-  glfwSetKeyCallback(window, GLFWKeyCallback);
-  glfwSetMouseButtonCallback(window, GLFWmouseButtonCallback);
-}
-
-static void GLFWClearEventCallbacks(GLFWwindow *window) {
-  glfwSetKeyCallback(window, nullptr);
-  glfwSetMouseButtonCallback(window, nullptr);
-}
-
-namespace flutter {
+namespace flutter_desktop_embedding {
 
 bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
-  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
-      glfwGetWindowUserPointer(flutter_window));
+  auto state = GetSavedEmbedderState(flutter_window);
   return state->plugin_handler->AddPlugin(std::move(plugin));
 }
 
@@ -259,7 +263,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
     glfwDestroyWindow(window);
     return nullptr;
   }
-  FlutterEmbedderStatePtr state = new FlutterEmbedderState();
+  FlutterEmbedderState *state = new FlutterEmbedderState();
   state->plugin_handler = std::make_unique<PluginHandler>();
   state->plugin_handler->AddPlugin(std::make_unique<FileChooserPlugin>());
   state->engine = flutter_engine_run_result;
@@ -283,11 +287,10 @@ void FlutterWindowLoop(GLFWwindow *flutter_window) {
     // TODO(awdavies): This will be deprecated soon.
     __FlutterEngineFlushPendingTasksNow();
   }
-  auto state = reinterpret_cast<FlutterEmbedderStatePtr>(
-      glfwGetWindowUserPointer(flutter_window));
+  auto state = GetSavedEmbedderState(flutter_window);
   FlutterEngineShutdown(state->engine);
   delete state;
   glfwDestroyWindow(flutter_window);
 }
 
-}  // namespace flutter
+}  // namespace flutter_desktop_embedding

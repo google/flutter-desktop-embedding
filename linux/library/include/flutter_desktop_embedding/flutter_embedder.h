@@ -22,9 +22,9 @@
 #include <memory>
 #include <string>
 
-#include <flutter/plugin.h>
+#include <flutter_desktop_embedding/plugin.h>
 
-namespace flutter {
+namespace flutter_desktop_embedding {
 
 // Creates a GLFW Window running a Flutter Application.
 //
@@ -77,6 +77,6 @@ bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin);
 // cleanup.
 void FlutterWindowLoop(GLFWwindow *flutter_window);
 
-}  // namespace flutter
+}  // namespace flutter_desktop_embedding
 
 #endif  // LINUX_LIBRARY_INCLUDE_FLUTTER_EMBEDDER_H_

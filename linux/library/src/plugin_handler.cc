@@ -11,11 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter/plugin_handler.h>
+#include <flutter_desktop_embedding/plugin_handler.h>
 
 #include <iostream>
 
-namespace flutter {
+namespace flutter_desktop_embedding {
 
 PluginHandler::PluginHandler() {}
 
@@ -30,7 +30,7 @@ bool PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
 }
 
 Json::Value PluginHandler::HandlePlatformMessage(
-    std::string channel, const Json::Value &message,
+    const std::string &channel, const Json::Value &message,
     std::function<void(void)> input_block_cb,
     std::function<void(void)> input_unblock_cb) {
   if (plugins_.find(channel) != plugins_.end()) {
@@ -47,4 +47,4 @@ Json::Value PluginHandler::HandlePlatformMessage(
   return Json::nullValue;
 }
 
-}  // namespace flutter
+}  // namespace flutter_desktop_embedding

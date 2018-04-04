@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter/file_chooser_plugin.h>
+#include <flutter_desktop_embedding/file_chooser_plugin.h>
 
 #include <gtk/gtk.h>
 #include <iostream>
@@ -44,7 +44,7 @@ static constexpr char kResultKey[] = "result";
 static constexpr int kCancelResultValue = 0;
 static constexpr int kOkResultValue = 1;
 
-namespace flutter {
+namespace flutter_desktop_embedding {
 
 // Applies filters to the file chooser.
 //
@@ -55,14 +55,17 @@ static void ProcessFilters(const Json::Value &method_args,
   Json::Value allowed_file_types = method_args[kAllowedFileTypesKey];
   if (!allowed_file_types.empty() && allowed_file_types.isArray()) {
     GtkFileFilter *filter = gtk_file_filter_new();
+    const std::string comma_delimiter = ", ";
+    const std::string file_wildcard = "*.";
     std::string filter_name = "";
     for (const Json::Value &element : allowed_file_types) {
-      std::string pattern = "*." + element.asString();
-      filter_name.append(pattern + ", ");
+      std::string pattern = file_wildcard + element.asString();
+      filter_name.append(pattern + comma_delimiter);
       gtk_file_filter_add_pattern(filter, pattern.c_str());
     }
-    // Deletes rid of trailing comma and space.
-    filter_name.erase(filter_name.end() - 2, filter_name.end());
+    // Deletes trailing comma and space.
+    filter_name.erase(filter_name.end() - comma_delimiter.size(),
+                      filter_name.end());
     gtk_file_filter_set_name(filter, filter_name.c_str());
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
   }
@@ -90,6 +93,13 @@ static void ProcessAttributes(const Json::Value &method_args,
   }
 }
 
+// Creates a file chooser based on the method type.
+//
+// If the method type is the open method (defined under kFileOpenMethod), then
+// this returns a file opener dialog. If it is a kFileSaveMethod string, then
+// this returns a file saver dialog.
+//
+// If the method is not recognized as one of those above, will return a nullptr.
 static GtkFileChooserNative *CreateFileChooserFromMethod(
     const std::string &method) {
   GtkFileChooserNative *chooser = nullptr;
@@ -105,6 +115,10 @@ static GtkFileChooserNative *CreateFileChooserFromMethod(
   return chooser;
 }
 
+// Creates a native file chooser based on the method specified.
+//
+// The JSON args determine the modifications to the file chooser, like filters,
+// being able to choose multiple files, etc.
 static GtkFileChooserNative *CreateFileChooser(const std::string &method,
                                                const Json::Value &args) {
   GtkFileChooserNative *chooser = CreateFileChooserFromMethod(method);
@@ -183,4 +197,4 @@ Json::Value FileChooserPlugin::HandlePlatformMessage(
   return CreateCallback(filenames, chooser_res, args);
 }
 
-}  // namespace flutter
+}  // namespace flutter_desktop_embedding
