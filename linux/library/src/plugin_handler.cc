@@ -25,7 +25,7 @@ bool PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
   if (plugins_.find(plugin->channel()) != plugins_.end()) {
     return false;
   }
-  plugins_.emplace(std::make_pair(plugin->channel(), std::move(plugin)));
+  plugins_.insert(std::make_pair(plugin->channel(), std::move(plugin)));
   return true;
 }
 
