@@ -14,6 +14,10 @@
 TARGETS=all clean
 SUBDIRS=library example
 
+# Example must be built after library. This prevents accidentally building the
+# two in parallel in the event that someone supplies the -j flag to `make`.
+example: library
+
 $(TARGETS): $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
