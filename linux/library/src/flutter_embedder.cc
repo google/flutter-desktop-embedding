@@ -24,7 +24,7 @@
 #include <memory>
 #include <string>
 
-#include <flutter/embedder_extensions.h>
+#include <embedder.h>
 #include <flutter/file_chooser_plugin.h>
 #include <flutter/plugin_handler.h>
 
