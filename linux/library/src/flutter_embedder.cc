@@ -81,13 +81,16 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
     return;
   }
   GLFWwindow *window = reinterpret_cast<GLFWwindow *>(user_data);
-  Json::Reader parser;
+  Json::CharReaderBuilder reader_builder;
+  std::unique_ptr<Json::CharReader> parser(reader_builder.newCharReader());
   Json::Value json;
-  std::string raw_string(reinterpret_cast<const char *>(message->message), 0,
-                         message->message_size);
-  bool parsing_successful = parser.parse(raw_string, json);
+  std::string parse_errors;
+  auto raw_message = reinterpret_cast<const char *>(message->message);
+  bool parsing_successful = parser->parse(
+      raw_message, raw_message + message->message_size, &json, &parse_errors);
   if (!parsing_successful) {
-    std::cerr << "Unable to parse platform message" << std::endl;
+    std::cerr << "Unable to parse platform message" << std::endl
+              << parse_errors << std::endl;
     return;
   }
   auto state = GetSavedEmbedderState(window);
@@ -99,8 +102,8 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
     return;
   }
 
-  Json::FastWriter writer;
-  std::string output = writer.write(response);
+  Json::StreamWriterBuilder writer_builder;
+  std::string output = Json::writeString(writer_builder, response);
   FlutterPlatformMessage platform_message_response = {
       .struct_size = sizeof(FlutterPlatformMessage),
       .channel = channel.c_str(),
