@@ -71,7 +71,7 @@ all: $(FLUTTER_EXAMPLE_DIR)/build $(BIN_OUT)
 
 $(FLUTTER_EXAMPLE_DIR)/build:
 	cd $(FLUTTER_EXAMPLE_DIR); \
-	$(FLUTTER_BIN_FROM_EXAMPLE_DIR) build flx \
+	$(FLUTTER_BIN_FROM_EXAMPLE_DIR) build bundle \
 		--local-engine-src-path=$(FLUTTER_ENGINE_SRC) \
 		--local-engine=$(FLUTTER_ENGINE_BUILD);
 
