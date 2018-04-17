@@ -16,8 +16,8 @@ See the README file in the directory corresponding to your platform.
 
 ## Discussion
 
-For bug reports and specific feature requests, you can file GitHub issues.
-For general discussion and questions there's a [project mailing
+For bug reports and specific feature requests, you can file GitHub issues. For
+general discussion and questions there's a [project mailing
 list](https://groups.google.com/forum/#!forum/flutter-desktop-embedding-dev).
 
 ## Caveats
@@ -27,3 +27,17 @@ This is not an officially supported Google product.
 This is an exploratory effort, and is not part of the Flutter project. See the
 [Flutter FAQ](https://flutter.io/faq/#can-i-use-flutter-to-build-desktop-apps)
 for Flutter's official stance on desktop development.
+
+## Submitting Issues
+
+When submitting issues related to build errors or other bugs, please make sure
+to include the git hash of the `Flutter` checkout you are using, as well as the
+git hash of the `Flutter Engine` checkout you are using. This will help speed up
+the debugging process.
+
+Example:
+
+```
+Flutter Version: abcdefg123456
+Flutter Engine:  2345678qwertyu
+```
