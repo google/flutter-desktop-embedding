@@ -42,7 +42,7 @@ static constexpr char kDefaultWindowTitle[] = "Flutter";
 // Callback forward declarations.
 static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
                             int action, int mods);
-static void GLFWCharCallback(GLFWwindow *window, unsigned int char_point);
+static void GLFWCharCallback(GLFWwindow *window, unsigned int code_point);
 static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
                                     int mods);
 
@@ -76,11 +76,10 @@ static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
   FlutterEngineSendWindowMetricsEvent(state->engine, &event);
 }
 
-// TODO: Document me.
+// Callback invoked when a plugin wants to send a message to the Flutter Engine.
 static void GLFWOnPlatformCallback(GLFWwindow *window,
                                    const std::string &channel,
                                    const Json::Value &json) {
-  std::cout << "SOME SICK JSON: [" << json << "]" << std::endl;
   Json::StreamWriterBuilder writer_builder;
   std::string output = Json::writeString(writer_builder, json);
   FlutterPlatformMessage platform_message_response = {
@@ -119,19 +118,19 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
   Json::Value response = state->plugin_handler->HandlePlatformMessage(
       channel, json, [window] { GLFWClearEventCallbacks(window); },
       [window] { GLFWAssignEventCallbacks(window); });
-  if (response.isNull()) {
-    return;
-  }
 
-  Json::StreamWriterBuilder writer_builder;
-  std::string output = Json::writeString(writer_builder, response);
-  FlutterPlatformMessage platform_message_response = {
-      .struct_size = sizeof(FlutterPlatformMessage),
-      .channel = channel.c_str(),
-      .message = reinterpret_cast<const uint8_t *>(output.c_str()),
-      .message_size = output.size(),
-  };
-  FlutterEngineSendPlatformMessage(state->engine, &platform_message_response);
+  // TODO(awdavies): This needs updating for Issue #45.
+  if (!response.isNull()) {
+    Json::StreamWriterBuilder writer_builder;
+    std::string output = Json::writeString(writer_builder, response);
+    FlutterPlatformMessage platform_message_response = {
+        .struct_size = sizeof(FlutterPlatformMessage),
+        .channel = channel.c_str(),
+        .message = reinterpret_cast<const uint8_t *>(output.c_str()),
+        .message_size = output.size(),
+    };
+    FlutterEngineSendPlatformMessage(state->engine, &platform_message_response);
+  }
   FlutterEngineSendPlatformMessageResponse(
       state->engine, message->response_handle, nullptr, 0);
 }
@@ -171,10 +170,10 @@ static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
   }
 }
 
-static void GLFWCharCallback(GLFWwindow *window, unsigned int char_point) {
+static void GLFWCharCallback(GLFWwindow *window, unsigned int code_point) {
   for (flutter_desktop_embedding::CharHookFunction hook :
        GetSavedEmbedderState(window)->plugin_handler->char_hooks()) {
-    hook(window, char_point);
+    hook(window, code_point);
   }
 }
 

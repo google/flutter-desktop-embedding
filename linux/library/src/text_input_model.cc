@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-static constexpr char kArgumentsKey[] = "args";
+#include <flutter_desktop_embedding/common/platform_protocol.h>
 
 static constexpr char kComposingBaseKey[] = "composingBase";
 
@@ -31,7 +31,6 @@ static constexpr char kSelectionIsDirectionalKey[] = "selectionIsDirectional";
 
 static constexpr char kTextKey[] = "text";
 
-static constexpr char kMethodKey[] = "method";
 static constexpr char kUpdateEditingStateMethod[] =
     "TextInputClient.updateEditingState";
 
@@ -55,14 +54,13 @@ bool TextInputModel::SetEditingState(size_t selection_base,
   if (selection_extent > text.size()) {
     return false;
   }
+  rep_ = std::string(text);
   selection_base_ = rep_.begin() + selection_base;
   selection_extent_ = rep_.begin() + selection_extent;
-  rep_.assign(text);
   return true;
 }
 
 void TextInputModel::DeleteSelected() {
-  // TODO: Test if this works on other stuff.
   selection_extent_ = rep_.erase(selection_base_, selection_extent_);
   selection_base_ = selection_extent_;
 }
@@ -115,7 +113,7 @@ void TextInputModel::MoveCursorToEnd() {
 bool TextInputModel::MoveCursorForward() {
   // If about to move set to the end of the highlight (when not selecting).
   if (selection_base_ != selection_extent_) {
-    selection_extent_ = selection_base_;
+    selection_base_ = selection_extent_;
     return true;
   }
   // If not at the end, move the extent forward.
@@ -129,7 +127,7 @@ bool TextInputModel::MoveCursorForward() {
 
 bool TextInputModel::MoveCursorBack() {
   if (selection_base_ != selection_extent_) {
-    selection_base_ = selection_extent_;
+    selection_extent_ = selection_base_;
     return true;
   }
   if (selection_base_ != rep_.begin()) {

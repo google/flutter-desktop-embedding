@@ -11,11 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_TEXT_INPUT_PLUGIN_H_
-#define LINUX_INCLUDE_TEXT_INPUT_PLUGIN_H_
+#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_PLUGIN_H_
+#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_PLUGIN_H_
 #include "plugin.h"
 
 #include <GLFW/glfw3.h>
+#include <map>
+#include <memory>
+
+#include <flutter_desktop_embedding/text_input_model.h>
 
 namespace flutter_desktop_embedding {
 
@@ -31,9 +35,16 @@ class TextInputPlugin : public Plugin {
 
   void KeyboardHook(GLFWwindow *window, int key, int scancode, int action,
                     int mods) override;
-  void CharHook(GLFWwindow *window, unsigned int char_point) override;
+  void CharHook(GLFWwindow *window, unsigned int code_point) override;
+
+ private:
+  // Mapping of client IDs to text input models.
+  std::map<int, std::unique_ptr<TextInputModel>> input_models_;
+
+  // The active model. nullptr if not set.
+  TextInputModel *active_model_;
 };
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_INCLUDE_TEXT_INPUT_PLUGIN_H_
+#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_PLUGIN_H_

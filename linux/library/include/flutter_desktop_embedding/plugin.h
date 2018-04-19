@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_PLUGIN_H_
-#define LINUX_INCLUDE_PLUGIN_H_
+#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
+#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
 #include <json/json.h>
 
 #include <GLFW/glfw3.h>
@@ -47,8 +47,8 @@ class Plugin {
   virtual void KeyboardHook(GLFWwindow *window, int key, int scancode,
                             int action, int mods) {}
 
-  // A function for hooking into unicode character point input.
-  virtual void CharHook(GLFWwindow *window, unsigned int char_point) {}
+  // A function for hooking into unicode code point input.
+  virtual void CharHook(GLFWwindow *window, unsigned int code_point) {}
 
   // Handles a platform message sent on this platform's channel.
   //
@@ -81,4 +81,4 @@ class Plugin {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_INCLUDE_FLUTTER_EMBEDDER_PLUGIN_H_
+#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
