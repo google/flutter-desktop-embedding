@@ -15,9 +15,14 @@
 #define LINUX_INCLUDE_PLUGIN_H_
 #include <json/json.h>
 
+#include <GLFW/glfw3.h>
+#include <functional>
 #include <string>
 
 namespace flutter_desktop_embedding {
+
+typedef std::function<void(const std::string &, const Json::Value &)>
+    PlatformCallback;
 
 // Represents a plugin that can be registered with the Flutter Embedder.
 //
@@ -31,14 +36,24 @@ class Plugin {
   // |input_blocking| Determines whether user input should be blocked during the
   // duration of this plugin's platform callback handler (in most cases this
   // can be set to false).
-  explicit Plugin(std::string channel, bool input_blocking = false)
-      : channel_(channel), input_blocking_(input_blocking) {}
+  explicit Plugin(std::string channel, PlatformCallback platform_callback,
+                  bool input_blocking = false)
+      : channel_(channel),
+        platform_callback_(platform_callback),
+        input_blocking_(input_blocking) {}
   virtual ~Plugin() {}
+
+  // A function for hooking into keyboard input.
+  virtual void KeyboardHook(GLFWwindow *window, int key, int scancode,
+                            int action, int mods) {}
+
+  // A function for hooking into unicode character point input.
+  virtual void CharHook(GLFWwindow *window, unsigned int char_point) {}
 
   // Handles a platform message sent on this platform's channel.
   //
-  // If some error has occurred or there is no valid response that can be made,
-  // must return a Json::nullValue object.
+  // If some error has occurred or there is no valid response that can be
+  // made, must return a Json::nullValue object.
   virtual Json::Value HandlePlatformMessage(const Json::Value &message) = 0;
 
   // Returns the channel on which this plugin listens.
@@ -50,8 +65,17 @@ class Plugin {
   // while waiting for this plugin to handle its platform message.
   virtual bool input_blocking() const { return input_blocking_; }
 
+ protected:
+  // Runs the platform callback. Noop if the callback is not set.
+  void CallPlatformCallback(const Json::Value &json) {
+    if (platform_callback_) {
+      platform_callback_(channel_, json);
+    }
+  }
+
  private:
   std::string channel_;
+  PlatformCallback platform_callback_;
   bool input_blocking_;
 };
 

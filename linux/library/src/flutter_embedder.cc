@@ -27,6 +27,7 @@
 #include <embedder.h>
 #include <flutter_desktop_embedding/file_chooser_plugin.h>
 #include <flutter_desktop_embedding/plugin_handler.h>
+#include <flutter_desktop_embedding/text_input_plugin.h>
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
@@ -41,6 +42,7 @@ static constexpr char kDefaultWindowTitle[] = "Flutter";
 // Callback forward declarations.
 static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
                             int action, int mods);
+static void GLFWCharCallback(GLFWwindow *window, unsigned int char_point);
 static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
                                     int mods);
 
@@ -53,12 +55,14 @@ static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
 static void GLFWAssignEventCallbacks(GLFWwindow *window) {
   glfwPollEvents();
   glfwSetKeyCallback(window, GLFWKeyCallback);
+  glfwSetCharCallback(window, GLFWCharCallback);
   glfwSetMouseButtonCallback(window, GLFWmouseButtonCallback);
 }
 
 // Clears default window events.
 static void GLFWClearEventCallbacks(GLFWwindow *window) {
   glfwSetKeyCallback(window, nullptr);
+  glfwSetCharCallback(window, nullptr);
   glfwSetMouseButtonCallback(window, nullptr);
 }
 
@@ -70,6 +74,23 @@ static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
   event.pixel_ratio = 1.0;
   auto state = GetSavedEmbedderState(window);
   FlutterEngineSendWindowMetricsEvent(state->engine, &event);
+}
+
+// TODO: Document me.
+static void GLFWOnPlatformCallback(GLFWwindow *window,
+                                   const std::string &channel,
+                                   const Json::Value &json) {
+  std::cout << "SOME SICK JSON: [" << json << "]" << std::endl;
+  Json::StreamWriterBuilder writer_builder;
+  std::string output = Json::writeString(writer_builder, json);
+  FlutterPlatformMessage platform_message_response = {
+      .struct_size = sizeof(FlutterPlatformMessage),
+      .channel = channel.c_str(),
+      .message = reinterpret_cast<const uint8_t *>(output.c_str()),
+      .message_size = output.size(),
+  };
+  auto state = GetSavedEmbedderState(window);
+  FlutterEngineSendPlatformMessage(state->engine, &platform_message_response);
 }
 
 static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
@@ -150,8 +171,19 @@ static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
   }
 }
 
+static void GLFWCharCallback(GLFWwindow *window, unsigned int char_point) {
+  for (flutter_desktop_embedding::CharHookFunction hook :
+       GetSavedEmbedderState(window)->plugin_handler->char_hooks()) {
+    hook(window, char_point);
+  }
+}
+
 static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
                             int action, int mods) {
+  for (flutter_desktop_embedding::KeyboardHookFunction hook :
+       GetSavedEmbedderState(window)->plugin_handler->keyboard_hooks()) {
+    hook(window, key, scancode, action, mods);
+  }
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
@@ -269,6 +301,10 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   FlutterEmbedderState *state = new FlutterEmbedderState();
   state->plugin_handler = std::make_unique<PluginHandler>();
   state->plugin_handler->AddPlugin(std::make_unique<FileChooserPlugin>());
+  state->plugin_handler->AddPlugin(std::make_unique<TextInputPlugin>(
+      [window](const std::string &channel, const Json::Value &value) {
+        GLFWOnPlatformCallback(window, channel, value);
+      }));
   state->engine = flutter_engine_run_result;
   glfwSetWindowUserPointer(window, state);
   int width, height;

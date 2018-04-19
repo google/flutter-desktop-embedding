@@ -24,6 +24,11 @@
 
 namespace flutter_desktop_embedding {
 
+typedef std::function<void(GLFWwindow*, int, int, int, int)>
+    KeyboardHookFunction;
+
+typedef std::function<void(GLFWwindow*, unsigned int)> CharHookFunction;
+
 // A class for managing a set of plugins.
 //
 // The plugins all map from a unique channel name to an actual plugin.
@@ -52,8 +57,18 @@ class PluginHandler {
       std::function<void(void)> input_block_cb = [] {},
       std::function<void(void)> input_unblock_cb = [] {});
 
+  const std::vector<KeyboardHookFunction>& keyboard_hooks() const {
+    return keyboard_hooks_;
+  }
+
+  const std::vector<CharHookFunction>& char_hooks() const {
+    return char_hooks_;
+  }
+
  private:
   std::map<std::string, std::unique_ptr<Plugin>> plugins_;
+  std::vector<KeyboardHookFunction> keyboard_hooks_;
+  std::vector<CharHookFunction> char_hooks_;
 };
 
 }  // namespace flutter_desktop_embedding
