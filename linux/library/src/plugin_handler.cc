@@ -34,8 +34,8 @@ bool PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
     plugin_raw_ptr->KeyboardHook(window, key, scancode, action, mods);
   });
   char_hooks_.push_back(
-      [plugin_raw_ptr](GLFWwindow *window, unsigned int char_point) {
-        plugin_raw_ptr->CharHook(window, char_point);
+      [plugin_raw_ptr](GLFWwindow *window, unsigned int code_point) {
+        plugin_raw_ptr->CharHook(window, code_point);
       });
   plugins_.insert(std::make_pair(plugin->channel(), std::move(plugin)));
   return true;
