@@ -153,7 +153,7 @@ static Json::Value CreateCallback(const std::vector<std::string> &filenames,
   return result;
 }
 
-FileChooserPlugin::FileChooserPlugin() : Plugin(kChannelName, true) {}
+FileChooserPlugin::FileChooserPlugin() : Plugin(kChannelName, nullptr, true) {}
 
 FileChooserPlugin::~FileChooserPlugin() {}
 
