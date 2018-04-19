@@ -17,7 +17,7 @@
 #include <flutter_desktop_embedding/flutter_embedder.h>
 
 int main(int argc, char **argv) {
-  std::string flutter_example_root = "../../flutter/examples/flutter_gallery";
+  std::string flutter_example_root = "../example_flutter";
   std::string flutter_git_root = "../../flutter";
   if (!glfwInit()) {
     std::cout << "Couldn't init GLFW";
@@ -31,10 +31,8 @@ int main(int argc, char **argv) {
       "--dart-non-checked-mode",
       NULL,
   };
-  auto window = flutter_desktop_embedding::CreateFlutterWindow(
-      640, 480, flutter_example_root + "/lib/main.dart",
-      flutter_example_root + "/build/flutter_assets",
-      flutter_example_root + "/.packages",
+  auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(
+      640, 480, flutter_example_root + "/build/flutter_assets",
       flutter_git_root + "/bin/cache/artifacts/engine/linux-x64/icudtl.dat",
       arg_count, const_cast<char **>(args_arr));
   if (window == nullptr) {
