@@ -15,7 +15,7 @@
 
 namespace flutter_desktop_embedding {
 
-const char kMethodKey[] = "method";
-const char kArgumentsKey[] = "args";
+constexpr char kMethodKey[] = "method";
+constexpr char kArgumentsKey[] = "args";
 
 }  // namespace flutter_desktop_embedding
