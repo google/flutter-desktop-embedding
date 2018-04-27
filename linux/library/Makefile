@@ -25,7 +25,7 @@ LDFLAGS= -L$(CURDIR) \
 
 LIBRARIES=lib$(FLUTTER_ENGINE_LIB).so
 HEADERS=$(shell find include/ -type f -name '*.h')
-SOURCES=$(wildcard src/*.cc)
+SOURCES=$(shell find src/ -type f -name '*.cc')
 
 .PHONY: all
 all: $(LIBRARY_OUT)

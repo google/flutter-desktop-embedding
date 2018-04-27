@@ -11,16 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_COMMON_PLATFORM_PROTOCOL_H_
-#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_COMMON_PLATFORM_PROTOCOL_H_
+#include <flutter_desktop_embedding/common/platform_protocol.h>
 
-// Defines a set of common JSON keys for communicating with the Flutter Engine's
-// platform message protocol.
 namespace flutter_desktop_embedding {
 
-extern const char kMethodKey[];
-extern const char kArgumentsKey[];
+const char kMethodKey[] = "method";
+const char kArgumentsKey[] = "args";
 
 }  // namespace flutter_desktop_embedding
-
-#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_COMMON_PLATFORM_PROTOCOL_H_
