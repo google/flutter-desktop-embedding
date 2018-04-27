@@ -17,6 +17,7 @@
 
 #include <flutter_desktop_embedding/common/platform_protocol.h>
 
+// TODO(awdavies): Need to fix this regarding issue #47.
 static constexpr char kComposingBaseKey[] = "composingBase";
 
 static constexpr char kComposingExtentKey[] = "composingExtent";
@@ -37,10 +38,10 @@ static constexpr char kUpdateEditingStateMethod[] =
 namespace flutter_desktop_embedding {
 
 TextInputModel::TextInputModel(int client_id)
-    : rep_(""),
+    : text_(""),
       client_id_(client_id),
-      selection_base_(rep_.begin()),
-      selection_extent_(rep_.begin()) {}
+      selection_base_(text_.begin()),
+      selection_extent_(text_.begin()) {}
 
 TextInputModel::~TextInputModel() {}
 
@@ -54,22 +55,23 @@ bool TextInputModel::SetEditingState(size_t selection_base,
   if (selection_extent > text.size()) {
     return false;
   }
-  rep_ = std::string(text);
-  selection_base_ = rep_.begin() + selection_base;
-  selection_extent_ = rep_.begin() + selection_extent;
+  text_ = std::string(text);
+  selection_base_ = text_.begin() + selection_base;
+  selection_extent_ = text_.begin() + selection_extent;
   return true;
 }
 
 void TextInputModel::DeleteSelected() {
-  selection_extent_ = rep_.erase(selection_base_, selection_extent_);
-  selection_base_ = selection_extent_;
+  selection_base_ = text_.erase(selection_base_, selection_extent_);
+  // Moves extent back to base, so that it is a single cursor placement again.
+  selection_extent_ = selection_base_;
 }
 
 void TextInputModel::AddCharacter(char c) {
   if (selection_base_ != selection_extent_) {
     DeleteSelected();
   }
-  selection_extent_ = rep_.insert(selection_extent_, c);
+  selection_extent_ = text_.insert(selection_extent_, c);
   selection_extent_++;
   selection_base_ = selection_extent_;
 }
@@ -79,9 +81,9 @@ bool TextInputModel::Backspace() {
     DeleteSelected();
     return true;
   }
-  if (selection_base_ != rep_.begin()) {
-    selection_extent_ = rep_.erase(selection_extent_ - 1, selection_extent_);
-    selection_base_ = selection_extent_;
+  if (selection_base_ != text_.begin()) {
+    selection_base_ = text_.erase(selection_base_ - 1, selection_base_);
+    selection_extent_ = selection_base_;
     return true;
   }
   return false;  // No edits happened.
@@ -92,22 +94,22 @@ bool TextInputModel::Delete() {
     DeleteSelected();
     return true;
   }
-  if (selection_base_ != rep_.end()) {
-    selection_extent_ = rep_.erase(selection_extent_, selection_extent_ + 1);
-    selection_base_ = selection_extent_;
+  if (selection_base_ != text_.end()) {
+    selection_base_ = text_.erase(selection_base_, selection_base_ + 1);
+    selection_extent_ = selection_base_;
     return true;
   }
   return false;
 }
 
 void TextInputModel::MoveCursorToBeginning() {
-  selection_extent_ = rep_.begin();
-  selection_base_ = rep_.begin();
+  selection_base_ = text_.begin();
+  selection_extent_ = text_.begin();
 }
 
 void TextInputModel::MoveCursorToEnd() {
-  selection_extent_ = rep_.end();
-  selection_base_ = rep_.end();
+  selection_base_ = text_.end();
+  selection_extent_ = text_.end();
 }
 
 bool TextInputModel::MoveCursorForward() {
@@ -117,7 +119,7 @@ bool TextInputModel::MoveCursorForward() {
     return true;
   }
   // If not at the end, move the extent forward.
-  if (selection_extent_ != rep_.end()) {
+  if (selection_extent_ != text_.end()) {
     selection_extent_++;
     selection_base_++;
     return true;
@@ -126,11 +128,14 @@ bool TextInputModel::MoveCursorForward() {
 }
 
 bool TextInputModel::MoveCursorBack() {
+  // If about to move set to the beginning of the highlight
+  // (when not selecting).
   if (selection_base_ != selection_extent_) {
     selection_extent_ = selection_base_;
     return true;
   }
-  if (selection_base_ != rep_.begin()) {
+  // If not at the start, move the beginning backward.
+  if (selection_base_ != text_.begin()) {
     selection_base_--;
     selection_extent_--;
     return true;
@@ -145,11 +150,11 @@ Json::Value TextInputModel::GetState() {
   editing_state[kComposingExtentKey] = -1;
   editing_state[kSelectionAffinityKey] = kAffinityDownstream;
   editing_state[kSelectionBaseKey] =
-      static_cast<int>(selection_base_ - rep_.begin());
+      static_cast<int>(selection_base_ - text_.begin());
   editing_state[kSelectionExtentKey] =
-      static_cast<int>(selection_extent_ - rep_.begin());
+      static_cast<int>(selection_extent_ - text_.begin());
   editing_state[kSelectionIsDirectionalKey] = 0;
-  editing_state[kTextKey] = rep_;
+  editing_state[kTextKey] = text_;
 
   Json::Value args = Json::arrayValue;
   args.append(client_id_);

@@ -21,6 +21,10 @@
 
 namespace flutter_desktop_embedding {
 
+// A platform callback:
+//
+// Contains a channel string for the plugin and a JSON value to pass to the
+// engine.
 typedef std::function<void(const std::string &, const Json::Value &)>
     PlatformCallback;
 

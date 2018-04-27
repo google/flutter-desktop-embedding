@@ -87,7 +87,7 @@ class TextInputModel {
  private:
   void DeleteSelected();
 
-  std::string rep_;
+  std::string text_;
   int client_id_;
   std::string::iterator selection_base_;
   std::string::iterator selection_extent_;
