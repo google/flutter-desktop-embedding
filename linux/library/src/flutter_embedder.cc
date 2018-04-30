@@ -83,9 +83,9 @@ static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
 }
 
 // Callback invoked when a plugin wants to send a message to the Flutter Engine.
-static void GLFWOnPlatformCallback(GLFWwindow *window,
-                                   const std::string &channel,
-                                   const Json::Value &json) {
+static void SendFlutterEngineMessage(GLFWwindow *window,
+                                     const std::string &channel,
+                                     const Json::Value &json) {
   Json::StreamWriterBuilder writer_builder;
   std::string output = Json::writeString(writer_builder, json);
   FlutterPlatformMessage platform_message_response = {
@@ -274,7 +274,7 @@ bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
   auto state = GetSavedEmbedderState(flutter_window);
   auto callback = [flutter_window](const std::string &channel,
                                    const Json::Value &value) {
-    GLFWOnPlatformCallback(flutter_window, channel, value);
+    SendFlutterEngineMessage(flutter_window, channel, value);
   };
   plugin->set_platform_callback(callback);
   return state->plugin_handler->AddPlugin(std::move(plugin));
