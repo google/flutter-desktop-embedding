@@ -13,9 +13,8 @@
 // limitations under the License.
 #ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_HANDLER_H_
 #define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_HANDLER_H_
-#include <json/json.h>
 
-#include <functional>
+#include <json/json.h>
 #include <map>
 #include <memory>
 #include <string>
@@ -23,11 +22,6 @@
 #include "plugin.h"
 
 namespace flutter_desktop_embedding {
-
-typedef std::function<void(GLFWwindow*, int, int, int, int)>
-    KeyboardHookFunction;
-
-typedef std::function<void(GLFWwindow*, unsigned int)> CharHookFunction;
 
 // A class for managing a set of plugins.
 //
@@ -57,18 +51,8 @@ class PluginHandler {
       std::function<void(void)> input_block_cb = [] {},
       std::function<void(void)> input_unblock_cb = [] {});
 
-  const std::vector<KeyboardHookFunction>& keyboard_hooks() const {
-    return keyboard_hooks_;
-  }
-
-  const std::vector<CharHookFunction>& char_hooks() const {
-    return char_hooks_;
-  }
-
  private:
   std::map<std::string, std::unique_ptr<Plugin>> plugins_;
-  std::vector<KeyboardHookFunction> keyboard_hooks_;
-  std::vector<CharHookFunction> char_hooks_;
 };
 
 }  // namespace flutter_desktop_embedding

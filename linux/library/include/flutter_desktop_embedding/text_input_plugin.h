@@ -13,20 +13,21 @@
 // limitations under the License.
 #ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_PLUGIN_H_
 #define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_PLUGIN_H_
-#include "plugin.h"
 
-#include <GLFW/glfw3.h>
 #include <map>
 #include <memory>
 
-#include <flutter_desktop_embedding/text_input_model.h>
+#include <flutter_desktop_embedding/input/keyboard_hook_handler.h>
+
+#include "plugin.h"
+#include "text_input_model.h"
 
 namespace flutter_desktop_embedding {
 
 // Implements a text input plugin.
 //
 // Specifically handles window events within GLFW.
-class TextInputPlugin : public Plugin {
+class TextInputPlugin : public KeyboardHookHandler, public Plugin {
  public:
   TextInputPlugin();
   virtual ~TextInputPlugin();
@@ -35,6 +36,7 @@ class TextInputPlugin : public Plugin {
 
   void KeyboardHook(GLFWwindow *window, int key, int scancode, int action,
                     int mods) override;
+
   void CharHook(GLFWwindow *window, unsigned int code_point) override;
 
  private:

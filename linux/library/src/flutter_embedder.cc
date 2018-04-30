@@ -26,6 +26,7 @@
 
 #include <embedder.h>
 #include <flutter_desktop_embedding/file_chooser_plugin.h>
+#include <flutter_desktop_embedding/input/keyboard_hook_handler.h>
 #include <flutter_desktop_embedding/plugin_handler.h>
 #include <flutter_desktop_embedding/text_input_plugin.h>
 
@@ -35,6 +36,11 @@ static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 struct FlutterEmbedderState {
   FlutterEngine engine;
   std::unique_ptr<flutter_desktop_embedding::PluginHandler> plugin_handler;
+
+  // plugin_handler owns these pointers. Destruction happens when this struct is
+  // deleted from the heap.
+  std::vector<flutter_desktop_embedding::KeyboardHookHandler *>
+      keyboard_hook_handlers;
 };
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
@@ -171,17 +177,17 @@ static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
 }
 
 static void GLFWCharCallback(GLFWwindow *window, unsigned int code_point) {
-  for (flutter_desktop_embedding::CharHookFunction hook :
-       GetSavedEmbedderState(window)->plugin_handler->char_hooks()) {
-    hook(window, code_point);
+  for (flutter_desktop_embedding::KeyboardHookHandler *handler :
+       GetSavedEmbedderState(window)->keyboard_hook_handlers) {
+    handler->CharHook(window, code_point);
   }
 }
 
 static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
                             int action, int mods) {
-  for (flutter_desktop_embedding::KeyboardHookFunction hook :
-       GetSavedEmbedderState(window)->plugin_handler->keyboard_hooks()) {
-    hook(window, key, scancode, action, mods);
+  for (flutter_desktop_embedding::KeyboardHookHandler *handler :
+       GetSavedEmbedderState(window)->keyboard_hook_handlers) {
+    handler->KeyboardHook(window, key, scancode, action, mods);
   }
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -305,9 +311,13 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   FlutterEmbedderState *state = new FlutterEmbedderState();
   state->plugin_handler = std::make_unique<PluginHandler>();
   state->engine = flutter_engine_run_result;
+  auto input_plugin = std::make_unique<TextInputPlugin>();
+  state->keyboard_hook_handlers.push_back(input_plugin.get());
+
   glfwSetWindowUserPointer(window, state);
+
   AddPlugin(window, std::make_unique<FileChooserPlugin>());
-  AddPlugin(window, std::make_unique<TextInputPlugin>());
+  AddPlugin(window, std::move(input_plugin));
 
   int width, height;
   glfwGetWindowSize(window, &width, &height);

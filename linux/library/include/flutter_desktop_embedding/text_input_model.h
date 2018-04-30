@@ -13,12 +13,11 @@
 // limitations under the License.
 #ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_MODEL_H_
 #define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_MODEL_H_
-#include "plugin.h"
 
+#include <json/json.h>
 #include <string>
 
 namespace flutter_desktop_embedding {
-
 // Handles underlying text input state, using a simple ASCII model.
 //
 // Ignores special states like "insert mode" for now.
@@ -29,8 +28,8 @@ class TextInputModel {
 
   // Attempts to set the text state.
   //
-  // Returns false if the state is not valid (base or extent are out of bounds,
-  // or base is less than extent).
+  // Returns false if the state is not valid (base or extent are out of
+  // bounds, or base is less than extent).
   bool SetEditingState(size_t selection_base, size_t selection_extent,
                        const std::string &text);
 
@@ -51,8 +50,8 @@ class TextInputModel {
 
   // Deletes either the selection, or one character behind the cursor.
   //
-  // Deleting one character behind the cursor occurs when the selection base and
-  // extent are the same.
+  // Deleting one character behind the cursor occurs when the selection base
+  // and extent are the same.
   //
   // Returns true if any deletion actually occurred.
   bool Backspace();
@@ -60,8 +59,8 @@ class TextInputModel {
   // Attempts to move the cursor backward.
   //
   // Returns true if the cursor could be moved. Changes base and extent to be
-  // equal to either the extent (if extent is at the end of the string), or for
-  // extent to be equal to
+  // equal to either the extent (if extent is at the end of the string), or
+  // for extent to be equal to
   bool MoveCursorBack();
 
   // Attempts to move the cursor forward.

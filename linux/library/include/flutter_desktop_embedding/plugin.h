@@ -15,7 +15,6 @@
 #define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
 #include <json/json.h>
 
-#include <GLFW/glfw3.h>
 #include <functional>
 #include <string>
 
@@ -45,13 +44,6 @@ class Plugin {
         platform_callback_(nullptr),
         input_blocking_(input_blocking) {}
   virtual ~Plugin() {}
-
-  // A function for hooking into keyboard input.
-  virtual void KeyboardHook(GLFWwindow *window, int key, int scancode,
-                            int action, int mods) {}
-
-  // A function for hooking into unicode code point input.
-  virtual void CharHook(GLFWwindow *window, unsigned int code_point) {}
 
   // Handles a platform message sent on this platform's channel.
   //
