@@ -13,6 +13,7 @@
 // limitations under the License.
 #include <flutter_desktop_embedding/text_input_plugin.h>
 
+#include <cstdint>
 #include <iostream>
 
 #include <flutter_desktop_embedding/common/platform_protocol.h>
@@ -29,6 +30,8 @@ static constexpr char kSelectionExtentKey[] = "selectionExtent";
 static constexpr char kTextKey[] = "text";
 
 static constexpr char kChannelName[] = "flutter/textinput";
+
+static constexpr uint32_t kInputModelLimit = 256;
 
 namespace flutter_desktop_embedding {
 
@@ -124,6 +127,12 @@ Json::Value TextInputPlugin::HandlePlatformMessage(const Json::Value &message) {
     }
     int client_id = client_id_json.asInt();
     if (input_models_.find(client_id) == input_models_.end()) {
+      // Skips out on adding a new input model once over the limit.
+      if (input_models_.size() > kInputModelLimit) {
+        std::cerr << "Input models over limit of " << kInputModelLimit
+                  << ". Aborting creation of new text model.";
+        return Json::nullValue;
+      }
       input_models_.insert(std::make_pair(
           client_id, std::make_unique<TextInputModel>(client_id)));
     }
