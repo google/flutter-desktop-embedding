@@ -28,7 +28,7 @@ namespace flutter_desktop_embedding {
 // Specifically handles window events within GLFW.
 class TextInputPlugin : public Plugin {
  public:
-  explicit TextInputPlugin(PlatformCallback platform_callback);
+  TextInputPlugin();
   virtual ~TextInputPlugin();
 
   Json::Value HandlePlatformMessage(const Json::Value &message) override;

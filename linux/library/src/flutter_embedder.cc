@@ -266,6 +266,11 @@ namespace flutter_desktop_embedding {
 
 bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
   auto state = GetSavedEmbedderState(flutter_window);
+  auto callback = [flutter_window](const std::string &channel,
+                                   const Json::Value &value) {
+    GLFWOnPlatformCallback(flutter_window, channel, value);
+  };
+  plugin->set_platform_callback(callback);
   return state->plugin_handler->AddPlugin(std::move(plugin));
 }
 
@@ -299,13 +304,11 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   }
   FlutterEmbedderState *state = new FlutterEmbedderState();
   state->plugin_handler = std::make_unique<PluginHandler>();
-  state->plugin_handler->AddPlugin(std::make_unique<FileChooserPlugin>());
-  state->plugin_handler->AddPlugin(std::make_unique<TextInputPlugin>(
-      [window](const std::string &channel, const Json::Value &value) {
-        GLFWOnPlatformCallback(window, channel, value);
-      }));
   state->engine = flutter_engine_run_result;
   glfwSetWindowUserPointer(window, state);
+  AddPlugin(window, std::make_unique<FileChooserPlugin>());
+  AddPlugin(window, std::make_unique<TextInputPlugin>());
+
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   GLFWwindowSizeCallback(window, width, height);

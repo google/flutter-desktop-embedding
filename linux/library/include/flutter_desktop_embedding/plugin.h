@@ -40,10 +40,9 @@ class Plugin {
   // |input_blocking| Determines whether user input should be blocked during the
   // duration of this plugin's platform callback handler (in most cases this
   // can be set to false).
-  explicit Plugin(std::string channel, PlatformCallback platform_callback,
-                  bool input_blocking = false)
+  explicit Plugin(std::string channel, bool input_blocking = false)
       : channel_(channel),
-        platform_callback_(platform_callback),
+        platform_callback_(nullptr),
         input_blocking_(input_blocking) {}
   virtual ~Plugin() {}
 
@@ -68,6 +67,13 @@ class Plugin {
   // If this is true, then the parent window should  disable input callbacks
   // while waiting for this plugin to handle its platform message.
   virtual bool input_blocking() const { return input_blocking_; }
+
+  // Sets the platform callback.
+  //
+  // Called via the embedder to handle interaction with Flutter engine.
+  virtual void set_platform_callback(PlatformCallback platform_callback) {
+    platform_callback_ = platform_callback;
+  }
 
  protected:
   // Runs the platform callback. Noop if the callback is not set.

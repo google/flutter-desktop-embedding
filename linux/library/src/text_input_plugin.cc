@@ -83,8 +83,8 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
   }
 }
 
-TextInputPlugin::TextInputPlugin(PlatformCallback platform_callback)
-    : Plugin(kChannelName, platform_callback, false), active_model_(nullptr) {}
+TextInputPlugin::TextInputPlugin()
+    : Plugin(kChannelName, false), active_model_(nullptr) {}
 
 TextInputPlugin::~TextInputPlugin() {}
 
