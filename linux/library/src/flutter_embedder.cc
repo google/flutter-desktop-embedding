@@ -125,7 +125,6 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
       channel, json, [window] { GLFWClearEventCallbacks(window); },
       [window] { GLFWAssignEventCallbacks(window); });
 
-  // TODO(awdavies): This needs updating for Issue #45.
   if (!response.isNull()) {
     Json::StreamWriterBuilder writer_builder;
     std::string output = Json::writeString(writer_builder, response);
