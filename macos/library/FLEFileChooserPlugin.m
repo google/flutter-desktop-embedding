@@ -30,11 +30,21 @@ static NSString *const kFileChooserCallbackMethod = @"FileChooser.Callback";
 static NSString *const kPlatformMethodNameKey = @"method";
 static NSString *const kPlatformMethodArgsKey = @"args";
 
-// Method argument keys.
+// Appearance configuration keys for NSSavePanel.
+static NSString *const kPanelTitleKey = @"title";
+static NSString *const kPanelMessageKey = @"message";
+static NSString *const kOKButtonTextKey = @"prompt";
+
+// Method argument keys for NSSavePanel.
+static NSString *const kInitialDirectoryKey = @"initialDirectory";
 static NSString *const kAllowedFileTypesKey = @"allowedFileTypes";
+static NSString *const kFileNameStringValueKey = @"nameFieldStringValue";
+static NSString *const kCanCreateDirectoriesKey = @"canCreateDirectories";
+
+// Method argument keys for NSOpenPanel.
 static NSString *const kAllowsMultipleSelectionKey = @"allowsMultipleSelection";
 static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
-static NSString *const kInitialDirectoryKey = @"initialDirectory";
+static NSString *const kCanChooseFilesKey = @"canChooseFiles";
 static NSString *const kPlatformClientIDKey = @"clientID";
 
 // Callback keys.
@@ -77,6 +87,21 @@ static NSString *const kFileChooserPathsKey = @"paths";
   if ([argKeys containsObject:kAllowedFileTypesKey]) {
     _panels[clientID].allowedFileTypes = arguments[kAllowedFileTypesKey];
   }
+  if ([argKeys containsObject:kFileNameStringValueKey]) {
+    _panels[clientID].nameFieldStringValue = arguments[kFileNameStringValueKey];
+  }
+  if ([argKeys containsObject:kCanCreateDirectoriesKey]) {
+    _panels[clientID].canCreateDirectories = [arguments[kCanCreateDirectoriesKey] boolValue];
+  }
+  if ([argKeys containsObject:kPanelTitleKey]) {
+    _panels[clientID].title = arguments[kPanelTitleKey];
+  }
+  if ([argKeys containsObject:kPanelMessageKey]) {
+    _panels[clientID].message = arguments[kPanelMessageKey];
+  }
+  if ([argKeys containsObject:kOKButtonTextKey]) {
+    _panels[clientID].prompt = arguments[kOKButtonTextKey];
+  }
 }
 
 /**
@@ -95,6 +120,9 @@ static NSString *const kFileChooserPathsKey = @"paths";
   if ([argKeys containsObject:kCanChooseDirectoriesKey]) {
     ((NSOpenPanel *)_panels[clientID]).canChooseDirectories =
         [arguments[kCanChooseDirectoriesKey] boolValue];
+  }
+  if ([argKeys containsObject:kCanChooseFilesKey]) {
+    ((NSOpenPanel *)_panels[clientID]).canChooseFiles = [arguments[kCanChooseFilesKey] boolValue];
   }
 }
 
