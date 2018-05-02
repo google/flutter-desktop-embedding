@@ -126,15 +126,7 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
       [window] { GLFWAssignEventCallbacks(window); });
 
   if (!response.isNull()) {
-    Json::StreamWriterBuilder writer_builder;
-    std::string output = Json::writeString(writer_builder, response);
-    FlutterPlatformMessage platform_message_response = {
-        .struct_size = sizeof(FlutterPlatformMessage),
-        .channel = channel.c_str(),
-        .message = reinterpret_cast<const uint8_t *>(output.c_str()),
-        .message_size = output.size(),
-    };
-    FlutterEngineSendPlatformMessage(state->engine, &platform_message_response);
+    SendFlutterEngineMessage(window, channel, response);
   }
   FlutterEngineSendPlatformMessageResponse(
       state->engine, message->response_handle, nullptr, 0);

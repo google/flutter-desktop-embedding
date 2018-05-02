@@ -32,11 +32,14 @@ class TextInputPlugin : public KeyboardHookHandler, public Plugin {
   TextInputPlugin();
   virtual ~TextInputPlugin();
 
+  // Plugin.
   Json::Value HandlePlatformMessage(const Json::Value &message) override;
 
+  // KeyboardHookHandler.
   void KeyboardHook(GLFWwindow *window, int key, int scancode, int action,
                     int mods) override;
 
+  // KeyboardHookHandler.
   void CharHook(GLFWwindow *window, unsigned int code_point) override;
 
  private:
