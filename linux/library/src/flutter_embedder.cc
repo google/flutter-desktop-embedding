@@ -25,6 +25,7 @@
 #include <string>
 
 #include <embedder.h>
+#include <flutter_desktop_embedding/color_picker_plugin.h>
 #include <flutter_desktop_embedding/file_chooser_plugin.h>
 #include <flutter_desktop_embedding/input/keyboard_hook_handler.h>
 #include <flutter_desktop_embedding/plugin_handler.h>
@@ -285,6 +286,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   glfwSetWindowUserPointer(window, state);
 
   AddPlugin(window, std::make_unique<FileChooserPlugin>());
+  AddPlugin(window, std::make_unique<ColorPickerPlugin>());
   AddPlugin(window, std::move(input_plugin));
 
   int width, height;
