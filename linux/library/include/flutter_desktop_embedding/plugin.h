@@ -22,13 +22,6 @@
 
 namespace flutter_desktop_embedding {
 
-// A platform callback:
-//
-// Contains a channel string for the plugin and a JSON value to pass to the
-// engine.
-typedef std::function<void(const std::string &, const Json::Value &)>
-    PlatformCallback;
-
 // Represents a plugin that can be registered with the Flutter Embedder.
 //
 // A plugin listens on a platform channel and processes JSON requests that come
@@ -65,8 +58,8 @@ class Plugin {
   virtual void set_flutter_engine(FlutterEngine engine) { engine_ = engine; }
 
  protected:
-  // Runs the platform callback. Noop if the callback is not set.
-  void CallPlatformCallback(const Json::Value &json);
+  // Sends a message to the flutter engine on this Plugin's channel.
+  void SendMessagetoFlutterEngine(const Json::Value &json);
 
  private:
   std::string channel_;
