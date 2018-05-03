@@ -82,22 +82,6 @@ static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
   FlutterEngineSendWindowMetricsEvent(state->engine, &event);
 }
 
-// Callback invoked when a plugin wants to send a message to the Flutter Engine.
-static void SendFlutterEngineMessage(GLFWwindow *window,
-                                     const std::string &channel,
-                                     const Json::Value &json) {
-  Json::StreamWriterBuilder writer_builder;
-  std::string output = Json::writeString(writer_builder, json);
-  FlutterPlatformMessage platform_message_response = {
-      .struct_size = sizeof(FlutterPlatformMessage),
-      .channel = channel.c_str(),
-      .message = reinterpret_cast<const uint8_t *>(output.c_str()),
-      .message_size = output.size(),
-  };
-  auto state = GetSavedEmbedderState(window);
-  FlutterEngineSendPlatformMessage(state->engine, &platform_message_response);
-}
-
 static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
                                          void *user_data) {
   if (message->struct_size != sizeof(FlutterPlatformMessage)) {
@@ -125,9 +109,6 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
       channel, json, [window] { GLFWClearEventCallbacks(window); },
       [window] { GLFWAssignEventCallbacks(window); });
 
-  if (!response.isNull()) {
-    SendFlutterEngineMessage(window, channel, response);
-  }
   FlutterEngineSendPlatformMessageResponse(
       state->engine, message->response_handle, nullptr, 0);
 }
@@ -263,11 +244,7 @@ namespace flutter_desktop_embedding {
 
 bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
   auto state = GetSavedEmbedderState(flutter_window);
-  auto callback = [flutter_window](const std::string &channel,
-                                   const Json::Value &value) {
-    SendFlutterEngineMessage(flutter_window, channel, value);
-  };
-  plugin->set_platform_callback(callback);
+  plugin->set_flutter_engine(state->engine);
   return state->plugin_handler->AddPlugin(std::move(plugin));
 }
 

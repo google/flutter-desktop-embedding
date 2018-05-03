@@ -194,7 +194,8 @@ Json::Value FileChooserPlugin::HandlePlatformMessage(
     g_slist_free(files);
   }
   g_object_unref(chooser);
-  return CreateCallback(filenames, chooser_res, args);
+  CallPlatformCallback(CreateCallback(filenames, chooser_res, args));
+  return Json::nullValue;
 }
 
 }  // namespace flutter_desktop_embedding

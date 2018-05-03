@@ -18,6 +18,8 @@
 #include <functional>
 #include <string>
 
+#include <embedder.h>
+
 namespace flutter_desktop_embedding {
 
 // A platform callback:
@@ -40,9 +42,7 @@ class Plugin {
   // duration of this plugin's platform callback handler (in most cases this
   // can be set to false).
   explicit Plugin(std::string channel, bool input_blocking = false)
-      : channel_(channel),
-        platform_callback_(nullptr),
-        input_blocking_(input_blocking) {}
+      : channel_(channel), engine_(nullptr), input_blocking_(input_blocking) {}
   virtual ~Plugin() {}
 
   // Handles a platform message sent on this platform's channel.
@@ -60,24 +60,32 @@ class Plugin {
   // while waiting for this plugin to handle its platform message.
   virtual bool input_blocking() const { return input_blocking_; }
 
-  // Sets the platform callback.
+  // Sets the pointer to the caller-owned Flutter Engine.
   //
-  // Called via the embedder to handle interaction with Flutter engine.
-  virtual void set_platform_callback(PlatformCallback platform_callback) {
-    platform_callback_ = platform_callback;
-  }
+  // The embedder typically sets this pointer rather than the client.
+  virtual void set_flutter_engine(FlutterEngine engine) { engine_ = engine; }
 
  protected:
   // Runs the platform callback. Noop if the callback is not set.
   void CallPlatformCallback(const Json::Value &json) {
-    if (platform_callback_) {
-      platform_callback_(channel_, json);
+    if (!engine_) {
+      return;
     }
+    Json::StreamWriterBuilder writer_builder;
+    std::string output = Json::writeString(writer_builder, json);
+    FlutterPlatformMessage platform_message_response = {
+        .struct_size = sizeof(FlutterPlatformMessage),
+        .channel = channel_.c_str(),
+        .message = reinterpret_cast<const uint8_t *>(output.c_str()),
+        .message_size = output.size(),
+    };
+    FlutterEngineSendPlatformMessage(engine_, &platform_message_response);
   }
 
  private:
   std::string channel_;
-  PlatformCallback platform_callback_;
+  // Caller-owned instance of the Flutter Engine.
+  FlutterEngine engine_;
   bool input_blocking_;
 };
 
