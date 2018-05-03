@@ -25,18 +25,6 @@ bool PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
   if (plugins_.find(plugin->channel()) != plugins_.end()) {
     return false;
   }
-  Plugin *plugin_raw_ptr = plugin.get();
-  // TODO(awdavies): This function might be a noop. Might be better to not add
-  // it if that's the case (somehow).
-  keyboard_hooks_.push_back([plugin_raw_ptr](GLFWwindow *window, int key,
-                                             int scancode, int action,
-                                             int mods) {
-    plugin_raw_ptr->KeyboardHook(window, key, scancode, action, mods);
-  });
-  char_hooks_.push_back(
-      [plugin_raw_ptr](GLFWwindow *window, unsigned int code_point) {
-        plugin_raw_ptr->CharHook(window, code_point);
-      });
   plugins_.insert(std::make_pair(plugin->channel(), std::move(plugin)));
   return true;
 }

@@ -22,7 +22,7 @@ namespace flutter_desktop_embedding {
 // Implements a color picker plugin.
 class ColorPickerPlugin : public Plugin {
  public:
-  explicit ColorPickerPlugin(PlatformCallback platform_callback);
+  ColorPickerPlugin();
   virtual ~ColorPickerPlugin();
 
   Json::Value HandlePlatformMessage(const Json::Value &message) override;

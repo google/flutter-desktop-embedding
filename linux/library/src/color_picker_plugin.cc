@@ -95,7 +95,7 @@ class ColorPickerPlugin::ColorPicker {
       callback_message[kMethodKey] = kColorPanelCallback;
       callback_message[kArgumentsKey] = Json::arrayValue;
       callback_message[kArgumentsKey].append(GdkColorToArgs(&color));
-      plugin->CallPlatformCallback(callback_message);
+      plugin->SendMessageToFlutterEngine(callback_message);
     }
     // Need this to close the color handler.
     plugin->HandlePlatformMessage(plugin_message);
@@ -105,14 +105,13 @@ class ColorPickerPlugin::ColorPicker {
   GtkWidget *gtk_widget_;
 };
 
-ColorPickerPlugin::ColorPickerPlugin(PlatformCallback platform_callback)
-    : Plugin(kChannelName, platform_callback, false), color_picker_(nullptr) {}
+ColorPickerPlugin::ColorPickerPlugin()
+    : Plugin(kChannelName), color_picker_(nullptr) {}
 
 ColorPickerPlugin::~ColorPickerPlugin() {}
 
 Json::Value ColorPickerPlugin::HandlePlatformMessage(
     const Json::Value &message) {
-  // TODO(awdavies): The return values should be updated to address Issue #45.
   Json::Value result;
   Json::Value method = message[kMethodKey];
   if (method.isNull()) {
