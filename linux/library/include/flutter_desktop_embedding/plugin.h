@@ -41,9 +41,8 @@ class Plugin {
   // |input_blocking| Determines whether user input should be blocked during the
   // duration of this plugin's platform callback handler (in most cases this
   // can be set to false).
-  explicit Plugin(std::string channel, bool input_blocking = false)
-      : channel_(channel), engine_(nullptr), input_blocking_(input_blocking) {}
-  virtual ~Plugin() {}
+  explicit Plugin(std::string channel, bool input_blocking = false);
+  virtual ~Plugin();
 
   // Handles a platform message sent on this platform's channel.
   //
@@ -67,20 +66,7 @@ class Plugin {
 
  protected:
   // Runs the platform callback. Noop if the callback is not set.
-  void CallPlatformCallback(const Json::Value &json) {
-    if (!engine_) {
-      return;
-    }
-    Json::StreamWriterBuilder writer_builder;
-    std::string output = Json::writeString(writer_builder, json);
-    FlutterPlatformMessage platform_message_response = {
-        .struct_size = sizeof(FlutterPlatformMessage),
-        .channel = channel_.c_str(),
-        .message = reinterpret_cast<const uint8_t *>(output.c_str()),
-        .message_size = output.size(),
-    };
-    FlutterEngineSendPlatformMessage(engine_, &platform_message_response);
-  }
+  void CallPlatformCallback(const Json::Value &json);
 
  private:
   std::string channel_;
