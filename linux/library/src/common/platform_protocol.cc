@@ -11,21 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FILE_CHOOSER_PLUGIN_H_
-#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FILE_CHOOSER_PLUGIN_H_
-#include "plugin.h"
+#include <flutter_desktop_embedding/common/platform_protocol.h>
 
 namespace flutter_desktop_embedding {
 
-// Implements a file chooser plugin.
-class FileChooserPlugin : public Plugin {
- public:
-  FileChooserPlugin();
-  virtual ~FileChooserPlugin();
-
-  Json::Value HandlePlatformMessage(const Json::Value &message) override;
-};
+constexpr char kMethodKey[] = "method";
+constexpr char kArgumentsKey[] = "args";
 
 }  // namespace flutter_desktop_embedding
-
-#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FILE_CHOOSER_PLUGIN_H_

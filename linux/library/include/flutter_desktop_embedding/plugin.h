@@ -11,11 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_PLUGIN_H_
-#define LINUX_INCLUDE_PLUGIN_H_
+#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
+#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
 #include <json/json.h>
 
+#include <functional>
 #include <string>
+
+#include <embedder.h>
 
 namespace flutter_desktop_embedding {
 
@@ -31,14 +34,13 @@ class Plugin {
   // |input_blocking| Determines whether user input should be blocked during the
   // duration of this plugin's platform callback handler (in most cases this
   // can be set to false).
-  explicit Plugin(std::string channel, bool input_blocking = false)
-      : channel_(channel), input_blocking_(input_blocking) {}
-  virtual ~Plugin() {}
+  explicit Plugin(std::string channel, bool input_blocking = false);
+  virtual ~Plugin();
 
   // Handles a platform message sent on this platform's channel.
   //
-  // If some error has occurred or there is no valid response that can be made,
-  // must return a Json::nullValue object.
+  // If some error has occurred or there is no valid response that can be
+  // made, must return a Json::nullValue object.
   virtual Json::Value HandlePlatformMessage(const Json::Value &message) = 0;
 
   // Returns the channel on which this plugin listens.
@@ -50,11 +52,22 @@ class Plugin {
   // while waiting for this plugin to handle its platform message.
   virtual bool input_blocking() const { return input_blocking_; }
 
+  // Sets the pointer to the caller-owned Flutter Engine.
+  //
+  // The embedder typically sets this pointer rather than the client.
+  virtual void set_flutter_engine(FlutterEngine engine) { engine_ = engine; }
+
+ protected:
+  // Sends a message to the flutter engine on this Plugin's channel.
+  void SendMessageToFlutterEngine(const Json::Value &json);
+
  private:
   std::string channel_;
+  // Caller-owned instance of the Flutter Engine.
+  FlutterEngine engine_;
   bool input_blocking_;
 };
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_INCLUDE_FLUTTER_EMBEDDER_PLUGIN_H_
+#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_

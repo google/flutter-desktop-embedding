@@ -11,11 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_PLUGIN_HANDLER_H_
-#define LINUX_INCLUDE_PLUGIN_HANDLER_H_
-#include <json/json.h>
+#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_HANDLER_H_
+#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_HANDLER_H_
 
-#include <functional>
+#include <json/json.h>
 #include <map>
 #include <memory>
 #include <string>
@@ -58,4 +57,4 @@ class PluginHandler {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_INCLUDE_PLUGIN_HANDLER_H_
+#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_HANDLER_H_

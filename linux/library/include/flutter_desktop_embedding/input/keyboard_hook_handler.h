@@ -11,21 +11,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FILE_CHOOSER_PLUGIN_H_
-#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FILE_CHOOSER_PLUGIN_H_
-#include "plugin.h"
+#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_INPUT_KEYBOARD_HOOK_HANDLER_H_
+#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_INPUT_KEYBOARD_HOOK_HANDLER_H_
+
+#include <GLFW/glfw3.h>
 
 namespace flutter_desktop_embedding {
 
-// Implements a file chooser plugin.
-class FileChooserPlugin : public Plugin {
+// Abstract class for handling keyboard input events.
+class KeyboardHookHandler {
  public:
-  FileChooserPlugin();
-  virtual ~FileChooserPlugin();
+  // A function for hooking into keyboard input.
+  virtual void KeyboardHook(GLFWwindow *window, int key, int scancode,
+                            int action, int mods) = 0;
 
-  Json::Value HandlePlatformMessage(const Json::Value &message) override;
+  // A function for hooking into unicode code point input.
+  virtual void CharHook(GLFWwindow *window, unsigned int code_point) = 0;
 };
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FILE_CHOOSER_PLUGIN_H_
+#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_INPUT_KEYBOARD_HOOK_HANDLER_H_
