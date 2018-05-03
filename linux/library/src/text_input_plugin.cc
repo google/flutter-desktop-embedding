@@ -42,7 +42,7 @@ void TextInputPlugin::CharHook(GLFWwindow *window, unsigned int code_point) {
   // TODO(awdavies): Actually handle potential unicode characters. Probably
   // requires some ICU data or something.
   active_model_->AddCharacter(static_cast<char>(code_point));
-  SendMessagetoFlutterEngine(active_model_->GetState());
+  SendMessageToFlutterEngine(active_model_->GetState());
 }
 
 void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
@@ -54,30 +54,30 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
     switch (key) {
       case GLFW_KEY_LEFT:
         if (active_model_->MoveCursorBack()) {
-          SendMessagetoFlutterEngine(active_model_->GetState());
+          SendMessageToFlutterEngine(active_model_->GetState());
         }
         break;
       case GLFW_KEY_RIGHT:
         if (active_model_->MoveCursorForward()) {
-          SendMessagetoFlutterEngine(active_model_->GetState());
+          SendMessageToFlutterEngine(active_model_->GetState());
         }
         break;
       case GLFW_KEY_END:
         active_model_->MoveCursorToEnd();
-        SendMessagetoFlutterEngine(active_model_->GetState());
+        SendMessageToFlutterEngine(active_model_->GetState());
         break;
       case GLFW_KEY_HOME:
         active_model_->MoveCursorToBeginning();
-        SendMessagetoFlutterEngine(active_model_->GetState());
+        SendMessageToFlutterEngine(active_model_->GetState());
         break;
       case GLFW_KEY_BACKSPACE:
         if (active_model_->Backspace()) {
-          SendMessagetoFlutterEngine(active_model_->GetState());
+          SendMessageToFlutterEngine(active_model_->GetState());
         }
         break;
       case GLFW_KEY_DELETE:
         if (active_model_->Delete()) {
-          SendMessagetoFlutterEngine(active_model_->GetState());
+          SendMessageToFlutterEngine(active_model_->GetState());
         }
         break;
       default:

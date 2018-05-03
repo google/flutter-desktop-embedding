@@ -20,7 +20,7 @@ Plugin::Plugin(std::string channel, bool input_blocking)
 
 Plugin::~Plugin() {}
 
-void Plugin::SendMessagetoFlutterEngine(const Json::Value &json) {
+void Plugin::SendMessageToFlutterEngine(const Json::Value &json) {
   if (!engine_) {
     return;
   }

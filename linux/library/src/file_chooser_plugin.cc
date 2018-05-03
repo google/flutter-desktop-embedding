@@ -194,7 +194,7 @@ Json::Value FileChooserPlugin::HandlePlatformMessage(
     g_slist_free(files);
   }
   g_object_unref(chooser);
-  SendMessagetoFlutterEngine(CreateCallback(filenames, chooser_res, args));
+  SendMessageToFlutterEngine(CreateCallback(filenames, chooser_res, args));
   return Json::nullValue;
 }
 

@@ -59,7 +59,7 @@ class Plugin {
 
  protected:
   // Sends a message to the flutter engine on this Plugin's channel.
-  void SendMessagetoFlutterEngine(const Json::Value &json);
+  void SendMessageToFlutterEngine(const Json::Value &json);
 
  private:
   std::string channel_;
