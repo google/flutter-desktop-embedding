@@ -70,7 +70,8 @@ class ColorPickerPlugin::ColorPicker {
 
   // Handler for when the user closes the color chooser dialog.
   //
-  // This is not toe be conflated with hitting the cancel button.
+  // This is not to be conflated with hitting the cancel button. That action is
+  // handled in the ResponseCallback function.
   static void CloseCallback(GtkDialog *dialog, gpointer data) {
     auto plugin = reinterpret_cast<ColorPickerPlugin *>(data);
     Json::Value message;
