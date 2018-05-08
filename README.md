@@ -7,8 +7,8 @@ contain the Flutter engine itself, as that is part of the Flutter project, only
 implementation of Flutter's embedding API (e.g., passing mouse and keyboard
 events to Flutter).
 
-Currently only macOS is supported, but the goal is to support other desktop
-embedders in the future.
+Currently macOS and Linux are supported, and the goal is to support Windows
+in the future as well.
 
 ## How to use this code
 
