@@ -32,6 +32,8 @@ static constexpr char kAllowsMultipleSelectionKey[] = "allowsMultipleSelection";
 static constexpr char kCanChooseDirectoriesKey[] = "canChooseDirectories";
 static constexpr char kInitialDirectoryKey[] = "initialDirectory";
 static constexpr char kClientIdKey[] = "clientID";
+static constexpr char kOkButtonLabelKey[] = "prompt";
+static constexpr char kInitialFileNameKey[] = "nameFieldStringValue";
 
 // File chooser callback methods.
 static constexpr char kFileCallbackMethod[] = "FileChooser.Callback";
@@ -91,6 +93,11 @@ static void ProcessAttributes(const Json::Value &method_args,
     std::string start_dir_str(start_dir.asString());
     gtk_file_chooser_set_current_folder(chooser, start_dir_str.c_str());
   }
+  Json::Value initial_file_name = method_args[kInitialFileNameKey];
+  if (!initial_file_name.isNull()) {
+    std::string initial_file_name_str(initial_file_name.asString());
+    gtk_file_chooser_set_current_name(chooser, initial_file_name_str.c_str());
+  }
 }
 
 // Creates a file chooser based on the method type.
@@ -101,16 +108,18 @@ static void ProcessAttributes(const Json::Value &method_args,
 //
 // If the method is not recognized as one of those above, will return a nullptr.
 static GtkFileChooserNative *CreateFileChooserFromMethod(
-    const std::string &method) {
+    const std::string &method, const std::string &ok_button) {
   GtkFileChooserNative *chooser = nullptr;
   if (method == kFileOpenMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    chooser = gtk_file_chooser_native_new("Open File", NULL, action, "_Open",
-                                          "_Cancel");
+    chooser = gtk_file_chooser_native_new(
+        "Open File", NULL, action,
+        ok_button.empty() ? "_Open" : ok_button.c_str(), "_Cancel");
   } else if (method == kFileSaveMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
-    chooser = gtk_file_chooser_native_new("Save File", NULL, action, "_Save",
-                                          "_Cancel");
+    chooser = gtk_file_chooser_native_new(
+        "Save File", NULL, action,
+        ok_button.empty() ? "_Save" : ok_button.c_str(), "_Cancel");
   }
   return chooser;
 }
@@ -121,7 +130,13 @@ static GtkFileChooserNative *CreateFileChooserFromMethod(
 // being able to choose multiple files, etc.
 static GtkFileChooserNative *CreateFileChooser(const std::string &method,
                                                const Json::Value &args) {
-  GtkFileChooserNative *chooser = CreateFileChooserFromMethod(method);
+  Json::Value ok_button_value = args[kOkButtonLabelKey];
+  std::string ok_button_str;
+  if (!ok_button_value.isNull()) {
+    ok_button_str = ok_button_value.asString();
+  }
+  GtkFileChooserNative *chooser =
+      CreateFileChooserFromMethod(method, ok_button_str);
   if (chooser == nullptr) {
     std::cerr << "Could not determine method for file chooser from: " << method
               << std::endl;
