@@ -35,16 +35,17 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
 
 Also requires a checkout of the Flutter repo and Flutter Engine repo. For the
 most straightforward build make sure to set up all checkouts with the same
-parent directory like so:
+parent directory like so (note `flutter-engine` is not the default name when
+using `git checkout`. Make sure to check it out to the right directory):
 
 ```
 <parent dir>
   ├─ flutter/ (from http://github.com/flutter/flutter)
-  ├─ engine/ (from https://github.com/flutter/engine)
+  ├─ flutter-engine/ (from https://github.com/flutter/engine)
   └─ flutter-desktop-embedding/ (from https://github.com/google/flutter-desktop-embedding)
 ```
 
-After you've checked out the engine code, make sure to build the version
+After you've checked out the engine code, make sure to sync to the version
 appropriate for your checkout of Flutter. This can be done using the
 `engine.version` file. Here is how you can check out the correct version of the
 engine when inside the `engine/` repo.
@@ -52,6 +53,11 @@ engine when inside the `engine/` repo.
 ```
 $ git checkout $(cat ../flutter/bin/internal/engine.version)
 ```
+
+Then you'll need to follow the steps for setting up the prerequisite
+tools/binaries (`gclient`, for example)outlined on the engine's
+[contributing](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
+page.
 
 ## Building and Running a Flutter App
 

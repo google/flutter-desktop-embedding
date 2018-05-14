@@ -22,7 +22,7 @@
 #
 # This variable will be used when building `example_flutter/` to pass the
 # `--local-engine-src-path` flag to the flutter binary.
-FLUTTER_ENGINE_ROOT=../../engine
+FLUTTER_ENGINE_ROOT ?=../../flutter-engine
 
 # See above regarding building the flutter engine before editing these
 # variables.
@@ -36,7 +36,7 @@ FLUTTER_ENGINE_ROOT=../../engine
 # A simple way to figure out how to set this flag is to check the output of `gn`
 # and then set $(FLUTTER_ENGINE_BUILD) to be the name of the directory after `out/`
 #
-# Example output:
+# Example output (from inside the $(FLUTTER_ENGINE_ROOT) directory):
 #
 #```
 # $ ./src/flutter/gn --unoptimized
@@ -45,7 +45,33 @@ FLUTTER_ENGINE_ROOT=../../engine
 #```
 #
 # From the above, you should then set this flag to `host_debug_unopt`.
-FLUTTER_ENGINE_BUILD=host_debug_unopt
+#
+# See also: $(FLUTTER_ENGINE_GN_ARGS)
+FLUTTER_ENGINE_BUILD ?=host_debug_unopt
+
+# Args used when running the GN command:
+#
+# example of the default args (`--unoptimized`) when inside the
+# $(FLUTTER_ENGINE_ROOT) dir:
+#
+#```
+# $ ./src/flutter/gn --unoptimized
+# gn gen --check in out/host_debug_unopt
+# Done. Made 385 Targets from 168 files in 379ms
+#```
+FLUTTER_ENGINE_GN_ARGS ?=--unoptimized
+
+# Args used when running ninja to build the engine (after the -C argument).
+#
+# This represents the bare minimum required to get the engine to run a
+# Flutter application.
+#
+# If this variable is set to the empty string, then all engine targets will be
+# built.
+FLUTTER_ENGINE_NINJA_TARGETS ?= flutter_engine \
+	dart-sdk/bin/dart \
+	gen/frontend_server.dart.snapshot
+
 FLUTTER_ENGINE_SYNC=$(FLUTTER_ENGINE_ROOT)/src
 FLUTTER_ENGINE_LIB_PATH= \
 	$(FLUTTER_ENGINE_ROOT)/src/out/$(FLUTTER_ENGINE_BUILD)/libflutter_engine.so
@@ -54,15 +80,12 @@ FLUTTER_ENGINE_GCLIENT_MANIFEST=gclient_manifest.gclient
 FLUTTER_ENGINE_LIB_DIR:=$(dir $(FLUTTER_ENGINE_LIB_PATH))
 FLUTTER_ENGINE_GN_TESTFILE=$(FLUTTER_ENGINE_LIB_DIR)/args.gn
 FLUTTER_ENGINE_GN=$(FLUTTER_ENGINE_SYNC)/flutter/tools/gn
-FLUTTER_ENGINE_GN_ARGS=--unoptimized
 FLUTTER_ENGINE_NINJA_CONFIG=$(FLUTTER_ENGINE_LIB_DIR)/build.ninja
 FLUTTER_ENGINE_NINJA=$(FLUTTER_ENGINE_SYNC)/buildtools/ninja
 # Builds the bare minimum requirements in order to build a flutter application.
-FLUTTER_ENGINE_NINJA_ARGS=-C $(FLUTTER_ENGINE_LIB_DIR) \
-	flutter_engine \
-	dart-sdk/bin/dart \
-	gen/frontend_server.dart.snapshot
 FLUTTER_ENGINE_HEADER=$(FLUTTER_ENGINE_ROOT)/shell/platform/embedder/embedder.h
+FLUTTER_ENGINE_NINJA_ARGS:=-C $(FLUTTER_ENGINE_LIB_DIR) \
+	$(FLUTTER_ENGINE_NINJA_TARGETS)
 GCLIENT=gclient
 GCLIENT_ARGS=sync
 
