@@ -36,7 +36,7 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
 Also requires a checkout of the Flutter repo and Flutter Engine repo. For the
 most straightforward build make sure to set up all checkouts with the same
 parent directory like so (note `flutter-engine` is not the default name when
-using `git checkout`. Make sure to check it out to the right directory):
+using `git clone`):
 
 ```
 <parent dir>
