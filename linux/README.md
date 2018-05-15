@@ -5,6 +5,7 @@ the Linux desktop. This currently includes support for:
 
 *   Drawing a Flutter view.
 *   Mouse event handling.
+*   Basic ASCII Keyboard input.
 
 # How to Use This Code
 
@@ -34,43 +35,29 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
 
 Also requires a checkout of the Flutter repo and Flutter Engine repo. For the
 most straightforward build make sure to set up all checkouts with the same
-parent directory like so:
+parent directory like so (note `flutter-engine` is not the default name when
+using `git clone`):
 
 ```
 <parent dir>
   ├─ flutter/ (from http://github.com/flutter/flutter)
-  ├─ engine/ (from https://github.com/flutter/engine)
+  ├─ flutter-engine/ (from https://github.com/flutter/engine)
   └─ flutter-desktop-embedding/ (from https://github.com/google/flutter-desktop-embedding)
 ```
 
-Next you will need to build the flutter engine. First, after you've checked out
-the engine code, make sure to build the version appropriate for your checkout of
-Flutter. This can be done using the `engine.version` file. Here is how you can
-check out the correct version of the engine when inside the `engine/` repo.
+After you've checked out the engine code, make sure to sync to the version
+appropriate for your checkout of Flutter. This can be done using the
+`engine.version` file. Here is how you can check out the correct version of the
+engine when inside the `engine/` repo.
 
 ```
 $ git checkout $(cat ../flutter/bin/internal/engine.version)
 ```
 
-Then, follow the steps outlined on the flutter engine's
+Then you'll need to follow the steps for setting up the prerequisite
+tools/binaries (`gclient`, for example)outlined on the engine's
 [contributing](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
-page so that you can build a copy of `libflutter_engine.so`.
-
-Then copy it from `out/host_debug_unopt/` (if you built the unoptimized binary)
-into the `flutter-desktop-embedding/linux/library/` directory.
-
-```
-$ cp <path_to_flutter_engine>/src/out/host_debug_unopt/libflutter_engine.so \
-       <path_to_flutter_desktop_embedding_repo>/linux/library
-```
-
-Then copy `embedder.h` into the include directory (the file can be found under
-the the flutter engine checkout).
-
-```
-$ cp <path_to_flutter_engine>/src/flutter/shell/platform/embedder/embedder.h \
-     <path_to_flutter_desktop_embedding_repo>/linux/library/include
-```
+page.
 
 ## Building and Running a Flutter App
 
@@ -83,7 +70,8 @@ a `flutter_embedder_example` binary.
 $ make
 ```
 
-This should generate all the files necessary to run the example application.
+This should generate all the files necessary to run the example application,
+including the flutter engine library.
 
 ## Running the Example Code
 
@@ -93,6 +81,22 @@ like so:
 
 ```
 $ ./example/flutter_embedder_example
+```
+
+## Cleaning up
+
+If you want to clean up generated all generated files, you'll need to run;
+
+```
+$ make clean
+```
+
+But this will also delete all code for building the engine, which can take a
+long time. If you just want to clean the local code (include the example flutter
+app), then run the following instead:
+
+```
+$ make clean_local
 ```
 
 # Caveats
