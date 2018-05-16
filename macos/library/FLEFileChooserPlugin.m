@@ -30,11 +30,15 @@ static NSString *const kFileChooserCallbackMethod = @"FileChooser.Callback";
 static NSString *const kPlatformMethodNameKey = @"method";
 static NSString *const kPlatformMethodArgsKey = @"args";
 
-// Method argument keys.
+// Method argument keys for NSSavePanel.
+static NSString *const kOKButtonLabelKey = @"confirmButtonLabel";
+static NSString *const kInitialDirectoryKey = @"initialDirectory";
 static NSString *const kAllowedFileTypesKey = @"allowedFileTypes";
+static NSString *const kInitialFileName = @"initialFileName";
+
+// Method argument keys for NSOpenPanel.
 static NSString *const kAllowsMultipleSelectionKey = @"allowsMultipleSelection";
 static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
-static NSString *const kInitialDirectoryKey = @"initialDirectory";
 static NSString *const kPlatformClientIDKey = @"clientID";
 
 // Callback keys.
@@ -77,6 +81,12 @@ static NSString *const kFileChooserPathsKey = @"paths";
   if ([argKeys containsObject:kAllowedFileTypesKey]) {
     _panels[clientID].allowedFileTypes = arguments[kAllowedFileTypesKey];
   }
+  if ([argKeys containsObject:kInitialFileName]) {
+    _panels[clientID].nameFieldStringValue = arguments[kInitialFileName];
+  }
+  if ([argKeys containsObject:kOKButtonLabelKey]) {
+    _panels[clientID].prompt = arguments[kOKButtonLabelKey];
+  }
 }
 
 /**
@@ -88,13 +98,15 @@ static NSString *const kFileChooserPathsKey = @"paths";
 - (void)configureOpenPanelForClient:(nonnull NSNumber *)clientID
                       withArguments:(nonnull NSDictionary<NSString *, id> *)arguments {
   NSSet *argKeys = [NSSet setWithArray:arguments.allKeys];
+  NSOpenPanel *openPanel = (NSOpenPanel *)_panels[clientID];
   if ([argKeys containsObject:kAllowsMultipleSelectionKey]) {
-    ((NSOpenPanel *)_panels[clientID]).allowsMultipleSelection =
+    openPanel.allowsMultipleSelection =
         [arguments[kAllowsMultipleSelectionKey] boolValue];
   }
   if ([argKeys containsObject:kCanChooseDirectoriesKey]) {
-    ((NSOpenPanel *)_panels[clientID]).canChooseDirectories =
-        [arguments[kCanChooseDirectoriesKey] boolValue];
+    BOOL canChooseDirectories = [arguments[kCanChooseDirectoriesKey] boolValue];
+    openPanel.canChooseDirectories = canChooseDirectories;
+    openPanel.canChooseFiles = !canChooseDirectories;
   }
 }
 
@@ -147,6 +159,7 @@ static NSString *const kFileChooserPathsKey = @"paths";
   __weak FLEFileChooserPlugin *weakself = self;
   if ([methodName isEqualToString:kShowSavePanelMethod]) {
     NSSavePanel *savePanel = [NSSavePanel savePanel];
+    savePanel.canCreateDirectories = YES;
     _panels[clientID] = savePanel;
     [self configureSavePanelForClient:clientID withArguments:methodArgs];
     [savePanel beginSheetModalForWindow:_controller.view.window
