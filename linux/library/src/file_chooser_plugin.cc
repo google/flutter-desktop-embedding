@@ -32,8 +32,8 @@ static constexpr char kAllowsMultipleSelectionKey[] = "allowsMultipleSelection";
 static constexpr char kCanChooseDirectoriesKey[] = "canChooseDirectories";
 static constexpr char kInitialDirectoryKey[] = "initialDirectory";
 static constexpr char kClientIdKey[] = "clientID";
-static constexpr char kOkButtonLabelKey[] = "prompt";
-static constexpr char kInitialFileNameKey[] = "nameFieldStringValue";
+static constexpr char kOkButtonLabelKey[] = "confirmButtonLabel";
+static constexpr char kInitialFileNameKey[] = "initialFileName";
 
 // File chooser callback methods.
 static constexpr char kFileCallbackMethod[] = "FileChooser.Callback";
