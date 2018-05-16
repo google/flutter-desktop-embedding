@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 #import "FLEPlugin.h"
 
@@ -21,6 +21,6 @@
  * Responsible for bridging the native macOS text input system with the
  * Flutter framework text editing classes, via system channels.
  */
-@interface FLETextInputPlugin : NSResponder<FLEPlugin>
+@interface FLETextInputPlugin : NSResponder <FLEPlugin>
 
 @end

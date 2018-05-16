@@ -34,8 +34,8 @@ static const int kDefaultWindowFramebuffer = 0;
 /**
  * Private interface declaration for FLEViewController.
  */
-@interface FLEViewController ()<FLEReshapeListener> {
-  NSOpenGLContext* _resourceContext;
+@interface FLEViewController () <FLEReshapeListener> {
+  NSOpenGLContext *_resourceContext;
 }
 
 /**
@@ -165,17 +165,37 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   return [self _addPlugin:plugin];
 }
 
-- (BOOL)sendPlatformMessage:(nonnull NSData *)message onChannel:(nonnull NSString *)channel {
+// TODO: Move to a structure that mimics the FlutterChannel structure used on iOS, for better
+// consistency (and to allow alternate method codecs).
+- (void)invokeMethod:(nonnull NSString *)method
+           arguments:(nullable id)arguments
+           onChannel:(nonnull NSString *)channel {
+  NSDictionary *messageObject =
+      [[[FLEMethodCall alloc] initWithMethodName:method arguments:arguments] asMessage];
+  if (![NSJSONSerialization isValidJSONObject:messageObject]) {
+    NSLog(@"Error: Unable to construct a valid JSON object from %@, %@", method, arguments);
+    return;
+  }
+
+  NSError *error = nil;
+  NSData *messageData =
+      [NSJSONSerialization dataWithJSONObject:messageObject options:0 error:&error];
+  if (!messageData) {
+    NSLog(@"Error: Failed to create JSON message data for %@: %@", method, error.debugDescription);
+    return;
+  }
+
   FlutterPlatformMessage platformMessage = {
       .struct_size = sizeof(FlutterPlatformMessage),
       .channel = [channel UTF8String],
-      .message = message.bytes,
-      .message_size = message.length,
+      .message = messageData.bytes,
+      .message_size = messageData.length,
   };
 
   FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
-
-  return result == kSuccess;
+  if (result != kSuccess) {
+    NSLog(@"Unable to invoke %@ on Flutter engine (%d).", method, result);
+  }
 }
 
 #pragma mark - Private methods.
@@ -265,29 +285,43 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 }
 
 - (void)handlePlatformMessage:(const FlutterPlatformMessage *)message {
-  // This method must not return early as we still need to submit the
-  // response callback in case of error.
-
   NSData *data = [NSData dataWithBytesNoCopy:(void *)message->message
                                       length:message->message_size
                                 freeWhenDone:NO];
-
-  NSError *error = nil;
-  NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-
   NSString *channel = @(message->channel);
-  id<FLEPlugin> plugin = _plugins[channel];
-  if (plugin != nil && dictionary != nil) {
-    id response = [plugin handlePlatformMessage:dictionary];
 
-    NSData *responseData = nil;
-    if (response != nil) {
-      responseData = [NSJSONSerialization dataWithJSONObject:response options:0 error:&error];
+  id messageObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+  FLEMethodCall *methodCall =
+      messageObject ? [FLEMethodCall methodCallFromMessage:messageObject] : nil;
+
+  __block const FlutterPlatformMessageResponseHandle *responseHandle = message->response_handle;
+  FLEMethodResult resultHandler = ^(id result) {
+    NSData *responseData = EngineResponseForMethodResult(result);
+    if (responseHandle) {
+      FlutterEngineSendPlatformMessageResponse(_engine, responseHandle, responseData.bytes,
+                                               responseData.length);
+      responseHandle = NULL;
+    } else {
+      NSLog(
+          @"Error: Method call responses can be called only once. Ignoring duplicate response "
+           "for '%@' on channel '%@'.",
+          methodCall.methodName, channel);
     }
+  };
 
-    FlutterEngineSendPlatformMessageResponse(_engine, message->response_handle, responseData.bytes,
-                                             responseData.length);
+  if (!methodCall) {
+    NSLog(@"Recieved invalid platform message: %@", messageObject);
+    resultHandler(FLEMethodNotImplemented);
+    return;
   }
+
+  id<FLEPlugin> plugin = _plugins[channel];
+  if (!plugin) {
+    resultHandler(FLEMethodNotImplemented);
+    return;
+  }
+
+  [plugin handleMethodCall:methodCall result:resultHandler];
 }
 
 /**
@@ -297,9 +331,9 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
  * will be called before the engine is started, and the context must be valid by then.
  */
 - (void)createResourceContext {
-  NSOpenGLContext *viewContext = ((NSOpenGLView*)self.view).openGLContext;
-  _resourceContext = [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat
-                                                shareContext:viewContext];
+  NSOpenGLContext *viewContext = ((NSOpenGLView *)self.view).openGLContext;
+  _resourceContext =
+      [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat shareContext:viewContext];
 }
 
 - (void)makeResourceContextCurrent {

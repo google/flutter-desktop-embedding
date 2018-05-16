@@ -19,6 +19,6 @@
  * Responsible for creating and showing instances of NSSavePanel or NSOpenPanel and sending
  * selected file paths to flutter clients, via system channels.
  */
-@interface FLEFileChooserPlugin : NSObject<FLEPlugin>
+@interface FLEFileChooserPlugin : NSObject <FLEPlugin>
 
 @end

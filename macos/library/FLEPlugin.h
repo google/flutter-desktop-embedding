@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+
+#import "FLEChannels.h"
 
 @class FLEViewController;
 
@@ -34,9 +36,18 @@
 @property(nonnull, readonly) NSString *channel;
 
 /**
- * Handles the given platform message sent on the plugin's channel. Handling may involve
- * sending messages the other direction via [FlutterViewController.sendPlatformMessage].
+ * Called when a message is sent from Flutter on this plugin's channel.
+ * The result callback must be called exactly once, with one of:
+ * - FLEMethodNotImplemented, if the method call is unknown.
+ * - An FLEMethodError, if the method call was understood but there was a
+ *   problem handling it.
+ * - Any other value (including nil) to indicate success. The value will
+ *   be returned to the Flutter caller, and must be serializable to JSON.
+ *
+ * If handling the method involves multiple responses to Flutter, follow-up
+ * messages can be sent by calling the other direction using
+ * -[FLEViewController invokeMethod:arguments:onChannel:].
  */
-- (nullable id)handlePlatformMessage:(nonnull NSDictionary *)message;
+- (void)handleMethodCall:(nonnull FLEMethodCall *)call result:(nonnull FLEMethodResult)result;
 
 @end
