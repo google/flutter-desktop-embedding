@@ -31,10 +31,10 @@ static NSString *const kPlatformMethodNameKey = @"method";
 static NSString *const kPlatformMethodArgsKey = @"args";
 
 // Method argument keys for NSSavePanel.
-static NSString *const kOKButtonLabelKey = @"prompt";
+static NSString *const kOKButtonLabelKey = @"confirmButtonLabel";
 static NSString *const kInitialDirectoryKey = @"initialDirectory";
 static NSString *const kAllowedFileTypesKey = @"allowedFileTypes";
-static NSString *const kInitialFileName = @"nameFieldStringValue";
+static NSString *const kInitialFileName = @"initialFileName";
 
 // Method argument keys for NSOpenPanel.
 static NSString *const kAllowsMultipleSelectionKey = @"allowsMultipleSelection";
