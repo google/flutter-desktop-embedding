@@ -41,7 +41,9 @@
 /**
  * The arguments to the method being called, if any.
  *
- * This object must be serializable to JSON.
+ * This object must be serializable to JSON. See
+ * https://docs.flutter.io/flutter/services/JSONMethodCodec-class.html
+ * for supported types.
  */
 @property(readonly, nonatomic, nullable) id arguments;
 
