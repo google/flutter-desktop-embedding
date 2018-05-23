@@ -25,7 +25,12 @@ class ColorPickerPlugin : public Plugin {
   ColorPickerPlugin();
   virtual ~ColorPickerPlugin();
 
-  Json::Value HandlePlatformMessage(const Json::Value &message) override;
+  void HandleMethodCall(const MethodCall &method_call,
+                        std::unique_ptr<MethodResult> result) override;
+
+ protected:
+  // Hides the color picker panel if it is showing.
+  void HidePanel();
 
  private:
   // Private implementation.

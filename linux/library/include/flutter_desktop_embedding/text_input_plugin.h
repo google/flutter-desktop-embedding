@@ -33,7 +33,8 @@ class TextInputPlugin : public KeyboardHookHandler, public Plugin {
   virtual ~TextInputPlugin();
 
   // Plugin.
-  Json::Value HandlePlatformMessage(const Json::Value &message) override;
+  void HandleMethodCall(const MethodCall &method_call,
+                        std::unique_ptr<MethodResult> result) override;
 
   // KeyboardHookHandler.
   void KeyboardHook(GLFWwindow *window, int key, int scancode, int action,
@@ -43,6 +44,9 @@ class TextInputPlugin : public KeyboardHookHandler, public Plugin {
   void CharHook(GLFWwindow *window, unsigned int code_point) override;
 
  private:
+  // Sends the current state of the given model to the Flutter engine.
+  void SendStateUpdate(const TextInputModel &model);
+
   // Mapping of client IDs to text input models.
   std::map<int, std::unique_ptr<TextInputModel>> input_models_;
 

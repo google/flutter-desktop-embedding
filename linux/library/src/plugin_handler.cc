@@ -29,8 +29,9 @@ bool PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
   return true;
 }
 
-Json::Value PluginHandler::HandlePlatformMessage(
-    const std::string &channel, const Json::Value &message,
+void PluginHandler::HandleMethodCall(
+    const std::string &channel, const MethodCall &method_call,
+    std::unique_ptr<MethodResult> result,
     std::function<void(void)> input_block_cb,
     std::function<void(void)> input_unblock_cb) {
   if (plugins_.find(channel) != plugins_.end()) {
@@ -38,13 +39,13 @@ Json::Value PluginHandler::HandlePlatformMessage(
     if (plugin->input_blocking()) {
       input_block_cb();
     }
-    Json::Value response = plugin->HandlePlatformMessage(message);
+    plugin->HandleMethodCall(method_call, std::move(result));
     if (plugin->input_blocking()) {
       input_unblock_cb();
     }
-    return response;
+  } else {
+    result->NotImplemented();
   }
-  return Json::nullValue;
 }
 
 }  // namespace flutter_desktop_embedding

@@ -23,9 +23,6 @@ static constexpr char kChannelName[] = "flutter/filechooser";
 static constexpr char kFileOpenMethod[] = "FileChooser.Show.Open";
 static constexpr char kFileSaveMethod[] = "FileChooser.Show.Save";
 
-static constexpr char kArgumentsKey[] = "args";
-static constexpr char kMethodKey[] = "method";
-
 // File chooser args.
 static constexpr char kAllowedFileTypesKey[] = "allowedFileTypes";
 static constexpr char kAllowsMultipleSelectionKey[] = "allowsMultipleSelection";
@@ -147,49 +144,43 @@ static GtkFileChooserNative *CreateFileChooser(const std::string &method,
   return chooser;
 }
 
-// Creates a valid callback JSON object.
+// Creates a valid callback arguments JSON object.
 //
 // This is based on the results of the file chooser termination.
-static Json::Value CreateCallback(const std::vector<std::string> &filenames,
-                                  gint chooser_res, const Json::Value &args) {
-  Json::Value result;
-  result[kMethodKey] = kFileCallbackMethod;
-  result[kArgumentsKey] = Json::objectValue;
+static Json::Value CreateCallbackArguments(
+    const std::vector<std::string> &filenames, gint chooser_res,
+    const Json::Value &call_arguments) {
+  Json::Value arguments(Json::objectValue);
   if (chooser_res == GTK_RESPONSE_ACCEPT) {
-    result[kArgumentsKey][kPathsKey] = Json::arrayValue;
+    arguments[kPathsKey] = Json::arrayValue;
     for (const std::string &filename : filenames) {
-      result[kArgumentsKey][kPathsKey].append(filename);
+      arguments[kPathsKey].append(filename);
     }
-    result[kArgumentsKey][kResultKey] = kOkResultValue;
+    arguments[kResultKey] = kOkResultValue;
   } else {
-    result[kArgumentsKey][kResultKey] = kCancelResultValue;
+    arguments[kResultKey] = kCancelResultValue;
   }
-  result[kArgumentsKey][kClientIdKey] = args[kClientIdKey];
-  return result;
+  arguments[kClientIdKey] = call_arguments[kClientIdKey];
+  return arguments;
 }
 
 FileChooserPlugin::FileChooserPlugin() : Plugin(kChannelName, true) {}
 
 FileChooserPlugin::~FileChooserPlugin() {}
 
-Json::Value FileChooserPlugin::HandlePlatformMessage(
-    const Json::Value &message) {
-  Json::Value result;
-  Json::Value method = message[kMethodKey];
-  if (method.isNull()) {
-    std::cerr << "No file chooser method declaration" << std::endl;
-    return Json::nullValue;
-  }
-  Json::Value args = message[kArgumentsKey];
-  if (args.isNull()) {
-    std::cerr << "Null file chooser method args received" << std::endl;
-    return Json::nullValue;
+void FileChooserPlugin::HandleMethodCall(const MethodCall &method_call,
+                                         std::unique_ptr<MethodResult> result) {
+  if (method_call.arguments().isNull()) {
+    result->Error("Bad Arguments", "Null file chooser method args received");
+    return;
   }
 
   gint chooser_res;
-  auto chooser = CreateFileChooser(method.asString(), args);
+  auto chooser =
+      CreateFileChooser(method_call.method_name(), method_call.arguments());
   if (chooser == nullptr) {
-    return Json::nullValue;
+    result->NotImplemented();
+    return;
   }
   chooser_res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(chooser));
   std::vector<std::string> filenames;
@@ -209,8 +200,13 @@ Json::Value FileChooserPlugin::HandlePlatformMessage(
     g_slist_free(files);
   }
   g_object_unref(chooser);
-  SendMessageToFlutterEngine(CreateCallback(filenames, chooser_res, args));
-  return Json::nullValue;
+
+  // TODO: Eliminate the seperate response message, and send the results back
+  // here. This will require simultaneous changes on the Dart side.
+  result->Success();
+  InvokeMethod(
+      kFileCallbackMethod,
+      CreateCallbackArguments(filenames, chooser_res, method_call.arguments()));
 }
 
 }  // namespace flutter_desktop_embedding

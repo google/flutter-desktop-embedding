@@ -15,8 +15,6 @@
 
 #include <iostream>
 
-#include <flutter_desktop_embedding/common/platform_protocol.h>
-
 // TODO(awdavies): Need to fix this regarding issue #47.
 static constexpr char kComposingBaseKey[] = "composingBase";
 
@@ -31,9 +29,6 @@ static constexpr char kSelectionExtentKey[] = "selectionExtent";
 static constexpr char kSelectionIsDirectionalKey[] = "selectionIsDirectional";
 
 static constexpr char kTextKey[] = "text";
-
-static constexpr char kUpdateEditingStateMethod[] =
-    "TextInputClient.updateEditingState";
 
 namespace flutter_desktop_embedding {
 
@@ -143,7 +138,7 @@ bool TextInputModel::MoveCursorBack() {
   return false;
 }
 
-Json::Value TextInputModel::GetState() {
+Json::Value TextInputModel::GetState() const {
   // TODO(awdavies): Most of these are hard-coded for now.
   Json::Value editing_state;
   editing_state[kComposingBaseKey] = -1;
@@ -156,14 +151,12 @@ Json::Value TextInputModel::GetState() {
   editing_state[kSelectionIsDirectionalKey] = 0;
   editing_state[kTextKey] = text_;
 
+  // TODO(stuartmorgan): Move client_id out up to the plugin so that this
+  // function just returns the editing state.
   Json::Value args = Json::arrayValue;
   args.append(client_id_);
   args.append(editing_state);
-
-  Json::Value result;
-  result[kMethodKey] = kUpdateEditingStateMethod;
-  result[kArgumentsKey] = args;
-  return result;
+  return args;
 }
 
 }  // namespace flutter_desktop_embedding
