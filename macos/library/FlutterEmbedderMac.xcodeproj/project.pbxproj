@@ -77,10 +77,10 @@
 		1E2492381FCF50BE00DD3BBB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1EEF8E051FD1F0C300DD563C /* FLEView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEView.h; sourceTree = "<group>"; };
 		1EEF8E061FD1F0C300DD563C /* FLEView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEView.m; sourceTree = "<group>"; };
-		33B1650F201A5F7D00732DC9 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/FlutterEmbedder.framework; sourceTree = SOURCE_ROOT; };
+		33B1650F201A5F7D00732DC9 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/macos/FlutterEmbedder.framework; sourceTree = SOURCE_ROOT; };
 		AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLETextInputModel.h; sourceTree = "<group>"; };
 		AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLETextInputModel.m; sourceTree = "<group>"; };
-		C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/FlutterEmbedder.framework; sourceTree = "<group>"; };
+		C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/macos/FlutterEmbedder.framework; sourceTree = "<group>"; };
 		E558F1C02023A34B00CA618A /* FLEFileChooserPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEFileChooserPlugin.h; sourceTree = "<group>"; };
 		E558F1C12023A34B00CA618A /* FLEFileChooserPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEFileChooserPlugin.m; sourceTree = "<group>"; };
 		E5A3B04E201024E6003A7D68 /* FLEColorPanelPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEColorPanelPlugin.h; sourceTree = "<group>"; };
@@ -251,7 +251,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ./update_engine.sh;
+			shellScript = "\"$PROJECT_DIR\"/../../tools/update_flutter_engine \"$PROJECT_DIR\"/../../../flutter_engine_framework/macos";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -400,7 +400,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../../flutter_engine_framework",
+					"$(PROJECT_DIR)/../../../flutter_engine_framework/macos",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -421,7 +421,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../../flutter_engine_framework",
+					"$(PROJECT_DIR)/../../../flutter_engine_framework/macos",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

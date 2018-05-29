@@ -1,0 +1,9 @@
+name: collection
+version: 1.14.6
+author: Dart Team <misc@dartlang.org>
+description: Collections and utilities functions and classes related to collections.
+homepage: https://www.github.com/dart-lang/collection
+environment:
+  sdk: '>=1.21.0 <2.0.0'
+dev_dependencies:
+  test: '^0.12.0'
