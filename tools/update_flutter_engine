@@ -13,5 +13,5 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-base_dir=$(dirname "$0")
+base_dir="$(dirname "$0")"
 exec "$base_dir/../../flutter/bin/cache/dart-sdk/bin/dart" "$base_dir/dart_tools/bin/update_flutter_engine.dart" $@
