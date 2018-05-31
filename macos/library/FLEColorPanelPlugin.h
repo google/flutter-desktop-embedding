@@ -21,6 +21,6 @@
  * the FlutterViewController. Responsible for managing the panel's display state
  * and sending selected color data to Flutter, via system channels.
  */
-@interface FLEColorPanelPlugin : NSObject<FLEPlugin>
+@interface FLEColorPanelPlugin : NSObject <FLEPlugin>
 
 @end

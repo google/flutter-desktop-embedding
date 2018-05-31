@@ -114,35 +114,27 @@ static NSString *const kFileChooserPathsKey = @"paths";
  * Encode and send a callback message to a flutter client.
  *
  * @param clientID - identifer for the flutter client to which the callback message will be sent.
- * @param result - the result value returned by the panel associated with the client.
  * @param URLs - an array of URLs selected using the flutter client's panel instance.
+ * @param result - the platform message callback.
  */
 - (void)invokeCallbackForClient:(nonnull NSNumber *)clientID
-                     withResult:(NSModalResponse)result
-                           URLs:(nullable NSArray<NSURL *> *)URLs {
-  NSMutableDictionary *response =
-      [NSMutableDictionary dictionaryWithObject:kFileChooserCallbackMethod
-                                         forKey:kPlatformMethodNameKey];
-  response[kPlatformMethodArgsKey] =
-      [NSMutableDictionary dictionaryWithObject:@(result) forKey:kFileChooserResultKey];
-  response[kPlatformMethodArgsKey][kPlatformClientIDKey] = clientID;
-  if (result == NSModalResponseOK && URLs.count > 0) {
-    response[kPlatformMethodArgsKey][kFileChooserPathsKey] = [URLs valueForKey:@"path"];
+                       withURLs:(nullable NSArray<NSURL *> *)URLs
+                         result:(nonnull FLEMethodResult)result {
+  // Send an empty succes reply to indicate that the requset was handled.
+  // TODO: Eliminate the seperate response message, and send the results back here. This will
+  // require simultaneous changes on the Dart side.
+  result(nil);
+
+  NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
+  arguments[kFileChooserResultKey] = @(URLs ? 1 : 0);
+  arguments[kPlatformClientIDKey] = clientID;
+  if (URLs.count > 0) {
+    arguments[kFileChooserPathsKey] = [URLs valueForKey:@"path"];
   }
 
-  if (![NSJSONSerialization isValidJSONObject:response]) {
-    NSLog(@"ERROR: invalid JSON object: %@", response);
-    return;
-  }
-
-  NSError *error = nil;
-  NSData *message = [NSJSONSerialization dataWithJSONObject:response options:0 error:&error];
-  if (message == nil || error != nil) {
-    NSLog(@"ERROR: could send platform response message: %@", error.debugDescription);
-    return;
-  }
-
-  [_controller sendPlatformMessage:message onChannel:kFileChooserChannelName];
+  [_controller invokeMethod:kFileChooserCallbackMethod
+                  arguments:arguments
+                  onChannel:kFileChooserChannelName];
 }
 
 #pragma FLEPlugin implementation
@@ -151,42 +143,41 @@ static NSString *const kFileChooserPathsKey = @"paths";
   return kFileChooserChannelName;
 }
 
-- (nullable id)handlePlatformMessage:(NSDictionary *)message {
-  NSString *methodName = message[kPlatformMethodNameKey];
-  NSDictionary *methodArgs = message[kPlatformMethodArgsKey];
-  NSNumber *clientID = methodArgs[kPlatformClientIDKey];
+- (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
+  NSDictionary *arguments = call.arguments;
+  NSNumber *clientID = arguments[kPlatformClientIDKey];
 
   __weak FLEFileChooserPlugin *weakself = self;
-  if ([methodName isEqualToString:kShowSavePanelMethod]) {
+  if ([call.methodName isEqualToString:kShowSavePanelMethod]) {
     NSSavePanel *savePanel = [NSSavePanel savePanel];
     savePanel.canCreateDirectories = YES;
     _panels[clientID] = savePanel;
-    [self configureSavePanelForClient:clientID withArguments:methodArgs];
+    [self configureSavePanelForClient:clientID withArguments:arguments];
     [savePanel beginSheetModalForWindow:_controller.view.window
-                      completionHandler:^(NSModalResponse result) {
+                      completionHandler:^(NSModalResponse panelResult) {
                         [weakself invokeCallbackForClient:clientID
-                                               withResult:result
-                                                     URLs:(result == NSModalResponseOK)
+                                                 withURLs:(panelResult == NSModalResponseOK)
                                                               ? @[ savePanel.URL ]
-                                                              : nil];
+                                                              : nil
+                                                   result:result];
                       }];
 
-  } else if ([methodName isEqualToString:kShowOpenPanelMethod]) {
+  } else if ([call.methodName isEqualToString:kShowOpenPanelMethod]) {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     _panels[clientID] = openPanel;
-    [self configureSavePanelForClient:clientID withArguments:methodArgs];
-    [self configureOpenPanelForClient:clientID withArguments:methodArgs];
-    [openPanel
-        beginSheetModalForWindow:_controller.view.window
-               completionHandler:^(NSModalResponse result) {
-                 [weakself
-                     invokeCallbackForClient:clientID
-                                  withResult:result
-                                        URLs:(result == NSModalResponseOK) ? openPanel.URLs : nil];
-               }];
+    [self configureSavePanelForClient:clientID withArguments:arguments];
+    [self configureOpenPanelForClient:clientID withArguments:arguments];
+    [openPanel beginSheetModalForWindow:_controller.view.window
+                      completionHandler:^(NSModalResponse panelResult) {
+                        [weakself invokeCallbackForClient:clientID
+                                                 withURLs:(panelResult == NSModalResponseOK)
+                                                              ? openPanel.URLs
+                                                              : nil
+                                                   result:result];
+                      }];
+  } else {
+    result(FLEMethodNotImplemented);
   }
-
-  return nil;
 }
 
 @end

@@ -31,6 +31,8 @@
 		1E2492411FCF50BE00DD3BBB /* FlutterEmbedderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492371FCF50BE00DD3BBB /* FlutterEmbedderMac.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1EEF8E071FD1F0C300DD563C /* FLEView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EEF8E051FD1F0C300DD563C /* FLEView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1EEF8E081FD1F0C300DD563C /* FLEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EEF8E061FD1F0C300DD563C /* FLEView.m */; };
+		33D7B59920A4F54400296EFC /* FLEChannels.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D7B59720A4F54400296EFC /* FLEChannels.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		33D7B59A20A4F54400296EFC /* FLEChannels.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D7B59820A4F54400296EFC /* FLEChannels.m */; };
 		AA8AE8B81FD948AC00B6FB31 /* FLETextInputModel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */; };
 		AA8AE8BA1FD948BA00B6FB31 /* FLETextInputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */; };
 		C4C1FE441FD74F6400691968 /* FlutterEmbedder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */; };
@@ -78,6 +80,8 @@
 		1EEF8E051FD1F0C300DD563C /* FLEView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEView.h; sourceTree = "<group>"; };
 		1EEF8E061FD1F0C300DD563C /* FLEView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEView.m; sourceTree = "<group>"; };
 		33B1650F201A5F7D00732DC9 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/macos/FlutterEmbedder.framework; sourceTree = SOURCE_ROOT; };
+		33D7B59720A4F54400296EFC /* FLEChannels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEChannels.h; sourceTree = "<group>"; };
+		33D7B59820A4F54400296EFC /* FLEChannels.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEChannels.m; sourceTree = "<group>"; };
 		AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLETextInputModel.h; sourceTree = "<group>"; };
 		AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLETextInputModel.m; sourceTree = "<group>"; };
 		C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/macos/FlutterEmbedder.framework; sourceTree = "<group>"; };
@@ -105,6 +109,7 @@
 				C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */,
 				1E2492371FCF50BE00DD3BBB /* FlutterEmbedderMac.h */,
 				1E2492451FCF536200DD3BBB /* Public */,
+				33D7B59820A4F54400296EFC /* FLEChannels.m */,
 				E5A3B050201024F5003A7D68 /* FLEColorPanelPlugin.m */,
 				E558F1C12023A34B00CA618A /* FLEFileChooserPlugin.m */,
 				AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */,
@@ -128,8 +133,9 @@
 		1E2492451FCF536200DD3BBB /* Public */ = {
 			isa = PBXGroup;
 			children = (
-				E558F1C02023A34B00CA618A /* FLEFileChooserPlugin.h */,
+				33D7B59720A4F54400296EFC /* FLEChannels.h */,
 				E5A3B04E201024E6003A7D68 /* FLEColorPanelPlugin.h */,
+				E558F1C02023A34B00CA618A /* FLEFileChooserPlugin.h */,
 				1E24922F1FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h */,
 				1E2492311FCF50BE00DD3BBB /* FLEPlugin.h */,
 				1E2492321FCF50BE00DD3BBB /* FLEReshapeListener.h */,
@@ -157,6 +163,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1E24923B1FCF50BE00DD3BBB /* FLEPlugin.h in Headers */,
+				33D7B59920A4F54400296EFC /* FLEChannels.h in Headers */,
 				1E24923F1FCF50BE00DD3BBB /* FLEViewController.h in Headers */,
 				1E2492411FCF50BE00DD3BBB /* FlutterEmbedderMac.h in Headers */,
 				1E2492391FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h in Headers */,
@@ -260,6 +267,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33D7B59A20A4F54400296EFC /* FLEChannels.m in Sources */,
 				1E2492401FCF50BE00DD3BBB /* FLEViewController.m in Sources */,
 				1E24923E1FCF50BE00DD3BBB /* FLETextInputPlugin.m in Sources */,
 				E558F1C32023A34B00CA618A /* FLEFileChooserPlugin.m in Sources */,

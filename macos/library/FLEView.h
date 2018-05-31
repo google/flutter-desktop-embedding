@@ -19,7 +19,7 @@
  * View capable of acting as a rendering target and input source for the Flutter
  * engine.
  */
-@interface FLEView : NSOpenGLView<FLEOpenGLContextHandling>
+@interface FLEView : NSOpenGLView <FLEOpenGLContextHandling>
 
 /**
  * Listener for reshape events. See protocol description.

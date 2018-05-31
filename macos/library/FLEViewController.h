@@ -71,8 +71,12 @@
 - (BOOL)addPlugin:(nonnull id<FLEPlugin>)plugin;
 
 /**
- * Sends a platform message on the given channel.
+ * Sends a platform message to the Flutter engine on the given channel.
+ *
+ * // TODO: Support responses.
  */
-- (BOOL)sendPlatformMessage:(nonnull NSData *)message onChannel:(nonnull NSString *)channel;
+- (void)invokeMethod:(nonnull NSString *)method
+           arguments:(nullable id)arguments
+           onChannel:(nonnull NSString *)channel;
 
 @end
