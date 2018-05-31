@@ -20,12 +20,14 @@ Plugin::Plugin(std::string channel, bool input_blocking)
 
 Plugin::~Plugin() {}
 
-void Plugin::SendMessageToFlutterEngine(const Json::Value &json) {
+void Plugin::InvokeMethod(const std::string &method,
+                          const Json::Value &arguments) {
   if (!engine_) {
     return;
   }
+  MethodCall call = MethodCall(method, arguments);
   Json::StreamWriterBuilder writer_builder;
-  std::string output = Json::writeString(writer_builder, json);
+  std::string output = Json::writeString(writer_builder, call.AsMessage());
   FlutterPlatformMessage platform_message_response = {
       .struct_size = sizeof(FlutterPlatformMessage),
       .channel = channel_.c_str(),

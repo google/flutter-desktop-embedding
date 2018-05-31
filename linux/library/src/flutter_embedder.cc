@@ -25,6 +25,7 @@
 #include <string>
 
 #include <embedder.h>
+#include <flutter_desktop_embedding/channels.h>
 #include <flutter_desktop_embedding/color_picker_plugin.h>
 #include <flutter_desktop_embedding/file_chooser_plugin.h>
 #include <flutter_desktop_embedding/input/keyboard_hook_handler.h>
@@ -106,12 +107,14 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
   }
   auto state = GetSavedEmbedderState(window);
   std::string channel(message->channel);
-  Json::Value response = state->plugin_handler->HandlePlatformMessage(
-      channel, json, [window] { GLFWClearEventCallbacks(window); },
+  std::unique_ptr<flutter_desktop_embedding::MethodCall> method_call =
+      flutter_desktop_embedding::MethodCall::CreateFromMessage(json);
+  auto result = std::make_unique<flutter_desktop_embedding::JsonMethodResult>(
+      state->engine, message->response_handle);
+  state->plugin_handler->HandleMethodCall(
+      channel, *method_call, std::move(result),
+      [window] { GLFWClearEventCallbacks(window); },
       [window] { GLFWAssignEventCallbacks(window); });
-
-  FlutterEngineSendPlatformMessageResponse(
-      state->engine, message->response_handle, nullptr, 0);
 }
 
 static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,

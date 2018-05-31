@@ -16,8 +16,6 @@
 #include <gtk/gtk.h>
 #include <iostream>
 
-#include <flutter_desktop_embedding/common/platform_protocol.h>
-
 static constexpr char kChannelName[] = "flutter/colorpanel";
 static constexpr char kWindowTitle[] = "Flutter Color Picker";
 
@@ -74,11 +72,7 @@ class ColorPickerPlugin::ColorPicker {
   // handled in the ResponseCallback function.
   static void CloseCallback(GtkDialog *dialog, gpointer data) {
     auto plugin = reinterpret_cast<ColorPickerPlugin *>(data);
-    Json::Value message;
-    message[kMethodKey] = kHideColorPanelMethod;
-
-    // Need this to close the color handler.
-    plugin->HandlePlatformMessage(message);
+    plugin->HidePanel();
   }
 
   // Handler for when the user chooses a button on the chooser dialog.
@@ -87,19 +81,15 @@ class ColorPickerPlugin::ColorPicker {
   static void ResponseCallback(GtkWidget *dialog, gint response_id,
                                gpointer data) {
     auto plugin = reinterpret_cast<ColorPickerPlugin *>(data);
-    Json::Value plugin_message;
-    plugin_message[kMethodKey] = kHideColorPanelMethod;
     if (response_id == GTK_RESPONSE_OK) {
       GdkRGBA color;
       gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dialog), &color);
-      Json::Value callback_message;
-      callback_message[kMethodKey] = kColorPanelCallback;
-      callback_message[kArgumentsKey] = Json::arrayValue;
-      callback_message[kArgumentsKey].append(GdkColorToArgs(&color));
-      plugin->SendMessageToFlutterEngine(callback_message);
+      Json::Value arguments(Json::arrayValue);
+      arguments.append(GdkColorToArgs(&color));
+      plugin->InvokeMethod(kColorPanelCallback, arguments);
     }
     // Need this to close the color handler.
-    plugin->HandlePlatformMessage(plugin_message);
+    plugin->HidePanel();
   }
 
  private:
@@ -111,31 +101,27 @@ ColorPickerPlugin::ColorPickerPlugin()
 
 ColorPickerPlugin::~ColorPickerPlugin() {}
 
-Json::Value ColorPickerPlugin::HandlePlatformMessage(
-    const Json::Value &message) {
-  Json::Value result;
-  Json::Value method = message[kMethodKey];
-  if (method.isNull()) {
-    std::cerr << "No color picker method selected" << std::endl;
-    return Json::nullValue;
-  }
-
-  if (method.compare(kShowColorPanelMethod) == 0) {
+void ColorPickerPlugin::HandleMethodCall(const MethodCall &method_call,
+                                         std::unique_ptr<MethodResult> result) {
+  if (method_call.method_name().compare(kShowColorPanelMethod) == 0) {
+    result->Success();
     // There is only one color picker that can be displayed at once.
     // There are no channels to use the color picker, so just return.
     if (color_picker_) {
-      return Json::nullValue;
+      return;
     }
     color_picker_ = std::make_unique<ColorPickerPlugin::ColorPicker>(this);
-  }
-  if (method.compare(kHideColorPanelMethod) == 0) {
+  } else if (method_call.method_name().compare(kHideColorPanelMethod) == 0) {
+    result->Success();
     if (color_picker_ == nullptr) {
-      return Json::nullValue;
+      return;
     }
-    // Destroys the color picker.
-    color_picker_.reset();
+    HidePanel();
+  } else {
+    result->NotImplemented();
   }
-  return Json::nullValue;
 }
+
+void ColorPickerPlugin::HidePanel() { color_picker_.reset(); }
 
 }  // namespace flutter_desktop_embedding

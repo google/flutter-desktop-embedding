@@ -23,7 +23,8 @@ class FileChooserPlugin : public Plugin {
   FileChooserPlugin();
   virtual ~FileChooserPlugin();
 
-  Json::Value HandlePlatformMessage(const Json::Value &message) override;
+  void HandleMethodCall(const MethodCall &method_call,
+                        std::unique_ptr<MethodResult> result) override;
 };
 
 }  // namespace flutter_desktop_embedding

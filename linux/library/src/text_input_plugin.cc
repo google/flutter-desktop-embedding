@@ -16,13 +16,14 @@
 #include <cstdint>
 #include <iostream>
 
-#include <flutter_desktop_embedding/common/platform_protocol.h>
-
 static constexpr char kSetEditingStateMethod[] = "TextInput.setEditingState";
 static constexpr char kClearClientMethod[] = "TextInput.clearClient";
 static constexpr char kSetClientMethod[] = "TextInput.setClient";
 static constexpr char kShowMethod[] = "TextInput.show";
 static constexpr char kHideMethod[] = "TextInput.hide";
+
+static constexpr char kUpdateEditingStateMethod[] =
+    "TextInputClient.updateEditingState";
 
 static constexpr char kSelectionBaseKey[] = "selectionBase";
 static constexpr char kSelectionExtentKey[] = "selectionExtent";
@@ -30,6 +31,10 @@ static constexpr char kSelectionExtentKey[] = "selectionExtent";
 static constexpr char kTextKey[] = "text";
 
 static constexpr char kChannelName[] = "flutter/textinput";
+
+static constexpr char kBadArgumentError[] = "Bad Arguments";
+static constexpr char kInternalConsistencyError[] =
+    "Internal Consistency Error";
 
 static constexpr uint32_t kInputModelLimit = 256;
 
@@ -42,7 +47,7 @@ void TextInputPlugin::CharHook(GLFWwindow *window, unsigned int code_point) {
   // TODO(awdavies): Actually handle potential unicode characters. Probably
   // requires some ICU data or something.
   active_model_->AddCharacter(static_cast<char>(code_point));
-  SendMessageToFlutterEngine(active_model_->GetState());
+  SendStateUpdate(*active_model_);
 }
 
 void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
@@ -54,30 +59,30 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
     switch (key) {
       case GLFW_KEY_LEFT:
         if (active_model_->MoveCursorBack()) {
-          SendMessageToFlutterEngine(active_model_->GetState());
+          SendStateUpdate(*active_model_);
         }
         break;
       case GLFW_KEY_RIGHT:
         if (active_model_->MoveCursorForward()) {
-          SendMessageToFlutterEngine(active_model_->GetState());
+          SendStateUpdate(*active_model_);
         }
         break;
       case GLFW_KEY_END:
         active_model_->MoveCursorToEnd();
-        SendMessageToFlutterEngine(active_model_->GetState());
+        SendStateUpdate(*active_model_);
         break;
       case GLFW_KEY_HOME:
         active_model_->MoveCursorToBeginning();
-        SendMessageToFlutterEngine(active_model_->GetState());
+        SendStateUpdate(*active_model_);
         break;
       case GLFW_KEY_BACKSPACE:
         if (active_model_->Backspace()) {
-          SendMessageToFlutterEngine(active_model_->GetState());
+          SendStateUpdate(*active_model_);
         }
         break;
       case GLFW_KEY_DELETE:
         if (active_model_->Delete()) {
-          SendMessageToFlutterEngine(active_model_->GetState());
+          SendStateUpdate(*active_model_);
         }
         break;
       default:
@@ -91,80 +96,78 @@ TextInputPlugin::TextInputPlugin()
 
 TextInputPlugin::~TextInputPlugin() {}
 
-Json::Value TextInputPlugin::HandlePlatformMessage(const Json::Value &message) {
-  Json::Value method = message[kMethodKey];
-  if (method.isNull()) {
-    std::cerr << "No text input method declaration" << std::endl;
-    return Json::nullValue;
-  }
-  std::string method_str = method.asString();
+void TextInputPlugin::HandleMethodCall(const MethodCall &method_call,
+                                       std::unique_ptr<MethodResult> result) {
+  const std::string &method = method_call.method_name();
 
-  // These methods are no-ops.
-  if (method_str.compare(kShowMethod) == 0 ||
-      method_str.compare(kHideMethod) == 0) {
-    return Json::nullValue;
-  }
-
-  // Clear client method takes no args. Every following method requires args.
-  if (method_str.compare(kClearClientMethod) == 0) {
+  if (method.compare(kShowMethod) == 0 || method.compare(kHideMethod) == 0) {
+    // These methods are no-ops.
+  } else if (method.compare(kClearClientMethod) == 0) {
     active_model_ = nullptr;
-    return Json::nullValue;
-  }
-
-  Json::Value args = message[kArgumentsKey];
-  if (args.isNull()) {
-    std::cerr << "Method invoked without args" << std::endl;
-    return Json::nullValue;
-  }
-
-  if (method_str.compare(kSetClientMethod) == 0) {
-    // TODO(awdavies): There's quite a wealth of arguments supplied with this
-    // method, and they should be inspected/used.
-    Json::Value client_id_json = args[0];
-    if (client_id_json.isNull()) {
-      std::cerr << "Could not set client, ID is null." << std::endl;
-      return Json::nullValue;
+  } else {
+    // Every following method requires args.
+    const Json::Value &args = method_call.arguments();
+    if (args.isNull()) {
+      result->Error(kBadArgumentError, "Method invoked without args");
+      return;
     }
-    int client_id = client_id_json.asInt();
-    if (input_models_.find(client_id) == input_models_.end()) {
-      // Skips out on adding a new input model once over the limit.
-      if (input_models_.size() > kInputModelLimit) {
-        std::cerr << "Input models over limit of " << kInputModelLimit
-                  << ". Aborting creation of new text model.";
-        return Json::nullValue;
+
+    if (method.compare(kSetClientMethod) == 0) {
+      // TODO(awdavies): There's quite a wealth of arguments supplied with this
+      // method, and they should be inspected/used.
+      Json::Value client_id_json = args[0];
+      if (client_id_json.isNull()) {
+        result->Error(kBadArgumentError, "Could not set client, ID is null.");
+        return;
       }
-      input_models_.insert(std::make_pair(
-          client_id, std::make_unique<TextInputModel>(client_id)));
+      int client_id = client_id_json.asInt();
+      if (input_models_.find(client_id) == input_models_.end()) {
+        // Skips out on adding a new input model once over the limit.
+        if (input_models_.size() > kInputModelLimit) {
+          result->Error(
+              kInternalConsistencyError,
+              "Input models over limit. Aborting creation of new text model.");
+          return;
+        }
+        input_models_.insert(std::make_pair(
+            client_id, std::make_unique<TextInputModel>(client_id)));
+      }
+      active_model_ = input_models_[client_id].get();
+    } else if (method.compare(kSetEditingStateMethod) == 0) {
+      if (active_model_ == nullptr) {
+        result->Error(
+            kInternalConsistencyError,
+            "Set editing state has been invoked, but no client is set.");
+        return;
+      }
+      Json::Value text = args[kTextKey];
+      if (text.isNull()) {
+        result->Error(kBadArgumentError,
+                      "Set editing state has been invoked, but without text.");
+        return;
+      }
+      Json::Value selection_base = args[kSelectionBaseKey];
+      Json::Value selection_extent = args[kSelectionExtentKey];
+      if (selection_base.isNull() || selection_extent.isNull()) {
+        result->Error(kInternalConsistencyError,
+                      "Selection base/extent values invalid.");
+        return;
+      }
+      active_model_->SetEditingState(selection_base.asInt(),
+                                     selection_extent.asInt(), text.asString());
+    } else {
+      // Unhandled method.
+      result->NotImplemented();
+      return;
     }
-    active_model_ = input_models_[client_id].get();
-    return Json::nullValue;
   }
+  // All error conditions return early, so if nothing has gone wrong indicate
+  // success.
+  result->Success();
+}
 
-  if (method_str.compare(kSetEditingStateMethod) == 0) {
-    if (active_model_ == nullptr) {
-      std::cerr << "Set editing state has been invoked, but no client is set."
-                << std::endl;
-      return Json::nullValue;
-    }
-    Json::Value text = args[kTextKey];
-    if (text.isNull()) {
-      std::cerr << "Set editing state has been invoked, but without text."
-                << std::endl;
-      return Json::nullValue;
-    }
-    Json::Value selection_base = args[kSelectionBaseKey];
-    Json::Value selection_extent = args[kSelectionExtentKey];
-    if (selection_base.isNull() || selection_extent.isNull()) {
-      std::cerr << "Selection base/extent values invalid." << std::endl;
-      return Json::nullValue;
-    }
-    active_model_->SetEditingState(selection_base.asInt(),
-                                   selection_extent.asInt(), text.asString());
-  }
-  // TODO(awdavies): Issue #45 dictates this is going to have to be updated
-  // to show that the command has run successfully. Current implementation just
-  // returns an empty string to the engine regardless of the result.
-  return Json::nullValue;
+void TextInputPlugin::SendStateUpdate(const TextInputModel &model) {
+  InvokeMethod(kUpdateEditingStateMethod, model.GetState());
 }
 
 }  // namespace flutter_desktop_embedding

@@ -42,14 +42,13 @@ class PluginHandler {
   // In the event that the plugin on |channel| is input blocking, calls the
   // caller-defined callbacks to block and then unblock input.
   //
-  // See the documentation for Plugin on the type of response that can be
-  // returned.
-  //
-  // If there is no plugin under |channel| Json::nullValue is returned.
-  Json::Value HandlePlatformMessage(
-      const std::string& channel, const Json::Value& message,
-      std::function<void(void)> input_block_cb = [] {},
-      std::function<void(void)> input_unblock_cb = [] {});
+  // If no plugin is registered for the channel, NotImplemented is called on
+  // |result|.
+  void HandleMethodCall(const std::string &channel,
+                        const MethodCall &method_call,
+                        std::unique_ptr<MethodResult> result,
+                        std::function<void(void)> input_block_cb = [] {},
+                        std::function<void(void)> input_unblock_cb = [] {});
 
  private:
   std::map<std::string, std::unique_ptr<Plugin>> plugins_;

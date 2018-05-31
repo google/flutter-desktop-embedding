@@ -16,9 +16,12 @@
 #include <json/json.h>
 
 #include <functional>
+#include <memory>
 #include <string>
 
 #include <embedder.h>
+
+#include "channels.h"
 
 namespace flutter_desktop_embedding {
 
@@ -37,11 +40,12 @@ class Plugin {
   explicit Plugin(std::string channel, bool input_blocking = false);
   virtual ~Plugin();
 
-  // Handles a platform message sent on this platform's channel.
+  // Handles a method call from Flutter on this platform's channel.
   //
-  // If some error has occurred or there is no valid response that can be
-  // made, must return a Json::nullValue object.
-  virtual Json::Value HandlePlatformMessage(const Json::Value &message) = 0;
+  // Implementations must call exactly one of the methods on |result|,
+  // exactly once. Failure to indicate a |result| is a memory leak.
+  virtual void HandleMethodCall(const MethodCall &method_call,
+                                std::unique_ptr<MethodResult> result) = 0;
 
   // Returns the channel on which this plugin listens.
   virtual std::string channel() const { return channel_; }
@@ -58,8 +62,8 @@ class Plugin {
   virtual void set_flutter_engine(FlutterEngine engine) { engine_ = engine; }
 
  protected:
-  // Sends a message to the flutter engine on this Plugin's channel.
-  void SendMessageToFlutterEngine(const Json::Value &json);
+  // Calls a method in the Flutter engine on this Plugin's channel.
+  void InvokeMethod(const std::string &method, const Json::Value &arguments);
 
  private:
   std::string channel_;

@@ -79,7 +79,7 @@ class TextInputModel {
   void MoveCursorToEnd();
 
   // Returns the state in the form of a platform message.
-  Json::Value GetState();
+  Json::Value GetState() const;
 
   int client_id() const { return client_id_; }
 
