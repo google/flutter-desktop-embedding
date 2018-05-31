@@ -36,10 +36,6 @@ std::unique_ptr<MethodCall> MethodCall::CreateFromMessage(
   return std::make_unique<MethodCall>(method.asString(), arguments);
 }
 
-void MethodCall::set_arguments(const Json::Value &arguments) {
-  arguments_ = arguments;
-}
-
 Json::Value MethodCall::AsMessage() const {
   Json::Value message(Json::objectValue);
   message[kMessageMethodKey] = method_name_;

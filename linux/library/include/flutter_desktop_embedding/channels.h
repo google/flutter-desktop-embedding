@@ -40,11 +40,9 @@ class MethodCall {
 
   // The name of the method being called.
   const std::string &method_name() const { return method_name_; }
-  void set_method_name(const std::string &name) { method_name_ = name; }
 
   // The arguments to the method call, or a nullValue if there are none.
   const Json::Value &arguments() const { return arguments_; }
-  void set_arguments(const Json::Value &arguments);
 
   // Returns a version of the method call serialized in the format expected by
   // the Flutter engine.
@@ -109,6 +107,8 @@ class JsonMethodResult : public MethodResult {
 
   // Sends the given response data (which must either be nullptr or a serialized
   // JSON response) to the engine.
+  // Uses a pointer rather than a reference since nullptr is used to indicate
+  // not-implemented (which is represented to Flutter by no data).
   void SendResponse(const std::string *serialized_response);
 
   FlutterEngine engine_;
