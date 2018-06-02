@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter_desktop_embedding/flutter_embedder.h>
+#include <flutter_desktop_embedding/embedder.h>
 
 #include <X11/Xlib.h>
 #include <assert.h>
@@ -24,7 +24,7 @@
 #include <memory>
 #include <string>
 
-#include <embedder.h>
+#include <flutter_embedder.h>
 #include <flutter_desktop_embedding/channels.h>
 #include <flutter_desktop_embedding/color_picker_plugin.h>
 #include <flutter_desktop_embedding/file_chooser_plugin.h>

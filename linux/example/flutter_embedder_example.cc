@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <flutter_desktop_embedding/flutter_embedder.h>
+#include <flutter_desktop_embedding/embedder.h>
 
 int main(int argc, char **argv) {
   std::string flutter_example_root = "../example_flutter";
