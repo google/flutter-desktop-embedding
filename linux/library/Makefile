@@ -41,8 +41,7 @@ $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
 # time. Instead, this duplicates the dependency information that the script
 # already has, and makes things slightly more fragile, in exchange for
 # avoiding unnecessary relinks.
-$(FLUTTER_ENGINE_LIB_FILE): \
-	../../../flutter/bin/internal/engine.version
+$(FLUTTER_ENGINE_LIB_FILE): ../../../flutter/bin/internal/engine.version
 	$(ENGINE_UPDATER) ./
 	if [ -f $(FLUTTER_ENGINE_HEADER) ]; then \
 		mv $(FLUTTER_ENGINE_HEADER) include/; \
