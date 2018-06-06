@@ -1,3 +1,4 @@
+.last_engine_version
 *.so
-embedder.h
+flutter_embedder.h
 flutter_embedder_example

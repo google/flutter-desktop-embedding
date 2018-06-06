@@ -11,7 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FLUTTER_ENGINE_LIB=flutter_engine
+FLUTTER_ENGINE_LIB_NAME=flutter_engine
+FLUTTER_ENGINE_LIB_FILE=lib$(FLUTTER_ENGINE_LIB_NAME).so
+FLUTTER_ENGINE_HEADER=flutter_embedder.h
+ENGINE_UPDATER=../../tools/update_flutter_engine
 LIBRARY_OUT=libflutter_embedder.so
 CXX=g++ -std=c++14
 CXXFLAGS= -Wall -Werror -shared -fPIC \
@@ -19,11 +22,11 @@ CXXFLAGS= -Wall -Werror -shared -fPIC \
 	$(shell pkg-config --cflags gtk+-3.0 epoxy x11 jsoncpp)
 LDFLAGS= -L$(CURDIR) \
 	$(shell pkg-config --libs gtk+-3.0 epoxy x11 jsoncpp) \
-	-lglfw -lGL -l$(FLUTTER_ENGINE_LIB) \
+	-lglfw -lGL -l$(FLUTTER_ENGINE_LIB_NAME) \
 	-Wl,-rpath=$(CURDIR)
 
 
-LIBRARIES=lib$(FLUTTER_ENGINE_LIB).so
+LIBRARIES=$(FLUTTER_ENGINE_LIB_FILE)
 HEADERS=$(shell find include/ -type f -name '*.h')
 SOURCES=$(shell find src/ -type f -name '*.cc')
 
@@ -32,6 +35,17 @@ all: $(LIBRARY_OUT)
 
 $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
 	$(CXX) $(CXXFLAGS) $(SOURCES) $(LDFLAGS) -o $@
+
+# Ideally this would use a .PHONY target since the script knows when it
+# needs to re-run, but that causes the embedder to need to re-link every
+# time. Instead, this duplicates the dependency information that the script
+# already has, and makes things slightly more fragile, in exchange for
+# avoiding unnecessary relinks.
+$(FLUTTER_ENGINE_LIB_FILE): ../../../flutter/bin/internal/engine.version
+	$(ENGINE_UPDATER) ./
+	if [ -f $(FLUTTER_ENGINE_HEADER) ]; then \
+		mv $(FLUTTER_ENGINE_HEADER) include/; \
+		fi
 
 .PHONY: clean
 clean:

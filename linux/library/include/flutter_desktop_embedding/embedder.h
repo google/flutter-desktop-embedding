@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FLUTTER_EMBEDDER_H_
-#define LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FLUTTER_EMBEDDER_H_
+#ifndef LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_EMBEDDER_H_
+#define LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_EMBEDDER_H_
 
 // Epoxy must be included before any graphics-related code.
 #include <epoxy/gl.h>
@@ -79,4 +79,4 @@ void FlutterWindowLoop(GLFWwindow *flutter_window);
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_FLUTTER_EMBEDDER_H_
+#endif  // LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_EMBEDDER_H_

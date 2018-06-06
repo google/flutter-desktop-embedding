@@ -19,7 +19,7 @@
 #include <memory>
 #include <string>
 
-#include <embedder.h>
+#include <flutter_embedder.h>
 
 #include "channels.h"
 

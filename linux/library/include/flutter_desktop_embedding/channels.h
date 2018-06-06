@@ -19,7 +19,7 @@
 #include <memory>
 #include <string>
 
-#include <embedder.h>
+#include <flutter_embedder.h>
 
 namespace flutter_desktop_embedding {
 
