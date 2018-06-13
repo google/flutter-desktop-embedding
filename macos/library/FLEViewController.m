@@ -15,7 +15,6 @@
 #import "FLEViewController.h"
 
 #import <FlutterEmbedder/FlutterEmbedder.h>
-#import "FLEColorPanelPlugin.h"
 #import "FLEFileChooserPlugin.h"
 #import "FLEReshapeListener.h"
 #import "FLETextInputPlugin.h"
@@ -385,9 +384,6 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 
   FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
   [self _addPlugin:textPlugin];
-
-  FLEColorPanelPlugin *colorPlugin = [[FLEColorPanelPlugin alloc] init];
-  [self _addPlugin:colorPlugin];
 
   FLEFileChooserPlugin *filePlugin = [[FLEFileChooserPlugin alloc] init];
   [self _addPlugin:filePlugin];

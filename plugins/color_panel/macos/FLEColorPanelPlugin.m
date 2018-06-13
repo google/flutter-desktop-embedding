@@ -14,37 +14,16 @@
 
 #import "FLEColorPanelPlugin.h"
 
-#import "FLEViewController.h"
+#import <AppKit/AppKit.h>
 
-static NSString *const kSystemMessageMethodKey = @"method";
-static NSString *const kSystemMessageArgumentsKey = @"args";
-
-static NSString *const kColorPanelChannel = @"flutter/colorpanel";
-static NSString *const kShowColorPanelMethod = @"ColorPanel.Show";
-static NSString *const kHideColorPanelMethod = @"ColorPanel.Hide";
-static NSString *const kColorPanelCallback = @"ColorPanel.Callback";
-static NSString *const kColorPanelSuccessKey = @"success";
-static NSString *const kColorComponentRedKey = @"red";
-static NSString *const kColorComponentGreenKey = @"green";
-static NSString *const kColorComponentBlueKey = @"blue";
-static const CGFloat kColorComponentMaxValue = 255.0;
-
-/**
- * Converts a color component to a number object suitable for JSON messages.
- *
- * @param component A CGFloat in the range 0-1.
- * @return An instance of NSNumber that wraps an NSInteger in the range 0-255.
- */
-static NSNumber *WrapColorComponent(CGFloat component) {
-  return @((NSInteger)(component * kColorComponentMaxValue));
-}
+#include "../common/channel_constants.h"
 
 @implementation FLEColorPanelPlugin
 
 @synthesize controller = _controller;
 
 - (NSString *)channel {
-  return kColorPanelChannel;
+  return @(kChannelName);
 }
 
 /**
@@ -53,9 +32,9 @@ static NSNumber *WrapColorComponent(CGFloat component) {
  */
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
   BOOL handled = YES;
-  if ([call.methodName isEqualToString:kShowColorPanelMethod]) {
+  if ([call.methodName isEqualToString:@(kShowColorPanelMethod)]) {
     [self showColorPanel];
-  } else if ([call.methodName isEqualToString:kHideColorPanelMethod]) {
+  } else if ([call.methodName isEqualToString:@(kHideColorPanelMethod)]) {
     [self hideColorPanel];
   } else {
     handled = NO;
@@ -70,6 +49,7 @@ static NSNumber *WrapColorComponent(CGFloat component) {
  */
 - (void)showColorPanel {
   NSColorPanel *sharedColor = [NSColorPanel sharedColorPanel];
+  sharedColor.delegate = self;
   [sharedColor setTarget:self];
   [sharedColor setAction:@selector(selectedColorDidChange)];
   if (!sharedColor.isKeyWindow) {
@@ -85,10 +65,21 @@ static NSNumber *WrapColorComponent(CGFloat component) {
     return;
   }
 
+  // Disconnect before closing to prevent invoking the close callback.
+  [self removeColorPanelConnections];
+
+  NSColorPanel *sharedColor = [NSColorPanel sharedColorPanel];
+  [sharedColor close];
+}
+
+/**
+ * Removes the connections from the shared color panel back to this instance.
+ */
+- (void)removeColorPanelConnections {
   NSColorPanel *sharedColor = [NSColorPanel sharedColorPanel];
   [sharedColor setTarget:nil];
   [sharedColor setAction:nil];
-  [sharedColor close];
+  sharedColor.delegate = nil;
 }
 
 /**
@@ -98,10 +89,9 @@ static NSNumber *WrapColorComponent(CGFloat component) {
 - (void)selectedColorDidChange {
   NSColor *color = [NSColorPanel sharedColorPanel].color;
   NSDictionary *colorDictionary = [self dictionaryWithColor:color];
-  // TODO: Eliminate the wrapping array. Requires simultaneous changes to the Dart side.
-  [_controller invokeMethod:kColorPanelCallback
-                  arguments:@[ colorDictionary ]
-                  onChannel:kColorPanelChannel];
+  [_controller invokeMethod:@(kColorSelectedCallbackMethod)
+                  arguments:colorDictionary
+                  onChannel:@(kChannelName)];
 }
 
 /**
@@ -112,10 +102,19 @@ static NSNumber *WrapColorComponent(CGFloat component) {
  */
 - (NSDictionary *)dictionaryWithColor:(NSColor *)color {
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
-  result[kColorComponentRedKey] = WrapColorComponent(color.redComponent);
-  result[kColorComponentGreenKey] = WrapColorComponent(color.greenComponent);
-  result[kColorComponentBlueKey] = WrapColorComponent(color.blueComponent);
+  result[@(kColorComponentRedKey)] = @(color.redComponent);
+  result[@(kColorComponentGreenKey)] = @(color.greenComponent);
+  result[@(kColorComponentBlueKey)] = @(color.blueComponent);
   return result;
+}
+
+#pragma mark - NSWindowDelegate
+
+- (void)windowWillClose:(NSNotification *)notification {
+  [self removeColorPanelConnections];
+  [_controller invokeMethod:@(kClosedCallbackMethod)
+                  arguments:nil
+                  onChannel:@(kChannelName)];
 }
 
 @end

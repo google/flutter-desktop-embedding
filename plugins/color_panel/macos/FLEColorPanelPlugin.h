@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
 
-#import "FLEPlugin.h"
+#import <FlutterEmbedderMac/FlutterEmbedderMac.h>
 
 /**
  * A FlutterPlugin to manage macOS's shared NSColorPanel singleton. Owned by
  * the FlutterViewController. Responsible for managing the panel's display state
  * and sending selected color data to Flutter, via system channels.
  */
-@interface FLEColorPanelPlugin : NSObject <FLEPlugin>
+@interface FLEColorPanelPlugin : NSObject <FLEPlugin, NSWindowDelegate>
 
 @end

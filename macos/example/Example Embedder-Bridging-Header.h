@@ -13,3 +13,4 @@
 // limitations under the License.
 
 #import <FlutterEmbedderMac/FlutterEmbedderMac.h>
+#import <FlutterEmbedderColorPanel/FlutterEmbedderColorPanel.h>

@@ -12,16 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import 'package:flutter/material.dart';
+import 'package:color_panel/color_panel.dart';
 
 void main() => runApp(new MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  const MyApp({Key key}) : super(key: key);
+
+  @override
+  _AppState createState() => new _AppState();
+}
+
+class _AppState extends State<MyApp> {
+  static _AppState of(BuildContext context) =>
+      context.ancestorStateOfType(const TypeMatcher<_AppState>());
+  Color _primaryColor = Colors.blue;
+
+  void setPrimaryColor(Color color) {
+    setState(() {
+      _primaryColor = color;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        primaryColor: _primaryColor,
+        accentColor: _primaryColor,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -45,17 +65,35 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _changePrimaryThemeColor(BuildContext context) {
+    final colorPanel = ColorPanel.instance;
+    if (!colorPanel.showing) {
+      colorPanel.show((color) {
+        _AppState.of(context).setPrimaryColor(color);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.color_lens),
+            tooltip: 'Change theme color',
+            onPressed: () {
+              _changePrimaryThemeColor(context);
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               'You have pushed the button this many times:',
             ),
             Text(
