@@ -22,7 +22,7 @@ dependencies:
 ```
 
 Then import it in your dart code as you would any other package:
-```
+```dart
 import 'package:color_panel/color_panel.dart';
 ```
 
@@ -35,7 +35,7 @@ When you set up your FLEViewController, before calling `launchEngine...`,
 call `-addPlugin:` with an instance of each plugin you want to use. For
 instance:
 
-```
+```objc
   [myFlutterViewController addPlugin:[[FLEColorPanelPlugin alloc] init]];
 ```
 
@@ -47,7 +47,7 @@ link the resulting library in your application.
 After creating your Flutter window, call AddPlugin with an instance of each
 plugin you want to use. For instance:
 
-```
+```cpp
   AddPlugin(window,
             std::make_unique<flutter_desktop_embedding::ColorPanelPlugin>());
 ```

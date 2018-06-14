@@ -16,17 +16,18 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 
-const _kColorPanelChannel = 'flutter/colorpanel';
-const _kShowColorPanelMethod = 'ColorPanel.Show';
-const _kHideColorPanelMethod = 'ColorPanel.Hide';
-const _kColorPanelColorSelectedCallback = 'ColorPanel.ColorSelectedCallback';
-const _kColorPanelClosedCallback = 'ColorPanel.ClosedCallback';
+// Plugin channel constants. See common/channel_constants.h for details.
+const String _kColorPanelChannel = 'flutter/colorpanel';
+const String _kShowColorPanelMethod = 'ColorPanel.Show';
+const String _kHideColorPanelMethod = 'ColorPanel.Hide';
+const String _kColorPanelColorSelectedCallback =
+    'ColorPanel.ColorSelectedCallback';
+const String _kColorPanelClosedCallback = 'ColorPanel.ClosedCallback';
+const String _kRedKey = 'red';
+const String _kGreenKey = 'green';
+const String _kBlueKey = 'blue';
 
-const _kRedKey = 'red';
-const _kGreenKey = 'green';
-const _kBlueKey = 'blue';
-
-const _platformChannel =
+const MethodChannel _platformChannel =
     const MethodChannel(_kColorPanelChannel, const JSONMethodCodec());
 
 /// A callback to pass to [ColorPanel] to receive user-selected colors.
