@@ -97,7 +97,7 @@ class ColorPanel {
   }
 
   /// Mediates between the platform channel callback and the client callback.
-  Future<Null> _wrappedColorPanelCallback(MethodCall methodCall) {
+  Future<Null> _wrappedColorPanelCallback(MethodCall methodCall) async {
     if (methodCall.method == _kColorPanelClosedCallback) {
       _callback = null;
     } else if (_callback != null &&
@@ -116,7 +116,5 @@ class ColorPanel {
         print('Exception in callback handler: $e\n$s');
       }
     }
-
-    return null;
   }
 }
