@@ -43,6 +43,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.6"
+  color_panel:
+    dependency: "direct main"
+    description:
+      path: "../plugins/color_panel"
+      relative: true
+    source: path
+    version: "0.0.0"
   convert:
     dependency: transitive
     description:

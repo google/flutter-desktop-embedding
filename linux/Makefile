@@ -12,14 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 TARGETS=all clean
-SUBDIRS=library example
+PLUGINS=color_panel
+PLUGIN_DIRS=$(patsubst %,../plugins/%/linux,$(PLUGINS))
+COMPONENT_DIRS=library example $(PLUGIN_DIRS)
 
-# Example must be built after library. This prevents accidentally building the
-# two in parallel in the event that someone supplies the -j flag to `make`.
-example: library
+# Enforce relative ordering. This prevents accidentally building the targets
+# in parallel in the event that someone supplies the -j flag to `make`.
+example: library $(PLUGIN_DIRS)
+$(PLUGIN_DIRS): library
 
-$(TARGETS): $(SUBDIRS)
-$(SUBDIRS):
+$(TARGETS): $(COMPONENT_DIRS)
+$(COMPONENT_DIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-.PHONY: $(TARGETS) $(SUBDIRS)
+.PHONY: $(TARGETS) $(COMPONENT_DIRS)

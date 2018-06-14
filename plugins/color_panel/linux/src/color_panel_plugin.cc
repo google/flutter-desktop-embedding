@@ -11,32 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter_desktop_embedding/color_picker_plugin.h>
+#include <color_panel/color_panel_plugin.h>
 
 #include <gtk/gtk.h>
 #include <iostream>
 
-static constexpr char kChannelName[] = "flutter/colorpanel";
+#include "../common/channel_constants.h"
+
 static constexpr char kWindowTitle[] = "Flutter Color Picker";
-
-static constexpr char kShowColorPanelMethod[] = "ColorPanel.Show";
-static constexpr char kHideColorPanelMethod[] = "ColorPanel.Hide";
-static constexpr char kColorPanelCallback[] = "ColorPanel.Callback";
-
-static constexpr char kColorPanelRedComponentKey[] = "red";
-static constexpr char kColorPanelGreenComponentKey[] = "green";
-static constexpr char kColorPanelBlueComponentKey[] = "blue";
-
-static const float kColorComponentMaxValue = 255.0;
 
 namespace flutter_desktop_embedding {
 
 // Private implementation class containing the color picker widget.
 //
 // This is to avoid having the user import extra GTK headers.
-class ColorPickerPlugin::ColorPicker {
+class ColorPanelPlugin::ColorPanel {
  public:
-  explicit ColorPicker(ColorPickerPlugin *parent) {
+  explicit ColorPanel(ColorPanelPlugin *parent) {
     gtk_widget_ = gtk_color_chooser_dialog_new(kWindowTitle, nullptr);
     gtk_widget_show_all(gtk_widget_);
     g_signal_connect(gtk_widget_, "close", G_CALLBACK(CloseCallback), parent);
@@ -44,7 +35,7 @@ class ColorPickerPlugin::ColorPicker {
                      parent);
   }
 
-  virtual ~ColorPicker() {
+  virtual ~ColorPanel() {
     if (gtk_widget_) {
       gtk_widget_destroy(gtk_widget_);
       gtk_widget_ = nullptr;
@@ -57,12 +48,9 @@ class ColorPickerPlugin::ColorPicker {
   // conversion assumes that the background color will be black.
   static Json::Value GdkColorToArgs(const GdkRGBA *color) {
     Json::Value result;
-    result[kColorPanelRedComponentKey] =
-        static_cast<int>((color->red * color->alpha) * kColorComponentMaxValue);
-    result[kColorPanelGreenComponentKey] = static_cast<int>(
-        (color->green * color->alpha) * kColorComponentMaxValue);
-    result[kColorPanelBlueComponentKey] = static_cast<int>(
-        (color->blue * color->alpha) * kColorComponentMaxValue);
+    result[kColorComponentRedKey] = color->red * color->alpha;
+    result[kColorComponentGreenKey] = color->green * color->alpha;
+    result[kColorComponentBlueKey] = color->blue * color->alpha;
     return result;
   }
 
@@ -71,8 +59,8 @@ class ColorPickerPlugin::ColorPicker {
   // This is not to be conflated with hitting the cancel button. That action is
   // handled in the ResponseCallback function.
   static void CloseCallback(GtkDialog *dialog, gpointer data) {
-    auto plugin = reinterpret_cast<ColorPickerPlugin *>(data);
-    plugin->HidePanel();
+    auto plugin = reinterpret_cast<ColorPanelPlugin *>(data);
+    plugin->HidePanel(ColorPanelPlugin::CloseRequestSource::kUserAction);
   }
 
   // Handler for when the user chooses a button on the chooser dialog.
@@ -80,48 +68,52 @@ class ColorPickerPlugin::ColorPicker {
   // This includes the cancel button as well as the select button.
   static void ResponseCallback(GtkWidget *dialog, gint response_id,
                                gpointer data) {
-    auto plugin = reinterpret_cast<ColorPickerPlugin *>(data);
+    auto plugin = reinterpret_cast<ColorPanelPlugin *>(data);
     if (response_id == GTK_RESPONSE_OK) {
       GdkRGBA color;
       gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dialog), &color);
-      Json::Value arguments(Json::arrayValue);
-      arguments.append(GdkColorToArgs(&color));
-      plugin->InvokeMethod(kColorPanelCallback, arguments);
+      plugin->InvokeMethod(kColorSelectedCallbackMethod,
+                           GdkColorToArgs(&color));
     }
     // Need this to close the color handler.
-    plugin->HidePanel();
+    plugin->HidePanel(CloseRequestSource::kUserAction);
   }
 
  private:
   GtkWidget *gtk_widget_;
 };
 
-ColorPickerPlugin::ColorPickerPlugin()
-    : Plugin(kChannelName), color_picker_(nullptr) {}
+ColorPanelPlugin::ColorPanelPlugin()
+    : Plugin(kChannelName), color_panel_(nullptr) {}
 
-ColorPickerPlugin::~ColorPickerPlugin() {}
+ColorPanelPlugin::~ColorPanelPlugin() {}
 
-void ColorPickerPlugin::HandleMethodCall(const MethodCall &method_call,
-                                         std::unique_ptr<MethodResult> result) {
+void ColorPanelPlugin::HandleMethodCall(const MethodCall &method_call,
+                                        std::unique_ptr<MethodResult> result) {
   if (method_call.method_name().compare(kShowColorPanelMethod) == 0) {
     result->Success();
-    // There is only one color picker that can be displayed at once.
-    // There are no channels to use the color picker, so just return.
-    if (color_picker_) {
+    // There is only one color panel that can be displayed at once.
+    // There are no channels to use the color panel, so just return.
+    if (color_panel_) {
       return;
     }
-    color_picker_ = std::make_unique<ColorPickerPlugin::ColorPicker>(this);
+    color_panel_ = std::make_unique<ColorPanelPlugin::ColorPanel>(this);
   } else if (method_call.method_name().compare(kHideColorPanelMethod) == 0) {
     result->Success();
-    if (color_picker_ == nullptr) {
+    if (color_panel_ == nullptr) {
       return;
     }
-    HidePanel();
+    HidePanel(CloseRequestSource::kPlatformChannel);
   } else {
     result->NotImplemented();
   }
 }
 
-void ColorPickerPlugin::HidePanel() { color_picker_.reset(); }
+void ColorPanelPlugin::HidePanel(CloseRequestSource source) {
+  color_panel_.reset();
+  if (source == CloseRequestSource::kUserAction) {
+    InvokeMethod(kClosedCallbackMethod);
+  }
+}
 
 }  // namespace flutter_desktop_embedding

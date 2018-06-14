@@ -13,7 +13,9 @@
 // limitations under the License.
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 
+#include <color_panel/color_panel_plugin.h>
 #include <flutter_desktop_embedding/embedder.h>
 
 int main(int argc, char **argv) {
@@ -31,6 +33,7 @@ int main(int argc, char **argv) {
       "--dart-non-checked-mode",
       NULL,
   };
+  // Start the engine.
   auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(
       640, 480, flutter_example_root + "/build/flutter_assets",
       flutter_git_root + "/bin/cache/artifacts/engine/linux-x64/icudtl.dat",
@@ -39,6 +42,11 @@ int main(int argc, char **argv) {
     glfwTerminate();
     return EXIT_FAILURE;
   }
+
+  // Register any native plugins.
+  AddPlugin(window,
+            std::make_unique<flutter_desktop_embedding::ColorPanelPlugin>());
+
   flutter_desktop_embedding::FlutterWindowLoop(window);
   glfwTerminate();
   return EXIT_SUCCESS;

@@ -63,7 +63,8 @@ class Plugin {
 
  protected:
   // Calls a method in the Flutter engine on this Plugin's channel.
-  void InvokeMethod(const std::string &method, const Json::Value &arguments);
+  void InvokeMethod(const std::string &method,
+                    const Json::Value &arguments = Json::Value());
 
  private:
   std::string channel_;

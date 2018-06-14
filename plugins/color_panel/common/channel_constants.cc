@@ -11,11 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#include "channel_constants.h"
 
-#import "FLEFileChooserPlugin.h"
-#import "FLEOpenGLContextHandling.h"
-#import "FLEPlugin.h"
-#import "FLEReshapeListener.h"
-#import "FLETextInputPlugin.h"
-#import "FLEView.h"
-#import "FLEViewController.h"
+const char kChannelName[] = "flutter/colorpanel";
+
+const char kShowColorPanelMethod[] = "ColorPanel.Show";
+const char kHideColorPanelMethod[] = "ColorPanel.Hide";
+const char kColorSelectedCallbackMethod[] = "ColorPanel.ColorSelectedCallback";
+const char kClosedCallbackMethod[] = "ColorPanel.ClosedCallback";
+
+const char kColorComponentRedKey[] = "red";
+const char kColorComponentGreenKey[] = "green";
+const char kColorComponentBlueKey[] = "blue";

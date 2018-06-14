@@ -19,6 +19,7 @@ class ExampleWindow: NSWindow {
 
   override func awakeFromNib() {
     let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
+    flutterViewController.add(FLEColorPanelPlugin())
     flutterViewController.launchEngine(
       withAssetsPath: assets,
       asHeadless: false,

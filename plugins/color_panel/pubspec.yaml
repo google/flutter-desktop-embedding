@@ -1,0 +1,5 @@
+name: color_panel
+description: Native color panel plugin for desktop Flutter
+dependencies:
+  flutter:
+    sdk: flutter
