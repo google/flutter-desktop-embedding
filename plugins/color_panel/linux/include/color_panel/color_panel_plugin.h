@@ -17,16 +17,17 @@
 
 #include <memory>
 
-namespace flutter_desktop_embedding {
+namespace plugins_color_panel {
 
 // A plugin for communicating with a native color picker panel.
-class ColorPanelPlugin : public Plugin {
+class ColorPanelPlugin : public flutter_desktop_embedding::Plugin {
  public:
   ColorPanelPlugin();
   virtual ~ColorPanelPlugin();
 
-  void HandleMethodCall(const MethodCall &method_call,
-                        std::unique_ptr<MethodResult> result) override;
+  void HandleMethodCall(
+      const flutter_desktop_embedding::MethodCall &method_call,
+      std::unique_ptr<flutter_desktop_embedding::MethodResult> result) override;
 
  protected:
   // The source of a request to hide the panel, either a user action or
@@ -42,6 +43,6 @@ class ColorPanelPlugin : public Plugin {
   std::unique_ptr<ColorPanel> color_panel_;
 };
 
-}  // namespace flutter_desktop_embedding
+}  // namespace plugins_color_panel
 
 #endif  // PLUGINS_COLOR_PANEL_LINUX_INCLUDE_COLOR_PANEL_COLOR_PANEL_PLUGIN_H_

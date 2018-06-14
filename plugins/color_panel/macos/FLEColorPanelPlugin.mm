@@ -23,7 +23,7 @@
 @synthesize controller = _controller;
 
 - (NSString *)channel {
-  return @(kChannelName);
+  return @(plugins_color_panel::kChannelName);
 }
 
 /**
@@ -32,9 +32,9 @@
  */
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
   BOOL handled = YES;
-  if ([call.methodName isEqualToString:@(kShowColorPanelMethod)]) {
+  if ([call.methodName isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
     [self showColorPanel];
-  } else if ([call.methodName isEqualToString:@(kHideColorPanelMethod)]) {
+  } else if ([call.methodName isEqualToString:@(plugins_color_panel::kHideColorPanelMethod)]) {
     [self hideColorPanel];
   } else {
     handled = NO;
@@ -89,9 +89,9 @@
 - (void)selectedColorDidChange {
   NSColor *color = [NSColorPanel sharedColorPanel].color;
   NSDictionary *colorDictionary = [self dictionaryWithColor:color];
-  [_controller invokeMethod:@(kColorSelectedCallbackMethod)
+  [_controller invokeMethod:@(plugins_color_panel::kColorSelectedCallbackMethod)
                   arguments:colorDictionary
-                  onChannel:@(kChannelName)];
+                  onChannel:@(plugins_color_panel::kChannelName)];
 }
 
 /**
@@ -102,9 +102,9 @@
  */
 - (NSDictionary *)dictionaryWithColor:(NSColor *)color {
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
-  result[@(kColorComponentRedKey)] = @(color.redComponent);
-  result[@(kColorComponentGreenKey)] = @(color.greenComponent);
-  result[@(kColorComponentBlueKey)] = @(color.blueComponent);
+  result[@(plugins_color_panel::kColorComponentRedKey)] = @(color.redComponent);
+  result[@(plugins_color_panel::kColorComponentGreenKey)] = @(color.greenComponent);
+  result[@(plugins_color_panel::kColorComponentBlueKey)] = @(color.blueComponent);
   return result;
 }
 
@@ -112,9 +112,9 @@
 
 - (void)windowWillClose:(NSNotification *)notification {
   [self removeColorPanelConnections];
-  [_controller invokeMethod:@(kClosedCallbackMethod)
+  [_controller invokeMethod:@(plugins_color_panel::kClosedCallbackMethod)
                   arguments:nil
-                  onChannel:@(kChannelName)];
+                  onChannel:@(plugins_color_panel::kChannelName)];
 }
 
 @end

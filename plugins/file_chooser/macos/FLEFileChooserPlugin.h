@@ -12,9 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEOpenGLContextHandling.h"
-#import "FLEPlugin.h"
-#import "FLEReshapeListener.h"
-#import "FLETextInputPlugin.h"
-#import "FLEView.h"
-#import "FLEViewController.h"
+#import <Foundation/Foundation.h>
+
+#import <FlutterEmbedderMac/FlutterEmbedderMac.h>
+
+/**
+ * A FlutterPlugin to handle file choosing affordances. Owned by the FlutterViewController.
+ * Responsible for creating and showing instances of NSSavePanel or NSOpenPanel and sending
+ * selected file paths to flutter clients, via system channels.
+ */
+@interface FLEFileChooserPlugin : NSObject <FLEPlugin>
+
+@end

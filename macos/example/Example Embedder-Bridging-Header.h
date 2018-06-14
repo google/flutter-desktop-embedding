@@ -14,3 +14,4 @@
 
 #import <FlutterEmbedderMac/FlutterEmbedderMac.h>
 #import <FlutterEmbedderColorPanel/FlutterEmbedderColorPanel.h>
+#import <FlutterEmbedderFileChooser/FlutterEmbedderFileChooser.h>

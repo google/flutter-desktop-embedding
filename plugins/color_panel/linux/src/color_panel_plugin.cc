@@ -20,7 +20,9 @@
 
 static constexpr char kWindowTitle[] = "Flutter Color Picker";
 
-namespace flutter_desktop_embedding {
+namespace plugins_color_panel {
+using flutter_desktop_embedding::MethodCall;
+using flutter_desktop_embedding::MethodResult;
 
 // Private implementation class containing the color picker widget.
 //
@@ -116,4 +118,4 @@ void ColorPanelPlugin::HidePanel(CloseRequestSource source) {
   }
 }
 
-}  // namespace flutter_desktop_embedding
+}  // namespace plugins_color_panel

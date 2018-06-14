@@ -16,6 +16,7 @@
 #include <memory>
 
 #include <color_panel/color_panel_plugin.h>
+#include <file_chooser/file_chooser_plugin.h>
 #include <flutter_desktop_embedding/embedder.h>
 
 int main(int argc, char **argv) {
@@ -44,8 +45,9 @@ int main(int argc, char **argv) {
   }
 
   // Register any native plugins.
+  AddPlugin(window, std::make_unique<plugins_color_panel::ColorPanelPlugin>());
   AddPlugin(window,
-            std::make_unique<flutter_desktop_embedding::ColorPanelPlugin>());
+            std::make_unique<plugins_file_chooser::FileChooserPlugin>());
 
   flutter_desktop_embedding::FlutterWindowLoop(window);
   glfwTerminate();

@@ -14,6 +14,8 @@
 #ifndef PLUGINS_COLOR_PANEL_COMMON_CHANNEL_CONSTANTS_H_
 #define PLUGINS_COLOR_PANEL_COMMON_CHANNEL_CONSTANTS_H_
 
+namespace plugins_color_panel {
+
 // This file contains constants used in the platform channel, which are shared
 // across all native platform implementations.
 
@@ -35,5 +37,7 @@ extern const char kClosedCallbackMethod[];
 extern const char kColorComponentRedKey[];
 extern const char kColorComponentGreenKey[];
 extern const char kColorComponentBlueKey[];
+
+}  // namespace plugins_color_panel
 
 #endif  // PLUGINS_COLOR_PANEL_COMMON_CHANNEL_CONSTANTS_H_
