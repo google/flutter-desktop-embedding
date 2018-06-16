@@ -78,6 +78,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.1"
+  file_chooser:
+    dependency: "direct main"
+    description:
+      path: "../plugins/file_chooser"
+      relative: true
+    source: path
+    version: "0.0.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -374,4 +381,4 @@ packages:
     source: hosted
     version: "2.1.13"
 sdks:
-  dart: ">=2.0.0-dev.52.0 <=2.0.0-dev.54.0.flutter-46ab040e58"
+  dart: ">=2.0.0-dev.52.0 <=2.0.0-dev.58.0.flutter-f981f09760"

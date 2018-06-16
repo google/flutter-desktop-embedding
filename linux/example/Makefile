@@ -17,7 +17,7 @@ FLUTTER_EXAMPLE_DIR=../../example_flutter
 FLUTTER_BIN_FROM_EXAMPLE_DIR=../../flutter/bin/flutter
 BIN_OUT=flutter_embedder_example
 
-PLUGINS=color_panel
+PLUGINS=color_panel file_chooser
 FLUTTER_EMBEDDER_LIB_DIR=$(CURDIR)/../library
 PLUGIN_DIRS=$(patsubst %,$(CURDIR)/../../plugins/%/linux,$(PLUGINS))
 LIBRARY_DIRS=$(FLUTTER_EMBEDDER_LIB_DIR) $(PLUGIN_DIRS)

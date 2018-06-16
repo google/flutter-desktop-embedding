@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-LIBRARY_OUT=libflutter_embedder_color_panel.so
+LIBRARY_OUT=libflutter_embedder_file_chooser.so
 
 # For dependency on the embedder shared library.
 EMBEDDER_LIBRARY_DIR=$(CURDIR)/../../../linux/library

@@ -13,17 +13,19 @@
 // limitations under the License.
 #include "channel_constants.h"
 
-namespace plugins_color_panel {
+namespace plugins_file_chooser {
 
-const char kChannelName[] = "flutter/colorpanel";
+const char kChannelName[] = "flutter/filechooser";
 
-const char kShowColorPanelMethod[] = "ColorPanel.Show";
-const char kHideColorPanelMethod[] = "ColorPanel.Hide";
-const char kColorSelectedCallbackMethod[] = "ColorPanel.ColorSelectedCallback";
-const char kClosedCallbackMethod[] = "ColorPanel.ClosedCallback";
+const char kShowOpenPanelMethod[] = "FileChooser.Show.Open";
+const char kShowSavePanelMethod[] = "FileChooser.Show.Save";
 
-const char kColorComponentRedKey[] = "red";
-const char kColorComponentGreenKey[] = "green";
-const char kColorComponentBlueKey[] = "blue";
+const char kInitialDirectoryKey[] = "initialDirectory";
+const char kInitialFileNameKey[] = "initialFileName";
+const char kAllowedFileTypesKey[] = "allowedFileTypes";
+const char kConfirmButtonTextKey[] = "confirmButtonText";
 
-}  // namespace plugins_color_panel
+const char kAllowsMultipleSelectionKey[] = "allowsMultipleSelection";
+const char kCanChooseDirectoriesKey[] = "canChooseDirectories";
+
+}  // namespace plugins_file_chooser

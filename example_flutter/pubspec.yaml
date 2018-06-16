@@ -9,8 +9,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.0
 
+  # Desktop embedder plugins.
   color_panel:
     path: ../plugins/color_panel
+  file_chooser:
+    path: ../plugins/file_chooser
 
 dev_dependencies:
   flutter_test:

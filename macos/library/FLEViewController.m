@@ -15,7 +15,6 @@
 #import "FLEViewController.h"
 
 #import <FlutterEmbedder/FlutterEmbedder.h>
-#import "FLEFileChooserPlugin.h"
 #import "FLEReshapeListener.h"
 #import "FLETextInputPlugin.h"
 #import "FLEView.h"
@@ -384,9 +383,6 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 
   FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
   [self _addPlugin:textPlugin];
-
-  FLEFileChooserPlugin *filePlugin = [[FLEFileChooserPlugin alloc] init];
-  [self _addPlugin:filePlugin];
 }
 
 - (BOOL)acceptsFirstResponder {

@@ -13,10 +13,13 @@
 // limitations under the License.
 import 'package:flutter/material.dart';
 import 'package:color_panel/color_panel.dart';
+import 'package:file_chooser/file_chooser.dart' as file_chooser;
 
 void main() => runApp(new MyApp());
 
+/// Top level widget for the example application.
 class MyApp extends StatefulWidget {
+  /// Constructs a new app with the given [key].
   const MyApp({Key key}) : super(key: key);
 
   @override
@@ -43,20 +46,20 @@ class _AppState extends State<MyApp> {
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: _MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key key, this.title}) : super(key: key);
+class _MyHomePage extends StatefulWidget {
+  const _MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<_MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -100,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.display1,
             ),
+            FileChooserTestWidget(),
           ],
         ),
       ),
@@ -110,4 +114,52 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+/// A widget containing controls to test the file chooser plugin.
+class FileChooserTestWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ButtonBar(
+      alignment: MainAxisAlignment.center,
+      children: <Widget>[
+        new FlatButton(
+          child: const Text('SAVE'),
+          onPressed: () {
+            file_chooser.showSavePanel((result, paths) {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text(_resultTextForFileChooserOperation(
+                        _FileChooserType.save, result, paths)),
+                  ));
+            }, suggestedFileName: 'save_test.txt');
+          },
+        ),
+        new FlatButton(
+          child: const Text('OPEN'),
+          onPressed: () {
+            file_chooser.showOpenPanel((result, paths) {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text(_resultTextForFileChooserOperation(
+                        _FileChooserType.open, result, paths)),
+                  ));
+            }, allowsMultipleSelection: true);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+/// Possible file chooser operation types.
+enum _FileChooserType { save, open }
+
+/// Returns display text reflecting the result of a file chooser operation.
+String _resultTextForFileChooserOperation(
+    _FileChooserType type, file_chooser.FileChooserResult result,
+    [List<String> paths]) {
+  if (result == file_chooser.FileChooserResult.cancel) {
+    return '${type == _FileChooserType.open ? 'Open' : 'Save'} cancelled';
+  }
+  final statusText = type == _FileChooserType.open ? 'Opened' : 'Saved';
+  return '$statusText: ${paths.join('\n')}';
 }

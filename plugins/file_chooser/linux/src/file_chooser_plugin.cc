@@ -11,39 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter_desktop_embedding/file_chooser_plugin.h>
+#include <file_chooser/file_chooser_plugin.h>
 
 #include <gtk/gtk.h>
 #include <iostream>
 #include <vector>
 
-static constexpr char kChannelName[] = "flutter/filechooser";
-
-// File chooser methods.
-static constexpr char kFileOpenMethod[] = "FileChooser.Show.Open";
-static constexpr char kFileSaveMethod[] = "FileChooser.Show.Save";
-
-// File chooser args.
-static constexpr char kAllowedFileTypesKey[] = "allowedFileTypes";
-static constexpr char kAllowsMultipleSelectionKey[] = "allowsMultipleSelection";
-static constexpr char kCanChooseDirectoriesKey[] = "canChooseDirectories";
-static constexpr char kInitialDirectoryKey[] = "initialDirectory";
-static constexpr char kClientIdKey[] = "clientID";
-static constexpr char kOkButtonLabelKey[] = "confirmButtonLabel";
-static constexpr char kInitialFileNameKey[] = "initialFileName";
-
-// File chooser callback methods.
-static constexpr char kFileCallbackMethod[] = "FileChooser.Callback";
-
-// File chooser callback args.
-static constexpr char kPathsKey[] = "paths";
-static constexpr char kResultKey[] = "result";
+#include "../common/channel_constants.h"
 
 // File chooser callback results.
 static constexpr int kCancelResultValue = 0;
 static constexpr int kOkResultValue = 1;
 
-namespace flutter_desktop_embedding {
+namespace plugins_file_chooser {
+using flutter_desktop_embedding::MethodCall;
+using flutter_desktop_embedding::MethodResult;
 
 // Applies filters to the file chooser.
 //
@@ -99,20 +81,20 @@ static void ProcessAttributes(const Json::Value &method_args,
 
 // Creates a file chooser based on the method type.
 //
-// If the method type is the open method (defined under kFileOpenMethod), then
-// this returns a file opener dialog. If it is a kFileSaveMethod string, then
-// this returns a file saver dialog.
+// If the method type is the open method (defined under kShowOpenFileMethod),
+// then this returns a file opener dialog. If it is a kShowSaveFileMethod
+// string, then this returns a file saver dialog.
 //
 // If the method is not recognized as one of those above, will return a nullptr.
 static GtkFileChooserNative *CreateFileChooserFromMethod(
     const std::string &method, const std::string &ok_button) {
   GtkFileChooserNative *chooser = nullptr;
-  if (method == kFileOpenMethod) {
+  if (method == kShowOpenPanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
     chooser = gtk_file_chooser_native_new(
         "Open File", NULL, action,
         ok_button.empty() ? "_Open" : ok_button.c_str(), "_Cancel");
-  } else if (method == kFileSaveMethod) {
+  } else if (method == kShowSavePanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
     chooser = gtk_file_chooser_native_new(
         "Save File", NULL, action,
@@ -127,7 +109,7 @@ static GtkFileChooserNative *CreateFileChooserFromMethod(
 // being able to choose multiple files, etc.
 static GtkFileChooserNative *CreateFileChooser(const std::string &method,
                                                const Json::Value &args) {
-  Json::Value ok_button_value = args[kOkButtonLabelKey];
+  Json::Value ok_button_value = args[kConfirmButtonTextKey];
   std::string ok_button_str;
   if (!ok_button_value.isNull()) {
     ok_button_str = ok_button_value.asString();
@@ -144,24 +126,19 @@ static GtkFileChooserNative *CreateFileChooser(const std::string &method,
   return chooser;
 }
 
-// Creates a valid callback arguments JSON object.
+// Creates a valid response JSON object given the list of filenames.
 //
-// This is based on the results of the file chooser termination.
-static Json::Value CreateCallbackArguments(
-    const std::vector<std::string> &filenames, gint chooser_res,
-    const Json::Value &call_arguments) {
-  Json::Value arguments(Json::objectValue);
-  if (chooser_res == GTK_RESPONSE_ACCEPT) {
-    arguments[kPathsKey] = Json::arrayValue;
-    for (const std::string &filename : filenames) {
-      arguments[kPathsKey].append(filename);
-    }
-    arguments[kResultKey] = kOkResultValue;
-  } else {
-    arguments[kResultKey] = kCancelResultValue;
+// An empty array is treated as a cancelled operation.
+static Json::Value CreateResponseObject(
+    const std::vector<std::string> &filenames) {
+  if (filenames.empty()) {
+    return Json::Value();
   }
-  arguments[kClientIdKey] = call_arguments[kClientIdKey];
-  return arguments;
+  Json::Value response(Json::arrayValue);
+  for (const std::string &filename : filenames) {
+    response.append(filename);
+  }
+  return response;
 }
 
 FileChooserPlugin::FileChooserPlugin() : Plugin(kChannelName, true) {}
@@ -201,12 +178,7 @@ void FileChooserPlugin::HandleMethodCall(const MethodCall &method_call,
   }
   g_object_unref(chooser);
 
-  // TODO: Eliminate the seperate response message, and send the results back
-  // here. This will require simultaneous changes on the Dart side.
-  result->Success();
-  InvokeMethod(
-      kFileCallbackMethod,
-      CreateCallbackArguments(filenames, chooser_res, method_call.arguments()));
+  result->Success(CreateResponseObject(filenames));
 }
 
-}  // namespace flutter_desktop_embedding
+}  // namespace plugins_file_chooser
