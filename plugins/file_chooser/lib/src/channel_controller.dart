@@ -93,7 +93,7 @@ class FileChooserChannelController {
   FileChooserChannelController._();
 
   /// A reference to the singleton instance of the class.
-  static FileChooserChannelController instance =
+  static final FileChooserChannelController instance =
       new FileChooserChannelController._();
 
   /// Shows a file chooser of [type] configured with [options], calling

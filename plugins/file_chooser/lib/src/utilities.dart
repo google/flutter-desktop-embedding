@@ -44,11 +44,8 @@ void showOpenPanel(FileChooserCallback callback,
 ///
 /// A number of configuration options are available:
 /// - [initialDirectory] defaults the panel to the given directory path.
+/// - [suggestedFileName] provides an initial value for the save filename.
 /// - [allowedFileTypes] restricts selection to the given file types.
-/// - [allowsMultipleSelection] controls whether or not more than one file
-///   can be selected. Defaults to single file selection if unset.
-/// - [canSelectDirectories] allows choosing directories instead of files.
-///   Defaults to file selection if unset.
 /// - [confirmButtonText] overrides the button that confirms selection.
 void showSavePanel(FileChooserCallback callback,
     {String initialDirectory,

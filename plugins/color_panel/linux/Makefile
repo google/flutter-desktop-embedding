@@ -18,12 +18,12 @@ EMBEDDER_LIBRARY_DIR=$(CURDIR)/../../../linux/library
 EMBEDDER_LIB_NAME=flutter_engine
 EMBEDDER_LIB_FILE=$(EMBEDDER_LIBRARY_DIR)/lib$(EMBEDDER_LIB_NAME).so
 
-COMMON_DIR=../common
+COMMON_DIR=$(CURDIR)/../common
 
 CXX=g++ -std=c++14
 CXXFLAGS= -Wall -Werror -shared -fPIC \
 	-I$(CURDIR)/include \
-	-I$(CURDIR)/$(COMMON_DIR) \
+	-I$(COMMON_DIR) \
 	-I$(EMBEDDER_LIBRARY_DIR)/include \
 	$(shell pkg-config --cflags gtk+-3.0 jsoncpp)
 LDFLAGS= -L$(EMBEDDER_LIBRARY_DIR) \

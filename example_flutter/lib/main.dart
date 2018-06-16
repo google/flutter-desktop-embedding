@@ -17,7 +17,9 @@ import 'package:file_chooser/file_chooser.dart' as file_chooser;
 
 void main() => runApp(new MyApp());
 
+/// Top level widget for the example application.
 class MyApp extends StatefulWidget {
+  /// Constructs a new app with the given [key].
   const MyApp({Key key}) : super(key: key);
 
   @override
@@ -44,20 +46,20 @@ class _AppState extends State<MyApp> {
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: _MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key key, this.title}) : super(key: key);
+class _MyHomePage extends StatefulWidget {
+  const _MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<_MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
