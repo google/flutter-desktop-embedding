@@ -33,6 +33,7 @@
 		1EEF8E081FD1F0C300DD563C /* FLEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EEF8E061FD1F0C300DD563C /* FLEView.m */; };
 		33D7B59920A4F54400296EFC /* FLEChannels.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D7B59720A4F54400296EFC /* FLEChannels.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33D7B59A20A4F54400296EFC /* FLEChannels.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D7B59820A4F54400296EFC /* FLEChannels.m */; };
+		64C76C2820D7BE2E00B16256 /* FLEKeyEventPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 64C76C2720D7BE2E00B16256 /* FLEKeyEventPlugin.m */; };
 		AA8AE8B81FD948AC00B6FB31 /* FLETextInputModel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */; };
 		AA8AE8BA1FD948BA00B6FB31 /* FLETextInputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */; };
 		C4C1FE441FD74F6400691968 /* FlutterEmbedder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */; };
@@ -78,6 +79,8 @@
 		33B1650F201A5F7D00732DC9 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/macos/FlutterEmbedder.framework; sourceTree = SOURCE_ROOT; };
 		33D7B59720A4F54400296EFC /* FLEChannels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEChannels.h; sourceTree = "<group>"; };
 		33D7B59820A4F54400296EFC /* FLEChannels.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEChannels.m; sourceTree = "<group>"; };
+		64C76C2620D7BDFB00B16256 /* FLEKeyEventPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEKeyEventPlugin.h; sourceTree = "<group>"; };
+		64C76C2720D7BE2E00B16256 /* FLEKeyEventPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEKeyEventPlugin.m; sourceTree = "<group>"; };
 		AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLETextInputModel.h; sourceTree = "<group>"; };
 		AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLETextInputModel.m; sourceTree = "<group>"; };
 		C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/macos/FlutterEmbedder.framework; sourceTree = "<group>"; };
@@ -104,6 +107,7 @@
 				33D7B59820A4F54400296EFC /* FLEChannels.m */,
 				AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */,
 				1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.m */,
+				64C76C2720D7BE2E00B16256 /* FLEKeyEventPlugin.m */,
 				1E2492361FCF50BE00DD3BBB /* FLEViewController.m */,
 				1EEF8E061FD1F0C300DD563C /* FLEView.m */,
 				1E2492381FCF50BE00DD3BBB /* Info.plist */,
@@ -129,6 +133,7 @@
 				1E2492321FCF50BE00DD3BBB /* FLEReshapeListener.h */,
 				AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */,
 				1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */,
+				64C76C2620D7BDFB00B16256 /* FLEKeyEventPlugin.h */,
 				1E2492351FCF50BE00DD3BBB /* FLEViewController.h */,
 				1EEF8E051FD1F0C300DD563C /* FLEView.h */,
 			);
@@ -255,6 +260,7 @@
 			files = (
 				33D7B59A20A4F54400296EFC /* FLEChannels.m in Sources */,
 				1E2492401FCF50BE00DD3BBB /* FLEViewController.m in Sources */,
+				64C76C2820D7BE2E00B16256 /* FLEKeyEventPlugin.m in Sources */,
 				1E24923E1FCF50BE00DD3BBB /* FLETextInputPlugin.m in Sources */,
 				1EEF8E081FD1F0C300DD563C /* FLEView.m in Sources */,
 				AA8AE8BA1FD948BA00B6FB31 /* FLETextInputModel.m in Sources */,

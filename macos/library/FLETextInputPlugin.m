@@ -91,10 +91,10 @@ static NSString *const kUpdateEditStateResponseMethod = @"TextInputClient.update
       _textInputModels[_activeClientID] = [[FLETextInputModel alloc] init];
     }
   } else if ([method isEqualToString:kShowMethod]) {
-    [_controller.view.window makeFirstResponder:self];
+    [self.controller.additionalKeyResponders addObject:self];
     [_textInputContext activate];
   } else if ([method isEqualToString:kHideMethod]) {
-    [_controller.view.window makeFirstResponder:nil];
+    [self.controller.additionalKeyResponders removeObject:self];
     [_textInputContext deactivate];
   } else if ([method isEqualToString:kClearClientMethod]) {
     _activeClientID = nil;
@@ -123,10 +123,6 @@ static NSString *const kUpdateEditStateResponseMethod = @"TextInputClient.update
 
 #pragma mark -
 #pragma mark NSResponder
-
-- (BOOL)acceptsFirstResponder {
-  return YES;
-}
 
 /**
  * Note, the Apple docs suggest that clients should override essentially all the

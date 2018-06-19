@@ -33,6 +33,11 @@
 @property(nullable) NSView<FLEOpenGLContextHandling> *view;
 
 /**
+ * A list of additional responders to keyboard events. Keybord events are forwarded to all of them.
+ */
+@property NSMutableSet<NSResponder*> *additionalKeyResponders;
+
+/**
  * Launches the Flutter engine in snapshot mode with the provided configuration. The path argument
  * is used to identify the Flutter application the engine should be configured with. See
  * https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for more information
@@ -71,12 +76,20 @@
 - (BOOL)addPlugin:(nonnull id<FLEPlugin>)plugin;
 
 /**
- * Sends a platform message to the Flutter engine on the given channel.
+ * Sends a platform message to the Flutter engine on the given channel
+ * @param method The method name.
+ * @param arguments The method arguments.
  *
  * // TODO: Support responses.
  */
 - (void)invokeMethod:(nonnull NSString *)method
            arguments:(nullable id)arguments
            onChannel:(nonnull NSString *)channel;
+
+/**
+ * Sends a platform message to the Flutter engine on the given channel.
+ * @param message The raw message.
+ */
+- (void)dispatchMessage:(nonnull NSDictionary*)message onChannel:(nonnull NSString *)channel;
 
 @end
