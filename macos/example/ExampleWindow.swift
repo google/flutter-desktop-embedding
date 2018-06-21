@@ -21,6 +21,7 @@ class ExampleWindow: NSWindow {
     let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
     flutterViewController.add(FLEColorPanelPlugin())
     flutterViewController.add(FLEFileChooserPlugin())
+    flutterViewController.add(FLEMenubarPlugin())
     flutterViewController.launchEngine(
       withAssetsPath: assets,
       asHeadless: false,

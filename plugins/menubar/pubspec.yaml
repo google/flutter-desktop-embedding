@@ -1,0 +1,7 @@
+name: menubar
+description: Native menubar plugin for desktop Flutter
+dependencies:
+  flutter:
+    sdk: flutter
+  meta: ^1.1.5
+

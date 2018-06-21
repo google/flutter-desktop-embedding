@@ -11,9 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:color_panel/color_panel.dart';
 import 'package:file_chooser/file_chooser.dart' as file_chooser;
+import 'package:menubar/menubar.dart';
 
 void main() => runApp(new MyApp());
 
@@ -27,18 +30,91 @@ class MyApp extends StatefulWidget {
 }
 
 class _AppState extends State<MyApp> {
+  Color _primaryColor = Colors.blue;
+  int _counter = 0;
+
   static _AppState of(BuildContext context) =>
       context.ancestorStateOfType(const TypeMatcher<_AppState>());
-  Color _primaryColor = Colors.blue;
 
+  /// Sets the primary color of the example app.
   void setPrimaryColor(Color color) {
     setState(() {
       _primaryColor = color;
     });
   }
 
+  void incrementCounter() {
+    _setCounter(_counter + 1);
+  }
+
+  void _decrementCounter() {
+    _setCounter(_counter - 1);
+  }
+
+  void _setCounter(int value) {
+    setState(() {
+      _counter = value;
+    });
+  }
+
+  /// Rebuilds the native menu bar based on the current state.
+  void updateMenubar() {
+    // Currently the menubar plugin is only implemented on macOS.
+    if (!Platform.isMacOS) {
+      return;
+    }
+    setApplicationMenu([
+      Submenu(label: 'Color', children: [
+        MenuItem(
+            label: 'Reset',
+            enabled: _primaryColor != Colors.blue,
+            onClicked: () {
+              setPrimaryColor(Colors.blue);
+            }),
+        MenuDivider(),
+        Submenu(label: 'Presets', children: [
+          MenuItem(
+              label: 'Red',
+              enabled: _primaryColor != Colors.red,
+              onClicked: () {
+                setPrimaryColor(Colors.red);
+              }),
+          MenuItem(
+              label: 'Green',
+              enabled: _primaryColor != Colors.green,
+              onClicked: () {
+                setPrimaryColor(Colors.green);
+              }),
+          MenuItem(
+              label: 'Purple',
+              enabled: _primaryColor != Colors.deepPurple,
+              onClicked: () {
+                setPrimaryColor(Colors.deepPurple);
+              }),
+        ])
+      ]),
+      Submenu(label: 'Counter', children: [
+        MenuItem(
+            label: 'Reset',
+            enabled: _counter != 0,
+            onClicked: () {
+              _setCounter(0);
+            }),
+        MenuDivider(),
+        MenuItem(label: 'Increment', onClicked: incrementCounter),
+        MenuItem(
+            label: 'Decrement',
+            enabled: _counter > 0,
+            onClicked: _decrementCounter),
+      ]),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Any time the state changes, the menu needs to be rebuilt.
+    updateMenubar();
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -46,27 +122,16 @@ class _AppState extends State<MyApp> {
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
       ),
-      home: _MyHomePage(title: 'Flutter Demo Home Page'),
+      home: _MyHomePage(title: 'Flutter Demo Home Page', counter: _counter),
     );
   }
 }
 
-class _MyHomePage extends StatefulWidget {
-  const _MyHomePage({Key key, this.title}) : super(key: key);
+class _MyHomePage extends StatelessWidget {
   final String title;
+  final int counter;
 
-  @override
-  _MyHomePageState createState() => new _MyHomePageState();
-}
-
-class _MyHomePageState extends State<_MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  const _MyHomePage({this.title, this.counter = 0});
 
   void _changePrimaryThemeColor(BuildContext context) {
     final colorPanel = ColorPanel.instance;
@@ -81,7 +146,7 @@ class _MyHomePageState extends State<_MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
         actions: <Widget>[
           new IconButton(
             icon: new Icon(Icons.color_lens),
@@ -100,7 +165,7 @@ class _MyHomePageState extends State<_MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Text(
-              '$_counter',
+              '$counter',
               style: Theme.of(context).textTheme.display1,
             ),
             FileChooserTestWidget(),
@@ -108,7 +173,7 @@ class _MyHomePageState extends State<_MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _AppState.of(context).incrementCounter,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),

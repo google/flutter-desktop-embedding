@@ -296,7 +296,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   FLEMethodResult resultHandler = ^(id result) {
     NSData *responseData = EngineResponseForMethodResult(result);
     if (responseHandle) {
-      FlutterEngineSendPlatformMessageResponse(_engine, responseHandle, responseData.bytes,
+      FlutterEngineSendPlatformMessageResponse(self->_engine, responseHandle, responseData.bytes,
                                                responseData.length);
       responseHandle = NULL;
     } else {
