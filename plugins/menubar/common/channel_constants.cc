@@ -11,8 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#include "channel_constants.h"
 
-#import <FlutterEmbedderMac/FlutterEmbedderMac.h>
-#import <FlutterEmbedderColorPanel/FlutterEmbedderColorPanel.h>
-#import <FlutterEmbedderFileChooser/FlutterEmbedderFileChooser.h>
-#import <FlutterEmbedderMenubar/FlutterEmbedderMenubar.h>
+namespace plugins_menubar {
+
+const char kChannelName[] = "flutter/menubar";
+
+const char kMenuSetMethod[] = "Menubar.SetMenu";
+const char kMenuItemSelectedCallbackMethod[] = "Menubar.SelectedCallback";
+
+const char kIdKey[] = "id";
+const char kLabelKey[] = "label";
+const char kEnabledKey[] = "enabled";
+const char kChildrenKey[] = "children";
+const char kDividerKey[] = "isDivider";
+
+}  // namespace plugins_menubar

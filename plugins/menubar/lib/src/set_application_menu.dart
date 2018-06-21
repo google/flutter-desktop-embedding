@@ -11,8 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import 'dart:async';
 
-#import <FlutterEmbedderMac/FlutterEmbedderMac.h>
-#import <FlutterEmbedderColorPanel/FlutterEmbedderColorPanel.h>
-#import <FlutterEmbedderFileChooser/FlutterEmbedderFileChooser.h>
-#import <FlutterEmbedderMenubar/FlutterEmbedderMenubar.h>
+import 'menu_channel.dart';
+import 'menu_item.dart';
+
+/// Sets the application menu for the app based on the [menuSpec].
+///
+/// Adjacent [MenuDivider]s will be coalesced, leading and/or trailing
+/// [MenuDivider]s will be removed.
+Future<Null> setApplicationMenu(List<Submenu> menuSpec) async {
+  await MenuChannel.instance.setMenu(menuSpec);
+}

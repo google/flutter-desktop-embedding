@@ -12,7 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import <AppKit/AppKit.h>
+
 #import <FlutterEmbedderMac/FlutterEmbedderMac.h>
-#import <FlutterEmbedderColorPanel/FlutterEmbedderColorPanel.h>
-#import <FlutterEmbedderFileChooser/FlutterEmbedderFileChooser.h>
-#import <FlutterEmbedderMenubar/FlutterEmbedderMenubar.h>
+
+/**
+ * A Flutter plugin to control the native menu bar.
+ */
+@interface FLEMenubarPlugin : NSObject <FLEPlugin>
+
+/**
+ * The menu item that Flutter-provided menus should be inserted after. If unset, Flutter-provided
+ * menus will be inserted after the application menu (i.e., starting at index 1).
+ */
+@property(nonatomic) NSMenuItem *insertAfterMenuItem;
+
+@end
