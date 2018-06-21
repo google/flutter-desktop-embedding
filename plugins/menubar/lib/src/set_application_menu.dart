@@ -21,5 +21,5 @@ import 'menu_item.dart';
 /// Adjacent [MenuDivider]s will be coalesced, leading and/or trailing
 /// [MenuDivider]s will be removed.
 Future<Null> setApplicationMenu(List<Submenu> menuSpec) async {
-  MenuChannel.instance.setMenu(menuSpec);
+  await MenuChannel.instance.setMenu(menuSpec);
 }

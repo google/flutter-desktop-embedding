@@ -60,14 +60,12 @@ class MenuChannel {
   /// How exactly this is handled is subject to platform interpretation.
   /// For instance, special menus that are handled entirely on the native
   /// side might be added to the provided menus.
-  void setMenu(List<Submenu> menus) {
+  Future<Null> setMenu(List<Submenu> menus) async {
     try {
       _updateInProgress = true;
-      _platformChannel
-          .invokeMethod(_kMenuSetMethod, _jsonRepresentationForMenus(menus))
-          .then((_) {
-        _updateInProgress = false;
-      });
+      await _platformChannel.invokeMethod(
+          _kMenuSetMethod, _jsonRepresentationForMenus(menus));
+      _updateInProgress = false;
     } on PlatformException catch (e) {
       print('Platform exception setting menu: ${e.message}');
     }
