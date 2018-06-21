@@ -30,22 +30,22 @@ const String _kDividerKey = 'isDivider';
 /// A singleton object that handles the interaction with the menu bar platform
 /// channel.
 class MenuChannel {
-  static const MethodChannel _platformChannel =
+  final MethodChannel _platformChannel =
       const MethodChannel(_kMenuChannelName, const JSONMethodCodec());
 
   /// Map from unique identifiers assigned by this class to the callbacks for
   /// those menu items.
-  static final Map<int, MenuSelectedCallback> _selectionCallbacks = {};
+  final Map<int, MenuSelectedCallback> _selectionCallbacks = {};
 
   /// The ID to use the next time a menu item needs an ID assigned.
-  static int _nextMenuItemId = 1;
+  int _nextMenuItemId = 1;
 
   /// Whether or not a call to [_kMenuSetMethod] is outstanding.
   ///
   /// This is used to drop any menu callbacks that aren't received until
   /// after a new call to setMenu, so that clients don't received unexpected
   /// stale callbacks.
-  static bool _updateInProgress;
+  bool _updateInProgress;
 
   /// Private constructor.
   MenuChannel._() {
