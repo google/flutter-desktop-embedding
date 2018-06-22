@@ -12,7 +12,7 @@ from this repository.
 ### Flutter
 
 Add local package references for the plugins you want to use to your
-pubspec.yaml. E.g.,:
+pubspec.yaml. For example:
 
 ```
 dependencies:
@@ -41,7 +41,7 @@ instance:
 
 ### Linux
 
-Run `make` in the linux directory for each plugin you want to use, then
+Run `make` in the `linux` directory for each plugin you want to use, then
 link the resulting library in your application.
 
 After creating your Flutter window, call AddPlugin with an instance of each
@@ -49,13 +49,16 @@ plugin you want to use. For instance:
 
 ```cpp
   AddPlugin(window,
-            std::make_unique<flutter_desktop_embedding::ColorPanelPlugin>());
+            std::make_unique<plugins_color_panel::ColorPanelPlugin>());
 ```
 
 ### Example Application
 
-See the example application under example/ in each platform's top-level
+See the example application under `example` in each platform's top-level
 directory to see an example of including optional plugins on that platform.
+
+The Flutter application under `example_flutter` shows examples of using
+optional plugins on the Dart side.
 
 ## Writing your own plugins
 
