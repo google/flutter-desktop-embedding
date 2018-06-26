@@ -164,10 +164,11 @@ class _MyHomePage extends StatelessWidget {
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
+            new Text(
               '$counter',
               style: Theme.of(context).textTheme.display1,
             ),
+            TextInputTestWidget(),
             FileChooserTestWidget(),
           ],
         ),
@@ -211,6 +212,37 @@ class FileChooserTestWidget extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+/// A widget containing controls to test text input.
+class TextInputTestWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const <Widget>[
+        SampleTextField(),
+        SampleTextField(),
+      ],
+    );
+  }
+}
+
+/// A text field with styling suitable for including in a TextInputTestWidget.
+class SampleTextField extends StatelessWidget {
+  /// Creates a new sample text field.
+  const SampleTextField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 200.0,
+      padding: const EdgeInsets.all(10.0),
+      child: TextField(
+        decoration: InputDecoration(border: OutlineInputBorder()),
+      ),
     );
   }
 }
