@@ -148,7 +148,7 @@ Json::Value TextInputModel::GetState() const {
       static_cast<int>(selection_base_ - text_.begin());
   editing_state[kSelectionExtentKey] =
       static_cast<int>(selection_extent_ - text_.begin());
-  editing_state[kSelectionIsDirectionalKey] = 0;
+  editing_state[kSelectionIsDirectionalKey] = false;
   editing_state[kTextKey] = text_;
 
   // TODO(stuartmorgan): Move client_id out up to the plugin so that this
