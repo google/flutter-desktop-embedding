@@ -14,7 +14,9 @@
 FLUTTER_ENGINE_LIB_NAME=flutter_engine
 FLUTTER_ENGINE_LIB_FILE=lib$(FLUTTER_ENGINE_LIB_NAME).so
 FLUTTER_ENGINE_HEADER=flutter_embedder.h
-ENGINE_UPDATER=../../tools/update_flutter_engine
+TOOLS_DIR=../../tools
+ENGINE_UPDATER=$(TOOLS_DIR)/update_flutter_engine
+FLUTTER_DIR=$(shell "$(TOOLS_DIR)/flutter_location")
 LIBRARY_OUT=libflutter_embedder.so
 CXX=g++ -std=c++14
 CXXFLAGS= -Wall -Werror -shared -fPIC \
@@ -41,8 +43,8 @@ $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
 # time. Instead, this duplicates the dependency information that the script
 # already has, and makes things slightly more fragile, in exchange for
 # avoiding unnecessary relinks.
-$(FLUTTER_ENGINE_LIB_FILE): ../../../flutter/bin/internal/engine.version
-	$(ENGINE_UPDATER) ./
+$(FLUTTER_ENGINE_LIB_FILE): $(FLUTTER_DIR)/bin/internal/engine.version
+	$(ENGINE_UPDATER) --flutter_root=$(FLUTTER_DIR) ./
 	if [ -f $(FLUTTER_ENGINE_HEADER) ]; then \
 		mv $(FLUTTER_ENGINE_HEADER) include/; \
 		fi

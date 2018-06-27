@@ -24,6 +24,11 @@ a Flutter tree in the same parent directory as the clone of this project:
   └─ flutter-desktop-embedding (from https://github.com/google/flutter-desktop-embedding)
 ```
 
+Alternately, you can place a `.flutter_location_config` file in the directory
+containing flutter-desktop-embedding, containng a path to the Flutter tree to
+use, if you prefer not to have the Flutter tree next to
+flutter-desktop-emebbing.
+
 ### Repository Structure
 
 Each supported platform has a top-level directory named for the platform.

@@ -2,3 +2,4 @@
 *.so
 flutter_embedder.h
 flutter_embedder_example
+icudtl.dat
