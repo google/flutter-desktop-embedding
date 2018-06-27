@@ -14,8 +14,13 @@
 
 FLUTTER_EMBEDDER_LIB=flutter_embedder
 FLUTTER_EXAMPLE_DIR=../../example_flutter
-FLUTTER_BIN_FROM_EXAMPLE_DIR=../../flutter/bin/flutter
+FLUTTER_DIR=$(shell ../../tools/flutter_location)
+FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
 BIN_OUT=flutter_embedder_example
+
+ICU_FILENAME=icudtl.dat
+ICU_SOURCE=$(FLUTTER_DIR)/bin/cache/artifacts/engine/linux-x64/$(ICU_FILENAME)
+ICU_DAT=./$(ICU_FILENAME)
 
 PLUGINS=color_panel file_chooser
 FLUTTER_EMBEDDER_LIB_DIR=$(CURDIR)/../library
@@ -41,18 +46,21 @@ LIBRARIES=$(CURDIR)/../library/lib$(FLUTTER_EMBEDDER_LIB).so \
 SOURCES=flutter_embedder_example.cc
 
 .PHONY: all
-all: $(FLUTTER_EXAMPLE_DIR)/build $(BIN_OUT)
+all: $(FLUTTER_EXAMPLE_DIR)/build $(BIN_OUT) $(ICU_DAT)
 
 .PHONY: $(FLUTTER_EXAMPLE_DIR)/build
 $(FLUTTER_EXAMPLE_DIR)/build:
 	cd $(FLUTTER_EXAMPLE_DIR); \
-	$(FLUTTER_BIN_FROM_EXAMPLE_DIR) build bundle
+	$(FLUTTER_BIN) build bundle
 
 $(BIN_OUT): $(SOURCES) $(LIBRARIES)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
+
+$(ICU_DAT): $(ICU_SOURCE)
+	cp $(ICU_SOURCE) $(ICU_DAT)
 
 .PHONY: clean
 clean:
 	rm -f $(BIN_OUT); \
 	cd $(FLUTTER_EXAMPLE_DIR); \
-	$(FLUTTER_BIN_FROM_EXAMPLE_DIR) clean
+	$(FLUTTER_BIN) clean

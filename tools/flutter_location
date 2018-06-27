@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This script prints the location of the Flutter tree that should be used by
+# any tools or build processes that depend on Flutter.
+set -e
+
+readonly base_dir="$(dirname "$0")"
+readonly config_file_dir="$base_dir/../.."
+readonly config_file="$config_file_dir/.flutter_location_config"
+
+# Default to a sibling directory to this repository.
+flutter_dir="$base_dir/../../flutter"
+# If the config file is present, use that instead.
+if [[ -e $config_file ]]; then
+  override_dir="$(cat "$config_file")"
+  # Support paths starting with ~/.
+  override_dir="${override_dir/#~\//$HOME/}"
+  # If the path is relative, treat it as relative to the directory containing
+  # the config file.
+  if [[ $override_dir != /* && $override_dir != ~* ]]; then
+    override_dir="$config_file_dir/$override_dir"
+  fi
+  flutter_dir="$override_dir"
+fi
+# Normalize the path if possible.
+if [[ -d $flutter_dir ]]; then
+  flutter_dir="$(cd "$flutter_dir" && pwd)"
+fi
+echo "$flutter_dir"

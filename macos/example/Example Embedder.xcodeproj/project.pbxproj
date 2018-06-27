@@ -349,7 +349,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$PROJECT_DIR\"/../../example_flutter\n../../flutter/bin/flutter build bundle";
+			shellScript = "cd \"$PROJECT_DIR\"/../../example_flutter\n\"$(\"$PROJECT_DIR\"/../../tools/flutter_location)\"/bin/flutter build bundle";
 		};
 /* End PBXShellScriptBuildPhase section */
 

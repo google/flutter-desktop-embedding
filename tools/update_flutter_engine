@@ -13,9 +13,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-base_dir="$(dirname "$0")"
-flutter_bin_dir="$base_dir/../../flutter/bin"
-dart_bin_dir="$flutter_bin_dir/cache/dart-sdk/bin"
+readonly base_dir="$(dirname "$0")"
+readonly flutter_dir="$("$base_dir/flutter_location")"
+readonly flutter_bin_dir="$flutter_dir/bin"
+readonly dart_bin_dir="$flutter_bin_dir/cache/dart-sdk/bin"
 # Ensure that the Dart SDK has been downloaded.
 if [[ ! -e $dart_bin_dir ]]; then
   "$flutter_bin_dir/flutter" precache

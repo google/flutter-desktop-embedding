@@ -21,7 +21,6 @@
 
 int main(int argc, char **argv) {
   std::string flutter_example_root = "../example_flutter";
-  std::string flutter_git_root = "../../flutter";
   if (!glfwInit()) {
     std::cout << "Couldn't init GLFW";
   }
@@ -37,8 +36,7 @@ int main(int argc, char **argv) {
   // Start the engine.
   auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(
       640, 480, flutter_example_root + "/build/flutter_assets",
-      flutter_git_root + "/bin/cache/artifacts/engine/linux-x64/icudtl.dat",
-      arg_count, const_cast<char **>(args_arr));
+      "example/icudtl.dat", arg_count, const_cast<char **>(args_arr));
   if (window == nullptr) {
     glfwTerminate();
     return EXIT_FAILURE;

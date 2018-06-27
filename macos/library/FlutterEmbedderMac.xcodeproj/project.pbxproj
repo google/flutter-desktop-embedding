@@ -243,8 +243,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$PROJECT_DIR\"/../../tools/update_flutter_engine \"$PROJECT_DIR\"/../../../flutter_engine_framework/macos";
+			shellPath = /bin/bash;
+			shellScript = "readonly TOOLS_DIR=\"$PROJECT_DIR\"/../../tools\n\"$TOOLS_DIR\"/update_flutter_engine --flutter_root=\"$(\"$TOOLS_DIR\"/flutter_location)\" \"$PROJECT_DIR\"/../../../flutter_engine_framework/macos";
 		};
 /* End PBXShellScriptBuildPhase section */
 
