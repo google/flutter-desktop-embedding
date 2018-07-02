@@ -121,6 +121,10 @@ class _AppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
+        // Specify a platform and font to reduce potential issues with the
+        // example behaving differently on different platforms.
+        platform: TargetPlatform.fuchsia,
+        fontFamily: 'Roboto',
       ),
       home: _MyHomePage(title: 'Flutter Demo Home Page', counter: _counter),
     );
