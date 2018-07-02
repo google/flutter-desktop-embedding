@@ -91,10 +91,4 @@
            arguments:(nullable id)arguments
            onChannel:(nonnull NSString *)channel;
 
-/**
- * Sends a platform message to the Flutter engine on the given channel.
- * @param message The raw message.
- */
-- (void)dispatchMessage:(nonnull NSDictionary*)message onChannel:(nonnull NSString *)channel;
-
 @end

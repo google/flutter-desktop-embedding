@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #import "FLEViewController.h"
+#import "FLEViewController+Internal.h"
 
 #import <FlutterEmbedder/FlutterEmbedder.h>
 #import "FLEReshapeListener.h"

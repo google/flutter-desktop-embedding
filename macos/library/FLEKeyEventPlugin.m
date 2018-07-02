@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #import "FLEViewController.h"
+#import "FLEViewController+Internal.h"
 #import "FLEKeyEventPlugin.h"
 
 static NSString *const kKeyEventChannel = @"flutter/keyevent";
