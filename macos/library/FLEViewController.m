@@ -55,7 +55,7 @@ static const int kDefaultWindowFramebuffer = 0;
 /**
  * A list of additional responders to keyboard events. Keybord events are forwarded to all of them.
  */
-@property NSMutableSet<NSResponder*> *additionalKeyResponders;
+@property NSMutableOrderedSet<NSResponder*> *additionalKeyResponders;
 
 @end
 
@@ -398,7 +398,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
  */
 - (void)initPlugins {
   _plugins = [[NSMutableDictionary alloc] init];
-  _additionalKeyResponders = [[NSMutableSet alloc] init];
+  _additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
 
   FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
   [self _addPlugin:textPlugin];
