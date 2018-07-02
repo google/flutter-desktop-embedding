@@ -33,11 +33,6 @@
 @property(nullable) NSView<FLEOpenGLContextHandling> *view;
 
 /**
- * A list of additional responders to keyboard events. Keybord events are forwarded to all of them.
- */
-@property NSMutableSet<NSResponder*> *additionalKeyResponders;
-
-/**
  * Launches the Flutter engine in snapshot mode with the provided configuration. The path argument
  * is used to identify the Flutter application the engine should be configured with. See
  * https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for more information
@@ -74,6 +69,16 @@
  * add will return NO.
  */
 - (BOOL)addPlugin:(nonnull id<FLEPlugin>)plugin;
+
+/**
+ * Adds a responder for keyboard events. Key up and key down events are forwarded to all added responders.
+ */
+- (void)addKeyResponder:(nonnull NSResponder*)responder;
+
+/**
+ * Removes a responder for keyboard events.
+ */
+- (void)removeKeyResponder:(nonnull NSResponder*)responder;
 
 /**
  * Sends a platform message to the Flutter engine on the given channel

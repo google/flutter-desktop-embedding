@@ -52,6 +52,11 @@ static const int kDefaultWindowFramebuffer = 0;
 
 @property NSMutableDictionary<NSString *, id<FLEPlugin>> *plugins;
 
+/**
+ * A list of additional responders to keyboard events. Keybord events are forwarded to all of them.
+ */
+@property NSMutableSet<NSResponder*> *additionalKeyResponders;
+
 @end
 
 #pragma mark - Static methods provided to engine configuration.
@@ -162,6 +167,14 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 
 - (BOOL)addPlugin:(nonnull id<FLEPlugin>)plugin {
   return [self _addPlugin:plugin];
+}
+
+- (void)addKeyResponder:(nonnull NSResponder*)responder {
+  [self.additionalKeyResponders addObject:responder];
+}
+
+- (void)removeKeyResponder:(nonnull NSResponder*)responder {
+  [self.additionalKeyResponders removeObject:responder];
 }
 
 // TODO: Move to a structure that mimics the FlutterChannel structure used on iOS, for better
@@ -362,7 +375,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 - (instancetype)initWithCoder:(NSCoder *)coder {
   self = [super initWithCoder:coder];
   if (self != nil) {
-    [self setup];
+    [self initPlugins];
   }
   return self;
 }
@@ -370,14 +383,9 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self != nil) {
-    [self setup];
+    [self initPlugins];
   }
   return self;
-}
-
-- (void)setup {
-    self.additionalKeyResponders = [NSMutableSet new];
-    [self initPlugins];
 }
 
 - (void)loadView {
@@ -390,6 +398,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
  */
 - (void)initPlugins {
   _plugins = [[NSMutableDictionary alloc] init];
+  _additionalKeyResponders = [[NSMutableSet alloc] init];
 
   FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
   [self _addPlugin:textPlugin];
@@ -404,7 +413,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
     return YES;
 }
 
-#pragma mark - NSResponder key events
+#pragma mark - NSResponder
 
 - (void)keyDown:(NSEvent *)event {
     for (NSResponder* responder in self.additionalKeyResponders) {
@@ -421,8 +430,6 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
         }
     }
 }
-
-#pragma mark - NSResponder mouse events
 
 - (void)mouseDown:(NSEvent *)theEvent {
   [self dispatchMouseEvent:theEvent phase:kDown];

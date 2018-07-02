@@ -12,11 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEKeyEventPlugin.h"
-
-#import <objc/message.h>
-
 #import "FLEViewController.h"
+#import "FLEKeyEventPlugin.h"
 
 static NSString *const kKeyEventChannel = @"flutter/keyevent";
 
@@ -25,33 +22,32 @@ static NSString *const kKeyEventChannel = @"flutter/keyevent";
 @synthesize controller = _controller;
 
 - (NSString *)channel {
-    return kKeyEventChannel;
+  return kKeyEventChannel;
 }
 
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
-    NSString *method = call.methodName;
-    NSLog(@"Unhandled text input method '%@'", method);
+  result(FLEMethodNotImplemented);
 }
 
 - (void)dispatchKeyEvent:(NSString *)type event:(NSEvent *)event {
-    // TODO: Do not use 'android'
-    NSDictionary* message = @{
-                                @"keymap": @"android",
-                                @"type": type,
-                                @"keyCode": [NSNumber numberWithUnsignedShort: event.keyCode],
-                                };
-    
-    [self.controller dispatchMessage:message onChannel:kKeyEventChannel];
+  // TODO: Do not use 'android'. Reconsider when https://github.com/google/flutter-desktop-embedding/issues/47 is solved.
+  NSDictionary* message = @{
+                            @"keymap": @"android",
+                            @"type": type,
+                            @"keyCode": @(event.keyCode),
+                            };
+  
+  [self.controller dispatchMessage:message onChannel:kKeyEventChannel];
 }
 
 #pragma mark - NSResponder
 
 - (void)keyDown:(NSEvent *)event {
-    [self dispatchKeyEvent:@"keydown" event:event];
+  [self dispatchKeyEvent:@"keydown" event:event];
 }
 
 - (void)keyUp:(NSEvent *)event {
-    [self dispatchKeyEvent:@"keyup" event:event];
+  [self dispatchKeyEvent:@"keyup" event:event];
 }
 
 @end

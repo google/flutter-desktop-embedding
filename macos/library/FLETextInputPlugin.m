@@ -91,10 +91,10 @@ static NSString *const kUpdateEditStateResponseMethod = @"TextInputClient.update
       _textInputModels[_activeClientID] = [[FLETextInputModel alloc] init];
     }
   } else if ([method isEqualToString:kShowMethod]) {
-    [self.controller.additionalKeyResponders addObject:self];
+    [self.controller addKeyResponder:self];
     [_textInputContext activate];
   } else if ([method isEqualToString:kHideMethod]) {
-    [self.controller.additionalKeyResponders removeObject:self];
+    [self.controller removeKeyResponder:self];
     [_textInputContext deactivate];
   } else if ([method isEqualToString:kClearClientMethod]) {
     _activeClientID = nil;
