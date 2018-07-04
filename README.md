@@ -2,8 +2,8 @@
 
 This repository contains code that implements basic embedders for
 [Flutter](https://github.com/flutter/flutter) on desktop platforms, as starting
-points for building native desktop applications that embed Flutter.
-Currently macOS and Linux are supported, and the goal is to support Windows
+points for building native applications.
+Currently macOS and Linux are supported. The goal is to support Windows
 in the future as well.
 
 It contains shared libraries that implement [Flutter's embedding
