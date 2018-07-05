@@ -30,6 +30,13 @@
 #include <flutter_desktop_embedding/text_input_plugin.h>
 #include <flutter_embedder.h>
 
+#ifndef GLFW_TRUE
+// GLFW_TRUE & GLFW_FALSE are introduced since libglfw-3.3,
+// add definitions here to compile under the old versions.
+#define GLFW_TRUE   1
+#define GLFW_FALSE  0
+#endif
+
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
 // Struct for storing state within an instance of the GLFW Window.

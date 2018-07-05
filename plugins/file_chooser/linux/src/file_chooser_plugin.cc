@@ -86,19 +86,21 @@ static void ProcessAttributes(const Json::Value &method_args,
 // string, then this returns a file saver dialog.
 //
 // If the method is not recognized as one of those above, will return a nullptr.
-static GtkFileChooserNative *CreateFileChooserFromMethod(
+static GtkFileChooserDialog *CreateFileChooserFromMethod(
     const std::string &method, const std::string &ok_button) {
-  GtkFileChooserNative *chooser = nullptr;
+  GtkFileChooserDialog *chooser = nullptr;
   if (method == kShowOpenPanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    chooser = gtk_file_chooser_native_new(
+    chooser = (GtkFileChooserDialog*)gtk_file_chooser_dialog_new(
         "Open File", NULL, action,
-        ok_button.empty() ? "_Open" : ok_button.c_str(), "_Cancel");
+        ok_button.empty() ? "_Open" : ok_button.c_str(), GTK_RESPONSE_ACCEPT,
+        "_Cancel", GTK_RESPONSE_CANCEL, NULL);
   } else if (method == kShowSavePanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
-    chooser = gtk_file_chooser_native_new(
+    chooser = (GtkFileChooserDialog*)gtk_file_chooser_dialog_new(
         "Save File", NULL, action,
-        ok_button.empty() ? "_Save" : ok_button.c_str(), "_Cancel");
+        ok_button.empty() ? "_Save" : ok_button.c_str(), GTK_RESPONSE_ACCEPT,
+        "_Cancel", GTK_RESPONSE_CANCEL, NULL);
   }
   return chooser;
 }
@@ -107,14 +109,14 @@ static GtkFileChooserNative *CreateFileChooserFromMethod(
 //
 // The JSON args determine the modifications to the file chooser, like filters,
 // being able to choose multiple files, etc.
-static GtkFileChooserNative *CreateFileChooser(const std::string &method,
+static GtkFileChooserDialog *CreateFileChooser(const std::string &method,
                                                const Json::Value &args) {
   Json::Value ok_button_value = args[kConfirmButtonTextKey];
   std::string ok_button_str;
   if (!ok_button_value.isNull()) {
     ok_button_str = ok_button_value.asString();
   }
-  GtkFileChooserNative *chooser =
+  GtkFileChooserDialog *chooser =
       CreateFileChooserFromMethod(method, ok_button_str);
   if (chooser == nullptr) {
     std::cerr << "Could not determine method for file chooser from: " << method
@@ -159,7 +161,7 @@ void FileChooserPlugin::HandleMethodCall(const MethodCall &method_call,
     result->NotImplemented();
     return;
   }
-  chooser_res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(chooser));
+  chooser_res = gtk_dialog_run(GTK_DIALOG(chooser));
   std::vector<std::string> filenames;
   if (chooser_res == GTK_RESPONSE_ACCEPT) {
     GSList *files = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(chooser));
