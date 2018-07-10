@@ -6,18 +6,6 @@ the Windows desktop.
 This README assumes you have already read [the top level README](../README.md),
 which contains important information and setup common to all platforms.
 
-## Flutter Location
-
-Contrary to [the top level README](../README.md) Windows cannot be run using a
-`.flutter_location_config` file and a Flutter tree must be located in the same
-parent directory as this repo like so:
-
-```
-<parent dir>
-  ├─ flutter (from http://github.com/flutter/flutter)
-  └─ flutter-desktop-embedding (from https://github.com/google/flutter-desktop-embedding)
-```
-
 ## Minimum Flutter Version
 
 The minimum version of Flutter supported on Windows is
@@ -46,7 +34,7 @@ The resulting binary expects to be run from this directory like so:
 > ".\bin\x64\$(Configuration)\GLFW Example\GLFW Example.exe"
 ```
 
-e.g:
+e.g.:
 
 ```
 > ".\bin\x64\Debug .dll\GLFW Example\GLFW Example.exe"
