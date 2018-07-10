@@ -15,7 +15,7 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 set BASE_DIR=%~dp0
-set CONFIG_FILE_DIR=%BASE_DIR%..\
+set CONFIG_FILE_DIR=%BASE_DIR%..\..\
 set CONFIG_FILE=%CONFIG_FILE_DIR%.flutter_location_config
 
 :: Default to a sibling directory to this repository.
