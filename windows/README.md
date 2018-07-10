@@ -14,31 +14,9 @@ Contrary to [the top level README](../README.md) Windows cannot be run using a `
   └─ flutter-desktop-embedding (from https://github.com/google/flutter-desktop-embedding)
 ```
 
-## Adding Windows as a Target Platform
+## Minimum Flutter Version
 
-By default flutter will throw an unknown target platform error if run on Windows. Windows can be added by editing `\path\to\flutter\packages\flutter\lib\src\foundation\platform.dart`.
-
-Change the code around line 37 from this:
-
-```dart
-if (Platform.isAndroid || Platform.isLinux) {
-  result = TargetPlatform.android;
-}
-```
-
-to this:
-
-```dart
-if (Platform.isAndroid || Platform.isLinux || Platform.isWindows) {
-  result = TargetPlatform.android;
-}
-```
-
-The flutter app you are trying to run must be rebuilt before it can be run on windows.
-
-```
-> flutter build bundle
-```
+The minimum version of Flutter supported on Windows is [32941a8](https://github.com/flutter/flutter/commit/32941a8cc0df5d7653a5c2c40ffb180c4db1c15d).
 
 ## Using the Library
 
