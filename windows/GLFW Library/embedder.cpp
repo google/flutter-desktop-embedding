@@ -76,6 +76,7 @@ static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
   event.struct_size = sizeof(event);
   event.width = width;
   event.height = height;
+  // TODO: Handle pixel ratio for different DPI monitors.
   event.pixel_ratio = 1.0;
   FlutterEngineSendWindowMetricsEvent(
       reinterpret_cast<FlutterEngine>(glfwGetWindowUserPointer(window)),
