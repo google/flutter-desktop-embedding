@@ -123,8 +123,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(SolutionDir)scripts\update_flutter_engine &amp;&amp; $(SolutionDir)scripts\get_engine_artifacts</Command>
-      <Message>Get the flutter engine using tools/update_flutter_engine and download it to dependencies/engine and get the icudtl.dat file and add to dependencies/engine</Message>
+      <Command>$(SolutionDir)scripts\update_flutter_engine &amp;&amp; $(SolutionDir)scripts\get_engine_artifacts &amp;&amp; $(SolutionDir)scripts\get_GLFW</Command>
+      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>
@@ -161,8 +161,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(SolutionDir)scripts\update_flutter_engine &amp;&amp; $(SolutionDir)scripts\get_engine_artifacts</Command>
-      <Message>Get the flutter engine using tools/update_flutter_engine and download it to dependencies/engine and get the icudtl.dat file and add to dependencies/engine</Message>
+      <Command>$(SolutionDir)scripts\update_flutter_engine &amp;&amp; $(SolutionDir)scripts\get_engine_artifacts &amp;&amp; $(SolutionDir)scripts\get_GLFW</Command>
+      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>
@@ -201,8 +201,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(SolutionDir)scripts\update_flutter_engine &amp;&amp; $(SolutionDir)scripts\get_engine_artifacts</Command>
-      <Message>Get the flutter engine using tools/update_flutter_engine and download it to dependencies/engine and get the icudtl.dat file and add to dependencies/engine</Message>
+      <Command>$(SolutionDir)scripts\update_flutter_engine &amp;&amp; $(SolutionDir)scripts\get_engine_artifacts &amp;&amp; $(SolutionDir)scripts\get_GLFW</Command>
+      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>
@@ -241,8 +241,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(SolutionDir)scripts\update_flutter_engine &amp;&amp; $(SolutionDir)scripts\get_engine_artifacts</Command>
-      <Message>Get the flutter engine using tools/update_flutter_engine and download it to dependencies/engine and get the icudtl.dat file and add to dependencies/engine</Message>
+      <Command>$(SolutionDir)scripts\update_flutter_engine &amp;&amp; $(SolutionDir)scripts\get_engine_artifacts &amp;&amp; $(SolutionDir)scripts\get_GLFW</Command>
+      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>
