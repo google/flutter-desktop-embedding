@@ -106,10 +106,8 @@
       <AdditionalDependencies>flutter_embedder.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
+      <Command>$(SolutionDir)scripts\build_example_app</Command>
+      <Message>Build the example app</Message>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>xcopy /y /d /q "$(OutputPath)..\GLFW Library\flutter_engine.dll" "$(OutputPath)"</Command>
@@ -135,10 +133,8 @@
       <AdditionalDependencies>flutter_embedder.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
+      <Command>$(SolutionDir)scripts\build_example_app</Command>
+      <Message>Build the example app</Message>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>xcopy /y /d /q "$(OutputPath)..\GLFW Library\flutter_engine.dll" "$(OutputPath)"</Command>
@@ -170,10 +166,8 @@
       <AdditionalDependencies>flutter_embedder.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
+      <Command>$(SolutionDir)scripts\build_example_app</Command>
+      <Message>Build the example app</Message>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>xcopy /y /d /q "$(OutputPath)..\GLFW Library\flutter_engine.dll" "$(OutputPath)"</Command>
@@ -203,10 +197,8 @@
       <AdditionalDependencies>flutter_embedder.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>
-      </Command>
-      <Message>
-      </Message>
+      <Command>$(SolutionDir)scripts\build_example_app</Command>
+      <Message>Build the example app</Message>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>xcopy /y /d /q "$(OutputPath)..\GLFW Library\flutter_engine.dll" "$(OutputPath)"</Command>

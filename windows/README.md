@@ -28,12 +28,6 @@ The output files are located in `bin\x64\$(Configuration)\GLFW Library\`.
 
 The application under `GLFW Example\` shows an example application using the library.
 
-The example application must be built before running the windows executable as Visual Studio doesn't automatically do this.
-
-```
-> flutter build bundle
-```
-
 You should be able to build the GLFW Example project in Visual Studio and have access to `GLFW Example.exe` located in `bin\x64\$(Configuration)\GLFW Example\`.
 
 The resulting binary expects to be run from this directory like so:
