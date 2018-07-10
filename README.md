@@ -25,7 +25,7 @@ a Flutter tree in the same parent directory as the clone of this project:
 ```
 
 Alternately, you can place a `.flutter_location_config` file in the directory
-containing flutter-desktop-embedding, containng a path to the Flutter tree to
+containing flutter-desktop-embedding, containing a path to the Flutter tree to
 use, if you prefer not to have the Flutter tree next to
 flutter-desktop-emebbing.
 
