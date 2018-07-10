@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
       NULL,
   };
   // Start the engine.
+  // TODO: Make paths relative to the executable so it can be run from anywhere.
   auto window = CreateFlutterWindowInSnapshotMode(
       640, 480,
       "..\\example_flutter\\build\\flutter_assets",
