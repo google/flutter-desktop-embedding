@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <flutter_embedder.h>
+#include "embedder.h"
 
 #include <assert.h>
 #include <chrono>
-
-#include "embedder.h"
 #include <iostream>
+
+#include <flutter_embedder.h>
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 

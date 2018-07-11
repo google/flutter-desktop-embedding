@@ -13,10 +13,11 @@
 // limitations under the License.
 
 #include <iostream>
+
 #include <embedder.h>
 
 int main(int argc, char **argv) {
-  if(!FlutterInit()) {
+  if (!FlutterInit()) {
     std::cout << "Couldn't init GLFW" << std::endl;
   }
   // Arguments for the Flutter Engine.
@@ -31,10 +32,9 @@ int main(int argc, char **argv) {
   // Start the engine.
   // TODO: Make paths relative to the executable so it can be run from anywhere.
   auto window = CreateFlutterWindowInSnapshotMode(
-      640, 480,
-      "..\\example_flutter\\build\\flutter_assets",
-      "dependencies\\engine\\icudtl.dat",
-      arg_count, const_cast<char **>(args_arr));
+      640, 480, "..\\example_flutter\\build\\flutter_assets",
+      "dependencies\\engine\\icudtl.dat", arg_count,
+      const_cast<char **>(args_arr));
   if (window == nullptr) {
     FlutterTerminate();
     return EXIT_FAILURE;

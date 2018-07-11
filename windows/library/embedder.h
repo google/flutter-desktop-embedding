@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
+#ifndef WINDOWS_LIBRARY_EMBEDDER_H_
+#define WINDOWS_LIBRARY_EMBEDDER_H_
+
+#include <string>
 
 #include <glfw3.h>
-#include <string>
 
 // Calls glfwInit()
 //
@@ -29,7 +31,7 @@ void FlutterTerminate();
 
 // Creates a GLFW Window running a Flutter Application.
 //
-// glfwInit() must be called prior to this function.
+// FlutterInit() must be called prior to this function.
 //
 // The arguments are to configure the paths when launching the engine. See:
 // https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for
@@ -46,7 +48,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 
 // Creates a GLFW Window running a Flutter Application in snapshot mode.
 //
-// glfwInit() must be called prior to this function.
+// FlutterInit() must be called prior to this function.
 //
 // In snapshot mode the assets directory snapshot is used to run the application
 // instead of the sources.
@@ -68,6 +70,8 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
 // Must be used instead of glfwWindowShouldClose as it cleans up engine state
 // after termination.
 //
-// After this function the user must eventually call glfwTerminate() if doing
+// After this function the user must eventually call FlutterTerminate() if doing
 // cleanup.
 void FlutterWindowLoop(GLFWwindow *flutter_window);
+
+#endif  // WINDOWS_LIBRARY_EMBEDDER_H_
