@@ -13,12 +13,20 @@
 // limitations under the License.
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
+
 import 'package:color_panel/color_panel.dart';
 import 'package:file_chooser/file_chooser.dart' as file_chooser;
 import 'package:menubar/menubar.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  // Desktop platforms are not recognized as valid targets by
+  // Flutter; force a specific target to prevent exceptions.
+  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  runApp(new MyApp());
+}
 
 /// Top level widget for the example application.
 class MyApp extends StatefulWidget {
@@ -121,9 +129,8 @@ class _AppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
-        // Specify a platform and font to reduce potential issues with the
+        // Specify a font to reduce potential issues with the
         // example behaving differently on different platforms.
-        platform: TargetPlatform.fuchsia,
         fontFamily: 'Roboto',
       ),
       home: _MyHomePage(title: 'Flutter Demo Home Page', counter: _counter),
