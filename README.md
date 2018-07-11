@@ -1,15 +1,13 @@
 # Desktop Embedding for Flutter
 
-This repository contains code that implements basic embedders for
-[Flutter](https://github.com/flutter/flutter) on desktop platforms, as starting
-points for building native desktop applications that embed Flutter.
-Currently macOS and Linux are supported, and the goal is to support Windows
-in the future as well.
+This purpose of this project is to support building
+applications that use [Flutter](https://github.com/flutter/flutter)
+on Windows, macOS, and Linux.
 
-It contains shared libraries that implement [Flutter's embedding
+It consists of libraries that implement [Flutter's embedding
 API](https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders),
-handling drawing, mouse event handling, and keyboard support. It also
-includes optional plugins to access other native platform functionality.
+handling drawing and mouse/keyboard input, as well as
+optional plugins to access other native platform functionality.
 
 ## How to Use This Code
 
