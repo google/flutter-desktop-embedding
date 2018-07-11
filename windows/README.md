@@ -45,5 +45,7 @@ example application automatically.
 
 ## Caveats
 
-While GLFW is in use in the current iteration, this is not going to be the final
-state for Windows support.
+* While GLFW is in use in the current iteration, this is not going to be the
+  final state for Windows support.
+* Text input does not work yet.
+* Plugins are not currently supported.
