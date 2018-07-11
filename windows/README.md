@@ -22,7 +22,7 @@ The output files are located in `bin\x64\$(Configuration)\GLFW Library\`.
 
 ## Example Application
 
-The application under `GLFW Example\` shows an example application using the
+The application under `example\` shows an example application using the
 library.
 
 You should be able to build the GLFW Example project in Visual Studio and have

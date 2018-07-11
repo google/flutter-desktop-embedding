@@ -72,25 +72,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)GLFW Library\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)library\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)bin\$(Platform)\$(Configuration)\GLFW Library\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)GLFW Library\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)library\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)bin\$(Platform)\$(Configuration)\GLFW Library\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Dynamic Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)GLFW Library\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)library\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)bin\$(Platform)\$(Configuration)\GLFW Library\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Static Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)GLFW Library\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)library\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)dependencies\GLFW\;$(SolutionDir)bin\$(Platform)\$(Configuration)\GLFW Library\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic Library|x64'">
@@ -217,7 +217,7 @@
     <ClCompile Include="flutter_embedder_example.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GLFW Library\GLFW Library.vcxproj">
+    <ProjectReference Include="..\library\GLFW Library.vcxproj">
       <Project>{90057fd8-9460-43a6-8cdf-3aac1c4255e5}</Project>
     </ProjectReference>
   </ItemGroup>
