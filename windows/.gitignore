@@ -11,6 +11,7 @@ glfw3.*
 
 # User-specific files
 *.suo
+*.user
 *.userosscache
 *.sln.docstates
 
