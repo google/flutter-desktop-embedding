@@ -37,7 +37,7 @@ The resulting binary expects to be run from this directory like so:
 e.g.:
 
 ```
-> ".\bin\x64\Debug .dll\GLFW Example\GLFW Example.exe"
+> ".\bin\x64\Debug Dynamic Library\GLFW Example\GLFW Example.exe"
 ```
 
 or you can use Visual Studio's inbuilt debugger to build the library and run the
