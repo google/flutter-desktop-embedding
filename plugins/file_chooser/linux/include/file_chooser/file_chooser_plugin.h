@@ -13,18 +13,19 @@
 // limitations under the License.
 #ifndef PLUGINS_FILE_CHOOSER_LINUX_INCLUDE_FILE_CHOOSER_FILE_CHOOSER_PLUGIN_H_
 #define PLUGINS_FILE_CHOOSER_LINUX_INCLUDE_FILE_CHOOSER_FILE_CHOOSER_PLUGIN_H_
-#include <flutter_desktop_embedding/plugin.h>
+
+#include <flutter_desktop_embedding/json_plugin.h>
 
 namespace plugins_file_chooser {
 
 // Implements a file chooser plugin.
-class FileChooserPlugin : public flutter_desktop_embedding::Plugin {
+class FileChooserPlugin : public flutter_desktop_embedding::JsonPlugin {
  public:
   FileChooserPlugin();
   virtual ~FileChooserPlugin();
 
-  void HandleMethodCall(
-      const flutter_desktop_embedding::MethodCall &method_call,
+  void HandleJsonMethodCall(
+      const flutter_desktop_embedding::JsonMethodCall &method_call,
       std::unique_ptr<flutter_desktop_embedding::MethodResult> result) override;
 };
 

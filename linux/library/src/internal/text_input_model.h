@@ -14,8 +14,9 @@
 #ifndef LINUX_LIBRARY_SRC_INTERNAL_TEXT_INPUT_MODEL_H_
 #define LINUX_LIBRARY_SRC_INTERNAL_TEXT_INPUT_MODEL_H_
 
-#include <json/json.h>
 #include <string>
+
+#include <json/json.h>
 
 namespace flutter_desktop_embedding {
 // Handles underlying text input state, using a simple ASCII model.
@@ -94,4 +95,4 @@ class TextInputModel {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_LIBRARY_SRC_INTERNAL_INPUT_MODEL_H_
+#endif  // LINUX_LIBRARY_SRC_INTERNAL_TEXT_INPUT_MODEL_H_

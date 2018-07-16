@@ -17,7 +17,7 @@
 #include <map>
 #include <memory>
 
-#include "linux/library/include/flutter_desktop_embedding/plugin.h"
+#include "linux/library/include/flutter_desktop_embedding/json_plugin.h"
 #include "linux/library/src/internal/keyboard_hook_handler.h"
 #include "linux/library/src/internal/text_input_model.h"
 
@@ -26,14 +26,14 @@ namespace flutter_desktop_embedding {
 // Implements a text input plugin.
 //
 // Specifically handles window events within GLFW.
-class TextInputPlugin : public KeyboardHookHandler, public Plugin {
+class TextInputPlugin : public KeyboardHookHandler, public JsonPlugin {
  public:
   TextInputPlugin();
   virtual ~TextInputPlugin();
 
   // Plugin.
-  void HandleMethodCall(const MethodCall &method_call,
-                        std::unique_ptr<MethodResult> result) override;
+  void HandleJsonMethodCall(const JsonMethodCall &method_call,
+                            std::unique_ptr<MethodResult> result) override;
 
   // KeyboardHookHandler.
   void KeyboardHook(GLFWwindow *window, int key, int scancode, int action,
