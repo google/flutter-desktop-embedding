@@ -86,18 +86,18 @@ static void ProcessAttributes(const Json::Value &method_args,
 // string, then this returns a file saver dialog.
 //
 // If the method is not recognized as one of those above, will return a nullptr.
-static GtkFileChooserDialog *CreateFileChooserFromMethod(
+static GtkWidget *CreateFileChooserFromMethod(
     const std::string &method, const std::string &ok_button) {
-  GtkFileChooserDialog *chooser = nullptr;
+  GtkWidget *chooser = nullptr;
   if (method == kShowOpenPanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    chooser = (GtkFileChooserDialog*)gtk_file_chooser_dialog_new(
+    chooser = gtk_file_chooser_dialog_new(
         "Open File", NULL, action,
         ok_button.empty() ? "_Open" : ok_button.c_str(), GTK_RESPONSE_ACCEPT,
         "_Cancel", GTK_RESPONSE_CANCEL, NULL);
   } else if (method == kShowSavePanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
-    chooser = (GtkFileChooserDialog*)gtk_file_chooser_dialog_new(
+    chooser = gtk_file_chooser_dialog_new(
         "Save File", NULL, action,
         ok_button.empty() ? "_Save" : ok_button.c_str(), GTK_RESPONSE_ACCEPT,
         "_Cancel", GTK_RESPONSE_CANCEL, NULL);
@@ -109,14 +109,14 @@ static GtkFileChooserDialog *CreateFileChooserFromMethod(
 //
 // The JSON args determine the modifications to the file chooser, like filters,
 // being able to choose multiple files, etc.
-static GtkFileChooserDialog *CreateFileChooser(const std::string &method,
+static GtkWidget *CreateFileChooser(const std::string &method,
                                                const Json::Value &args) {
   Json::Value ok_button_value = args[kConfirmButtonTextKey];
   std::string ok_button_str;
   if (!ok_button_value.isNull()) {
     ok_button_str = ok_button_value.asString();
   }
-  GtkFileChooserDialog *chooser =
+  GtkWidget *chooser =
       CreateFileChooserFromMethod(method, ok_button_str);
   if (chooser == nullptr) {
     std::cerr << "Could not determine method for file chooser from: " << method
@@ -178,7 +178,7 @@ void FileChooserPlugin::HandleMethodCall(const MethodCall &method_call,
     }
     g_slist_free(files);
   }
-  g_object_unref(chooser);
+  gtk_widget_destroy(chooser);
 
   result->Success(CreateResponseObject(filenames));
 }
