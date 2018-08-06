@@ -22,7 +22,7 @@
 #include <memory>
 #include <string>
 
-#include <flutter_desktop_embedding/plugin.h>
+#include "plugin.h"
 
 namespace flutter_desktop_embedding {
 

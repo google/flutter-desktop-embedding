@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter_desktop_embedding/embedder.h>
+#include "linux/library/include/flutter_desktop_embedding/embedder.h"
 
 #include <X11/Xlib.h>
 #include <assert.h>
@@ -24,11 +24,12 @@
 #include <memory>
 #include <string>
 
-#include <flutter_desktop_embedding/channels.h>
-#include <flutter_desktop_embedding/input/keyboard_hook_handler.h>
-#include <flutter_desktop_embedding/plugin_handler.h>
-#include <flutter_desktop_embedding/text_input_plugin.h>
 #include <flutter_embedder.h>
+
+#include "linux/library/include/flutter_desktop_embedding/channels.h"
+#include "linux/library/src/internal/keyboard_hook_handler.h"
+#include "linux/library/src/internal/plugin_handler.h"
+#include "linux/library/src/internal/text_input_plugin.h"
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
