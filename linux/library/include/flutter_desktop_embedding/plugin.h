@@ -22,7 +22,8 @@
 
 #include <flutter_embedder.h>
 
-#include "channels.h"
+#include "method_call.h"
+#include "method_result.h"
 
 namespace flutter_desktop_embedding {
 

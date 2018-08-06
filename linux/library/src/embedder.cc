@@ -26,7 +26,8 @@
 
 #include <flutter_embedder.h>
 
-#include "linux/library/include/flutter_desktop_embedding/channels.h"
+#include "linux/library/include/flutter_desktop_embedding/method_call.h"
+#include "linux/library/include/flutter_desktop_embedding/method_result.h"
 #include "linux/library/src/internal/keyboard_hook_handler.h"
 #include "linux/library/src/internal/plugin_handler.h"
 #include "linux/library/src/internal/text_input_plugin.h"
