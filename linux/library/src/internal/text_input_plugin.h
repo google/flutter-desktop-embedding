@@ -11,16 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_PLUGIN_H_
-#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_PLUGIN_H_
+#ifndef LINUX_LIBRARY_SRC_INTERNAL_TEXT_INPUT_PLUGIN_H_
+#define LINUX_LIBRARY_SRC_INTERNAL_TEXT_INPUT_PLUGIN_H_
 
 #include <map>
 #include <memory>
 
-#include <flutter_desktop_embedding/input/keyboard_hook_handler.h>
-
-#include "plugin.h"
-#include "text_input_model.h"
+#include "linux/library/include/flutter_desktop_embedding/plugin.h"
+#include "linux/library/src/internal/keyboard_hook_handler.h"
+#include "linux/library/src/internal/text_input_model.h"
 
 namespace flutter_desktop_embedding {
 
@@ -56,4 +55,4 @@ class TextInputPlugin : public KeyboardHookHandler, public Plugin {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TEXT_INPUT_PLUGIN_H_
+#endif  // LINUX_LIBRARY_SRC_INTERNAL_TEXT_INPUT_PLUGIN_H_

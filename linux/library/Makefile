@@ -14,12 +14,14 @@
 FLUTTER_ENGINE_LIB_NAME=flutter_engine
 FLUTTER_ENGINE_LIB_FILE=lib$(FLUTTER_ENGINE_LIB_NAME).so
 FLUTTER_ENGINE_HEADER=flutter_embedder.h
-TOOLS_DIR=../../tools
+PROJECT_ROOT=../..
+TOOLS_DIR=$(PROJECT_ROOT)/tools
 ENGINE_UPDATER=$(TOOLS_DIR)/update_flutter_engine
 FLUTTER_DIR=$(shell "$(TOOLS_DIR)/flutter_location")
 LIBRARY_OUT=libflutter_embedder.so
 CXX=g++ -std=c++14
 CXXFLAGS= -Wall -Werror -shared -fPIC \
+	-I$(PROJECT_ROOT) \
 	-I$(CURDIR)/include \
 	$(shell pkg-config --cflags gtk+-3.0 epoxy x11 jsoncpp)
 LDFLAGS= -L$(CURDIR) \

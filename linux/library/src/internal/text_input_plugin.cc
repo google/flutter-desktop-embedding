@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter_desktop_embedding/text_input_plugin.h>
+#include "linux/library/src/internal/text_input_plugin.h"
 
 #include <cstdint>
 #include <iostream>
