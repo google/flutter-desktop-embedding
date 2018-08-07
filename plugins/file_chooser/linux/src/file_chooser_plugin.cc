@@ -24,7 +24,7 @@ static constexpr int kCancelResultValue = 0;
 static constexpr int kOkResultValue = 1;
 
 namespace plugins_file_chooser {
-using flutter_desktop_embedding::MethodCall;
+using flutter_desktop_embedding::JsonMethodCall;
 using flutter_desktop_embedding::MethodResult;
 
 // Applies filters to the file chooser.
@@ -141,27 +141,26 @@ static Json::Value CreateResponseObject(
   return response;
 }
 
-FileChooserPlugin::FileChooserPlugin() : Plugin(kChannelName, true) {}
+FileChooserPlugin::FileChooserPlugin() : JsonPlugin(kChannelName, true) {}
 
 FileChooserPlugin::~FileChooserPlugin() {}
 
-void FileChooserPlugin::HandleMethodCall(const MethodCall &method_call,
-                                         std::unique_ptr<MethodResult> result) {
-  if (method_call.arguments().isNull()) {
+void FileChooserPlugin::HandleJsonMethodCall(
+    const JsonMethodCall &method_call, std::unique_ptr<MethodResult> result) {
+  if (method_call.GetArgumentsAsJson().isNull()) {
     result->Error("Bad Arguments", "Null file chooser method args received");
     return;
   }
 
-  gint chooser_res;
-  auto chooser =
-      CreateFileChooser(method_call.method_name(), method_call.arguments());
+  auto chooser = CreateFileChooser(method_call.method_name(),
+                                   method_call.GetArgumentsAsJson());
   if (chooser == nullptr) {
     result->NotImplemented();
     return;
   }
-  chooser_res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(chooser));
+  gint chooser_result = gtk_native_dialog_run(GTK_NATIVE_DIALOG(chooser));
   std::vector<std::string> filenames;
-  if (chooser_res == GTK_RESPONSE_ACCEPT) {
+  if (chooser_result == GTK_RESPONSE_ACCEPT) {
     GSList *files = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(chooser));
     // Each filename must be freed, and then GSList afterward:
     //
@@ -178,7 +177,8 @@ void FileChooserPlugin::HandleMethodCall(const MethodCall &method_call,
   }
   g_object_unref(chooser);
 
-  result->Success(CreateResponseObject(filenames));
+  Json::Value response_object(CreateResponseObject(filenames));
+  result->Success(&response_object);
 }
 
 }  // namespace plugins_file_chooser

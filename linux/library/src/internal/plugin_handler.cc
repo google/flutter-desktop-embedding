@@ -13,11 +13,13 @@
 // limitations under the License.
 #include "linux/library/src/internal/plugin_handler.h"
 
+#include "linux/library/src/internal/engine_method_result.h"
+
 #include <iostream>
 
 namespace flutter_desktop_embedding {
 
-PluginHandler::PluginHandler() {}
+PluginHandler::PluginHandler(FlutterEngine engine) : engine_(engine) {}
 
 PluginHandler::~PluginHandler() {}
 
@@ -29,22 +31,42 @@ bool PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
   return true;
 }
 
-void PluginHandler::HandleMethodCall(
-    const std::string &channel, const MethodCall &method_call,
-    std::unique_ptr<MethodResult> result,
+void PluginHandler::HandleMethodCallMessage(
+    const FlutterPlatformMessage *message,
     std::function<void(void)> input_block_cb,
     std::function<void(void)> input_unblock_cb) {
-  if (plugins_.find(channel) != plugins_.end()) {
-    const std::unique_ptr<Plugin> &plugin = plugins_[channel];
-    if (plugin->input_blocking()) {
-      input_block_cb();
-    }
-    plugin->HandleMethodCall(method_call, std::move(result));
-    if (plugin->input_blocking()) {
-      input_unblock_cb();
-    }
-  } else {
+  std::string channel(message->channel);
+
+  // Find the plugin for the channel; if there isn't one, report the failure.
+  if (plugins_.find(channel) == plugins_.end()) {
+    auto result =
+        std::make_unique<flutter_desktop_embedding::EngineMethodResult>(
+            engine_, message->response_handle, nullptr);
     result->NotImplemented();
+    return;
+  }
+  const std::unique_ptr<Plugin> &plugin = plugins_[channel];
+
+  // Use the plugin's codec to decode the call and build a result handler.
+  const flutter_desktop_embedding::MethodCodec &codec = plugin->GetCodec();
+  auto result = std::make_unique<flutter_desktop_embedding::EngineMethodResult>(
+      engine_, message->response_handle, &codec);
+  std::unique_ptr<flutter_desktop_embedding::MethodCall> method_call =
+      codec.DecodeMethodCall(message->message, message->message_size);
+  if (!method_call) {
+    std::cerr << "Unable to construct method call from message on channel "
+              << message->channel << std::endl;
+    result->NotImplemented();
+    return;
+  }
+
+  // Process the call, handling input blocking if requested by the plugin.
+  if (plugin->input_blocking()) {
+    input_block_cb();
+  }
+  plugin->HandleMethodCall(*method_call, std::move(result));
+  if (plugin->input_blocking()) {
+    input_unblock_cb();
   }
 }
 

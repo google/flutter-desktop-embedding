@@ -92,12 +92,12 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
 }
 
 TextInputPlugin::TextInputPlugin()
-    : Plugin(kChannelName, false), active_model_(nullptr) {}
+    : JsonPlugin(kChannelName, false), active_model_(nullptr) {}
 
 TextInputPlugin::~TextInputPlugin() {}
 
-void TextInputPlugin::HandleMethodCall(const MethodCall &method_call,
-                                       std::unique_ptr<MethodResult> result) {
+void TextInputPlugin::HandleJsonMethodCall(
+    const JsonMethodCall &method_call, std::unique_ptr<MethodResult> result) {
   const std::string &method = method_call.method_name();
 
   if (method.compare(kShowMethod) == 0 || method.compare(kHideMethod) == 0) {
@@ -106,7 +106,7 @@ void TextInputPlugin::HandleMethodCall(const MethodCall &method_call,
     active_model_ = nullptr;
   } else {
     // Every following method requires args.
-    const Json::Value &args = method_call.arguments();
+    const Json::Value &args = method_call.GetArgumentsAsJson();
     if (args.isNull()) {
       result->Error(kBadArgumentError, "Method invoked without args");
       return;

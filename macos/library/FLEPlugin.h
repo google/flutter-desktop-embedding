@@ -15,14 +15,18 @@
 #import <Foundation/Foundation.h>
 
 #import "FLEChannels.h"
+#import "FLECodecs.h"
 
 @class FLEViewController;
 
 /**
  * A plugin is an object that can respond appropriately to Flutter platform messages over a specific
  * named system channel. See https://flutter.io/platform-channels/.
+ *
+ * Note: This interface will be changing in the future to more closely match the iOS Flutter
+ * platform message API. It will be a one-time breaking change.
  */
-@protocol FLEPlugin
+@protocol FLEPlugin <NSObject>
 
 /**
  * A weak reference to the owning controller. May be used to send messages to the Flutter
@@ -49,5 +53,16 @@
  * -[FLEViewController invokeMethod:arguments:onChannel:].
  */
 - (void)handleMethodCall:(nonnull FLEMethodCall *)call result:(nonnull FLEMethodResult)result;
+
+@optional
+
+/**
+ * If implemented, returns the codec to use for method calls to this plugin.
+ *
+ * If not implemented, the codec is assumed to be FLEJSONMethodCodec. Note that this is different
+ * from existing Flutter platforms, which default to the standard codec; this is to preserve
+ * backwards compatibility for FLEPlugin until the breaking change for the platform messages API.
+ */
+@property(nonnull, readonly) id<FLEMethodCodec> codec;
 
 @end

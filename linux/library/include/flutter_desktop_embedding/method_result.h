@@ -14,12 +14,7 @@
 #ifndef LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_RESULT_H_
 #define LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_RESULT_H_
 
-#include <json/json.h>
-
-#include <memory>
 #include <string>
-
-#include <flutter_embedder.h>
 
 namespace flutter_desktop_embedding {
 
@@ -27,17 +22,26 @@ namespace flutter_desktop_embedding {
 // MethodCall. Only one method should be called on any given instance.
 class MethodResult {
  public:
+  MethodResult();
+  virtual ~MethodResult();
+
+  // Prevent copying.
+  MethodResult(MethodResult const &) = delete;
+  MethodResult &operator=(MethodResult const &) = delete;
+
   // Sends a success response, indicating that the call completed successfully.
-  // An optional value can be provided as part of the success message.
-  void Success(const Json::Value &result = Json::Value());
+  // An optional value can be provided as part of the success message. The value
+  // must be a type handled by the channel's codec.
+  void Success(const void *result = nullptr);
 
   // Sends an error response, indicating that the call was understood but
   // handling failed in some way. A string error code must be provided, and in
   // addition an optional user-readable error_message and/or details object can
-  // be included.
+  // be included. The details, if provided, must be a type handled by the
+  // channel's codec.
   void Error(const std::string &error_code,
              const std::string &error_message = "",
-             const Json::Value &error_details = Json::Value());
+             const void *error_details = nullptr);
 
   // Sends a not-implemented response, indicating that the method either was not
   // recognized, or has not been implemented.
@@ -46,43 +50,11 @@ class MethodResult {
  protected:
   // Internal implementation of the interface methods above, to be implemented
   // in subclasses.
-  virtual void SuccessInternal(const Json::Value &result) = 0;
+  virtual void SuccessInternal(const void *result) = 0;
   virtual void ErrorInternal(const std::string &error_code,
                              const std::string &error_message,
-                             const Json::Value &error_details) = 0;
+                             const void *error_details) = 0;
   virtual void NotImplementedInternal() = 0;
-};
-
-// Implemention of MethodResult using JSON as the protocol.
-// TODO: Move this logic into method codecs.
-class JsonMethodResult : public MethodResult {
- public:
-  // Creates a result object that will send results to |engine|, tagged as
-  // associated with |response_handle|. The engine pointer must remain valid for
-  // as long as this object exists.
-  JsonMethodResult(FlutterEngine engine,
-                   const FlutterPlatformMessageResponseHandle *response_handle);
-  ~JsonMethodResult();
-
- protected:
-  void SuccessInternal(const Json::Value &result) override;
-  void ErrorInternal(const std::string &error_code,
-                     const std::string &error_message,
-                     const Json::Value &error_details) override;
-  void NotImplementedInternal() override;
-
- private:
-  // Sends the given JSON response object to the engine.
-  void SendResponseJson(const Json::Value &response);
-
-  // Sends the given response data (which must either be nullptr or a serialized
-  // JSON response) to the engine.
-  // Uses a pointer rather than a reference since nullptr is used to indicate
-  // not-implemented (which is represented to Flutter by no data).
-  void SendResponse(const std::string *serialized_response);
-
-  FlutterEngine engine_;
-  const FlutterPlatformMessageResponseHandle *response_handle_;
 };
 
 }  // namespace flutter_desktop_embedding
