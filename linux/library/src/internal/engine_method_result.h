@@ -39,6 +39,7 @@ class EngineMethodResult : public MethodResult {
   ~EngineMethodResult();
 
  protected:
+  // MethodResult:
   void SuccessInternal(const void *result) override;
   void ErrorInternal(const std::string &error_code,
                      const std::string &error_message,

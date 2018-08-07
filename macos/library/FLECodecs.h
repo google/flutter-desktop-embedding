@@ -44,7 +44,7 @@
 - (nullable NSData*)encodeSuccessEnvelope:(nullable id)result;
 
 /**
- * Returns a binary encoding of |error|. Returns nil if the |details| parameter of |erorr| is not
+ * Returns a binary encoding of |error|. Returns nil if the |details| parameter of |error| is not
  * a type supported by the codec.
  */
 - (nullable NSData*)encodeErrorEnvelope:(nonnull FLEMethodError*)error;
@@ -55,7 +55,7 @@
  * A codec that uses JSON as the encoding format. Method arguments and error details for plugins
  * using this codec must be serializable to JSON.
  */
-@interface FLEJSONMethodCodec : NSObject <FLEMethodCodec>
+@interface FLEJSONMethodCodec : NSObject<FLEMethodCodec>
 @end
 
 // TODO: Implement the other core Flutter codecs. Issue #67.
