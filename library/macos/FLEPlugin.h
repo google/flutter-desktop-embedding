@@ -18,52 +18,38 @@
 #import "FLEMethodChannel.h"
 #import "FLEMethodCodec.h"
 
-@class FLEViewController;
+@protocol FLEPluginRegistrar;
 
 /**
- * A plugin is an object that can respond appropriately to Flutter platform messages over a specific
- * named system channel. See https://flutter.io/platform-channels/.
+ * Implemented by the platform side of a Flutter plugin.
  *
- * Note: This interface will be changing in the future to more closely match the iOS Flutter
- * platform message API. It will be a one-time breaking change.
+ * Defines a set of optional callback methods and a method to set up the plugin
+ * and register it to be called by other application components.
+ *
+ * Currently FLEPlugin has very limited functionality, but is expected to expand over time to
+ * more closely match the functionality of FlutterPlugin.
  */
 @protocol FLEPlugin <NSObject>
 
 /**
- * A weak reference to the owning controller. May be used to send messages to the Flutter
- * framework.
+ * Creates an instance of the plugin to register with |registrar| using the desired
+ * FLEPluginRegistrar methods.
  */
-@property(nullable, weak) FLEViewController *controller;
++ (void)registerWithRegistrar:(nonnull id<FLEPluginRegistrar>)registrar;
+
+@optional
 
 /**
- * The name of the system channel via which this plugin communicates.
- */
-@property(nonnull, readonly) NSString *channel;
-
-/**
- * Called when a message is sent from Flutter on this plugin's channel.
- * The result callback must be called exactly once, with one of:
+ * Called when a message is sent from Flutter on a channel that a plugin instance has subscribed
+ * to via -[FLEPluginRegistrar addMethodCallDelegate:channel:].
+ *
+ * The |result| callback must be called exactly once, with one of:
  * - FLEMethodNotImplemented, if the method call is unknown.
  * - An FLEMethodError, if the method call was understood but there was a
  *   problem handling it.
  * - Any other value (including nil) to indicate success. The value will
  *   be returned to the Flutter caller, and must be serializable to JSON.
- *
- * If handling the method involves multiple responses to Flutter, follow-up
- * messages can be sent by calling the other direction using
- * -[FLEViewController invokeMethod:arguments:onChannel:].
  */
 - (void)handleMethodCall:(nonnull FLEMethodCall *)call result:(nonnull FLEMethodResult)result;
-
-@optional
-
-/**
- * If implemented, returns the codec to use for method calls to this plugin.
- *
- * If not implemented, the codec is assumed to be FLEJSONMethodCodec. Note that this is different
- * from existing Flutter platforms, which default to the standard codec; this is to preserve
- * backwards compatibility for FLEPlugin until the breaking change for the platform messages API.
- */
-@property(nonnull, readonly) id<FLEMethodCodec> codec;
 
 @end

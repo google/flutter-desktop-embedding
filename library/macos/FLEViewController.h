@@ -14,9 +14,11 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "FLEBinaryMessenger.h"
 #import "FLEMethodCodec.h"
 #import "FLEOpenGLContextHandling.h"
 #import "FLEPlugin.h"
+#import "FLEPluginRegistrar.h"
 #import "FLEReshapeListener.h"
 
 /**
@@ -26,7 +28,8 @@
  * Can be launched headless (no managed view), at which point a Dart executable will be run on the
  * Flutter engine in non-interactive mode, or with a drawable Flutter canvas.
  */
-@interface FLEViewController : NSViewController <FLEBinaryMessenger, FLEReshapeListener>
+@interface FLEViewController
+    : NSViewController <FLEBinaryMessenger, FLEPluginRegistrar, FLEReshapeListener>
 
 /**
  * The view this controller manages when launched in interactive mode (headless set to false). Must
@@ -65,30 +68,13 @@
             commandLineArguments:(nonnull NSArray<NSString *> *)arguments;
 
 /**
- * Adds a plugin to the view controller to handle domain-specific system messages. The plugin's
- * channel property will determine which system channel the plugin operates on. Only one plugin
- * can operate on a given named channel; if two plugins declare the same channel, the second
- * add will return NO.
- */
-- (BOOL)addPlugin:(nonnull id<FLEPlugin>)plugin;
-
-/**
- * Sends a platform message to the Flutter engine on |channel|, encoded using |codec|.
+ * Adds a plugin to the view controller to handle domain-specific system messages. The given plugin
+ * class will receive a registerWithRegistrar: callback.
  *
- * // TODO: Move to an API that mirrors the FlutterMethodChannel API.
- * // TODO: Support responses.
+ * In the future, the plugin registration system is likely to change to more closely match iOS
+ * plugin registration, but for now clients of this library should register plugins directly with
+ * the view controller.
  */
-- (void)invokeMethod:(nonnull NSString *)method
-           arguments:(nullable id)arguments
-           onChannel:(nonnull NSString *)channelName
-           withCodec:(nonnull id<FLEMethodCodec>)codec;
-
-/**
- * Calls invokeMethod:arguments:onChannel:withCodec: using FLEJSONCodec. See the note in
- * FLEPlugin.h for why JSON is the default.
- */
-- (void)invokeMethod:(nonnull NSString *)method
-           arguments:(nullable id)arguments
-           onChannel:(nonnull NSString *)channelName;
+- (void)registerPlugin:(nonnull Class<FLEPlugin>)pluginClass;
 
 @end

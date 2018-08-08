@@ -16,6 +16,7 @@
 
 #import <objc/message.h>
 
+#import "FLEJSONMethodCodec.h"
 #import "FLETextInputModel.h"
 #import "FLEViewController+Internal.h"
 
@@ -33,7 +34,6 @@ static NSString *const kPerformAction = @"TextInputClient.performAction";
 static NSString *const kNewLine = @"TextInputAction.newline";
 static NSString *const kDone = @"TextInputAction.done";
 
-
 /**
  * Private properties of FlutterTextInputPlugin.
  */
@@ -42,42 +42,61 @@ static NSString *const kDone = @"TextInputAction.done";
 /**
  * A text input context, representing a connection to the Cocoa text input system.
  */
-@property NSTextInputContext *textInputContext;
+@property(nonatomic) NSTextInputContext *textInputContext;
 
 /**
  * A dictionary of text input models, one per client connection, keyed
  * by the client connection ID.
  */
-@property NSMutableDictionary<NSNumber *, FLETextInputModel *> *textInputModels;
+@property(nonatomic) NSMutableDictionary<NSNumber *, FLETextInputModel *> *textInputModels;
 
 /**
  * The currently active client connection ID.
  */
-@property(nullable) NSNumber *activeClientID;
+@property(nonatomic, nullable) NSNumber *activeClientID;
 
 /**
  * The currently active text input model.
  */
-@property(readonly, nullable) FLETextInputModel *activeModel;
+@property(nonatomic, readonly, nullable) FLETextInputModel *activeModel;
+
+/**
+ * The channel used to communicate with Flutter.
+ */
+@property(nonatomic) FLEMethodChannel *channel;
+
+/**
+ * The FLEViewController to manage input for.
+ */
+@property(nonatomic, weak) FLEViewController *flutterViewController;
+
+/**
+ * Handles a Flutter system message on the text input channel.
+ */
+- (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result;
 
 @end
 
 @implementation FLETextInputPlugin
 
-@synthesize controller = _controller;
-
-- (instancetype)init {
+- (instancetype)initWithViewController:(FLEViewController *)viewController {
   self = [super init];
   if (self != nil) {
+    _flutterViewController = viewController;
+    _channel = [FLEMethodChannel methodChannelWithName:kTextInputChannel
+                                       binaryMessenger:viewController
+                                                 codec:[FLEJSONMethodCodec sharedInstance]];
+    __weak FLETextInputPlugin *weakSelf = self;
+    [_channel setMethodCallHandler:^(FLEMethodCall *call, FLEMethodResult result) {
+      [weakSelf handleMethodCall:call result:result];
+    }];
     _textInputModels = [[NSMutableDictionary alloc] init];
     _textInputContext = [[NSTextInputContext alloc] initWithClient:self];
   }
   return self;
 }
 
-- (NSString *)channel {
-  return kTextInputChannel;
-}
+#pragma mark - Private
 
 - (FLETextInputModel *)activeModel {
   return (_activeClientID == nil) ? nil : _textInputModels[_activeClientID];
@@ -95,10 +114,10 @@ static NSString *const kDone = @"TextInputAction.done";
       _textInputModels[_activeClientID] = [[FLETextInputModel alloc] init];
     }
   } else if ([method isEqualToString:kShowMethod]) {
-    [self.controller addKeyResponder:self];
+    [self.flutterViewController addKeyResponder:self];
     [_textInputContext activate];
   } else if ([method isEqualToString:kHideMethod]) {
-    [self.controller removeKeyResponder:self];
+    [self.flutterViewController removeKeyResponder:self];
     [_textInputContext deactivate];
   } else if ([method isEqualToString:kClearClientMethod]) {
     _activeClientID = nil;
@@ -120,9 +139,8 @@ static NSString *const kDone = @"TextInputAction.done";
     return;
   }
 
-  [_controller invokeMethod:kUpdateEditStateResponseMethod
-                  arguments:@[ _activeClientID, _textInputModels[_activeClientID].state ]
-                  onChannel:kTextInputChannel];
+  [_channel invokeMethod:kUpdateEditStateResponseMethod
+               arguments:@[ _activeClientID, _textInputModels[_activeClientID].state ]];
 }
 
 #pragma mark -
@@ -226,9 +244,7 @@ static NSString *const kDone = @"TextInputAction.done";
   // There is a PR in Flutter to identify if the widget is multiline, and act accordingly
   // (https://github.com/flutter/flutter/pull/23015). Once merged, this action should be changed
   // to kNewLine.
-  [_controller invokeMethod:kPerformAction
-                  arguments:@[ _activeClientID, kDone ]
-                  onChannel:kTextInputChannel];
+  [_channel invokeMethod:kPerformAction arguments:@[ _activeClientID, kDone ]];
 }
 
 - (void)setMarkedText:(id)string
