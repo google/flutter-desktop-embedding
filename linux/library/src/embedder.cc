@@ -29,6 +29,15 @@
 #include "linux/library/src/internal/plugin_handler.h"
 #include "linux/library/src/internal/text_input_plugin.h"
 
+// GLFW_TRUE & GLFW_FALSE are introduced since libglfw-3.3,
+// add definitions here to compile under the old versions.
+#ifndef GLFW_TRUE
+#define GLFW_TRUE   1
+#endif
+#ifndef GLFW_FALSE
+#define GLFW_FALSE  0
+#endif
+
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
 // Struct for storing state within an instance of the GLFW Window.
