@@ -11,9 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
-#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
-#include <json/json.h>
+#ifndef LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
+#define LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
 
 #include <functional>
 #include <memory>
@@ -21,13 +20,15 @@
 
 #include <flutter_embedder.h>
 
-#include "channels.h"
+#include "method_call.h"
+#include "method_codec.h"
+#include "method_result.h"
 
 namespace flutter_desktop_embedding {
 
 // Represents a plugin that can be registered with the Flutter Embedder.
 //
-// A plugin listens on a platform channel and processes JSON requests that come
+// A plugin listens on a platform channel and processes requests that come
 // in on said channel.  See https://flutter.io/platform-channels/ for more
 // details on what these channels look like.
 class Plugin {
@@ -37,8 +38,11 @@ class Plugin {
   // |input_blocking| Determines whether user input should be blocked during the
   // duration of this plugin's platform callback handler (in most cases this
   // can be set to false).
-  explicit Plugin(std::string channel, bool input_blocking = false);
+  explicit Plugin(const std::string &channel, bool input_blocking = false);
   virtual ~Plugin();
+
+  // Returns the codec to use for this plugin.
+  virtual const MethodCodec &GetCodec() const = 0;
 
   // Handles a method call from Flutter on this platform's channel.
   //
@@ -63,8 +67,7 @@ class Plugin {
 
  protected:
   // Calls a method in the Flutter engine on this Plugin's channel.
-  void InvokeMethod(const std::string &method,
-                    const Json::Value &arguments = Json::Value());
+  void InvokeMethodCall(const MethodCall &method_call);
 
  private:
   std::string channel_;
@@ -75,4 +78,4 @@ class Plugin {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_
+#endif  // LINUX_LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_H_

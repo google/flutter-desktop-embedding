@@ -13,20 +13,21 @@
 // limitations under the License.
 #ifndef PLUGINS_COLOR_PANEL_LINUX_INCLUDE_COLOR_PANEL_COLOR_PANEL_PLUGIN_H_
 #define PLUGINS_COLOR_PANEL_LINUX_INCLUDE_COLOR_PANEL_COLOR_PANEL_PLUGIN_H_
-#include <flutter_desktop_embedding/plugin.h>
 
 #include <memory>
+
+#include <flutter_desktop_embedding/json_plugin.h>
 
 namespace plugins_color_panel {
 
 // A plugin for communicating with a native color picker panel.
-class ColorPanelPlugin : public flutter_desktop_embedding::Plugin {
+class ColorPanelPlugin : public flutter_desktop_embedding::JsonPlugin {
  public:
   ColorPanelPlugin();
   virtual ~ColorPanelPlugin();
 
-  void HandleMethodCall(
-      const flutter_desktop_embedding::MethodCall &method_call,
+  void HandleJsonMethodCall(
+      const flutter_desktop_embedding::JsonMethodCall &method_call,
       std::unique_ptr<flutter_desktop_embedding::MethodResult> result) override;
 
  protected:

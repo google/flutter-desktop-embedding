@@ -16,22 +16,7 @@
 
 NSString const *FLEMethodNotImplemented = @"notimplemented";
 
-static NSString *const kMessageMethodKey = @"method";
-static NSString *const kMessageArgumentsKey = @"args";
-
 @implementation FLEMethodCall
-
-+ (nullable instancetype)methodCallFromMessage:(nonnull NSDictionary *)message {
-  NSString *method = message[kMessageMethodKey];
-  if (!method) {
-    return nil;
-  }
-  id arguments = message[kMessageArgumentsKey];
-  if (arguments == [NSNull null]) {
-    arguments = nil;
-  }
-  return [[self alloc] initWithMethodName:method arguments:arguments];
-}
 
 - (nonnull instancetype)initWithMethodName:(nonnull NSString *)name
                                  arguments:(nullable id)arguments {
@@ -41,13 +26,6 @@ static NSString *const kMessageArgumentsKey = @"args";
     _arguments = arguments;
   }
   return self;
-}
-
-- (nonnull NSDictionary *)asMessage {
-  return @{
-    kMessageMethodKey : _methodName,
-    kMessageArgumentsKey : _arguments ?: [NSNull null],
-  };
 }
 
 @end
@@ -69,31 +47,3 @@ static NSString *const kMessageArgumentsKey = @"args";
 }
 
 @end
-
-#pragma mark -
-
-NSData *EngineResponseForMethodResult(id result) {
-  // The engine expects one of three responses to a platform message:
-  // - No data, indicating that the method is not implemented.
-  // - A one-element array indicating succes, with the response payload as the element.
-  // - A three-element array indicating an error, consisting of:
-  //   * An error code string.
-  //   * An optional human-readable error string.
-  //   * An optional object with more error information.
-  NSArray *responseObject = nil;
-  if (result == FLEMethodNotImplemented) {
-    // Note that the compare above deliberately uses pointer equality rather than string equality
-    // since only the constant itself should be treated as 'not implemented'.
-    return nil;
-  } else if ([result isKindOfClass:[FLEMethodError class]]) {
-    FLEMethodError *error = (FLEMethodError *)result;
-    responseObject = @[
-      error.code,
-      error.message ?: [NSNull null],
-      error.details ?: [NSNull null],
-    ];
-  } else {
-    responseObject = @[ result ?: [NSNull null] ];
-  }
-  return [NSJSONSerialization dataWithJSONObject:responseObject options:0 error:NULL];
-}

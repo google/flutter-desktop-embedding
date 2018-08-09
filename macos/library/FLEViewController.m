@@ -163,23 +163,14 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   return [self _addPlugin:plugin];
 }
 
-// TODO: Move to a structure that mimics the FlutterChannel structure used on iOS, for better
-// consistency (and to allow alternate method codecs).
 - (void)invokeMethod:(nonnull NSString *)method
            arguments:(nullable id)arguments
-           onChannel:(nonnull NSString *)channel {
-  NSDictionary *messageObject =
-      [[[FLEMethodCall alloc] initWithMethodName:method arguments:arguments] asMessage];
-  if (![NSJSONSerialization isValidJSONObject:messageObject]) {
-    NSLog(@"Error: Unable to construct a valid JSON object from %@, %@", method, arguments);
-    return;
-  }
-
-  NSError *error = nil;
-  NSData *messageData =
-      [NSJSONSerialization dataWithJSONObject:messageObject options:0 error:&error];
+           onChannel:(nonnull NSString *)channel
+           withCodec:(nonnull id<FLEMethodCodec>)codec {
+  FLEMethodCall *methodCall = [[FLEMethodCall alloc] initWithMethodName:method arguments:arguments];
+  NSData *messageData = [codec encodeMethodCall:methodCall];
   if (!messageData) {
-    NSLog(@"Error: Failed to create JSON message data for %@: %@", method, error.debugDescription);
+    NSLog(@"Error: Unable to construct a message to call %@ on %@", method, channel);
     return;
   }
 
@@ -194,6 +185,15 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   if (result != kSuccess) {
     NSLog(@"Unable to invoke %@ on Flutter engine (%d).", method, result);
   }
+}
+
+- (void)invokeMethod:(nonnull NSString *)method
+           arguments:(nullable id)arguments
+           onChannel:(nonnull NSString *)channel {
+  [self invokeMethod:method
+           arguments:arguments
+           onChannel:channel
+           withCodec:[FLEJSONMethodCodec sharedInstance]];
 }
 
 #pragma mark - Private methods.
@@ -234,8 +234,8 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
     command_line_args[i - unused] = [arguments[i] UTF8String];
   }
 
-  NSString *icuData =
-      [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath ofType:nil];
+  NSString *icuData = [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath
+                                                                             ofType:nil];
 
   const FlutterProjectArgs args = {
       .struct_size = sizeof(FlutterProjectArgs),
@@ -287,34 +287,46 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
                                       length:message->message_size
                                 freeWhenDone:NO];
   NSString *channel = @(message->channel);
-
-  id messageObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-  FLEMethodCall *methodCall =
-      messageObject ? [FLEMethodCall methodCallFromMessage:messageObject] : nil;
-
   __block const FlutterPlatformMessageResponseHandle *responseHandle = message->response_handle;
+
+  id<FLEPlugin> plugin = _plugins[channel];
+  if (!plugin) {
+    FlutterEngineSendPlatformMessageResponse(self->_engine, responseHandle, NULL, 0);
+    return;
+  }
+
+  // See the note on the |codec| property of FLEPlugin for the reason this defaults to JSON.
+  id<FLEMethodCodec> codec = [FLEJSONMethodCodec sharedInstance];
+  if ([plugin respondsToSelector:@selector(codec)]) {
+    codec = plugin.codec;
+  }
+  FLEMethodCall *methodCall = [codec decodeMethodCall:data];
+
   FLEMethodResult resultHandler = ^(id result) {
-    NSData *responseData = EngineResponseForMethodResult(result);
+    NSData *responseData = nil;
+    if (result == FLEMethodNotImplemented) {
+      // No-op; nil is the not-implemented response.
+      // Note that the compare above deliberately uses pointer equality rather than string equality
+      // since only the constant itself should be treated as 'not implemented'.
+    } else if ([result isKindOfClass:[FLEMethodError class]]) {
+      responseData = [codec encodeErrorEnvelope:(FLEMethodError *)result];
+    } else {
+      responseData = [codec encodeSuccessEnvelope:result];
+    }
+
     if (responseHandle) {
       FlutterEngineSendPlatformMessageResponse(self->_engine, responseHandle, responseData.bytes,
                                                responseData.length);
       responseHandle = NULL;
     } else {
-      NSLog(
-          @"Error: Method call responses can be called only once. Ignoring duplicate response "
-           "for '%@' on channel '%@'.",
-          methodCall.methodName, channel);
+      NSLog(@"Error: Method call responses can be called only once. Ignoring duplicate response "
+             "for '%@' on channel '%@'.",
+            methodCall.methodName, channel);
     }
   };
 
   if (!methodCall) {
-    NSLog(@"Recieved invalid platform message: %@", messageObject);
-    resultHandler(FLEMethodNotImplemented);
-    return;
-  }
-
-  id<FLEPlugin> plugin = _plugins[channel];
-  if (!plugin) {
+    NSLog(@"Received invalid platform message on channel %@", channel);
     resultHandler(FLEMethodNotImplemented);
     return;
   }
@@ -330,8 +342,8 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
  */
 - (void)createResourceContext {
   NSOpenGLContext *viewContext = ((NSOpenGLView *)self.view).openGLContext;
-  _resourceContext =
-      [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat shareContext:viewContext];
+  _resourceContext = [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat
+                                                shareContext:viewContext];
 }
 
 - (void)makeResourceContextCurrent {
