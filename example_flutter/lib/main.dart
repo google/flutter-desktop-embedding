@@ -182,10 +182,12 @@ class _MyHomePage extends StatelessWidget {
             ),
             TextInputTestWidget(),
             FileChooserTestWidget(),
-            new RaisedButton(child: new Text('Test raw keyboard events'), onPressed: () {
-              Navigator.of(context).push(new MaterialPageRoute(
-                  builder: (context) => KeyboardTestPage()));
-            })
+            new RaisedButton(
+                child: new Text('Test raw keyboard events'),
+                onPressed: () {
+                  Navigator.of(context).push(new MaterialPageRoute(
+                      builder: (context) => KeyboardTestPage()));
+                })
           ],
         ),
       ),

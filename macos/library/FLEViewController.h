@@ -72,16 +72,6 @@
 - (BOOL)addPlugin:(nonnull id<FLEPlugin>)plugin;
 
 /**
- * Adds a responder for keyboard events. Key up and key down events are forwarded to all added responders.
- */
-- (void)addKeyResponder:(nonnull NSResponder*)responder;
-
-/**
- * Removes a responder for keyboard events.
- */
-- (void)removeKeyResponder:(nonnull NSResponder*)responder;
-
-/**
  * Sends a platform message to the Flutter engine on |channel|, encoded using |codec|.
  *
  * // TODO: Move to an API that mirrors the FlutterMethodChannel API.

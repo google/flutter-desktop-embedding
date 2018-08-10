@@ -12,12 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import "FLEViewController.h"
+
 @interface FLEViewController ()
+
+/**
+ * Adds a responder for keyboard events. Key up and key down events are forwarded to all added
+ * responders.
+ */
+- (void)addKeyResponder:(nonnull NSResponder *)responder;
+
+/**
+ * Removes a responder for keyboard events.
+ */
+- (void)removeKeyResponder:(nonnull NSResponder *)responder;
 
 /**
  * Sends a platform message to the Flutter engine on the given channel.
  * @param message The raw message.
  */
-- (void)dispatchMessage:(nonnull NSDictionary*)message onChannel:(nonnull NSString *)channel;
+- (void)dispatchMessage:(nonnull NSDictionary *)message onChannel:(nonnull NSString *)channel;
 
 @end

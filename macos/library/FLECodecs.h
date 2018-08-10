@@ -55,7 +55,7 @@
  * A codec that uses JSON as the encoding format. Method arguments and error details for plugins
  * using this codec must be serializable to JSON.
  */
-@interface FLEJSONMethodCodec : NSObject<FLEMethodCodec>
+@interface FLEJSONMethodCodec : NSObject <FLEMethodCodec>
 @end
 
 // TODO: Implement the other core Flutter codecs. Issue #67.

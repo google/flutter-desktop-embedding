@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
+/// Keyboard test page for the example application.
 class KeyboardTestPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -25,6 +26,7 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
+          title: new Text("Keyboard events test"),
           leading: new IconButton(
               icon: new Icon(Icons.arrow_back),
               onPressed: () {
@@ -45,10 +47,8 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
     );
   }
 
-  void onKeyEvent(RawKeyEvent event) async {
-    int keyCode;
+  void onKeyEvent(RawKeyEvent event) {
     bool isKeyDown;
-
     switch (event.runtimeType) {
       case RawKeyDownEvent:
         isKeyDown = true;
@@ -60,6 +60,7 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
         throw new Exception('Unexpected runtimeType of RawKeyEvent');
     }
 
+    int keyCode;
     switch (event.data.runtimeType) {
       case RawKeyEventDataAndroid:
         final RawKeyEventDataAndroid data = event.data;

@@ -17,7 +17,7 @@
 #import <objc/message.h>
 
 #import "FLETextInputModel.h"
-#import "FLEViewController.h"
+#import "FLEViewController+Internal.h"
 
 static NSString *const kTextInputChannel = @"flutter/textinput";
 

@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEViewController.h"
-#import "FLEViewController+Internal.h"
 #import "FLEKeyEventPlugin.h"
+
+#import "FLEViewController+Internal.h"
+#import "FLEViewController.h"
 
 static NSString *const kKeyEventChannel = @"flutter/keyevent";
 
@@ -30,25 +31,31 @@ static NSString *const kKeyEventChannel = @"flutter/keyevent";
   result(FLEMethodNotImplemented);
 }
 
-- (void)dispatchKeyEvent:(NSString *)type event:(NSEvent *)event {
-  // TODO: Do not use 'android'. Reconsider when https://github.com/google/flutter-desktop-embedding/issues/47 is solved.
-  NSDictionary* message = @{
-                            @"keymap": @"android",
-                            @"type": type,
-                            @"keyCode": @(event.keyCode),
-                            };
-  
+/**
+ * Sends a key event to flutter.
+ * @param event NSEvent received from the system.
+ * @param type Type of this key event. Can be either "keydown" or "keyup".
+ */
+- (void)dispatchKeyEvent:(NSEvent *)event ofType:(NSString *)type {
+  // TODO: Do not use 'android'. Reconsider when
+  // https://github.com/google/flutter-desktop-embedding/issues/47 is solved.
+  NSDictionary *message = @{
+    @"keymap" : @"android",
+    @"type" : type,
+    @"keyCode" : @(event.keyCode),
+  };
+
   [self.controller dispatchMessage:message onChannel:kKeyEventChannel];
 }
 
 #pragma mark - NSResponder
 
 - (void)keyDown:(NSEvent *)event {
-  [self dispatchKeyEvent:@"keydown" event:event];
+  [self dispatchKeyEvent:event ofType:@"keydown"];
 }
 
 - (void)keyUp:(NSEvent *)event {
-  [self dispatchKeyEvent:@"keyup" event:event];
+  [self dispatchKeyEvent:event ofType:@"keyup"];
 }
 
 @end
