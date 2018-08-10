@@ -14,6 +14,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "FLECodecs.h"
 #import "FLEOpenGLContextHandling.h"
 #import "FLEPlugin.h"
 
@@ -81,11 +82,19 @@
 - (void)removeKeyResponder:(nonnull NSResponder*)responder;
 
 /**
- * Sends a platform message to the Flutter engine on the given channel
- * @param method The method name.
- * @param arguments The method arguments.
+ * Sends a platform message to the Flutter engine on |channel|, encoded using |codec|.
  *
+ * // TODO: Move to an API that mirrors the FlutterMethodChannel API.
  * // TODO: Support responses.
+ */
+- (void)invokeMethod:(nonnull NSString *)method
+           arguments:(nullable id)arguments
+           onChannel:(nonnull NSString *)channel
+           withCodec:(nonnull id<FLEMethodCodec>)codec;
+
+/**
+ * Calls invokeMethod:arguments:onChannel:withCodec: using FLEJSONCodec. See the note in
+ * FLEPlugin.h for why JSON is the default.
  */
 - (void)invokeMethod:(nonnull NSString *)method
            arguments:(nullable id)arguments

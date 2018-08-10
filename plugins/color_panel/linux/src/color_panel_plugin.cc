@@ -21,7 +21,7 @@
 static constexpr char kWindowTitle[] = "Flutter Color Picker";
 
 namespace plugins_color_panel {
-using flutter_desktop_embedding::MethodCall;
+using flutter_desktop_embedding::JsonMethodCall;
 using flutter_desktop_embedding::MethodResult;
 
 // Private implementation class containing the color picker widget.
@@ -86,12 +86,12 @@ class ColorPanelPlugin::ColorPanel {
 };
 
 ColorPanelPlugin::ColorPanelPlugin()
-    : Plugin(kChannelName), color_panel_(nullptr) {}
+    : JsonPlugin(kChannelName), color_panel_(nullptr) {}
 
 ColorPanelPlugin::~ColorPanelPlugin() {}
 
-void ColorPanelPlugin::HandleMethodCall(const MethodCall &method_call,
-                                        std::unique_ptr<MethodResult> result) {
+void ColorPanelPlugin::HandleJsonMethodCall(
+    const JsonMethodCall &method_call, std::unique_ptr<MethodResult> result) {
   if (method_call.method_name().compare(kShowColorPanelMethod) == 0) {
     result->Success();
     // There is only one color panel that can be displayed at once.

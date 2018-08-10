@@ -16,7 +16,6 @@
 #include <X11/Xlib.h>
 #include <assert.h>
 #include <gtk/gtk.h>
-#include <json/json.h>
 
 #include <chrono>
 #include <cstdlib>
@@ -24,11 +23,20 @@
 #include <memory>
 #include <string>
 
-#include <flutter_desktop_embedding/channels.h>
-#include <flutter_desktop_embedding/input/keyboard_hook_handler.h>
-#include <flutter_desktop_embedding/plugin_handler.h>
-#include <flutter_desktop_embedding/text_input_plugin.h>
 #include <flutter_embedder.h>
+
+#include "linux/library/src/internal/keyboard_hook_handler.h"
+#include "linux/library/src/internal/plugin_handler.h"
+#include "linux/library/src/internal/text_input_plugin.h"
+
+// GLFW_TRUE & GLFW_FALSE are introduced since libglfw-3.3,
+// add definitions here to compile under the old versions.
+#ifndef GLFW_TRUE
+#define GLFW_TRUE   1
+#endif
+#ifndef GLFW_FALSE
+#define GLFW_FALSE  0
+#endif
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
@@ -90,28 +98,11 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
               << message->struct_size << std::endl;
     return;
   }
+
   GLFWwindow *window = reinterpret_cast<GLFWwindow *>(user_data);
-  Json::CharReaderBuilder reader_builder;
-  std::unique_ptr<Json::CharReader> parser(reader_builder.newCharReader());
-  Json::Value json;
-  std::string parse_errors;
-  auto raw_message = reinterpret_cast<const char *>(message->message);
-  bool parsing_successful = parser->parse(
-      raw_message, raw_message + message->message_size, &json, &parse_errors);
-  if (!parsing_successful) {
-    std::cerr << "Unable to parse platform message" << std::endl
-              << parse_errors << std::endl;
-    return;
-  }
   auto state = GetSavedEmbedderState(window);
-  std::string channel(message->channel);
-  std::unique_ptr<flutter_desktop_embedding::MethodCall> method_call =
-      flutter_desktop_embedding::MethodCall::CreateFromMessage(json);
-  auto result = std::make_unique<flutter_desktop_embedding::JsonMethodResult>(
-      state->engine, message->response_handle);
-  state->plugin_handler->HandleMethodCall(
-      channel, *method_call, std::move(result),
-      [window] { GLFWClearEventCallbacks(window); },
+  state->plugin_handler->HandleMethodCallMessage(
+      message, [window] { GLFWClearEventCallbacks(window); },
       [window] { GLFWAssignEventCallbacks(window); });
 }
 
@@ -272,15 +263,15 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
     return nullptr;
   }
   GLFWClearCanvas(window);
-  auto flutter_engine_run_result = RunFlutterEngine(
-      window, main_path, assets_path, packages_path, icu_data_path, argc, argv);
-  if (flutter_engine_run_result == nullptr) {
+  auto engine = RunFlutterEngine(window, main_path, assets_path, packages_path,
+                                 icu_data_path, argc, argv);
+  if (engine == nullptr) {
     glfwDestroyWindow(window);
     return nullptr;
   }
   FlutterEmbedderState *state = new FlutterEmbedderState();
-  state->plugin_handler = std::make_unique<PluginHandler>();
-  state->engine = flutter_engine_run_result;
+  state->plugin_handler = std::make_unique<PluginHandler>(engine);
+  state->engine = engine;
   auto input_plugin = std::make_unique<TextInputPlugin>();
   state->keyboard_hook_handlers.push_back(input_plugin.get());
 

@@ -16,15 +16,8 @@
 
 /**
  * An object encapsulating a method call from Flutter.
- *
- * TODO: Move serialization details into a method codec class, to match mobile Flutter plugin APIs.
  */
 @interface FLEMethodCall : NSObject
-
-/**
- * Returns a new FLEMethodCall created from a JSON message received from the Flutter engine.
- */
-+ (nullable instancetype)methodCallFromMessage:(nonnull NSDictionary *)message;
 
 /**
  * Initializes an FLEMethodCall. If |arguments| is provided, it must be serializable to JSON.
@@ -46,11 +39,6 @@
  * for supported types.
  */
 @property(readonly, nonatomic, nullable) id arguments;
-
-/**
- * Returns a version of the method call serialized in the format expected by the Flutter engine.
- */
-- (nonnull NSDictionary *)asMessage;
 
 @end
 
@@ -100,11 +88,3 @@ extern NSString const *_Nonnull FLEMethodNotImplemented;
 @property(readonly, nonatomic, nullable) id details;
 
 @end
-
-/**
- * Returns the serialized JSON data that should be sent to the engine for the given
- * FLEMethodResult argument.
- *
- * // TODO: Move this logic into method codecs.
- */
-NSData *_Nullable EngineResponseForMethodResult(id _Nullable result);

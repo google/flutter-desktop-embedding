@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_INPUT_KEYBOARD_HOOK_HANDLER_H_
-#define LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_INPUT_KEYBOARD_HOOK_HANDLER_H_
+#ifndef LINUX_LIBRARY_SRC_INTERNAL_INPUT_KEYBOARD_HOOK_HANDLER_H_
+#define LINUX_LIBRARY_SRC_INTERNAL_INPUT_KEYBOARD_HOOK_HANDLER_H_
 
 #include <GLFW/glfw3.h>
 
@@ -31,4 +31,4 @@ class KeyboardHookHandler {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_INPUT_KEYBOARD_HOOK_HANDLER_H_
+#endif  // LINUX_LIBRARY_SRC_INTERNAL_INPUT_KEYBOARD_HOOK_HANDLER_H_

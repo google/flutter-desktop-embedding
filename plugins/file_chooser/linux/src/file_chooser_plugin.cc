@@ -24,7 +24,7 @@ static constexpr int kCancelResultValue = 0;
 static constexpr int kOkResultValue = 1;
 
 namespace plugins_file_chooser {
-using flutter_desktop_embedding::MethodCall;
+using flutter_desktop_embedding::JsonMethodCall;
 using flutter_desktop_embedding::MethodResult;
 
 // Applies filters to the file chooser.
@@ -86,19 +86,21 @@ static void ProcessAttributes(const Json::Value &method_args,
 // string, then this returns a file saver dialog.
 //
 // If the method is not recognized as one of those above, will return a nullptr.
-static GtkFileChooserNative *CreateFileChooserFromMethod(
+static GtkWidget *CreateFileChooserFromMethod(
     const std::string &method, const std::string &ok_button) {
-  GtkFileChooserNative *chooser = nullptr;
+  GtkWidget *chooser = nullptr;
   if (method == kShowOpenPanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    chooser = gtk_file_chooser_native_new(
+    chooser = gtk_file_chooser_dialog_new(
         "Open File", NULL, action,
-        ok_button.empty() ? "_Open" : ok_button.c_str(), "_Cancel");
+        ok_button.empty() ? "_Open" : ok_button.c_str(), GTK_RESPONSE_ACCEPT,
+        "_Cancel", GTK_RESPONSE_CANCEL, NULL);
   } else if (method == kShowSavePanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
-    chooser = gtk_file_chooser_native_new(
+    chooser = gtk_file_chooser_dialog_new(
         "Save File", NULL, action,
-        ok_button.empty() ? "_Save" : ok_button.c_str(), "_Cancel");
+        ok_button.empty() ? "_Save" : ok_button.c_str(), GTK_RESPONSE_ACCEPT,
+        "_Cancel", GTK_RESPONSE_CANCEL, NULL);
   }
   return chooser;
 }
@@ -107,14 +109,14 @@ static GtkFileChooserNative *CreateFileChooserFromMethod(
 //
 // The JSON args determine the modifications to the file chooser, like filters,
 // being able to choose multiple files, etc.
-static GtkFileChooserNative *CreateFileChooser(const std::string &method,
+static GtkWidget *CreateFileChooser(const std::string &method,
                                                const Json::Value &args) {
   Json::Value ok_button_value = args[kConfirmButtonTextKey];
   std::string ok_button_str;
   if (!ok_button_value.isNull()) {
     ok_button_str = ok_button_value.asString();
   }
-  GtkFileChooserNative *chooser =
+  GtkWidget *chooser =
       CreateFileChooserFromMethod(method, ok_button_str);
   if (chooser == nullptr) {
     std::cerr << "Could not determine method for file chooser from: " << method
@@ -141,27 +143,26 @@ static Json::Value CreateResponseObject(
   return response;
 }
 
-FileChooserPlugin::FileChooserPlugin() : Plugin(kChannelName, true) {}
+FileChooserPlugin::FileChooserPlugin() : JsonPlugin(kChannelName, true) {}
 
 FileChooserPlugin::~FileChooserPlugin() {}
 
-void FileChooserPlugin::HandleMethodCall(const MethodCall &method_call,
-                                         std::unique_ptr<MethodResult> result) {
-  if (method_call.arguments().isNull()) {
+void FileChooserPlugin::HandleJsonMethodCall(
+    const JsonMethodCall &method_call, std::unique_ptr<MethodResult> result) {
+  if (method_call.GetArgumentsAsJson().isNull()) {
     result->Error("Bad Arguments", "Null file chooser method args received");
     return;
   }
 
-  gint chooser_res;
-  auto chooser =
-      CreateFileChooser(method_call.method_name(), method_call.arguments());
+  auto chooser = CreateFileChooser(method_call.method_name(),
+                                   method_call.GetArgumentsAsJson());
   if (chooser == nullptr) {
     result->NotImplemented();
     return;
   }
-  chooser_res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(chooser));
+  gint chooser_result = gtk_dialog_run(GTK_DIALOG(chooser));
   std::vector<std::string> filenames;
-  if (chooser_res == GTK_RESPONSE_ACCEPT) {
+  if (chooser_result == GTK_RESPONSE_ACCEPT) {
     GSList *files = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(chooser));
     // Each filename must be freed, and then GSList afterward:
     //
@@ -176,9 +177,10 @@ void FileChooserPlugin::HandleMethodCall(const MethodCall &method_call,
     }
     g_slist_free(files);
   }
-  g_object_unref(chooser);
+  gtk_widget_destroy(chooser);
 
-  result->Success(CreateResponseObject(filenames));
+  Json::Value response_object(CreateResponseObject(filenames));
+  result->Success(&response_object);
 }
 
 }  // namespace plugins_file_chooser

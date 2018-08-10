@@ -72,8 +72,7 @@ class _MD5Sink extends HashSink {
   @override
   final digest = new Uint32List(4);
 
-  _MD5Sink(Sink<Digest> sink)
-      : super(sink, 16, endian: Endianness.LITTLE_ENDIAN) {
+  _MD5Sink(Sink<Digest> sink) : super(sink, 16, endian: Endian.little) {
     digest[0] = 0x67452301;
     digest[1] = 0xefcdab89;
     digest[2] = 0x98badcfe;

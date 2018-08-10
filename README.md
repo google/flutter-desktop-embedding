@@ -1,15 +1,13 @@
 # Desktop Embedding for Flutter
 
-This repository contains code that implements basic embedders for
-[Flutter](https://github.com/flutter/flutter) on desktop platforms, as starting
-points for building native desktop applications that embed Flutter.
-Currently macOS and Linux are supported, and the goal is to support Windows
-in the future as well.
+This purpose of this project is to support building
+applications that use [Flutter](https://github.com/flutter/flutter)
+on Windows, macOS, and Linux.
 
-It contains shared libraries that implement [Flutter's embedding
+It consists of libraries that implement [Flutter's embedding
 API](https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders),
-handling drawing, mouse event handling, and keyboard support. It also
-includes optional plugins to access other native platform functionality.
+handling drawing and mouse/keyboard input, as well as
+optional plugins to access other native platform functionality.
 
 ## How to Use This Code
 
@@ -25,7 +23,7 @@ a Flutter tree in the same parent directory as the clone of this project:
 ```
 
 Alternately, you can place a `.flutter_location_config` file in the directory
-containing flutter-desktop-embedding, containng a path to the Flutter tree to
+containing flutter-desktop-embedding, containing a path to the Flutter tree to
 use, if you prefer not to have the Flutter tree next to
 flutter-desktop-emebbing.
 
@@ -49,6 +47,71 @@ In addition, there is:
 * `tools`: Tools used in the development process. Currently these are used
   by the build systems, but in the future developer utilities providing
   some functionality similar to the `flutter` tool may be added.
+
+## Flutter Application Requirements
+
+Because desktop platforms are not supported Flutter targets, existing Flutter
+applications are likely to require slight modifications to run.
+
+### Target Platform Override
+
+Most applications will need to override the target platform for the application
+to one of the supported values in order to avoid 'Unknown platform' exceptions.
+This should be done as early as possible.
+
+In the simplest case, where the code will only run on desktop and the behavior
+should be consistent on all platforms, you can hard-code a single target:
+
+```dart
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
+[...]
+
+void main() {
+  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  [...]
+}
+```
+
+If the code needs to run on both mobile and desktop, or you want different
+behavior on different desktop platforms, you can conditionalize on `Platform`.
+For example, the line in `main()` above could be replaced with a call to:
+
+```dart
+/// If the current platform is desktop, override the default platform to
+/// a supported platform (iOS for macOS, Android for Linux and Windows).
+/// Otherwise, do nothing.
+void _setTargetPlatformForDesktop() {
+  TargetPlatform targetPlatform;
+  if (Platform.isMacOS) {
+    targetPlatform = TargetPlatform.iOS;
+  } else if (Platform.isLinux || Platform.isWindows) {
+    targetPlatform = TargetPlatform.android;
+  }
+  if (targetPlatform != null) {
+    debugDefaultTargetPlatformOverride = targetPlatform;
+  }
+}
+```
+
+Note that the target platform you use will affect not only the behavior and
+appearance of the widgets, but also the expectations Flutter will have for
+what is available on the platform, such as fonts.
+
+### Fonts
+
+Flutter applications may default to fonts that are standard for the target
+platform, but unavailable on desktop. For instance, if the target platform is
+`TargetPlatform.iOS` the Material library will default to San Francisco, which
+is available on macOS but not Linux or Windows.
+
+Most applications will need to set the font (e.g., via `ThemeData`) based
+on the host platform, or set a specific font that is bundled with the
+application. The example application demonstrates using and bundling Roboto
+on all platforms.
+
+Symptoms of missing fonts can include text failing to display, console logging
+about failure to load fonts, or in some cases crashes.
 
 ## Feedback and Discussion
 
