@@ -3,3 +3,6 @@ description: Native color panel plugin for desktop Flutter
 dependencies:
   flutter:
     sdk: flutter
+
+environment:
+  sdk: '<3.0.0'
