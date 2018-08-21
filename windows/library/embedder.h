@@ -62,7 +62,8 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 // when it is non-null.
 GLFWwindow *CreateFlutterWindowInSnapshotMode(
     size_t initial_width, size_t initial_height, const std::string &assets_path,
-    const std::string &icu_data_path, const std::vector<std::string> &arguments);
+    const std::string &icu_data_path,
+    const std::vector<std::string> &arguments);
 
 // Loops on flutter window events until termination.
 //

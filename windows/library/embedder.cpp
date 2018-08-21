@@ -14,8 +14,8 @@
 
 #include "embedder.h"
 
-#include <algorithm>
 #include <assert.h>
+#include <algorithm>
 #include <chrono>
 #include <iostream>
 
@@ -127,12 +127,11 @@ static void GLFWClearCanvas(GLFWwindow *window) {
 // the necessary callbacks for rendering within a GLFWwindow.
 //
 // Returns a caller-owned pointer to the engine.
-static FlutterEngine RunFlutterEngine(GLFWwindow *window,
-                                      const std::string &main_path,
-                                      const std::string &assets_path,
-                                      const std::string &packages_path,
-                                      const std::string &icu_data_path,
-                                      const std::vector<std::string> &arguments) {
+static FlutterEngine RunFlutterEngine(
+    GLFWwindow *window, const std::string &main_path,
+    const std::string &assets_path, const std::string &packages_path,
+    const std::string &icu_data_path,
+    const std::vector<std::string> &arguments) {
   std::vector<const char *> argv;
   std::transform(
       arguments.begin(), arguments.end(), std::back_inserter(argv),
@@ -191,8 +190,8 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 }
 
 GLFWwindow *CreateFlutterWindowInSnapshotMode(
-    size_t initial_width, size_t initial_height,
-    const std::string &assets_path, const std::string &icu_data_path,
+    size_t initial_width, size_t initial_height, const std::string &assets_path,
+    const std::string &icu_data_path,
     const std::vector<std::string> &arguments) {
   return CreateFlutterWindow(initial_width, initial_height, "", assets_path, "",
                              icu_data_path, arguments);
