@@ -13,8 +13,10 @@
 // limitations under the License.
 
 #import "FLEViewController.h"
+#import "FLEViewController+Internal.h"
 
 #import <FlutterEmbedder/FlutterEmbedder.h>
+#import "FLEKeyEventPlugin.h"
 #import "FLEReshapeListener.h"
 #import "FLETextInputPlugin.h"
 #import "FLEView.h"
@@ -50,6 +52,11 @@ static const int kDefaultWindowFramebuffer = 0;
 - (void)makeResourceContextCurrent;
 
 @property NSMutableDictionary<NSString *, id<FLEPlugin>> *plugins;
+
+/**
+ * A list of additional responders to keyboard events. Keybord events are forwarded to all of them.
+ */
+@property NSMutableOrderedSet<NSResponder *> *additionalKeyResponders;
 
 @end
 
@@ -163,6 +170,14 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   return [self _addPlugin:plugin];
 }
 
+- (void)addKeyResponder:(nonnull NSResponder *)responder {
+  [self.additionalKeyResponders addObject:responder];
+}
+
+- (void)removeKeyResponder:(nonnull NSResponder *)responder {
+  [self.additionalKeyResponders removeObject:responder];
+}
+
 - (void)invokeMethod:(nonnull NSString *)method
            arguments:(nullable id)arguments
            onChannel:(nonnull NSString *)channel
@@ -174,17 +189,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
     return;
   }
 
-  FlutterPlatformMessage platformMessage = {
-      .struct_size = sizeof(FlutterPlatformMessage),
-      .channel = [channel UTF8String],
-      .message = messageData.bytes,
-      .message_size = messageData.length,
-  };
-
-  FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
-  if (result != kSuccess) {
-    NSLog(@"Unable to invoke %@ on Flutter engine (%d).", method, result);
-  }
+  [self dispatchMessageData:messageData onChannel:channel];
 }
 
 - (void)invokeMethod:(nonnull NSString *)method
@@ -194,6 +199,36 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
            arguments:arguments
            onChannel:channel
            withCodec:[FLEJSONMethodCodec sharedInstance]];
+}
+
+- (void)dispatchMessage:(nonnull NSDictionary *)message onChannel:(nonnull NSString *)channel {
+  if (![NSJSONSerialization isValidJSONObject:message]) {
+    NSLog(@"Error: Unable to construct a valid JSON object from %@", message);
+    return;
+  }
+
+  NSError *error = nil;
+  NSData *messageData = [NSJSONSerialization dataWithJSONObject:message options:0 error:&error];
+  if (!messageData) {
+    NSLog(@"Error: Failed to create JSON message data for %@: %@", message, error.debugDescription);
+    return;
+  }
+
+  [self dispatchMessageData:messageData onChannel:channel];
+}
+
+- (void)dispatchMessageData:(nonnull NSData *)messageData onChannel:(nonnull NSString *)channel {
+  FlutterPlatformMessage platformMessage = {
+      .struct_size = sizeof(FlutterPlatformMessage),
+      .channel = [channel UTF8String],
+      .message = messageData.bytes,
+      .message_size = messageData.length,
+  };
+
+  FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
+  if (result != kSuccess) {
+    NSLog(@"Flutter engine sent unsuccessful response for message data: (%d).", result);
+  }
 }
 
 #pragma mark - Private methods.
@@ -234,8 +269,8 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
     command_line_args[i - unused] = [arguments[i] UTF8String];
   }
 
-  NSString *icuData = [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath
-                                                                             ofType:nil];
+  NSString *icuData =
+      [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath ofType:nil];
 
   const FlutterProjectArgs args = {
       .struct_size = sizeof(FlutterProjectArgs),
@@ -319,9 +354,10 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
                                                responseData.length);
       responseHandle = NULL;
     } else {
-      NSLog(@"Error: Method call responses can be called only once. Ignoring duplicate response "
-             "for '%@' on channel '%@'.",
-            methodCall.methodName, channel);
+      NSLog(
+          @"Error: Method call responses can be called only once. Ignoring duplicate response "
+           "for '%@' on channel '%@'.",
+          methodCall.methodName, channel);
     }
   };
 
@@ -342,8 +378,8 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
  */
 - (void)createResourceContext {
   NSOpenGLContext *viewContext = ((NSOpenGLView *)self.view).openGLContext;
-  _resourceContext = [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat
-                                                shareContext:viewContext];
+  _resourceContext =
+      [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat shareContext:viewContext];
 }
 
 - (void)makeResourceContextCurrent {
@@ -392,28 +428,51 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
  */
 - (void)initPlugins {
   _plugins = [[NSMutableDictionary alloc] init];
+  _additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
 
   FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
   [self _addPlugin:textPlugin];
+
+  FLEKeyEventPlugin *keyEventPlugin = [[FLEKeyEventPlugin alloc] init];
+  [self _addPlugin:keyEventPlugin];
+  [self.additionalKeyResponders addObject:keyEventPlugin];
 }
 
 - (BOOL)acceptsFirstResponder {
   return YES;
 }
 
+#pragma mark - NSResponder
+
+- (void)keyDown:(NSEvent *)event {
+  for (NSResponder *responder in self.additionalKeyResponders) {
+    if ([responder respondsToSelector:@selector(keyDown:)]) {
+      [responder keyDown:event];
+    }
+  }
+}
+
+- (void)keyUp:(NSEvent *)event {
+  for (NSResponder *responder in self.additionalKeyResponders) {
+    if ([responder respondsToSelector:@selector(keyUp:)]) {
+      [responder keyUp:event];
+    }
+  }
+}
+
 - (void)mouseDown:(NSEvent *)theEvent {
-  [self dispatchEvent:theEvent phase:kDown];
+  [self dispatchMouseEvent:theEvent phase:kDown];
 }
 
 - (void)mouseUp:(NSEvent *)theEvent {
-  [self dispatchEvent:theEvent phase:kUp];
+  [self dispatchMouseEvent:theEvent phase:kUp];
 }
 
 - (void)mouseDragged:(nonnull NSEvent *)theEvent {
-  [self dispatchEvent:theEvent phase:kMove];
+  [self dispatchMouseEvent:theEvent phase:kMove];
 }
 
-- (void)dispatchEvent:(NSEvent *)theEvent phase:(FlutterPointerPhase)phase {
+- (void)dispatchMouseEvent:(NSEvent *)theEvent phase:(FlutterPointerPhase)phase {
   NSPoint locationInView = [self.view convertPoint:theEvent.locationInWindow fromView:nil];
   NSPoint locationInBackingCoordinates = [self.view convertPointToBacking:locationInView];
   const FlutterPointerEvent event = {
