@@ -17,6 +17,7 @@
 #import "FLECodecs.h"
 #import "FLEOpenGLContextHandling.h"
 #import "FLEPlugin.h"
+#import "FLEReshapeListener.h"
 
 /**
  * Controls embedder plugins and communication with the underlying Flutter engine, managing a view
@@ -25,7 +26,7 @@
  * Can be launched headless (no managed view), at which point a Dart executable will be run on the
  * Flutter engine in non-interactive mode, or with a drawable Flutter canvas.
  */
-@interface FLEViewController : NSViewController
+@interface FLEViewController : NSViewController <FLEReshapeListener>
 
 /**
  * The view this controller manages when launched in interactive mode (headless set to false). Must

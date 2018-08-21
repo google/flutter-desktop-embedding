@@ -34,23 +34,13 @@ static const int kDefaultWindowFramebuffer = 0;
 /**
  * Private interface declaration for FLEViewController.
  */
-@interface FLEViewController () <FLEReshapeListener> {
+@interface FLEViewController () {
   NSOpenGLContext *_resourceContext;
 }
 
 /**
- * Responds to system messages sent to this controller from the Flutter engine.
- * Invoked from a static method provided in the engine configuration, thus must be
- * explicitly declared.
+ * The registered FLEPlugin instances, keyed by the channel they are registered on.
  */
-- (void)handlePlatformMessage:(const FlutterPlatformMessage *)message;
-
-/**
- * Makes the OpenGL context used by the engine for rendering optimization the
- * current context.
- */
-- (void)makeResourceContextCurrent;
-
 @property NSMutableDictionary<NSString *, id<FLEPlugin>> *plugins;
 
 /**
@@ -58,9 +48,67 @@ static const int kDefaultWindowFramebuffer = 0;
  */
 @property NSMutableOrderedSet<NSResponder *> *additionalKeyResponders;
 
+/**
+ * Initializes plugins used by this view controller.
+ * Called from init.
+ */
+- (void)initPlugins;
+
+/**
+ * Internal implementation of addPlugin:. Separated since it is called during init, so must not
+ * be overridden in subclasses.
+ */
+- (BOOL)_addPlugin:(nonnull id<FLEPlugin>)plugin;
+
+/**
+ * Identical to the public API except that |main| and |packages| are nullable (and assets and main
+ * are swapped to make it clearer that they are the nullable pair; the public API is staying the
+ * same for now to avoid needless thrashing for code using it). Per the TODO in the header, this API
+ * should be reworked once we have decided whether both versions will stay.
+ *
+ * If main is nil, the engine will run in snapshot mode.
+ */
+- (BOOL)launchEngineInternalWithAssetsPath:(nonnull NSURL *)assets
+                                  mainPath:(nullable NSURL *)main
+                              packagesPath:(nullable NSURL *)packages
+                                asHeadless:(BOOL)headless
+                      commandLineArguments:(nonnull NSArray<NSString *> *)arguments;
+
+/**
+ * Creates a render config with callbacks based on whether the embedder is being run as a headless
+ * server.
+ */
++ (FlutterRendererConfig)createRenderConfigHeadless:(BOOL)headless;
+
+/**
+ * Creates the OpenGL context used as the resource context by the engine.
+ */
+- (void)createResourceContext;
+
+/**
+ * Makes the OpenGL context used by the engine for rendering optimization the
+ * current context.
+ */
+- (void)makeResourceContextCurrent;
+
+/**
+ * Responds to system messages sent to this controller from the Flutter engine.
+ */
+- (void)handlePlatformMessage:(const FlutterPlatformMessage *)message;
+
+/**
+ * Converts |event| to a FlutterPointerEvent with the given phase, and sends it to the engine.
+ */
+- (void)dispatchMouseEvent:(nonnull NSEvent *)event phase:(FlutterPointerPhase)phase;
+
+/**
+ * Sends |messageData|, unprocessed, to the engine on the given channel.
+ */
+- (void)dispatchMessageData:(nonnull NSData *)messageData onChannel:(nonnull NSString *)channel;
+
 @end
 
-#pragma mark - Static methods provided to engine configuration.
+#pragma mark - Static methods provided to engine configuration
 
 /**
  * Makes the owned FlutterView the current context.
@@ -107,7 +155,7 @@ static bool OnMakeResourceCurrent(FLEViewController *controller) {
   return true;
 }
 
-#pragma mark - Static methods provided for headless engine configuration.
+#pragma mark Static methods provided for headless engine configuration
 
 static bool HeadlessOnMakeCurrent(FLEViewController *controller) { return false; }
 
@@ -127,23 +175,37 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 
 @dynamic view;
 
-#pragma mark - Public methods.
-
-- (BOOL)launchEngineWithMainPath:(nonnull NSURL *)main
-                      assetsPath:(nonnull NSURL *)assets
-                    packagesPath:(nonnull NSURL *)packages
-                      asHeadless:(BOOL)headless
-            commandLineArguments:(nonnull NSArray<NSString *> *)arguments {
-  return [self launchEngineInternalWithAssetsPath:assets
-                                         mainPath:main
-                                     packagesPath:packages
-                                       asHeadless:headless
-                             commandLineArguments:arguments];
+- (instancetype)initWithCoder:(NSCoder *)coder {
+  self = [super initWithCoder:coder];
+  if (self != nil) {
+    [self initPlugins];
+  }
+  return self;
 }
 
-- (BOOL)launchEngineWithAssetsPath:(nonnull NSURL *)assets
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (self != nil) {
+    [self initPlugins];
+  }
+  return self;
+}
+
+- (void)dealloc {
+  if (FlutterEngineShutdown(_engine) == kSuccess) {
+    _engine = NULL;
+  }
+}
+
+- (void)loadView {
+  self.view = [[FLEView alloc] init];
+}
+
+#pragma mark - Public methods
+
+- (BOOL)launchEngineWithAssetsPath:(NSURL *)assets
                         asHeadless:(BOOL)headless
-              commandLineArguments:(nonnull NSArray<NSString *> *)arguments {
+              commandLineArguments:(NSArray<NSString *> *)arguments {
   return [self launchEngineInternalWithAssetsPath:assets
                                          mainPath:nil
                                      packagesPath:nil
@@ -151,37 +213,26 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
                              commandLineArguments:arguments];
 }
 
-/**
- * Adds a plugin to the view controller to handle domain-specific system messages.
- * This private method is called both during and after init.
- */
-- (BOOL)_addPlugin:(nonnull id<FLEPlugin>)plugin {
-  NSString *channel = plugin.channel;
-  if (_plugins[channel] != nil) {
-    NSLog(@"Warning: channel %@ already has an associated plugin", channel);
-    return NO;
-  }
-  _plugins[channel] = plugin;
-  plugin.controller = self;
-  return YES;
+- (BOOL)launchEngineWithMainPath:(NSURL *)main
+                      assetsPath:(NSURL *)assets
+                    packagesPath:(NSURL *)packages
+                      asHeadless:(BOOL)headless
+            commandLineArguments:(NSArray<NSString *> *)arguments {
+  return [self launchEngineInternalWithAssetsPath:assets
+                                         mainPath:main
+                                     packagesPath:packages
+                                       asHeadless:headless
+                             commandLineArguments:arguments];
 }
 
-- (BOOL)addPlugin:(nonnull id<FLEPlugin>)plugin {
+- (BOOL)addPlugin:(id<FLEPlugin>)plugin {
   return [self _addPlugin:plugin];
 }
 
-- (void)addKeyResponder:(nonnull NSResponder *)responder {
-  [self.additionalKeyResponders addObject:responder];
-}
-
-- (void)removeKeyResponder:(nonnull NSResponder *)responder {
-  [self.additionalKeyResponders removeObject:responder];
-}
-
-- (void)invokeMethod:(nonnull NSString *)method
-           arguments:(nullable id)arguments
-           onChannel:(nonnull NSString *)channel
-           withCodec:(nonnull id<FLEMethodCodec>)codec {
+- (void)invokeMethod:(NSString *)method
+           arguments:(id)arguments
+           onChannel:(NSString *)channel
+           withCodec:(id<FLEMethodCodec>)codec {
   FLEMethodCall *methodCall = [[FLEMethodCall alloc] initWithMethodName:method arguments:arguments];
   NSData *messageData = [codec encodeMethodCall:methodCall];
   if (!messageData) {
@@ -192,16 +243,24 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   [self dispatchMessageData:messageData onChannel:channel];
 }
 
-- (void)invokeMethod:(nonnull NSString *)method
-           arguments:(nullable id)arguments
-           onChannel:(nonnull NSString *)channel {
+- (void)invokeMethod:(NSString *)method arguments:(id)arguments onChannel:(NSString *)channel {
   [self invokeMethod:method
            arguments:arguments
            onChannel:channel
            withCodec:[FLEJSONMethodCodec sharedInstance]];
 }
 
-- (void)dispatchMessage:(nonnull NSDictionary *)message onChannel:(nonnull NSString *)channel {
+#pragma mark - Framework-internal methods
+
+- (void)addKeyResponder:(NSResponder *)responder {
+  [self.additionalKeyResponders addObject:responder];
+}
+
+- (void)removeKeyResponder:(NSResponder *)responder {
+  [self.additionalKeyResponders removeObject:responder];
+}
+
+- (void)dispatchMessage:(NSDictionary *)message onChannel:(NSString *)channel {
   if (![NSJSONSerialization isValidJSONObject:message]) {
     NSLog(@"Error: Unable to construct a valid JSON object from %@", message);
     return;
@@ -217,39 +276,49 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   [self dispatchMessageData:messageData onChannel:channel];
 }
 
-- (void)dispatchMessageData:(nonnull NSData *)messageData onChannel:(nonnull NSString *)channel {
-  FlutterPlatformMessage platformMessage = {
-      .struct_size = sizeof(FlutterPlatformMessage),
-      .channel = [channel UTF8String],
-      .message = messageData.bytes,
-      .message_size = messageData.length,
-  };
-
-  FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
-  if (result != kSuccess) {
-    NSLog(@"Flutter engine sent unsuccessful response for message data: (%d).", result);
-  }
-}
-
-#pragma mark - Private methods.
+#pragma mark - Private methods
 
 /**
- * Identical to the public API except that |main| and |packages| are nullable (and assets and main
- * are swapped to make it clearer that they are the nullable pair; the public API is staying the
- * same for now to avoid needless thrashing for code using it). Per the TODO in the header, this API
- * should be reworked once we have decided whether both versions will stay.
- *
- * If main is nil, the engine will run in snapshot mode.
+ * Warning: This method is called during init, so should not call methods on self.
  */
-- (BOOL)launchEngineInternalWithAssetsPath:(nonnull NSURL *)assets
-                                  mainPath:(nullable NSURL *)main
-                              packagesPath:(nullable NSURL *)packages
+- (void)initPlugins {
+  _plugins = [[NSMutableDictionary alloc] init];
+  _additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
+
+  FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
+  [self _addPlugin:textPlugin];
+
+  FLEKeyEventPlugin *keyEventPlugin = [[FLEKeyEventPlugin alloc] init];
+  [self _addPlugin:keyEventPlugin];
+  [_additionalKeyResponders addObject:keyEventPlugin];
+}
+
+/**
+ * Warning: This method is called both during and after init, so should not call methods on self.
+ */
+- (BOOL)_addPlugin:(id<FLEPlugin>)plugin {
+  NSString *channel = plugin.channel;
+  if (_plugins[channel] != nil) {
+    NSLog(@"Warning: channel %@ already has an associated plugin", channel);
+    return NO;
+  }
+  _plugins[channel] = plugin;
+  plugin.controller = self;
+  return YES;
+}
+
+- (BOOL)launchEngineInternalWithAssetsPath:(NSURL *)assets
+                                  mainPath:(NSURL *)main
+                              packagesPath:(NSURL *)packages
                                 asHeadless:(BOOL)headless
-                      commandLineArguments:(nonnull NSArray<NSString *> *)arguments {
+                      commandLineArguments:(NSArray<NSString *> *)arguments {
   if (_engine != NULL) {
     return NO;
   }
 
+  // Set up the resource context. This is done here rather than in viewDidLoad as there's no
+  // guarantee that viewDidLoad will be called before the engine is started, and the context must
+  // be valid by that point.
   [self createResourceContext];
 
   const FlutterRendererConfig config = [FLEViewController createRenderConfigHeadless:headless];
@@ -269,8 +338,8 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
     command_line_args[i - unused] = [arguments[i] UTF8String];
   }
 
-  NSString *icuData =
-      [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath ofType:nil];
+  NSString *icuData = [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath
+                                                                             ofType:nil];
 
   const FlutterProjectArgs args = {
       .struct_size = sizeof(FlutterProjectArgs),
@@ -289,10 +358,6 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   return result;
 }
 
-/**
- * Creates a render config with callbacks based on whether the embedder is being run as a headless
- * server.
- */
 + (FlutterRendererConfig)createRenderConfigHeadless:(BOOL)headless {
   if (headless) {
     const FlutterRendererConfig config = {
@@ -315,6 +380,16 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
         .open_gl.make_resource_current = (BoolCallback)OnMakeResourceCurrent};
     return config;
   }
+}
+
+- (void)createResourceContext {
+  NSOpenGLContext *viewContext = ((NSOpenGLView *)self.view).openGLContext;
+  _resourceContext = [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat
+                                                shareContext:viewContext];
+}
+
+- (void)makeResourceContextCurrent {
+  [_resourceContext makeCurrentContext];
 }
 
 - (void)handlePlatformMessage:(const FlutterPlatformMessage *)message {
@@ -354,10 +429,9 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
                                                responseData.length);
       responseHandle = NULL;
     } else {
-      NSLog(
-          @"Error: Method call responses can be called only once. Ignoring duplicate response "
-           "for '%@' on channel '%@'.",
-          methodCall.methodName, channel);
+      NSLog(@"Error: Method call responses can be called only once. Ignoring duplicate response "
+             "for '%@' on channel '%@'.",
+            methodCall.methodName, channel);
     }
   };
 
@@ -370,23 +444,36 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   [plugin handleMethodCall:methodCall result:resultHandler];
 }
 
+- (void)dispatchMouseEvent:(NSEvent *)event phase:(FlutterPointerPhase)phase {
+  NSPoint locationInView = [self.view convertPoint:event.locationInWindow fromView:nil];
+  NSPoint locationInBackingCoordinates = [self.view convertPointToBacking:locationInView];
+  const FlutterPointerEvent flutterEvent = {
+      .struct_size = sizeof(flutterEvent),
+      .phase = phase,
+      .x = locationInBackingCoordinates.x,
+      .y = -locationInBackingCoordinates.y,  // convertPointToBacking makes this negative.
+      .timestamp = event.timestamp * NSEC_PER_MSEC,
+  };
+  FlutterEngineSendPointerEvent(_engine, &flutterEvent, 1);
+}
+
+- (void)dispatchMessageData:(NSData *)messageData onChannel:(NSString *)channel {
+  FlutterPlatformMessage platformMessage = {
+      .struct_size = sizeof(FlutterPlatformMessage),
+      .channel = [channel UTF8String],
+      .message = messageData.bytes,
+      .message_size = messageData.length,
+  };
+
+  FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
+  if (result != kSuccess) {
+    NSLog(@"Flutter engine sent unsuccessful response for message data: (%d).", result);
+  }
+}
+
+#pragma mark - FLEReshapeListener
+
 /**
- * Creates the OpenGL context used as the resource context by the engine.
- *
- * This is done explicitly rather than in viewDidLoad as there's no guarantee that viewDidLoad
- * will be called before the engine is started, and the context must be valid by then.
- */
-- (void)createResourceContext {
-  NSOpenGLContext *viewContext = ((NSOpenGLView *)self.view).openGLContext;
-  _resourceContext =
-      [[NSOpenGLContext alloc] initWithFormat:viewContext.pixelFormat shareContext:viewContext];
-}
-
-- (void)makeResourceContextCurrent {
-  [_resourceContext makeCurrentContext];
-}
-
-/*
  * Responds to view reshape by notifying the engine of the change in dimensions.
  */
 - (void)viewDidReshape:(NSOpenGLView *)view {
@@ -400,49 +487,11 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   FlutterEngineSendWindowMetricsEvent(_engine, &event);
 }
 
-#pragma mark - View controller lifecycle and responder overrides.
-
-- (instancetype)initWithCoder:(NSCoder *)coder {
-  self = [super initWithCoder:coder];
-  if (self != nil) {
-    [self initPlugins];
-  }
-  return self;
-}
-
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-  if (self != nil) {
-    [self initPlugins];
-  }
-  return self;
-}
-
-- (void)loadView {
-  self.view = [[FLEView alloc] init];
-}
-
-/**
- * Initializes plugins used by this view controller.
- * Called from init.
- */
-- (void)initPlugins {
-  _plugins = [[NSMutableDictionary alloc] init];
-  _additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
-
-  FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
-  [self _addPlugin:textPlugin];
-
-  FLEKeyEventPlugin *keyEventPlugin = [[FLEKeyEventPlugin alloc] init];
-  [self _addPlugin:keyEventPlugin];
-  [self.additionalKeyResponders addObject:keyEventPlugin];
-}
+#pragma mark - NSResponder
 
 - (BOOL)acceptsFirstResponder {
   return YES;
 }
-
-#pragma mark - NSResponder
 
 - (void)keyDown:(NSEvent *)event {
   for (NSResponder *responder in self.additionalKeyResponders) {
@@ -460,35 +509,16 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   }
 }
 
-- (void)mouseDown:(NSEvent *)theEvent {
-  [self dispatchMouseEvent:theEvent phase:kDown];
+- (void)mouseDown:(NSEvent *)event {
+  [self dispatchMouseEvent:event phase:kDown];
 }
 
-- (void)mouseUp:(NSEvent *)theEvent {
-  [self dispatchMouseEvent:theEvent phase:kUp];
+- (void)mouseUp:(NSEvent *)event {
+  [self dispatchMouseEvent:event phase:kUp];
 }
 
-- (void)mouseDragged:(nonnull NSEvent *)theEvent {
-  [self dispatchMouseEvent:theEvent phase:kMove];
-}
-
-- (void)dispatchMouseEvent:(NSEvent *)theEvent phase:(FlutterPointerPhase)phase {
-  NSPoint locationInView = [self.view convertPoint:theEvent.locationInWindow fromView:nil];
-  NSPoint locationInBackingCoordinates = [self.view convertPointToBacking:locationInView];
-  const FlutterPointerEvent event = {
-      .struct_size = sizeof(event),
-      .phase = phase,
-      .x = locationInBackingCoordinates.x,
-      .y = -locationInBackingCoordinates.y,  // convertPointToBacking makes this negative.
-      .timestamp = theEvent.timestamp * NSEC_PER_MSEC,
-  };
-  FlutterEngineSendPointerEvent(_engine, &event, 1);
-}
-
-- (void)dealloc {
-  if (FlutterEngineShutdown(_engine) == kSuccess) {
-    _engine = NULL;
-  }
+- (void)mouseDragged:(NSEvent *)event {
+  [self dispatchMouseEvent:event phase:kMove];
 }
 
 @end

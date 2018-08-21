@@ -24,7 +24,6 @@
 		1E2492391FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E24922F1FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1E24923B1FCF50BE00DD3BBB /* FLEPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492311FCF50BE00DD3BBB /* FLEPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1E24923C1FCF50BE00DD3BBB /* FLEReshapeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492321FCF50BE00DD3BBB /* FLEReshapeListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1E24923D1FCF50BE00DD3BBB /* FLETextInputPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1E24923E1FCF50BE00DD3BBB /* FLETextInputPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.m */; };
 		1E24923F1FCF50BE00DD3BBB /* FLEViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492351FCF50BE00DD3BBB /* FLEViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1E2492401FCF50BE00DD3BBB /* FLEViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E2492361FCF50BE00DD3BBB /* FLEViewController.m */; };
@@ -35,6 +34,9 @@
 		33A87EB720F6BCDB0086D21D /* FLECodecs.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A87EB520F6BCDB0086D21D /* FLECodecs.m */; };
 		33D7B59920A4F54400296EFC /* FLEChannels.h in Headers */ = {isa = PBXBuildFile; fileRef = 33D7B59720A4F54400296EFC /* FLEChannels.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33D7B59A20A4F54400296EFC /* FLEChannels.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D7B59820A4F54400296EFC /* FLEChannels.m */; };
+		33E202A5212BC0A800337F48 /* FLETextInputPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */; };
+		33E202A6212BC0ED00337F48 /* FLEKeyEventPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 64C76C2620D7BDFB00B16256 /* FLEKeyEventPlugin.h */; };
+		33E202A7212BC0F100337F48 /* FLEViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6442F82C20EA6C5F00A393AE /* FLEViewController+Internal.h */; };
 		64C76C2820D7BE2E00B16256 /* FLEKeyEventPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 64C76C2720D7BE2E00B16256 /* FLEKeyEventPlugin.m */; };
 		AA8AE8B81FD948AC00B6FB31 /* FLETextInputModel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */; };
 		AA8AE8BA1FD948BA00B6FB31 /* FLETextInputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */; };
@@ -111,12 +113,15 @@
 				1E2492451FCF536200DD3BBB /* Public */,
 				33D7B59820A4F54400296EFC /* FLEChannels.m */,
 				33A87EB520F6BCDB0086D21D /* FLECodecs.m */,
+				AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */,
 				AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */,
+				1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */,
 				1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.m */,
+				64C76C2620D7BDFB00B16256 /* FLEKeyEventPlugin.h */,
 				64C76C2720D7BE2E00B16256 /* FLEKeyEventPlugin.m */,
+				1EEF8E061FD1F0C300DD563C /* FLEView.m */,
 				6442F82C20EA6C5F00A393AE /* FLEViewController+Internal.h */,
 				1E2492361FCF50BE00DD3BBB /* FLEViewController.m */,
-				1EEF8E061FD1F0C300DD563C /* FLEView.m */,
 				1E2492381FCF50BE00DD3BBB /* Info.plist */,
 				33B1650E201A5F7400732DC9 /* Dependencies */,
 				1E2492251FCF504200DD3BBB /* Products */,
@@ -139,11 +144,8 @@
 				1E24922F1FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h */,
 				1E2492311FCF50BE00DD3BBB /* FLEPlugin.h */,
 				1E2492321FCF50BE00DD3BBB /* FLEReshapeListener.h */,
-				AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */,
-				1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */,
-				64C76C2620D7BDFB00B16256 /* FLEKeyEventPlugin.h */,
-				1E2492351FCF50BE00DD3BBB /* FLEViewController.h */,
 				1EEF8E051FD1F0C300DD563C /* FLEView.h */,
+				1E2492351FCF50BE00DD3BBB /* FLEViewController.h */,
 			);
 			name = Public;
 			sourceTree = "<group>";
@@ -163,13 +165,15 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33E202A6212BC0ED00337F48 /* FLEKeyEventPlugin.h in Headers */,
 				1E24923B1FCF50BE00DD3BBB /* FLEPlugin.h in Headers */,
 				33D7B59920A4F54400296EFC /* FLEChannels.h in Headers */,
 				1E24923F1FCF50BE00DD3BBB /* FLEViewController.h in Headers */,
+				33E202A5212BC0A800337F48 /* FLETextInputPlugin.h in Headers */,
 				1E2492411FCF50BE00DD3BBB /* FlutterEmbedderMac.h in Headers */,
 				1E2492391FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h in Headers */,
-				1E24923D1FCF50BE00DD3BBB /* FLETextInputPlugin.h in Headers */,
 				1E24923C1FCF50BE00DD3BBB /* FLEReshapeListener.h in Headers */,
+				33E202A7212BC0F100337F48 /* FLEViewController+Internal.h in Headers */,
 				AA8AE8B81FD948AC00B6FB31 /* FLETextInputModel.h in Headers */,
 				1EEF8E071FD1F0C300DD563C /* FLEView.h in Headers */,
 				33A87EB620F6BCDB0086D21D /* FLECodecs.h in Headers */,
