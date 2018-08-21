@@ -14,6 +14,7 @@
 
 #include "embedder.h"
 
+#include <algorithm>
 #include <assert.h>
 #include <chrono>
 #include <iostream>
@@ -131,7 +132,12 @@ static FlutterEngine RunFlutterEngine(GLFWwindow *window,
                                       const std::string &assets_path,
                                       const std::string &packages_path,
                                       const std::string &icu_data_path,
-                                      int argc, char **argv) {
+                                      const std::vector<std::string> &arguments) {
+  std::vector<const char *> argv;
+  std::transform(
+      arguments.begin(), arguments.end(), std::back_inserter(argv),
+      [](const std::string &arg) -> const char * { return arg.c_str(); });
+
   FlutterRendererConfig config = {};
   config.type = kOpenGL;
   config.open_gl.struct_size = sizeof(config.open_gl);
@@ -145,8 +151,8 @@ static FlutterEngine RunFlutterEngine(GLFWwindow *window,
   args.main_path = main_path.c_str();
   args.packages_path = packages_path.c_str();
   args.icu_data_path = icu_data_path.c_str();
-  args.command_line_argc = argc;
-  args.command_line_argv = argv;
+  args.command_line_argc = argv.size();
+  args.command_line_argv = &argv[0];
   FlutterEngine engine = nullptr;
   auto result =
       FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &args, window, &engine);
@@ -160,8 +166,8 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
                                 const std::string &main_path,
                                 const std::string &assets_path,
                                 const std::string &packages_path,
-                                const std::string &icu_data_path, int argc,
-                                char **argv) {
+                                const std::string &icu_data_path,
+                                const std::vector<std::string> &arguments) {
   auto window = glfwCreateWindow(initial_width, initial_height,
                                  kDefaultWindowTitle, NULL, NULL);
   if (window == nullptr) {
@@ -169,7 +175,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   }
   GLFWClearCanvas(window);
   auto flutter_engine_run_result = RunFlutterEngine(
-      window, main_path, assets_path, packages_path, icu_data_path, argc, argv);
+      window, main_path, assets_path, packages_path, icu_data_path, arguments);
   if (flutter_engine_run_result == nullptr) {
     glfwDestroyWindow(window);
     return nullptr;
@@ -184,13 +190,12 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   return window;
 }
 
-GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
-                                              size_t initial_height,
-                                              const std::string &assets_path,
-                                              const std::string &icu_data_path,
-                                              int argc, char **argv) {
+GLFWwindow *CreateFlutterWindowInSnapshotMode(
+    size_t initial_width, size_t initial_height,
+    const std::string &assets_path, const std::string &icu_data_path,
+    const std::vector<std::string> &arguments) {
   return CreateFlutterWindow(initial_width, initial_height, "", assets_path, "",
-                             icu_data_path, argc, argv);
+                             icu_data_path, arguments);
 }
 
 void FlutterWindowLoop(GLFWwindow *flutter_window) {

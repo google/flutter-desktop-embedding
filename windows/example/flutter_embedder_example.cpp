@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <iostream>
+#include <vector>
 
 #include <embedder.h>
 
@@ -21,20 +22,18 @@ int main(int argc, char **argv) {
     std::cout << "Couldn't init GLFW" << std::endl;
   }
   // Arguments for the Flutter Engine.
-  int arg_count = 2;
+  std::vector<std::string> arguments;
   // First argument is argv[0] since the engine is expecting real command line
   // args.
-  const char *args_arr[] = {
-      argv[0],
-      "--dart-non-checked-mode",
-      NULL,
-  };
+  arguments.push_back(argv[0]);
+#ifndef _DEBUG
+  arguments.push_back("--dart-non-checked-mode");
+#endif
   // Start the engine.
   // TODO: Make paths relative to the executable so it can be run from anywhere.
   auto window = CreateFlutterWindowInSnapshotMode(
       640, 480, "..\\example_flutter\\build\\flutter_assets",
-      "dependencies\\engine\\icudtl.dat", arg_count,
-      const_cast<char **>(args_arr));
+      "dependencies\\engine\\icudtl.dat", arguments);
   if (window == nullptr) {
     FlutterTerminate();
     return EXIT_FAILURE;
