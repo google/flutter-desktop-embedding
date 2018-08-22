@@ -36,19 +36,12 @@ for details on calling into the library.
 The application under `example/` shows an example application using the library,
 including adding plugins.
 
-You should be able to run `make` within the this directory and have access to
-a `flutter_embedder_example` binary.
+To try it out, run the top-level `make` in this directory to build the library,
+plugins, and example application. The example binary and its resources will be
+in `example/out/`, and can be run from there:
 
 ```
-$ make
-```
-
-This should generate all the files necessary to run the example application.
-The resulting `flutter_embedder_example` executable expects to be run from
-this directory like so:
-
-```
-$ ./example/flutter_embedder_example
+$ ./example/out/flutter_embedder_example
 ```
 
 ## Caveats
