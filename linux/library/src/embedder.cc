@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <gtk/gtk.h>
 
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -32,10 +33,10 @@
 // GLFW_TRUE & GLFW_FALSE are introduced since libglfw-3.3,
 // add definitions here to compile under the old versions.
 #ifndef GLFW_TRUE
-#define GLFW_TRUE   1
+#define GLFW_TRUE 1
 #endif
 #ifndef GLFW_FALSE
-#define GLFW_FALSE  0
+#define GLFW_FALSE 0
 #endif
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
@@ -202,12 +203,16 @@ static void GLFWClearCanvas(GLFWwindow *window) {
 // the necessary callbacks for rendering within a GLFWwindow.
 //
 // Returns a caller-owned pointer to the engine.
-static FlutterEngine RunFlutterEngine(GLFWwindow *window,
-                                      const std::string &main_path,
-                                      const std::string &assets_path,
-                                      const std::string &packages_path,
-                                      const std::string &icu_data_path,
-                                      int argc, char **argv) {
+static FlutterEngine RunFlutterEngine(
+    GLFWwindow *window, const std::string &main_path,
+    const std::string &assets_path, const std::string &packages_path,
+    const std::string &icu_data_path,
+    const std::vector<std::string> &arguments) {
+  std::vector<const char *> argv;
+  std::transform(
+      arguments.begin(), arguments.end(), std::back_inserter(argv),
+      [](const std::string &arg) -> const char * { return arg.c_str(); });
+
   FlutterRendererConfig config = {};
   config.type = kOpenGL;
   config.open_gl.struct_size = sizeof(config.open_gl);
@@ -221,8 +226,8 @@ static FlutterEngine RunFlutterEngine(GLFWwindow *window,
   args.main_path = main_path.c_str();
   args.packages_path = packages_path.c_str();
   args.icu_data_path = icu_data_path.c_str();
-  args.command_line_argc = argc;
-  args.command_line_argv = argv;
+  args.command_line_argc = argv.size();
+  args.command_line_argv = &argv[0];
   args.platform_message_callback = GLFWOnFlutterPlatformMessage;
   FlutterEngine engine = nullptr;
   auto result =
@@ -241,21 +246,20 @@ bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
   return state->plugin_handler->AddPlugin(std::move(plugin));
 }
 
-GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
-                                              size_t initial_height,
-                                              const std::string &assets_path,
-                                              const std::string &icu_data_path,
-                                              int argc, char **argv) {
+GLFWwindow *CreateFlutterWindowInSnapshotMode(
+    size_t initial_width, size_t initial_height, const std::string &assets_path,
+    const std::string &icu_data_path,
+    const std::vector<std::string> &arguments) {
   return CreateFlutterWindow(initial_width, initial_height, "", assets_path, "",
-                             icu_data_path, argc, argv);
+                             icu_data_path, arguments);
 }
 
 GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
                                 const std::string &main_path,
                                 const std::string &assets_path,
                                 const std::string &packages_path,
-                                const std::string &icu_data_path, int argc,
-                                char **argv) {
+                                const std::string &icu_data_path,
+                                const std::vector<std::string> &arguments) {
   gtk_init(0, nullptr);
   auto window = glfwCreateWindow(initial_width, initial_height,
                                  kDefaultWindowTitle, NULL, NULL);
@@ -264,7 +268,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   }
   GLFWClearCanvas(window);
   auto engine = RunFlutterEngine(window, main_path, assets_path, packages_path,
-                                 icu_data_path, argc, argv);
+                                 icu_data_path, arguments);
   if (engine == nullptr) {
     glfwDestroyWindow(window);
     return nullptr;

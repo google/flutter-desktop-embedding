@@ -18,14 +18,21 @@ class ExampleWindow: NSWindow {
   @IBOutlet weak var flutterViewController: FLEViewController!
 
   override func awakeFromNib() {
-    let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
     flutterViewController.add(FLEColorPanelPlugin())
     flutterViewController.add(FLEFileChooserPlugin())
     flutterViewController.add(FLEMenubarPlugin())
+
+    let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
+    // Pass through argument zero, since the Flutter engine expects to be processing a full
+    // command line string.
+    var arguments = [CommandLine.arguments[0]];
+#if !DEBUG
+    arguments.append("--dart-non-checked-mode");
+#endif
     flutterViewController.launchEngine(
       withAssetsPath: assets,
       asHeadless: false,
-      commandLineArguments: [CommandLine.arguments[0], "--dart-non-checked-mode"])
+      commandLineArguments: arguments)
 
     super.awakeFromNib()
   }

@@ -16,6 +16,7 @@
 #define WINDOWS_LIBRARY_EMBEDDER_H_
 
 #include <string>
+#include <vector>
 
 #include <glfw3.h>
 
@@ -43,8 +44,8 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
                                 const std::string &main_path,
                                 const std::string &assets_path,
                                 const std::string &packages_path,
-                                const std::string &icu_data_path, int argc,
-                                char **argv);
+                                const std::string &icu_data_path,
+                                const std::vector<std::string> &arguments);
 
 // Creates a GLFW Window running a Flutter Application in snapshot mode.
 //
@@ -59,11 +60,10 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 //
 // Returns a null pointer in the event of an error. The caller owns the pointer
 // when it is non-null.
-GLFWwindow *CreateFlutterWindowInSnapshotMode(size_t initial_width,
-                                              size_t initial_height,
-                                              const std::string &assets_path,
-                                              const std::string &icu_data_path,
-                                              int argc, char **argv);
+GLFWwindow *CreateFlutterWindowInSnapshotMode(
+    size_t initial_width, size_t initial_height, const std::string &assets_path,
+    const std::string &icu_data_path,
+    const std::vector<std::string> &arguments);
 
 // Loops on flutter window events until termination.
 //

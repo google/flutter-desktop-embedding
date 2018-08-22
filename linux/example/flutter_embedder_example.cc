@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 #include <color_panel/color_panel_plugin.h>
 #include <file_chooser/file_chooser_plugin.h>
@@ -25,18 +26,17 @@ int main(int argc, char **argv) {
     std::cout << "Couldn't init GLFW";
   }
   // Arguments for the Flutter Engine.
-  int arg_count = 2;
+  std::vector<std::string> arguments;
   // First argument is argv[0] since the engine is expecting real command line
   // args.
-  const char *args_arr[] = {
-      argv[0],
-      "--dart-non-checked-mode",
-      NULL,
-  };
+  arguments.push_back(argv[0]);
+#ifdef NDEBUG
+  arguments.push_back("--dart-non-checked-mode");
+#endif
   // Start the engine.
   auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(
       640, 480, flutter_example_root + "/build/flutter_assets",
-      "example/icudtl.dat", arg_count, const_cast<char **>(args_arr));
+      "example/icudtl.dat", arguments);
   if (window == nullptr) {
     glfwTerminate();
     return EXIT_FAILURE;
