@@ -12,55 +12,103 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FLUTTER_EMBEDDER_LIB=flutter_embedder
-FLUTTER_EXAMPLE_DIR=../../example_flutter
-FLUTTER_DIR=$(shell ../../tools/flutter_location)
-FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
-BIN_OUT=flutter_embedder_example
-
-ICU_FILENAME=icudtl.dat
-ICU_SOURCE=$(FLUTTER_DIR)/bin/cache/artifacts/engine/linux-x64/$(ICU_FILENAME)
-ICU_DAT=./$(ICU_FILENAME)
-
-PLUGINS=color_panel file_chooser
+# Dependency locations
 FLUTTER_EMBEDDER_LIB_DIR=$(CURDIR)/../library
-PLUGIN_DIRS=$(patsubst %,$(CURDIR)/../../plugins/%/linux,$(PLUGINS))
-LIBRARY_DIRS=$(FLUTTER_EMBEDDER_LIB_DIR) $(PLUGIN_DIRS)
+FLUTTER_APP_DIR=$(CURDIR)/../../example_flutter
+PLUGINS_DIR=$(CURDIR)/../../plugins
+FLUTTER_DIR=$(shell ../../tools/flutter_location)
 
+# Libraries
+FLUTTER_EMBEDDER_LIB_NAME=flutter_embedder
+FLUTTER_EMBEDDER_LIB=$(FLUTTER_EMBEDDER_LIB_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME).so
+
+FLUTTER_ENGINE_LIB_NAME=flutter_engine
+FLUTTER_ENGINE_LIB=$(FLUTTER_EMBEDDER_LIB_DIR)/lib$(FLUTTER_ENGINE_LIB_NAME).so
+
+PLUGIN_NAMES=color_panel file_chooser
+PLUGIN_LIB_NAME_PREFIX=flutter_embedder_
+PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
+	,$(PLUGINS_DIR)/$(plugin)/linux/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
+
+ALL_LIBS=$(FLUTTER_EMBEDDER_LIB) $(FLUTTER_ENGINE_LIB) $(PLUGIN_LIBS)
+
+# Headers
+PLUGIN_DIRS=$(patsubst %,$(PLUGINS_DIR)/%/linux,$(PLUGIN_NAMES))
+LIBRARY_DIRS=$(FLUTTER_EMBEDDER_LIB_DIR) $(PLUGIN_DIRS)
+INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS))
+
+# Tools
+FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
+
+# Resources
+ICU_DATA_NAME=icudtl.dat
+ICU_DATA_SOURCE=$(FLUTTER_DIR)/bin/cache/artifacts/engine/linux-x64/$(ICU_DATA_NAME)
+FLUTTER_ASSETS_NAME=flutter_assets
+FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_DIR)/build/$(FLUTTER_ASSETS_NAME)
+
+# Output bundle structure and targets
+OUT_DIR=$(CURDIR)/out
+OUT_DATA_DIR=$(OUT_DIR)/data
+OUT_LIB_DIR=$(OUT_DIR)/lib
+
+BIN_OUT=$(OUT_DIR)/flutter_embedder_example
+ICU_DATA_OUT=$(OUT_DATA_DIR)/$(ICU_DATA_NAME)
+ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(OUT_LIB_DIR)/$(notdir $(lib)))
+
+# Build settings
 CXX=g++ -std=c++14
 CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp)
-CPPFLAGS=$(patsubst %,-I%/include,$(LIBRARY_DIRS))
-# TODO: Make the Linux example build a standalone directory with
-# the binary and its dependencies (including Flutter resources),
-# suitable for relocating, to more closely match the macOS example.
-# Then only one -L/-rpath directory will be necessary.
-LDFLAGS=$(patsubst %,-L%,$(LIBRARY_DIRS)) \
+CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
+LDFLAGS=-L$(OUT_LIB_DIR) \
 	-lglfw \
 	$(shell pkg-config --libs jsoncpp) \
-	-l$(FLUTTER_EMBEDDER_LIB) \
-	$(patsubst %,-lflutter_embedder_%,$(PLUGINS)) \
-	-Wl,-rpath=$(subst $(eval) ,:,$(LIBRARY_DIRS))
+	-l$(FLUTTER_EMBEDDER_LIB_NAME) \
+	-l$(FLUTTER_ENGINE_LIB_NAME) \
+	$(patsubst %,-l$(PLUGIN_LIB_NAME_PREFIX)%,$(PLUGIN_NAMES)) \
+	-Wl,-rpath=\$$ORIGIN/lib
 
-LIBRARIES=$(CURDIR)/../library/lib$(FLUTTER_EMBEDDER_LIB).so \
-	$(wildcard $(PLUGIN_DIRS)/*.so)
 SOURCES=flutter_embedder_example.cc
 
+# Targets
+
 .PHONY: all
-all: $(FLUTTER_EXAMPLE_DIR)/build $(BIN_OUT) $(ICU_DAT)
+all: $(BIN_OUT) bundle
 
-.PHONY: $(FLUTTER_EXAMPLE_DIR)/build
-$(FLUTTER_EXAMPLE_DIR)/build:
-	cd $(FLUTTER_EXAMPLE_DIR); \
-	$(FLUTTER_BIN) build bundle
+.PHONY: bundle
+bundle: $(ICU_DATA_OUT) $(ALL_LIBS_OUT) bundleflutterassets
 
-$(BIN_OUT): $(SOURCES) $(LIBRARIES)
+$(BIN_OUT): $(SOURCES) $(ALL_LIBS_OUT)
+	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
-$(ICU_DAT): $(ICU_SOURCE)
-	cp $(ICU_SOURCE) $(ICU_DAT)
+# This is slightly inefficient in that it copies all libraries if any of them
+# changes, but is far simpler than setting up individual rules for each library.
+$(ALL_LIBS_OUT): $(ALL_LIBS)
+	mkdir -p $(OUT_LIB_DIR)
+	cp $(ALL_LIBS) $(OUT_LIB_DIR)
+
+$(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
+	mkdir -p $(dir $(ICU_DATA_OUT))
+	cp $(ICU_DATA_SOURCE) $(ICU_DATA_OUT)
+
+# Fully re-copy the assets directory on each build to avoid having to keep a
+# comprehensive list of all asset files here, which would be fragile to changes
+# in the Flutter example (e.g., adding a new font to pubspec.yaml would require
+# changes here).
+.PHONY: bundleflutterassets
+bundleflutterassets: $(FLUTTER_ASSETS_SOURCE)
+	mkdir -p $(OUT_DATA_DIR)
+	rsync -rpu --delete $(FLUTTER_ASSETS_SOURCE) $(OUT_DATA_DIR)
+
+# PHONY since the Makefile doesn't have all the dependency information necessary
+# to know if 'build bundle' needs to be re-run.
+.PHONY: $(FLUTTER_ASSETS_SOURCE)
+$(FLUTTER_ASSETS_SOURCE):
+	cd $(FLUTTER_APP_DIR); \
+	$(FLUTTER_BIN) build bundle
 
 .PHONY: clean
 clean:
-	rm -f $(BIN_OUT); \
-	cd $(FLUTTER_EXAMPLE_DIR); \
+	rm -rf $(OUT_DIR); \
+	cd $(FLUTTER_APP_DIR); \
 	$(FLUTTER_BIN) clean
