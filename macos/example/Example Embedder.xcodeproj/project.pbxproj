@@ -349,7 +349,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$PROJECT_DIR\"/../../example_flutter\n\"$(\"$PROJECT_DIR\"/../../tools/flutter_location)\"/bin/flutter build bundle";
+			shellScript = "DEPOT_ROOT=\"$PROJECT_DIR\"/../..\n\"$DEPOT_ROOT\"/tools/build_flutter_assets \"$DEPOT_ROOT\"/example_flutter";
 		};
 /* End PBXShellScriptBuildPhase section */
 
