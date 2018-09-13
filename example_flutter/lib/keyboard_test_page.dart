@@ -32,6 +32,11 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     FocusScope.of(context).requestFocus(_focusNode);
   }
 
