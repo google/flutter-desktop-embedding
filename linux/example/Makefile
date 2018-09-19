@@ -16,7 +16,8 @@
 FLUTTER_EMBEDDER_LIB_DIR=$(CURDIR)/../library
 FLUTTER_APP_DIR=$(CURDIR)/../../example_flutter
 PLUGINS_DIR=$(CURDIR)/../../plugins
-FLUTTER_DIR=$(shell ../../tools/flutter_location)
+TOOLS_DIR=../../tools
+FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
 
 # Libraries
 FLUTTER_EMBEDDER_LIB_NAME=flutter_embedder
@@ -38,6 +39,7 @@ LIBRARY_DIRS=$(FLUTTER_EMBEDDER_LIB_DIR) $(PLUGIN_DIRS)
 INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS))
 
 # Tools
+BUILD_ASSETS_BIN=$(TOOLS_DIR)/build_flutter_assets
 FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
 
 # Resources
@@ -104,8 +106,7 @@ bundleflutterassets: $(FLUTTER_ASSETS_SOURCE)
 # to know if 'build bundle' needs to be re-run.
 .PHONY: $(FLUTTER_ASSETS_SOURCE)
 $(FLUTTER_ASSETS_SOURCE):
-	cd $(FLUTTER_APP_DIR); \
-	$(FLUTTER_BIN) build bundle
+	$(BUILD_ASSETS_BIN) $(FLUTTER_APP_DIR)
 
 .PHONY: clean
 clean:

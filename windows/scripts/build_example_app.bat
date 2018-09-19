@@ -12,6 +12,4 @@
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
 @echo off
-for /f "delims=" %%i in ('%~dp0..\..\tools\flutter_location') do set FLUTTER_DIR=%%i
-cd ..\..\example_flutter
-%FLUTTER_DIR%\bin\flutter build bundle
+..\..\tools\build_flutter_assets ..\..\example_flutter
