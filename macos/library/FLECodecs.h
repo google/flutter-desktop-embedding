@@ -14,7 +14,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "FLEChannels.h"
+#import "FLEMethods.h"
 
 /**
  * Translates between a binary message and higher-level method call and response/error objects.

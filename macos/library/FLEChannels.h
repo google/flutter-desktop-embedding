@@ -15,38 +15,8 @@
 #import <Foundation/Foundation.h>
 
 /**
- * An object encapsulating a method call from Flutter.
- */
-@interface FLEMethodCall : NSObject
-
-/**
- * Initializes an FLEMethodCall. If |arguments| is provided, it must be serializable to JSON.
- */
-- (nonnull instancetype)initWithMethodName:(nonnull NSString *)name
-                                 arguments:(nullable id)arguments NS_DESIGNATED_INITIALIZER;
-- (nonnull instancetype)init NS_UNAVAILABLE;
-
-/**
- * The name of the method being called.
- */
-@property(readonly, nonatomic, nonnull) NSString *methodName;
-
-/**
- * The arguments to the method being called, if any.
- *
- * This object must be serializable to JSON. See
- * https://docs.flutter.io/flutter/services/JSONMethodCodec-class.html
- * for supported types.
- */
-@property(readonly, nonatomic, nullable) id arguments;
-
-@end
-
-#pragma mark -
-
-/**
  * A method call result callback. Used for sending a method call's response back to the
- * Flutter engine. The result must be serializable to JSON.
+ * Flutter engine. The result must be serializable by the codec used to encode the message.
  */
 typedef void (^FLEMethodResult)(id _Nullable result);
 
@@ -55,36 +25,3 @@ typedef void (^FLEMethodResult)(id _Nullable result);
  * (e.g., the method name is unknown).
  */
 extern NSString const *_Nonnull FLEMethodNotImplemented;
-
-/**
- * An error object that can be passed to an FLEMethodResult to send an error response to the caller
- * on the Flutter side.
- */
-@interface FLEMethodError : NSObject
-
-/**
- * Initializes an FLEMethodError. If |details| is provided, it must be serializable to JSON.
- */
-- (nonnull instancetype)initWithCode:(nonnull NSString *)code
-                             message:(nullable NSString *)message
-                             details:(nullable id)details NS_DESIGNATED_INITIALIZER;
-- (nonnull instancetype)init NS_UNAVAILABLE;
-
-/**
- * The error code, as a string.
- */
-@property(readonly, nonatomic, nonnull) NSString *code;
-
-/**
- * A human-readable description of the error.
- */
-@property(readonly, nonatomic, nullable) NSString *message;
-
-/**
- * Any additional details or context about the error.
- *
- * This object must be serializable to JSON.
- */
-@property(readonly, nonatomic, nullable) id details;
-
-@end
