@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import "FLEBinaryMessenger.h"
 #import "FLEChannels.h"
 #import "FLECodecs.h"
 #import "FLEMethods.h"

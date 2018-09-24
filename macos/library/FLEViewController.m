@@ -36,12 +36,10 @@ static const int kDefaultWindowFramebuffer = 0;
  */
 @interface FLEViewController () {
   NSOpenGLContext *_resourceContext;
-}
 
-/**
- * The registered FLEPlugin instances, keyed by the channel they are registered on.
- */
-@property NSMutableDictionary<NSString *, id<FLEPlugin>> *plugins;
+  // A mapping of channel names to the registered handlers for those channels.
+  NSMutableDictionary<NSString *, FLEBinaryMessageHandler> *_messageHandlers;
+}
 
 /**
  * A list of additional responders to keyboard events. Keybord events are forwarded to all of them.
@@ -93,11 +91,6 @@ static const int kDefaultWindowFramebuffer = 0;
  * Converts |event| to a FlutterPointerEvent with the given phase, and sends it to the engine.
  */
 - (void)dispatchMouseEvent:(nonnull NSEvent *)event phase:(FlutterPointerPhase)phase;
-
-/**
- * Sends |messageData|, unprocessed, to the engine on the given channel.
- */
-- (void)dispatchMessageData:(nonnull NSData *)messageData onChannel:(nonnull NSString *)channel;
 
 @end
 
@@ -172,7 +165,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
  * Performs initialization that's common between the different init paths.
  */
 static void CommonInit(FLEViewController *controller) {
-  controller->_plugins = [[NSMutableDictionary alloc] init];
+  controller->_messageHandlers = [[NSMutableDictionary alloc] init];
   controller->_additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
 }
 
@@ -227,28 +220,45 @@ static void CommonInit(FLEViewController *controller) {
 }
 
 - (BOOL)addPlugin:(id<FLEPlugin>)plugin {
-  NSString *channel = plugin.channel;
-  if (_plugins[channel] != nil) {
-    NSLog(@"Warning: channel %@ already has an associated plugin", channel);
+  NSString *channelName = plugin.channel;
+  if (_messageHandlers[channelName] != nil) {
+    NSLog(@"Warning: channel %@ already has an associated plugin", channelName);
     return NO;
   }
-  _plugins[channel] = plugin;
+
   plugin.controller = self;
+  // See the note on the |codec| property of FLEPlugin for the reason this defaults to JSON.
+  id<FLEMethodCodec> codec = [FLEJSONMethodCodec sharedInstance];
+  if ([plugin respondsToSelector:@selector(codec)]) {
+    codec = plugin.codec;
+  }
+
+  // TODO: Move the channel into the plugin implementations, matching Flutter's iOS plugin
+  // structure. This is is a temporary shim to add FLEMethodChannel without coupling it to the
+  // breaking API change.
+  FLEMethodChannel *channel = [FLEMethodChannel methodChannelWithName:channelName
+                                                      binaryMessenger:self
+                                                                codec:codec];
+  // This will end up calling back to setMessageHandlerOnChannel:binaryMessageHandler: below, which
+  // retains the handler, so the strong reference to |plugin| here will keep the plugin alive.
+  [channel setMethodCallHandler:^(FLEMethodCall *call, FLEMethodResult result) {
+    [plugin handleMethodCall:call result:result];
+  }];
+
   return YES;
 }
 
 - (void)invokeMethod:(NSString *)method
            arguments:(id)arguments
-           onChannel:(NSString *)channel
+           onChannel:(NSString *)channelName
            withCodec:(id<FLEMethodCodec>)codec {
-  FLEMethodCall *methodCall = [[FLEMethodCall alloc] initWithMethodName:method arguments:arguments];
-  NSData *messageData = [codec encodeMethodCall:methodCall];
-  if (!messageData) {
-    NSLog(@"Error: Unable to construct a message to call %@ on %@", method, channel);
-    return;
-  }
-
-  [self dispatchMessageData:messageData onChannel:channel];
+  // TODO: Move the channel into the plugin implementations, matching Flutter's iOS plugin
+  // structure. This is is a temporary shim to add FLEMethodChannel without coupling it to the
+  // breaking API change.
+  FLEMethodChannel *channel = [FLEMethodChannel methodChannelWithName:channelName
+                                                      binaryMessenger:self
+                                                                codec:codec];
+  [channel invokeMethod:method arguments:arguments];
 }
 
 - (void)invokeMethod:(NSString *)method arguments:(id)arguments onChannel:(NSString *)channel {
@@ -281,7 +291,7 @@ static void CommonInit(FLEViewController *controller) {
     return;
   }
 
-  [self dispatchMessageData:messageData onChannel:channel];
+  [self sendOnChannel:channel message:messageData];
 }
 
 #pragma mark - Private methods
@@ -384,55 +394,30 @@ static void CommonInit(FLEViewController *controller) {
 }
 
 - (void)handlePlatformMessage:(const FlutterPlatformMessage *)message {
-  NSData *data = [NSData dataWithBytesNoCopy:(void *)message->message
-                                      length:message->message_size
-                                freeWhenDone:NO];
+  NSData *messageData = [NSData dataWithBytesNoCopy:(void *)message->message
+                                             length:message->message_size
+                                       freeWhenDone:NO];
   NSString *channel = @(message->channel);
   __block const FlutterPlatformMessageResponseHandle *responseHandle = message->response_handle;
 
-  id<FLEPlugin> plugin = _plugins[channel];
-  if (!plugin) {
-    FlutterEngineSendPlatformMessageResponse(self->_engine, responseHandle, NULL, 0);
-    return;
-  }
-
-  // See the note on the |codec| property of FLEPlugin for the reason this defaults to JSON.
-  id<FLEMethodCodec> codec = [FLEJSONMethodCodec sharedInstance];
-  if ([plugin respondsToSelector:@selector(codec)]) {
-    codec = plugin.codec;
-  }
-  FLEMethodCall *methodCall = [codec decodeMethodCall:data];
-
-  FLEMethodResult resultHandler = ^(id result) {
-    NSData *responseData = nil;
-    if (result == FLEMethodNotImplemented) {
-      // No-op; nil is the not-implemented response.
-      // Note that the compare above deliberately uses pointer equality rather than string equality
-      // since only the constant itself should be treated as 'not implemented'.
-    } else if ([result isKindOfClass:[FLEMethodError class]]) {
-      responseData = [codec encodeErrorEnvelope:(FLEMethodError *)result];
-    } else {
-      responseData = [codec encodeSuccessEnvelope:result];
-    }
-
+  FLEBinaryReply binaryResponseHandler = ^(NSData *response) {
     if (responseHandle) {
-      FlutterEngineSendPlatformMessageResponse(self->_engine, responseHandle, responseData.bytes,
-                                               responseData.length);
+      FlutterEngineSendPlatformMessageResponse(self->_engine, responseHandle, response.bytes,
+                                               response.length);
       responseHandle = NULL;
     } else {
-      NSLog(@"Error: Method call responses can be called only once. Ignoring duplicate response "
-             "for '%@' on channel '%@'.",
-            methodCall.methodName, channel);
+      NSLog(@"Error: Message responses can be sent only once. Ignoring duplicate response "
+             "on channel '%@'.",
+            channel);
     }
   };
 
-  if (!methodCall) {
-    NSLog(@"Received invalid platform message on channel %@", channel);
-    resultHandler(FLEMethodNotImplemented);
-    return;
+  FLEBinaryMessageHandler channelHandler = _messageHandlers[channel];
+  if (channelHandler) {
+    channelHandler(messageData, binaryResponseHandler);
+  } else {
+    binaryResponseHandler(nil);
   }
-
-  [plugin handleMethodCall:methodCall result:resultHandler];
 }
 
 - (void)dispatchMouseEvent:(NSEvent *)event phase:(FlutterPointerPhase)phase {
@@ -446,20 +431,6 @@ static void CommonInit(FLEViewController *controller) {
       .timestamp = event.timestamp * NSEC_PER_MSEC,
   };
   FlutterEngineSendPointerEvent(_engine, &flutterEvent, 1);
-}
-
-- (void)dispatchMessageData:(NSData *)messageData onChannel:(NSString *)channel {
-  FlutterPlatformMessage platformMessage = {
-      .struct_size = sizeof(FlutterPlatformMessage),
-      .channel = [channel UTF8String],
-      .message = messageData.bytes,
-      .message_size = messageData.length,
-  };
-
-  FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
-  if (result != kSuccess) {
-    NSLog(@"Flutter engine sent unsuccessful response for message data: (%d).", result);
-  }
 }
 
 #pragma mark - FLEReshapeListener
@@ -476,6 +447,27 @@ static void CommonInit(FLEViewController *controller) {
       .pixel_ratio = scaledBounds.size.width / view.bounds.size.width,
   };
   FlutterEngineSendWindowMetricsEvent(_engine, &event);
+}
+
+#pragma mark - FLEBinaryMessenger
+
+- (void)sendOnChannel:(nonnull NSString *)channel message:(nullable NSData *)message {
+  FlutterPlatformMessage platformMessage = {
+      .struct_size = sizeof(FlutterPlatformMessage),
+      .channel = [channel UTF8String],
+      .message = message.bytes,
+      .message_size = message.length,
+  };
+
+  FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
+  if (result != kSuccess) {
+    NSLog(@"Failed to send message to Flutter engine on channel '%@' (%d).", channel, result);
+  }
+}
+
+- (void)setMessageHandlerOnChannel:(nonnull NSString *)channel
+              binaryMessageHandler:(nullable FLEBinaryMessageHandler)handler {
+  _messageHandlers[channel] = [handler copy];
 }
 
 #pragma mark - NSResponder
