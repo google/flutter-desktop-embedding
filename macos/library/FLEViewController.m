@@ -171,7 +171,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 /**
  * Performs initialization that's common between the different init paths.
  */
-void CommonInit(FLEViewController *controller) {
+static void CommonInit(FLEViewController *controller) {
   controller->_plugins = [[NSMutableDictionary alloc] init];
   controller->_additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
 }
