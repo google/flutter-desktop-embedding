@@ -49,16 +49,9 @@ static const int kDefaultWindowFramebuffer = 0;
 @property NSMutableOrderedSet<NSResponder *> *additionalKeyResponders;
 
 /**
- * Initializes plugins used by this view controller.
- * Called from init.
+ * Creates and registers plugins used by this view controller.
  */
-- (void)initPlugins;
-
-/**
- * Internal implementation of addPlugin:. Separated since it is called during init, so must not
- * be overridden in subclasses.
- */
-- (BOOL)_addPlugin:(nonnull id<FLEPlugin>)plugin;
+- (void)addInternalPlugins;
 
 /**
  * Identical to the public API except that |main| and |packages| are nullable (and assets and main
@@ -175,10 +168,18 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 
 @dynamic view;
 
+/**
+ * Performs initialization that's common between the different init paths.
+ */
+void CommonInit(FLEViewController *controller) {
+  controller->_plugins = [[NSMutableDictionary alloc] init];
+  controller->_additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
+}
+
 - (instancetype)initWithCoder:(NSCoder *)coder {
   self = [super initWithCoder:coder];
   if (self != nil) {
-    [self initPlugins];
+    CommonInit(self);
   }
   return self;
 }
@@ -186,7 +187,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self != nil) {
-    [self initPlugins];
+    CommonInit(self);
   }
   return self;
 }
@@ -226,7 +227,14 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 }
 
 - (BOOL)addPlugin:(id<FLEPlugin>)plugin {
-  return [self _addPlugin:plugin];
+  NSString *channel = plugin.channel;
+  if (_plugins[channel] != nil) {
+    NSLog(@"Warning: channel %@ already has an associated plugin", channel);
+    return NO;
+  }
+  _plugins[channel] = plugin;
+  plugin.controller = self;
+  return YES;
 }
 
 - (void)invokeMethod:(NSString *)method
@@ -278,33 +286,13 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 
 #pragma mark - Private methods
 
-/**
- * Warning: This method is called during init, so should not call methods on self.
- */
-- (void)initPlugins {
-  _plugins = [[NSMutableDictionary alloc] init];
-  _additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
-
+- (void)addInternalPlugins {
   FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
-  [self _addPlugin:textPlugin];
+  [self addPlugin:textPlugin];
 
   FLEKeyEventPlugin *keyEventPlugin = [[FLEKeyEventPlugin alloc] init];
-  [self _addPlugin:keyEventPlugin];
+  [self addPlugin:keyEventPlugin];
   [_additionalKeyResponders addObject:keyEventPlugin];
-}
-
-/**
- * Warning: This method is called both during and after init, so should not call methods on self.
- */
-- (BOOL)_addPlugin:(id<FLEPlugin>)plugin {
-  NSString *channel = plugin.channel;
-  if (_plugins[channel] != nil) {
-    NSLog(@"Warning: channel %@ already has an associated plugin", channel);
-    return NO;
-  }
-  _plugins[channel] = plugin;
-  plugin.controller = self;
-  return YES;
 }
 
 - (BOOL)launchEngineInternalWithAssetsPath:(NSURL *)assets
@@ -322,6 +310,9 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   [self createResourceContext];
 
   const FlutterRendererConfig config = [FLEViewController createRenderConfigHeadless:headless];
+
+  // Register internal plugins before starting the engine.
+  [self addInternalPlugins];
 
   // Strip out the Xcode-added -NSDocumentRevisionsDebugMode YES.
   // TODO: Improve command line argument handling.
