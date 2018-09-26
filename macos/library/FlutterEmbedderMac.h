@@ -14,6 +14,7 @@
 
 #import "FLEChannels.h"
 #import "FLECodecs.h"
+#import "FLEMethods.h"
 #import "FLEOpenGLContextHandling.h"
 #import "FLEPlugin.h"
 #import "FLEReshapeListener.h"

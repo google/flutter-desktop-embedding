@@ -15,35 +15,3 @@
 #import "FLEChannels.h"
 
 NSString const *FLEMethodNotImplemented = @"notimplemented";
-
-@implementation FLEMethodCall
-
-- (nonnull instancetype)initWithMethodName:(nonnull NSString *)name
-                                 arguments:(nullable id)arguments {
-  self = [super init];
-  if (self) {
-    _methodName = name;
-    _arguments = arguments;
-  }
-  return self;
-}
-
-@end
-
-#pragma mark -
-
-@implementation FLEMethodError
-
-- (nonnull instancetype)initWithCode:(nonnull NSString *)code
-                             message:(nullable NSString *)message
-                             details:(nullable id)details {
-  self = [super init];
-  if (self) {
-    _code = code;
-    _message = message;
-    _details = details;
-  }
-  return self;
-}
-
-@end
