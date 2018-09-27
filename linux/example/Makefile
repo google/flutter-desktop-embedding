@@ -26,7 +26,7 @@ FLUTTER_EMBEDDER_LIB=$(FLUTTER_EMBEDDER_LIB_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME)
 FLUTTER_ENGINE_LIB_NAME=flutter_engine
 FLUTTER_ENGINE_LIB=$(FLUTTER_EMBEDDER_LIB_DIR)/lib$(FLUTTER_ENGINE_LIB_NAME).so
 
-PLUGIN_NAMES=color_panel file_chooser
+PLUGIN_NAMES=color_panel file_chooser menubar
 PLUGIN_LIB_NAME_PREFIX=flutter_embedder_
 PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
 	,$(PLUGINS_DIR)/$(plugin)/linux/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
