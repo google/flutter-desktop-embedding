@@ -25,17 +25,17 @@ namespace plugins_menubar {
 using flutter_desktop_embedding::JsonMethodCall;
 using flutter_desktop_embedding::MethodResult;
 
-MenuBarPlugin::MenuBarPlugin()
+MenubarPlugin::MenubarPlugin()
     : JsonPlugin(kChannelName, false), menubar_(nullptr) {}
 
-MenuBarPlugin::~MenuBarPlugin() {}
+MenubarPlugin::~MenubarPlugin() {}
 
 // Class containing the implementation of the Menubar widget. This is currently
 // a floating GTK window, separate from the main app. This is not the optimal
 // solution.
-class MenuBarPlugin::Menubar {
+class MenubarPlugin::Menubar {
  public:
-  explicit Menubar(MenuBarPlugin *parent) {
+  explicit Menubar(MenubarPlugin *parent) {
     menubar_window_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_position(GTK_WINDOW(menubar_window_), GTK_WIN_POS_CENTER);
     gtk_window_set_default_size(GTK_WINDOW(menubar_window_), 300, 50);
@@ -58,7 +58,7 @@ class MenuBarPlugin::Menubar {
   GtkWidget *GetRootMenuBar() { return menubar_; }
 
   static void MenuItemSelected(GtkWidget *menuItem, gpointer *data) {
-    auto plugin = reinterpret_cast<MenuBarPlugin *>(data);
+    auto plugin = reinterpret_cast<MenubarPlugin *>(data);
 
     plugin->InvokeMethod(kMenuItemSelectedCallbackMethod,
                          std::stoi(gtk_widget_get_name(menuItem)));
@@ -139,12 +139,12 @@ class MenuBarPlugin::Menubar {
   GtkWidget *menubar_;
 };
 
-void MenuBarPlugin::HandleJsonMethodCall(const JsonMethodCall &method_call,
+void MenubarPlugin::HandleJsonMethodCall(const JsonMethodCall &method_call,
                                          std::unique_ptr<MethodResult> result) {
   if (method_call.method_name().compare(kMenuSetMethod) == 0) {
     result->Success();
     if (menubar_ == nullptr) {
-      menubar_ = std::make_unique<MenuBarPlugin::Menubar>(this);
+      menubar_ = std::make_unique<MenubarPlugin::Menubar>(this);
     }
     // The menubar will be redrawn after every interaction. Clear items to avoid
     // duplication.

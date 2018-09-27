@@ -18,11 +18,11 @@
 
 namespace plugins_menubar {
 
-class MenuBarPlugin : public flutter_desktop_embedding::JsonPlugin {
+class MenubarPlugin : public flutter_desktop_embedding::JsonPlugin {
  public:
   // See Plugin for constructor details.
-  MenuBarPlugin();
-  virtual ~MenuBarPlugin();
+  MenubarPlugin();
+  virtual ~MenubarPlugin();
 
   void HandleJsonMethodCall(
       const flutter_desktop_embedding::JsonMethodCall &method_call,
