@@ -84,7 +84,7 @@ class MenubarPlugin::Menubar {
       return;
     }
 
-    if ((root[kLabelKey]).isString()) {
+    if (root[kLabelKey].isString()) {
       std::string label = root[kLabelKey].asString();
 
       if (root[kChildrenKey].isArray()) {
