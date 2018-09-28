@@ -26,7 +26,6 @@ void Plugin::InvokeMethodCall(const MethodCall &method_call) {
   if (!engine_) {
     return;
   }
-
   std::unique_ptr<std::vector<uint8_t>> message =
       GetCodec().EncodeMethodCall(method_call);
   FlutterPlatformMessage platform_message_response = {

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 TARGETS=all clean
-PLUGINS=color_panel file_chooser
+PLUGINS=color_panel file_chooser menubar
 PLUGIN_DIRS=$(patsubst %,../plugins/%/linux,$(PLUGINS))
 COMPONENT_DIRS=library example $(PLUGIN_DIRS)
 
