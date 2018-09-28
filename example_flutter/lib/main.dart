@@ -68,6 +68,10 @@ class _AppState extends State<MyApp> {
 
   /// Rebuilds the native menu bar based on the current state.
   void updateMenubar() {
+    // Currently, the menubar plugin is only implemented on macOS and linux.
+    if (!Platform.isLinux) {
+      return;
+    }
     setApplicationMenu([
       Submenu(label: 'Color', children: [
         MenuItem(
