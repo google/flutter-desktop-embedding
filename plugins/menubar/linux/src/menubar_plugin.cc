@@ -26,7 +26,7 @@ using flutter_desktop_embedding::JsonMethodCall;
 using flutter_desktop_embedding::MethodResult;
 
 MenubarPlugin::MenubarPlugin()
-    : JsonPlugin(kChannelName, false), menubar_(nullptr) {}
+    : JsonPlugin(kChannelName, false) {}
 
 MenubarPlugin::~MenubarPlugin() {}
 
@@ -50,13 +50,14 @@ class MenubarPlugin::Menubar {
   virtual ~Menubar() {
     if (menubar_window_) {
       gtk_widget_destroy(menubar_window_);
-      menubar_window_ = nullptr;
+      gtk_widget_destroy(menubar_);
     }
   }
 
-  // Get the top level menubar widget.
+  // Gets the top level menubar widget.
   GtkWidget *GetRootMenuBar() { return menubar_; }
 
+  // Triggers an action once a menubar item has been selected.
   static void MenuItemSelected(GtkWidget *menuItem, gpointer *data) {
     auto plugin = reinterpret_cast<MenubarPlugin *>(data);
 
@@ -64,7 +65,7 @@ class MenubarPlugin::Menubar {
                          std::stoi(gtk_widget_get_name(menuItem)));
   }
 
-  // Create the menu items heirarchy from a given Json object.
+  // Creates the menu items heirarchy from a given Json object.
   void SetMenuItems(const Json::Value &root,
                     flutter_desktop_embedding::Plugin *plugin,
                     GtkWidget *parentWidget) {
@@ -87,7 +88,7 @@ class MenubarPlugin::Menubar {
       std::string label = root[kLabelKey].asString();
 
       if (root[kChildrenKey].isArray()) {
-        // A parent menu item. Create a widget with its label and then build the
+        // A parent menu item. Creates a widget with its label and then build the
         // children.
         auto array = root[kChildrenKey];
         auto menu = gtk_menu_new();
@@ -123,7 +124,7 @@ class MenubarPlugin::Menubar {
     gtk_widget_show_all(menubar_window_);
   }
 
-  // Remove all items from the menubar.
+  // Removes all items from the menubar.
   void ClearMenuItems() {
     GList *children, *iter;
 

@@ -18,6 +18,7 @@
 
 namespace plugins_menubar {
 
+// A plugin to control a native menubar.
 class MenubarPlugin : public flutter_desktop_embedding::JsonPlugin {
  public:
   // See Plugin for constructor details.
