@@ -41,7 +41,7 @@
 		3329007420D84D3E002E5F16 /* FLEMenubarPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEMenubarPlugin.h; sourceTree = "<group>"; };
 		3329007820D84D4B002E5F16 /* channel_constants.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = channel_constants.cc; sourceTree = "<group>"; };
 		3329007920D84D4B002E5F16 /* channel_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = channel_constants.h; sourceTree = "<group>"; };
-		3329007C20D84DD4002E5F16 /* FlutterEmbedderMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMac.xcodeproj; path = ../../../macos/library/FlutterEmbedderMac.xcodeproj; sourceTree = "<group>"; };
+		3329007C20D84DD4002E5F16 /* FlutterEmbedderMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMac.xcodeproj; path = ../../../library/macos/FlutterEmbedderMac.xcodeproj; sourceTree = "<group>"; };
 		3329009A20D86B6C002E5F16 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 

@@ -39,7 +39,7 @@
 		3329001A20D2D6F7002E5F16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3329002720D2D7F6002E5F16 /* channel_constants.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = channel_constants.cc; sourceTree = "<group>"; };
 		3329002820D2D7F6002E5F16 /* channel_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = channel_constants.h; sourceTree = "<group>"; };
-		3329002F20D2D836002E5F16 /* FlutterEmbedderMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMac.xcodeproj; path = ../../../macos/library/FlutterEmbedderMac.xcodeproj; sourceTree = "<group>"; };
+		3329002F20D2D836002E5F16 /* FlutterEmbedderMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMac.xcodeproj; path = ../../../library/macos/FlutterEmbedderMac.xcodeproj; sourceTree = "<group>"; };
 		3329003E20D2D900002E5F16 /* FLEFileChooserPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FLEFileChooserPlugin.mm; sourceTree = "<group>"; };
 		3329003F20D2D900002E5F16 /* FLEFileChooserPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEFileChooserPlugin.h; sourceTree = "<group>"; };
 		3378247320D3759C00909728 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
