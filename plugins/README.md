@@ -54,10 +54,10 @@ plugin you want to use. For instance:
 
 ### Example Application
 
-See the example application under `example` in each platform's top-level
+See the example application under each platform's directory in the `example`
 directory to see an example of including optional plugins on that platform.
 
-The Flutter application under `example_flutter` shows examples of using
+The Flutter application under `example/flutter_app` shows examples of using
 optional plugins on the Dart side.
 
 ## Writing your own plugins

@@ -9,11 +9,11 @@ dependencies:
 
   # Desktop embedder plugins.
   color_panel:
-    path: ../plugins/color_panel
+    path: ../../plugins/color_panel
   file_chooser:
-    path: ../plugins/file_chooser
+    path: ../../plugins/file_chooser
   menubar:
-    path: ../plugins/menubar
+    path: ../../plugins/menubar
 
 dev_dependencies:
   flutter_test:

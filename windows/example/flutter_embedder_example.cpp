@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   // Start the engine.
   // TODO: Make paths relative to the executable so it can be run from anywhere.
   auto window = CreateFlutterWindowInSnapshotMode(
-      640, 480, "..\\example_flutter\\build\\flutter_assets",
+      640, 480, "..\\example\\flutter_app\\build\\flutter_assets",
       "dependencies\\engine\\icudtl.dat", arguments);
   if (window == nullptr) {
     FlutterTerminate();

@@ -14,7 +14,7 @@
 
 # Dependency locations
 FLUTTER_EMBEDDER_LIB_DIR=$(CURDIR)/../library
-FLUTTER_APP_DIR=$(CURDIR)/../../example_flutter
+FLUTTER_APP_DIR=$(CURDIR)/../../example/flutter_app
 PLUGINS_DIR=$(CURDIR)/../../plugins
 TOOLS_DIR=../../tools
 FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
