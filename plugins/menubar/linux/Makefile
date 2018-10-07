@@ -14,7 +14,7 @@
 LIBRARY_OUT=libflutter_embedder_menubar.so
 
 # For dependency on the embedder shared library.
-EMBEDDER_LIBRARY_DIR=$(CURDIR)/../../../linux/library
+EMBEDDER_LIBRARY_DIR=$(CURDIR)/../../../library/linux
 EMBEDDER_LIB_NAME=flutter_engine
 EMBEDDER_LIB_FILE=$(EMBEDDER_LIBRARY_DIR)/lib$(EMBEDDER_LIB_NAME).so
 
