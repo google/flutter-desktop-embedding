@@ -26,7 +26,7 @@
  * Can be launched headless (no managed view), at which point a Dart executable will be run on the
  * Flutter engine in non-interactive mode, or with a drawable Flutter canvas.
  */
-@interface FLEViewController : NSViewController <FLEReshapeListener>
+@interface FLEViewController : NSViewController <FLEBinaryMessenger, FLEReshapeListener>
 
 /**
  * The view this controller manages when launched in interactive mode (headless set to false). Must
@@ -80,7 +80,7 @@
  */
 - (void)invokeMethod:(nonnull NSString *)method
            arguments:(nullable id)arguments
-           onChannel:(nonnull NSString *)channel
+           onChannel:(nonnull NSString *)channelName
            withCodec:(nonnull id<FLEMethodCodec>)codec;
 
 /**
@@ -89,6 +89,6 @@
  */
 - (void)invokeMethod:(nonnull NSString *)method
            arguments:(nullable id)arguments
-           onChannel:(nonnull NSString *)channel;
+           onChannel:(nonnull NSString *)channelName;
 
 @end
