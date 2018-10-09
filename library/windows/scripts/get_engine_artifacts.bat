@@ -12,4 +12,5 @@
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
 @echo off
-..\..\tools\build_flutter_assets ..\..\example\flutter_app
+for /f "delims=" %%i in ('%~dp0..\..\..\tools\flutter_location') do set FLUTTER_DIR=%%i
+xcopy /y /d /q %FLUTTER_DIR%\bin\cache\artifacts\engine\windows-x64\icudtl.dat %~dp0..\dependencies\engine
