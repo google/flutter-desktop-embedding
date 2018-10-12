@@ -46,6 +46,9 @@ class TextInputPlugin : public KeyboardHookHandler, public JsonPlugin {
   // Sends the current state of the given model to the Flutter engine.
   void SendStateUpdate(const TextInputModel &model);
 
+  // Sends a "newline" action to the Flutter engine.
+  void EnterPressed(const TextInputModel &model);
+
   // Mapping of client IDs to text input models.
   std::map<int, std::unique_ptr<TextInputModel>> input_models_;
 
