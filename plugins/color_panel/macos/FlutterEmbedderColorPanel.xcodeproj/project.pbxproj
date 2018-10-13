@@ -34,7 +34,7 @@
 
 /* Begin PBXFileReference section */
 		3329FFCF20C9D25C002E5F16 /* FlutterEmbedderColorPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlutterEmbedderColorPanel.h; sourceTree = "<group>"; };
-		3329FFD820C9D496002E5F16 /* FlutterEmbedderMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMac.xcodeproj; path = ../../../macos/library/FlutterEmbedderMac.xcodeproj; sourceTree = "<group>"; };
+		3329FFD820C9D496002E5F16 /* FlutterEmbedderMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMac.xcodeproj; path = ../../../library/macos/FlutterEmbedderMac.xcodeproj; sourceTree = "<group>"; };
 		332A46C120C9CFE600C30EB9 /* FlutterEmbedderColorPanel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FlutterEmbedderColorPanel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		332A46C520C9CFE600C30EB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		332A46CC20C9D15C00C30EB9 /* FLEColorPanelPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEColorPanelPlugin.h; sourceTree = "<group>"; };

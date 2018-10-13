@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW Example", "GLFW Example.vcxproj", "{5A827760-CF8B-408A-99A3-B6C0AD2271E7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5} = {90057FD8-9460-43A6-8CDF-3AAC1C4255E5}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW Library", "..\..\library\windows\GLFW Library.vcxproj", "{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Dynamic Library|x64 = Debug Dynamic Library|x64
+		Debug Static Library|x64 = Debug Static Library|x64
+		Release Dynamic Library|x64 = Release Dynamic Library|x64
+		Release Static Library|x64 = Release Static Library|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}.Debug Dynamic Library|x64.ActiveCfg = Debug Dynamic Library|x64
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}.Debug Dynamic Library|x64.Build.0 = Debug Dynamic Library|x64
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}.Debug Static Library|x64.ActiveCfg = Debug Static Library|x64
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}.Debug Static Library|x64.Build.0 = Debug Static Library|x64
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}.Release Dynamic Library|x64.ActiveCfg = Release Dynamic Library|x64
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}.Release Dynamic Library|x64.Build.0 = Release Dynamic Library|x64
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}.Release Static Library|x64.ActiveCfg = Release Static Library|x64
+		{90057FD8-9460-43A6-8CDF-3AAC1C4255E5}.Release Static Library|x64.Build.0 = Release Static Library|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Debug Dynamic Library|x64.ActiveCfg = Debug Dynamic Library|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Debug Dynamic Library|x64.Build.0 = Debug Dynamic Library|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Debug Static Library|x64.ActiveCfg = Debug Static Library|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Debug Static Library|x64.Build.0 = Debug Static Library|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release Dynamic Library|x64.ActiveCfg = Release Dynamic Library|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release Dynamic Library|x64.Build.0 = Release Dynamic Library|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release Static Library|x64.ActiveCfg = Release Static Library|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release Static Library|x64.Build.0 = Release Static Library|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C8A8041-10D8-4BEB-B73D-C02BCE62120B}
+	EndGlobalSection
+EndGlobal
