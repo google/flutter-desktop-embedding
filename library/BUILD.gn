@@ -1,0 +1,89 @@
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/flutter.gni")
+import("//build/packaging.gni")
+import("//library/engine.gni")
+
+published_shared_library("flutter_embedder") {
+  if (is_linux) {
+    sources = [
+      "linux/src/internal/engine_method_result.cc",
+      "linux/src/internal/engine_method_result.h",
+      "linux/src/internal/keyboard_hook_handler.h",
+      "linux/src/internal/plugin_handler.cc",
+      "linux/src/internal/plugin_handler.h",
+      "linux/src/internal/text_input_model.cc",
+      "linux/src/internal/text_input_model.h",
+      "linux/src/internal/text_input_plugin.cc",
+      "linux/src/internal/text_input_plugin.h",
+      "linux/src/embedder.cc",
+      "linux/src/json_method_call.cc",
+      "linux/src/json_method_codec.cc",
+      "linux/src/json_plugin.cc",
+      "linux/src/method_call.cc",
+      "linux/src/method_codec.cc",
+      "linux/src/method_result.cc",
+      "linux/src/plugin.cc",
+    ]
+    public = [
+      "linux/include/flutter_desktop_embedding/embedder.h",
+      "linux/include/flutter_desktop_embedding/json_method_call.h",
+      "linux/include/flutter_desktop_embedding/json_method_codec.h",
+      "linux/include/flutter_desktop_embedding/json_plugin.h",
+      "linux/include/flutter_desktop_embedding/method_call.h",
+      "linux/include/flutter_desktop_embedding/method_codec.h",
+      "linux/include/flutter_desktop_embedding/method_result.h",
+      "linux/include/flutter_desktop_embedding/plugin.h",
+    ]
+  }
+
+  deps = [
+    ":fetch_flutter_engine",
+  ]
+
+  if (is_linux) {
+    public_header_subdir = "flutter_desktop_embedding"
+
+    deps += [
+      "//library/linux:publish_flutter_engine",
+    ]
+
+    libs = [
+      "glfw",
+      "GL",
+    ]
+
+    configs += [
+      "//build/linux/config:epoxy",
+      "//build/linux/config:gtk3",
+      "//build/linux/config:jsoncpp",
+      "//build/linux/config:x11",
+    ]
+
+    public_configs = [
+      "//library/linux:relative_public_headers",
+    ]
+  }
+}
+
+action("fetch_flutter_engine") {
+  script = "//tools/dart_tools/bin/update_flutter_engine.dart"
+  inputs = [ "$flutter_tree_path/bin/internal/engine.version" ]
+  outputs = engine_files
+  args = [
+    "--flutter_root=$flutter_tree_path",
+    rebase_path(engine_download_dir, root_build_dir),
+  ]
+}

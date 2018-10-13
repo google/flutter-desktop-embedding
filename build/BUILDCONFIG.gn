@@ -1,0 +1,42 @@
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set_default_toolchain("//third_party/chromium/build/toolchain:gcc")
+
+set_defaults("executable") {
+  configs = [ "//build:defaults" ]
+}
+set_defaults("static_library") {
+  configs = [ "//build:defaults" ]
+}
+set_defaults("shared_library") {
+  configs = [ "//build:defaults", "//build:shared_library_defaults" ]
+}
+set_defaults("published_shared_library") {
+  configs = [ "//build:defaults", "//build:shared_library_defaults" ]
+}
+
+if (host_os == "linux") {
+  is_linux = true
+  is_mac = false
+  is_win = false
+} else if (host_os == "mac") {
+  is_linux = false
+  is_mac = true
+  is_win = false
+} else if (host_os == "win") {
+  is_linux = false
+  is_mac = false
+  is_win = true
+}
