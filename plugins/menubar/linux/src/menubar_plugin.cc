@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <menubar/menubar_plugin.h>
+#include "plugins/menubar/linux/include/menubar/menubar_plugin.h"
 
 #include <gtk/gtk.h>
 #include <stdio.h>
 
-#include "../../common/channel_constants.h"
+#include "plugins/menubar/common/channel_constants.h"
 
 static constexpr char kWindowTitle[] = "Flutter Menubar";
 
