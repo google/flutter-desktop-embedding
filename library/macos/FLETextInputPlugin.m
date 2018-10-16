@@ -220,12 +220,13 @@ static NSString *const kDone = @"TextInputAction.done";
 }
 
 - (void)insertNewline:(id)sender {
-  /// This method is called when the user hits the Enter key. Since the embedder can't distinguish
-  /// if the current widget is multiline or not, this method will be considered a "submit" action,
-  /// To insert a new line, the user should hit ctrl + Enter to call insertLineBreak.
-  /// There is a PR in Flutter to identify if the widget is multiline, and act accordingly
-  /// (https://github.com/flutter/flutter/pull/23015). Once merged, this action should be changed
-  ///  to kNewLine.
+  /** This method is called when the user hits the Enter key. Since the embedder can't distinguish
+   * if the current widget is multiline or not, this method will be considered a "submit" action,
+   * To insert a new line, the user should hit ctrl + Enter to call insertLineBreak.
+   * There is a PR in Flutter to identify if the widget is multiline, and act accordingly
+   * (https://github.com/flutter/flutter/pull/23015). Once merged, this action should be changed
+   *  to kNewLine.
+   */
   [_controller invokeMethod:kPerformAction
                   arguments:@[ _activeClientID, kDone ]
                   onChannel:kTextInputChannel];
