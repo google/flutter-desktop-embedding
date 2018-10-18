@@ -27,6 +27,7 @@ static constexpr char kUpdateEditingStateMethod[] =
 static constexpr char kPerformActionMethod[] = "TextInputClient.performAction";
 
 static constexpr char kNewLineAction[] = "TextInputAction.newline";
+static constexpr char kDoneAction[] = "TextInputAction.done";
 
 static constexpr char kSelectionBaseKey[] = "selectionBase";
 static constexpr char kSelectionExtentKey[] = "selectionExtent";
@@ -178,7 +179,7 @@ void TextInputPlugin::SendStateUpdate(const TextInputModel &model) {
 void TextInputPlugin::EnterPressed(const TextInputModel &model) {
   Json::Value args = Json::arrayValue;
   args.append(model.client_id());
-  args.append(kNewLineAction);
+  args.append(kDoneAction);
 
   InvokeMethod(kPerformActionMethod, args);
 }
