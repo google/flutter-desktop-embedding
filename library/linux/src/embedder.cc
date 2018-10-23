@@ -26,6 +26,7 @@
 
 #include <flutter_embedder.h>
 
+#include "library/linux/src/internal/key_event_plugin.h"
 #include "library/linux/src/internal/keyboard_hook_handler.h"
 #include "library/linux/src/internal/plugin_handler.h"
 #include "library/linux/src/internal/text_input_plugin.h"
@@ -275,13 +276,17 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   FlutterEmbedderState *state = new FlutterEmbedderState();
   state->plugin_handler = std::make_unique<PluginHandler>(engine);
   state->engine = engine;
+  
+  auto key_event_plugin = std::make_unique<KeyEventPlugin>();
+  state->keyboard_hook_handlers.push_back(key_event_plugin.get());
   auto input_plugin = std::make_unique<TextInputPlugin>();
   state->keyboard_hook_handlers.push_back(input_plugin.get());
-
+  
   glfwSetWindowUserPointer(window, state);
 
+  AddPlugin(window, std::move(key_event_plugin));
   AddPlugin(window, std::move(input_plugin));
-
+  
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   GLFWwindowSizeCallback(window, width, height);
