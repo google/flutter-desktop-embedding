@@ -24,6 +24,10 @@ static constexpr char kHideMethod[] = "TextInput.hide";
 
 static constexpr char kUpdateEditingStateMethod[] =
     "TextInputClient.updateEditingState";
+static constexpr char kPerformActionMethod[] = "TextInputClient.performAction";
+
+static constexpr char kNewLineAction[] = "TextInputAction.newline";
+static constexpr char kDoneAction[] = "TextInputAction.done";
 
 static constexpr char kSelectionBaseKey[] = "selectionBase";
 static constexpr char kSelectionExtentKey[] = "selectionExtent";
@@ -85,6 +89,8 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
           SendStateUpdate(*active_model_);
         }
         break;
+      case GLFW_KEY_ENTER:
+        EnterPressed(*active_model_);
       default:
         break;
     }
@@ -168,6 +174,14 @@ void TextInputPlugin::HandleJsonMethodCall(
 
 void TextInputPlugin::SendStateUpdate(const TextInputModel &model) {
   InvokeMethod(kUpdateEditingStateMethod, model.GetState());
+}
+
+void TextInputPlugin::EnterPressed(const TextInputModel &model) {
+  Json::Value args = Json::arrayValue;
+  args.append(model.client_id());
+  args.append(kDoneAction);
+
+  InvokeMethod(kPerformActionMethod, args);
 }
 
 }  // namespace flutter_desktop_embedding
