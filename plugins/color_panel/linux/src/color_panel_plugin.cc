@@ -11,12 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <color_panel/color_panel_plugin.h>
+#include "plugins/color_panel/linux/include/color_panel/color_panel_plugin.h"
 
 #include <gtk/gtk.h>
 #include <iostream>
 
-#include "../common/channel_constants.h"
+#include "plugins/color_panel/common/channel_constants.h"
 
 static constexpr char kWindowTitle[] = "Flutter Color Picker";
 
