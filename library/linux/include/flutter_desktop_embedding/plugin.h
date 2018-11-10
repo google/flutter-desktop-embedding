@@ -18,8 +18,7 @@
 #include <memory>
 #include <string>
 
-#include <flutter_embedder.h>
-
+#include "binary_messenger.h"
 #include "method_call.h"
 #include "method_codec.h"
 #include "method_result.h"
@@ -60,10 +59,12 @@ class Plugin {
   // while waiting for this plugin to handle its platform message.
   virtual bool input_blocking() const { return input_blocking_; }
 
-  // Sets the pointer to the caller-owned Flutter Engine.
+  // Sets the pointer to the caller-owned binary messenger.
   //
   // The embedder typically sets this pointer rather than the client.
-  virtual void set_flutter_engine(FlutterEngine engine) { engine_ = engine; }
+  virtual void set_binary_messenger(BinaryMessenger *messenger) {
+    messenger_ = messenger;
+  }
 
  protected:
   // Calls a method in the Flutter engine on this Plugin's channel.
@@ -71,8 +72,8 @@ class Plugin {
 
  private:
   std::string channel_;
-  // Caller-owned instance of the Flutter Engine.
-  FlutterEngine engine_;
+  // Caller-owned instance of the binary messenger used to message the engine.
+  BinaryMessenger *messenger_;
   bool input_blocking_;
 };
 
