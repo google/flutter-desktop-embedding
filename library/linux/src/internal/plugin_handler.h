@@ -63,10 +63,13 @@ class PluginHandler : public BinaryMessenger {
   // BinaryMessenger implementation:
   void Send(const std::string &channel, const uint8_t *message,
             const size_t message_size) const override;
+  void SetMessageHandler(const std::string &channel,
+                         BinaryMessageHandler handler) override;
 
  private:
   FlutterEngine engine_;
   std::map<std::string, std::unique_ptr<Plugin>> plugins_;
+  std::map<std::string, BinaryMessageHandler> handlers_;
 };
 
 }  // namespace flutter_desktop_embedding
