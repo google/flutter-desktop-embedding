@@ -70,4 +70,15 @@ void PluginHandler::HandleMethodCallMessage(
   }
 }
 
+void PluginHandler::Send(const std::string &channel, const uint8_t *message,
+                         const size_t message_size) const {
+  FlutterPlatformMessage platform_message = {
+      .struct_size = sizeof(FlutterPlatformMessage),
+      .channel = channel.c_str(),
+      .message = message,
+      .message_size = message_size,
+  };
+  FlutterEngineSendPlatformMessage(engine_, &platform_message);
+}
+
 }  // namespace flutter_desktop_embedding

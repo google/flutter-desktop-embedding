@@ -20,6 +20,7 @@
 
 #include <flutter_embedder.h>
 
+#include "library/linux/include/flutter_desktop_embedding/binary_messenger.h"
 #include "library/linux/include/flutter_desktop_embedding/plugin.h"
 
 namespace flutter_desktop_embedding {
@@ -27,7 +28,7 @@ namespace flutter_desktop_embedding {
 // A class for managing a set of plugins.
 //
 // The plugins all map from a unique channel name to an actual plugin.
-class PluginHandler {
+class PluginHandler : public BinaryMessenger {
  public:
   // Creates a new PluginHandler. |engine| must remain valid as long as this
   // object exists.
@@ -58,6 +59,10 @@ class PluginHandler {
                                std::function<void(void)> input_block_cb = [] {},
                                std::function<void(void)> input_unblock_cb =
                                    [] {});
+
+  // BinaryMessenger implementation:
+  void Send(const std::string &channel, const uint8_t *message,
+            const size_t message_size) const override;
 
  private:
   FlutterEngine engine_;
