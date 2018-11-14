@@ -43,7 +43,7 @@ class JsonMessageCodec {
   std::unique_ptr<std::vector<uint8_t>> EncodeMessage(
       const Json::Value &message) const;
 
-  // Returns the MethodCall encoded in |message|, or nullptr if it cannot be
+  // Returns the JSON object encoded in |message|, or nullptr if it cannot be
   // decoded.
   // TODO: Consider adding absl as a dependency and using absl::Span.
   std::unique_ptr<Json::Value> DecodeMessage(const uint8_t *message,
