@@ -13,6 +13,7 @@
 // limitations under the License.
 #include "library/linux/src/internal/plugin_handler.h"
 
+#include "library/linux/include/flutter_desktop_embedding/method_channel.h"
 #include "library/linux/src/internal/engine_method_result.h"
 
 #include <iostream>
@@ -27,6 +28,7 @@ bool PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
   if (plugins_.find(plugin->channel()) != plugins_.end()) {
     return false;
   }
+  plugin->SetBinaryMessenger(this);
   plugins_.insert(std::make_pair(plugin->channel(), std::move(plugin)));
   return true;
 }
@@ -36,36 +38,42 @@ void PluginHandler::HandleMethodCallMessage(
     std::function<void(void)> input_block_cb,
     std::function<void(void)> input_unblock_cb) {
   std::string channel(message->channel);
+  auto *response_handle = message->response_handle;
+  auto *response_engine = engine_;
+  BinaryReply reply_handler = [response_engine, response_handle](
+                                  const uint8_t *reply,
+                                  const size_t reply_size) mutable {
+    if (!response_handle) {
+      std::cerr << "Error: Response can be set only once. Ignoring "
+                   "duplicate response."
+                << std::endl;
+      return;
+    }
+    FlutterEngineSendPlatformMessageResponse(response_engine, response_handle,
+                                             reply, reply_size);
+    // The engine frees the response handle once
+    // FlutterEngineSendPlatformMessageResponse is called.
+    response_handle = nullptr;
+  };
 
-  // Find the plugin for the channel; if there isn't one, report the failure.
-  if (plugins_.find(channel) == plugins_.end()) {
+  // Find the handler for the channel; if there isn't one, report the failure.
+  if (handlers_.find(channel) == handlers_.end()) {
     auto result =
         std::make_unique<flutter_desktop_embedding::EngineMethodResult>(
-            engine_, message->response_handle, nullptr);
+            std::move(reply_handler), nullptr);
     result->NotImplemented();
     return;
   }
+  const BinaryMessageHandler &message_handler = handlers_[channel];
   const std::unique_ptr<Plugin> &plugin = plugins_[channel];
 
-  // Use the plugin's codec to decode the call and build a result handler.
-  const flutter_desktop_embedding::MethodCodec &codec = plugin->GetCodec();
-  auto result = std::make_unique<flutter_desktop_embedding::EngineMethodResult>(
-      engine_, message->response_handle, &codec);
-  std::unique_ptr<flutter_desktop_embedding::MethodCall> method_call =
-      codec.DecodeMethodCall(message->message, message->message_size);
-  if (!method_call) {
-    std::cerr << "Unable to construct method call from message on channel "
-              << message->channel << std::endl;
-    result->NotImplemented();
-    return;
-  }
-
   // Process the call, handling input blocking if requested by the plugin.
-  if (plugin->input_blocking()) {
+  if (plugin && plugin->input_blocking()) {
     input_block_cb();
   }
-  plugin->HandleMethodCall(*method_call, std::move(result));
-  if (plugin->input_blocking()) {
+  message_handler(message->message, message->message_size,
+                  std::move(reply_handler));
+  if (plugin && plugin->input_blocking()) {
     input_unblock_cb();
   }
 }
@@ -79,6 +87,11 @@ void PluginHandler::Send(const std::string &channel, const uint8_t *message,
       .message_size = message_size,
   };
   FlutterEngineSendPlatformMessage(engine_, &platform_message);
+}
+
+void PluginHandler::SetMessageHandler(const std::string &channel,
+                                      BinaryMessageHandler handler) {
+  handlers_[channel] = std::move(handler);
 }
 
 }  // namespace flutter_desktop_embedding

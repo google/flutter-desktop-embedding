@@ -32,9 +32,20 @@ void JsonPlugin::HandleMethodCall(const MethodCall &method_call,
                        std::move(result));
 }
 
+void JsonPlugin::RegisterMethodChannels(BinaryMessenger *messenger) {
+  method_channel_ =
+      std::make_unique<MethodChannel>(messenger, channel(), &GetCodec());
+
+  MethodCallHandler handler = [this](const MethodCall &call,
+                                     std::unique_ptr<MethodResult> result) {
+    HandleMethodCall(call, std::move(result));
+  };
+  method_channel_->SetMethodCallHandler(std::move(handler));
+}
+
 void JsonPlugin::InvokeMethod(const std::string &method,
                               const Json::Value &arguments) {
-  InvokeMethodCall(JsonMethodCall(method, arguments));
+  method_channel_->InvokeMethodCall(JsonMethodCall(method, arguments));
 }
 
 }  // namespace flutter_desktop_embedding

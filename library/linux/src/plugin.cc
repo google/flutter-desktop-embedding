@@ -22,6 +22,11 @@ Plugin::Plugin(const std::string &channel, bool input_blocking)
 
 Plugin::~Plugin() {}
 
+void Plugin::SetBinaryMessenger(BinaryMessenger *messenger) {
+  messenger_ = messenger;
+  RegisterMethodChannels(messenger);
+}
+
 void Plugin::InvokeMethodCall(const MethodCall &method_call) {
   if (!messenger_) {
     return;
