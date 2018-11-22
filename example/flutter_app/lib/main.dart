@@ -150,7 +150,7 @@ class _MyHomePage extends StatelessWidget {
     if (!colorPanel.showing) {
       colorPanel.show((color) {
         _AppState.of(context).setPrimaryColor(color);
-      });
+      }, showAlphaSlider: true);
     }
   }
 

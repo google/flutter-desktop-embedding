@@ -23,6 +23,7 @@ const String _kHideColorPanelMethod = 'ColorPanel.Hide';
 const String _kColorPanelColorSelectedCallback =
     'ColorPanel.ColorSelectedCallback';
 const String _kColorPanelClosedCallback = 'ColorPanel.ClosedCallback';
+const String _kColorPanelShowAlphaSlider = 'ColorPanel.ShowAlphaSlider';
 const String _kRedKey = 'red';
 const String _kGreenKey = 'green';
 const String _kBlueKey = 'blue';
@@ -55,14 +56,15 @@ class ColorPanel {
   ///
   /// [callback] will be called when the user selects a color; it can be called
   /// an number of times depending on the interaction model of the native
-  /// panel.
+  /// panel. Set [showAlphaSlider] to true to show an opacity slider.
   ///
   /// It is an error to call [show] if the panel is already showing.
-  void show(ColorPanelCallback callback) {
+  void show(ColorPanelCallback callback, {bool showAlphaSlider}) {
     try {
       if (!showing) {
         _callback = callback;
-        _platformChannel.invokeMethod(_kShowColorPanelMethod);
+        _platformChannel.invokeMethod(_kShowColorPanelMethod,
+            {_kColorPanelShowAlphaSlider: showAlphaSlider ?? false});
       } else {
         throw new StateError('Color panel is already shown');
       }
