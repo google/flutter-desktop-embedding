@@ -54,6 +54,8 @@ for details on calling into the library.
 
 You will also need to link `libflutter_engine.so` into your binary.
 
+_Note: There is also a [GN build](GN.md) available as an alternative to Make._
+
 ### macOS
 
 #### Dependencies

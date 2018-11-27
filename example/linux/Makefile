@@ -58,6 +58,29 @@ BIN_OUT=$(OUT_DIR)/flutter_embedder_example
 ICU_DATA_OUT=$(OUT_DATA_DIR)/$(ICU_DATA_NAME)
 ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(OUT_LIB_DIR)/$(notdir $(lib)))
 
+# Overrides for the optional GN build.
+ifdef USE_GN
+GN_OUT_DIR=$(PROJECT_ROOT)/out
+# Use GN's out dir even though this isn't a GN build, to group build output.
+OUT_DIR=$(GN_OUT_DIR)/example
+
+# The GN build places all libraries at the top level of the output directory.
+FLUTTER_EMBEDDER_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME).so
+FLUTTER_ENGINE_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_ENGINE_LIB_NAME).so
+PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
+	,$(GN_OUT_DIR)/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
+
+# The GN build places all published headers in a top-level include/.
+INCLUDE_DIRS=$(GN_OUT_DIR)/include
+
+# Override LIBRARY_DIRS since it's used for controlling the external build.
+LIBRARY_DIRS=$(GN_OUT_DIR)
+
+# Additional tools
+GN_WRAPPER=$(TOOLS_DIR)/gn_dart
+NINJA_BIN=ninja
+endif
+
 # Build settings
 CXX=g++ -std=c++14
 CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp)
@@ -85,6 +108,12 @@ $(BIN_OUT): $(SOURCES) $(ALL_LIBS_OUT)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
 # Depedency directories are used as phony targets to invoke their builds.
+ifdef USE_GN
+.PHONY: $(LIBRARY_DIRS)
+$(LIBRARY_DIRS):
+	$(GN_WRAPPER) gen $(GN_OUT_DIR)
+	$(NINJA_BIN) -C $(GN_OUT_DIR) $(FLUTTER_EMBEDDER_LIB_NAME) $(PLUGIN_NAMES)
+else
 .PHONY: $(LIBRARY_DIRS)
 $(LIBRARY_DIRS):
 	$(MAKE) -C $@ $(MAKECMDGOALS)
@@ -93,6 +122,7 @@ $(LIBRARY_DIRS):
 # in parallel in the event that someone supplies the -j flag to `make`.
 # TODO: Fix this in the plugin builds so that it's not necessary at this layer.
 $(PLUGIN_DIRS): $(FLUTTER_EMBEDDER_LIB_DIR)
+endif
 
 # Require that all the library builds run for anything depending on the
 # libraries, but use order-only so that the phony build targets don't trigger
