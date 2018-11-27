@@ -33,7 +33,7 @@ extern const char kColorSelectedCallbackMethod[];
 extern const char kClosedCallbackMethod[];
 
 // The argument to show an opacity slider on the panel.
-extern const char kColorPanelShowAlphaSlider[];
+extern const char kColorPanelShowAlpha[];
 
 // Keys for the RGB color JSON object sent to kColorPanelCallback.
 // The values should be numbers between 0 and 1.

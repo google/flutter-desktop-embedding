@@ -23,7 +23,7 @@ const String _kHideColorPanelMethod = 'ColorPanel.Hide';
 const String _kColorPanelColorSelectedCallback =
     'ColorPanel.ColorSelectedCallback';
 const String _kColorPanelClosedCallback = 'ColorPanel.ClosedCallback';
-const String _kColorPanelShowAlphaSlider = 'ColorPanel.ShowAlphaSlider';
+const String _kColorPanelShowAlpha = 'ColorPanel.ShowAlpha';
 const String _kRedKey = 'red';
 const String _kGreenKey = 'green';
 const String _kBlueKey = 'blue';
@@ -64,7 +64,7 @@ class ColorPanel {
       if (!showing) {
         _callback = callback;
         _platformChannel.invokeMethod(_kShowColorPanelMethod,
-            {_kColorPanelShowAlphaSlider: showAlpha});
+            {_kColorPanelShowAlpha: showAlpha});
       } else {
         throw new StateError('Color panel is already shown');
       }

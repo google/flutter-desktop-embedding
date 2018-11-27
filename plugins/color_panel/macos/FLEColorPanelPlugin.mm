@@ -35,7 +35,7 @@
   if ([call.methodName isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
     BOOL showAlpha = YES;
     if ([call.arguments isKindOfClass:[NSDictionary class]]) {
-      showAlpha = [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlphaSlider)]
+      showAlpha = [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlpha)]
                    boolValue];
     }
     [self showColorPanel:showAlpha];

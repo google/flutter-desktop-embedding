@@ -34,7 +34,7 @@ class ColorPanelPlugin::ColorPanel {
     gtk_widget_ = gtk_color_chooser_dialog_new(kWindowTitle, nullptr);
     gtk_color_chooser_set_use_alpha(
         reinterpret_cast<GtkColorChooser *>(gtk_widget_),
-        method_args[kColorPanelShowAlphaSlider].asBool());
+        method_args[kColorPanelShowAlpha].asBool());
     gtk_widget_show_all(gtk_widget_);
     g_signal_connect(gtk_widget_, "close", G_CALLBACK(CloseCallback), parent);
     g_signal_connect(gtk_widget_, "response", G_CALLBACK(ResponseCallback),
