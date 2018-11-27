@@ -83,6 +83,14 @@ published_shared_library("flutter_embedder") {
   }
 }
 
+# Allows targets depending on the engine library to use library-style
+# inculdes for its header rather than project-relative.
+config("relative_engine_headers") {
+  include_dirs = [
+    "$engine_download_dir",
+  ]
+}
+
 action("fetch_flutter_engine") {
   script = "//tools/dart_tools/bin/update_flutter_engine.dart"
   inputs = [ "$flutter_tree_path/bin/internal/engine.version" ]
@@ -91,4 +99,9 @@ action("fetch_flutter_engine") {
     "--flutter_root=$flutter_tree_path",
     rebase_path(engine_download_dir, root_build_dir),
   ]
+  if (is_linux) {
+    public_configs = [
+      ":relative_engine_headers",
+    ]
+  }
 }
