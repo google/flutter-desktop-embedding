@@ -15,6 +15,7 @@
 # The location for downloading the engine library/headers.
 engine_download_dir = "$root_gen_dir/flutter_engine"
 
+# The files that make up the downloaded engine library on Linux.
 if (is_linux) {
   engine_files = [
     "$engine_download_dir/libflutter_engine.so",

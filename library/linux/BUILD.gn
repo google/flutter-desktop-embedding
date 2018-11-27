@@ -15,8 +15,6 @@
 import("//build/packaging.gni")
 import("//library/engine.gni")
 
-# The files that make up the download engine library on Linux.
-
 # Allows targets depending on this library to use library-style
 # inculdes for its header rather than project-relative.
 config("relative_public_headers") {

@@ -21,6 +21,8 @@ published_shared_library("flutter_embedder") {
     sources = [
       "linux/src/internal/engine_method_result.cc",
       "linux/src/internal/engine_method_result.h",
+      "linux/src/internal/json_message_codec.cc",
+      "linux/src/internal/json_message_codec.h",
       "linux/src/internal/keyboard_hook_handler.h",
       "linux/src/internal/plugin_handler.cc",
       "linux/src/internal/plugin_handler.h",
@@ -33,16 +35,19 @@ published_shared_library("flutter_embedder") {
       "linux/src/json_method_codec.cc",
       "linux/src/json_plugin.cc",
       "linux/src/method_call.cc",
+      "linux/src/method_channel.cc",
       "linux/src/method_codec.cc",
       "linux/src/method_result.cc",
       "linux/src/plugin.cc",
     ]
     public = [
+      "linux/include/flutter_desktop_embedding/binary_messenger.h",
       "linux/include/flutter_desktop_embedding/embedder.h",
       "linux/include/flutter_desktop_embedding/json_method_call.h",
       "linux/include/flutter_desktop_embedding/json_method_codec.h",
       "linux/include/flutter_desktop_embedding/json_plugin.h",
       "linux/include/flutter_desktop_embedding/method_call.h",
+      "linux/include/flutter_desktop_embedding/method_channel.h",
       "linux/include/flutter_desktop_embedding/method_codec.h",
       "linux/include/flutter_desktop_embedding/method_result.h",
       "linux/include/flutter_desktop_embedding/plugin.h",
