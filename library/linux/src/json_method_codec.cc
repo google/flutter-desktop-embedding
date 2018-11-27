@@ -13,9 +13,8 @@
 // limitations under the License.
 #include "library/linux/include/flutter_desktop_embedding/json_method_codec.h"
 
-#include <iostream>
-
 #include "library/linux/include/flutter_desktop_embedding/json_method_call.h"
+#include "library/linux/src/internal/json_message_codec.h"
 
 namespace flutter_desktop_embedding {
 
@@ -33,25 +32,17 @@ const JsonMethodCodec &JsonMethodCodec::GetInstance() {
 
 std::unique_ptr<MethodCall> JsonMethodCodec::DecodeMethodCallInternal(
     const uint8_t *message, const size_t message_size) const {
-  Json::CharReaderBuilder reader_builder;
-  std::unique_ptr<Json::CharReader> parser(reader_builder.newCharReader());
-
-  auto raw_message = reinterpret_cast<const char *>(message);
-  Json::Value json_message;
-  std::string parse_errors;
-  bool parsing_successful = parser->parse(
-      raw_message, raw_message + message_size, &json_message, &parse_errors);
-  if (!parsing_successful) {
-    std::cerr << "Unable to parse JSON method call:" << std::endl
-              << parse_errors << std::endl;
+  std::unique_ptr<Json::Value> json_message =
+      JsonMessageCodec::GetInstance().DecodeMessage(message, message_size);
+  if (!json_message) {
     return nullptr;
   }
 
-  Json::Value method = json_message[kMessageMethodKey];
+  Json::Value method = (*json_message)[kMessageMethodKey];
   if (method.isNull()) {
     return nullptr;
   }
-  Json::Value arguments = json_message[kMessageArgumentsKey];
+  Json::Value arguments = (*json_message)[kMessageArgumentsKey];
   return std::make_unique<JsonMethodCall>(method.asString(), arguments);
 }
 
@@ -62,7 +53,7 @@ std::unique_ptr<std::vector<uint8_t>> JsonMethodCodec::EncodeMethodCallInternal(
   message[kMessageArgumentsKey] =
       *static_cast<const Json::Value *>(method_call.arguments());
 
-  return EncodeJsonObject(message);
+  return JsonMessageCodec::GetInstance().EncodeMessage(message);
 }
 
 std::unique_ptr<std::vector<uint8_t>>
@@ -71,7 +62,7 @@ JsonMethodCodec::EncodeSuccessEnvelopeInternal(const void *result) const {
   envelope.append(result == nullptr
                       ? Json::Value()
                       : *static_cast<const Json::Value *>(result));
-  return EncodeJsonObject(envelope);
+  return JsonMessageCodec::GetInstance().EncodeMessage(envelope);
 }
 
 std::unique_ptr<std::vector<uint8_t>>
@@ -84,16 +75,7 @@ JsonMethodCodec::EncodeErrorEnvelopeInternal(const std::string &error_code,
   envelope.append(error_details == nullptr
                       ? Json::Value()
                       : *static_cast<const Json::Value *>(error_details));
-  return EncodeJsonObject(envelope);
-}
-
-std::unique_ptr<std::vector<uint8_t>> JsonMethodCodec::EncodeJsonObject(
-    const Json::Value &json) const {
-  Json::StreamWriterBuilder writer_builder;
-  std::string serialization = Json::writeString(writer_builder, json);
-
-  return std::make_unique<std::vector<uint8_t>>(serialization.begin(),
-                                                serialization.end());
+  return JsonMessageCodec::GetInstance().EncodeMessage(envelope);
 }
 
 }  // namespace flutter_desktop_embedding

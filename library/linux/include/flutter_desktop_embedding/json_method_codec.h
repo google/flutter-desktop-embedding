@@ -14,8 +14,6 @@
 #ifndef LIBRARY_LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
 #define LIBRARY_LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
 
-#include <json/json.h>
-
 #include "method_codec.h"
 
 namespace flutter_desktop_embedding {
@@ -49,11 +47,6 @@ class JsonMethodCodec : public MethodCodec {
   std::unique_ptr<std::vector<uint8_t>> EncodeErrorEnvelopeInternal(
       const std::string &error_code, const std::string &error_message,
       const void *error_details) const override;
-
- private:
-  // Serializes |json| into a byte stream.
-  std::unique_ptr<std::vector<uint8_t>> EncodeJsonObject(
-      const Json::Value &json) const;
 };
 
 }  // namespace flutter_desktop_embedding

@@ -242,7 +242,6 @@ namespace flutter_desktop_embedding {
 
 bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
   auto state = GetSavedEmbedderState(flutter_window);
-  plugin->set_flutter_engine(state->engine);
   return state->plugin_handler->AddPlugin(std::move(plugin));
 }
 
