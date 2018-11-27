@@ -33,7 +33,12 @@
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
   BOOL handled = YES;
   if ([call.methodName isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
-    [self showColorPanel: call.arguments];
+    BOOL showAlpha = YES;
+    if ([call.arguments isKindOfClass:[NSDictionary class]]) {
+      showAlpha = [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlphaSlider)]
+                   boolValue];
+    }
+    [self showColorPanel:showAlpha];
   } else if ([call.methodName isEqualToString:@(plugins_color_panel::kHideColorPanelMethod)]) {
     [self hideColorPanel];
   } else {
@@ -47,13 +52,10 @@
 /**
  * Configures the shared instance of NSColorPanel and makes it the frontmost & key window.
  */
-- (void)showColorPanel:(id)args {
+- (void)showColorPanel:(BOOL)showAlpha {
   NSColorPanel *sharedColor = [NSColorPanel sharedColorPanel];
   sharedColor.delegate = self;
-  if ([args isKindOfClass:[NSDictionary class]]) {
-    id showAlpha = [args valueForKey: @(plugins_color_panel::kColorPanelShowAlphaSlider)];
-    [sharedColor setShowsAlpha: [showAlpha boolValue]];
-  }
+  [sharedColor setShowsAlpha:showAlpha];
   [sharedColor setTarget:self];
   [sharedColor setAction:@selector(selectedColorDidChange)];
   if (!sharedColor.isKeyWindow) {

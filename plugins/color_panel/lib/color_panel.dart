@@ -56,15 +56,15 @@ class ColorPanel {
   ///
   /// [callback] will be called when the user selects a color; it can be called
   /// an number of times depending on the interaction model of the native
-  /// panel. Set [showAlphaSlider] to true to show an opacity slider.
+  /// panel. Set [showAlpha] to false to hide the color opacity modifier UI.
   ///
   /// It is an error to call [show] if the panel is already showing.
-  void show(ColorPanelCallback callback, {bool showAlphaSlider}) {
+  void show(ColorPanelCallback callback, {bool showAlpha = true}) {
     try {
       if (!showing) {
         _callback = callback;
         _platformChannel.invokeMethod(_kShowColorPanelMethod,
-            {_kColorPanelShowAlphaSlider: showAlphaSlider ?? false});
+            {_kColorPanelShowAlphaSlider: showAlpha});
       } else {
         throw new StateError('Color panel is already shown');
       }
