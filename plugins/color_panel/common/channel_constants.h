@@ -32,7 +32,7 @@ extern const char kColorSelectedCallbackMethod[];
 // closed from the UI, rather than via a call to kHideColorPanelMethod.
 extern const char kClosedCallbackMethod[];
 
-// The argument to show an opacity slider on the panel.
+// The argument to show an opacity modifier on the panel. Default is true.
 extern const char kColorPanelShowAlpha[];
 
 // Keys for the RGB color JSON object sent to kColorPanelCallback.
