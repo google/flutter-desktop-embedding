@@ -11,20 +11,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "library/linux/include/flutter_desktop_embedding/json_method_call.h"
+#include "library/shared/include/flutter_desktop_embedding/method_result.h"
 
 namespace flutter_desktop_embedding {
 
-JsonMethodCall::JsonMethodCall(const std::string &method_name,
-                               const Json::Value &arguments)
-    : MethodCall(method_name), arguments_(arguments) {}
+MethodResult::MethodResult() {}
 
-JsonMethodCall::~JsonMethodCall() {}
+MethodResult::~MethodResult() {}
 
-const void *JsonMethodCall::arguments() const { return &arguments_; }
+void MethodResult::Success(const void *result) { SuccessInternal(result); }
 
-const Json::Value &JsonMethodCall::GetArgumentsAsJson() const {
-  return arguments_;
+void MethodResult::Error(const std::string &error_code,
+                         const std::string &error_message,
+                         const void *error_details) {
+  ErrorInternal(error_code, error_message, error_details);
 }
+
+void MethodResult::NotImplemented() { NotImplementedInternal(); }
 
 }  // namespace flutter_desktop_embedding

@@ -76,7 +76,7 @@
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
     <IncludePath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\shared\src\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">
@@ -109,9 +109,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies);json_vc71_libmt.lib</AdditionalDependencies>
     </Link>
     <Link>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
@@ -261,9 +262,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\shared\src\internal\engine_method_result.cc" />
+    <ClCompile Include="..\shared\src\internal\json_message_codec.cc" />
     <ClCompile Include="..\shared\src\internal\plugin_handler.cc" />
     <ClCompile Include="..\shared\src\internal\text_input_model.cc" />
     <ClCompile Include="..\shared\src\internal\text_input_plugin.cc" />
+    <ClCompile Include="..\shared\src\json_method_call.cc" />
+    <ClCompile Include="..\shared\src\json_method_codec.cc" />
+    <ClCompile Include="..\shared\src\json_plugin.cc" />
+    <ClCompile Include="..\shared\src\method_channel.cc" />
+    <ClCompile Include="..\shared\src\method_codec.cc" />
+    <ClCompile Include="..\shared\src\method_result.cc" />
+    <ClCompile Include="..\shared\src\plugin.cc" />
     <ClCompile Include="embedder.cpp" />
   </ItemGroup>
   <ItemGroup>
