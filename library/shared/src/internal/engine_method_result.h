@@ -17,9 +17,9 @@
 #include <string>
 #include <vector>
 
-#include "library/linux/include/flutter_desktop_embedding/binary_messenger.h"
-#include "library/linux/include/flutter_desktop_embedding/method_codec.h"
-#include "library/linux/include/flutter_desktop_embedding/method_result.h"
+#include "library/shared/include/flutter_desktop_embedding/binary_messenger.h"
+#include "library/shared/include/flutter_desktop_embedding/method_codec.h"
+#include "library/shared/include/flutter_desktop_embedding/method_result.h"
 
 namespace flutter_desktop_embedding {
 

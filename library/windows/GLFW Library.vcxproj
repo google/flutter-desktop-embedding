@@ -77,6 +77,7 @@
     <TargetExt>.dll</TargetExt>
     <IncludePath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(ProjectDir)..\..\library\shared\src\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
@@ -259,6 +260,7 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\shared\src\internal\plugin_handler.cc" />
     <ClCompile Include="embedder.cpp" />
   </ItemGroup>
   <ItemGroup>
