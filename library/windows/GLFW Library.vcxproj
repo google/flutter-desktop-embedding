@@ -269,6 +269,7 @@
     <ClCompile Include="..\shared\src\json_method_call.cc" />
     <ClCompile Include="..\shared\src\json_method_codec.cc" />
     <ClCompile Include="..\shared\src\json_plugin.cc" />
+    <ClCompile Include="..\shared\src\method_call.cc" />
     <ClCompile Include="..\shared\src\method_channel.cc" />
     <ClCompile Include="..\shared\src\method_codec.cc" />
     <ClCompile Include="..\shared\src\method_result.cc" />
