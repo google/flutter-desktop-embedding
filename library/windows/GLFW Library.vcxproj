@@ -260,7 +260,10 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\shared\src\internal\engine_method_result.cc" />
     <ClCompile Include="..\shared\src\internal\plugin_handler.cc" />
+    <ClCompile Include="..\shared\src\internal\text_input_model.cc" />
+    <ClCompile Include="..\shared\src\internal\text_input_plugin.cc" />
     <ClCompile Include="embedder.cpp" />
   </ItemGroup>
   <ItemGroup>
