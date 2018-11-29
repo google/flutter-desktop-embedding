@@ -18,6 +18,7 @@ namespace plugins_color_panel {
 const char kChannelName[] = "flutter/colorpanel";
 
 const char kShowColorPanelMethod[] = "ColorPanel.Show";
+const char kColorPanelShowAlpha[] = "ColorPanel.ShowAlpha";
 const char kHideColorPanelMethod[] = "ColorPanel.Hide";
 const char kColorSelectedCallbackMethod[] = "ColorPanel.ColorSelectedCallback";
 const char kClosedCallbackMethod[] = "ColorPanel.ClosedCallback";

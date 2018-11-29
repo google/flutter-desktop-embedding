@@ -29,8 +29,12 @@ using flutter_desktop_embedding::MethodResult;
 // This is to avoid having the user import extra GTK headers.
 class ColorPanelPlugin::ColorPanel {
  public:
-  explicit ColorPanel(ColorPanelPlugin *parent) {
+  explicit ColorPanel(ColorPanelPlugin *parent,
+                      const Json::Value &method_args) {
     gtk_widget_ = gtk_color_chooser_dialog_new(kWindowTitle, nullptr);
+    gtk_color_chooser_set_use_alpha(
+        reinterpret_cast<GtkColorChooser *>(gtk_widget_),
+        method_args[kColorPanelShowAlpha].asBool());
     gtk_widget_show_all(gtk_widget_);
     g_signal_connect(gtk_widget_, "close", G_CALLBACK(CloseCallback), parent);
     g_signal_connect(gtk_widget_, "response", G_CALLBACK(ResponseCallback),
@@ -99,7 +103,8 @@ void ColorPanelPlugin::HandleJsonMethodCall(
     if (color_panel_) {
       return;
     }
-    color_panel_ = std::make_unique<ColorPanelPlugin::ColorPanel>(this);
+    color_panel_ = std::make_unique<ColorPanelPlugin::ColorPanel>(
+        this, method_call.GetArgumentsAsJson());
   } else if (method_call.method_name().compare(kHideColorPanelMethod) == 0) {
     result->Success();
     if (color_panel_ == nullptr) {
