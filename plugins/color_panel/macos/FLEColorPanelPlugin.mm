@@ -33,12 +33,16 @@
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
   BOOL handled = YES;
   if ([call.methodName isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
-    BOOL showAlpha = YES;
     if ([call.arguments isKindOfClass:[NSDictionary class]]) {
-      showAlpha = [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlpha)]
-                   boolValue];
+      BOOL showAlpha =
+      [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlpha)] boolValue];
+      [self showColorPanelWithAlpha:showAlpha];
+    } else {
+      NSLog(@"Malformed call for %@. Expected an NSDictionary but got %@",
+            @(plugins_color_panel::kShowColorPanelMethod),
+            NSStringFromClass([call.arguments class]));
+      handled = NO;
     }
-    [self showColorPanel:showAlpha];
   } else if ([call.methodName isEqualToString:@(plugins_color_panel::kHideColorPanelMethod)]) {
     [self hideColorPanel];
   } else {
@@ -52,7 +56,7 @@
 /**
  * Configures the shared instance of NSColorPanel and makes it the frontmost & key window.
  */
-- (void)showColorPanel:(BOOL)showAlpha {
+- (void)showColorPanelWithAlpha:(BOOL)showAlpha {
   NSColorPanel *sharedColor = [NSColorPanel sharedColorPanel];
   sharedColor.delegate = self;
   [sharedColor setShowsAlpha:showAlpha];
