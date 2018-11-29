@@ -35,12 +35,12 @@ extern const char kClosedCallbackMethod[];
 // The argument to show an opacity modifier on the panel. Default is true.
 extern const char kColorPanelShowAlpha[];
 
-// Keys for the RGB color JSON object sent to kColorPanelCallback.
+// Keys for the ARGB color JSON object sent to kColorPanelCallback.
 // The values should be numbers between 0 and 1.
 extern const char kColorComponentRedKey[];
 extern const char kColorComponentGreenKey[];
 extern const char kColorComponentBlueKey[];
-
+extern const char kColorComponentAlphaKey[];
 }  // namespace plugins_color_panel
 
 #endif  // PLUGINS_COLOR_PANEL_COMMON_CHANNEL_CONSTANTS_H_

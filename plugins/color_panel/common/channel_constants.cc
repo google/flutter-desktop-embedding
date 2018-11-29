@@ -26,5 +26,6 @@ const char kClosedCallbackMethod[] = "ColorPanel.ClosedCallback";
 const char kColorComponentRedKey[] = "red";
 const char kColorComponentGreenKey[] = "green";
 const char kColorComponentBlueKey[] = "blue";
+const char kColorComponentAlphaKey[] = "alpha";
 
 }  // namespace plugins_color_panel

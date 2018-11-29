@@ -112,9 +112,12 @@
  */
 - (NSDictionary *)dictionaryWithColor:(NSColor *)color {
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
-  result[@(plugins_color_panel::kColorComponentRedKey)] = @(color.redComponent);
-  result[@(plugins_color_panel::kColorComponentGreenKey)] = @(color.greenComponent);
-  result[@(plugins_color_panel::kColorComponentBlueKey)] = @(color.blueComponent);
+  // Consider being able to pass other type of color space (Gray scale, CMYK, etc).
+  NSColor *rgbColor = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
+  result[@(plugins_color_panel::kColorComponentRedKey)] = @(rgbColor.redComponent);
+  result[@(plugins_color_panel::kColorComponentGreenKey)] = @(rgbColor.greenComponent);
+  result[@(plugins_color_panel::kColorComponentBlueKey)] = @(rgbColor.blueComponent);
+  result[@(plugins_color_panel::kColorComponentAlphaKey)] = @(rgbColor.alphaComponent);
   return result;
 }
 
