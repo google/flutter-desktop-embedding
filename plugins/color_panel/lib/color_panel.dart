@@ -27,6 +27,7 @@ const String _kColorPanelShowAlpha = 'ColorPanel.ShowAlpha';
 const String _kRedKey = 'red';
 const String _kGreenKey = 'green';
 const String _kBlueKey = 'blue';
+const String _kAlphaKey = 'alpha';
 
 const MethodChannel _platformChannel =
     const MethodChannel(_kColorPanelChannel, const JSONMethodCodec());
@@ -109,7 +110,7 @@ class ColorPanel {
             methodCall.arguments.cast<String, dynamic>();
         if (arg != null) {
           _callback(Color.fromARGB(
-              255,
+              _colorComponentFloatToInt(arg[_kAlphaKey]),
               _colorComponentFloatToInt(arg[_kRedKey]),
               _colorComponentFloatToInt(arg[_kGreenKey]),
               _colorComponentFloatToInt(arg[_kBlueKey])));

@@ -48,7 +48,9 @@ class _AppState extends State<MyApp> {
   /// Sets the primary color of the example app.
   void setPrimaryColor(Color color) {
     setState(() {
-      _primaryColor = color;
+      // Force 255 on the alpha channel to avoid crashes when setting the
+      // ThemeData colors.
+      _primaryColor = Color.fromARGB(255, color.red, color.green, color.blue);
     });
   }
 
@@ -212,9 +214,9 @@ class FileChooserTestWidget extends StatelessWidget {
           onPressed: () {
             file_chooser.showSavePanel((result, paths) {
               Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text(_resultTextForFileChooserOperation(
-                        _FileChooserType.save, result, paths)),
-                  ));
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.save, result, paths)),
+              ));
             }, suggestedFileName: 'save_test.txt');
           },
         ),
@@ -223,9 +225,9 @@ class FileChooserTestWidget extends StatelessWidget {
           onPressed: () {
             file_chooser.showOpenPanel((result, paths) {
               Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text(_resultTextForFileChooserOperation(
-                        _FileChooserType.open, result, paths)),
-                  ));
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.open, result, paths)),
+              ));
             }, allowsMultipleSelection: true);
           },
         ),
