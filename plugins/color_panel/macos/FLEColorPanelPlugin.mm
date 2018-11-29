@@ -115,6 +115,7 @@
   result[@(plugins_color_panel::kColorComponentRedKey)] = @(color.redComponent);
   result[@(plugins_color_panel::kColorComponentGreenKey)] = @(color.greenComponent);
   result[@(plugins_color_panel::kColorComponentBlueKey)] = @(color.blueComponent);
+  result[@(plugins_color_panel::kColorComponentAlphaKey)] = @(color.alphaComponent);
   return result;
 }
 
