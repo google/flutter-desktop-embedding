@@ -48,7 +48,7 @@ class _AppState extends State<MyApp> {
   /// Sets the primary color of the example app.
   void setPrimaryColor(Color color) {
     setState(() {
-      _primaryColor = Color.fromARGB(255, color.red, color.green, color.blue);
+      _primaryColor = color;
     });
   }
 
@@ -150,7 +150,8 @@ class _MyHomePage extends StatelessWidget {
     if (!colorPanel.showing) {
       colorPanel.show((color) {
         _AppState.of(context).setPrimaryColor(color);
-      });
+      // Setting the primary color to a non-opaque color raises an exception.
+      }, showAlpha: false); 
     }
   }
 

@@ -48,15 +48,15 @@ class ColorPanelPlugin::ColorPanel {
     }
   }
 
-  // Converts a color from RGBA to RGB in the form of a JSON object.
+  // Converts a color from ARGB to a JSON object.
   //
-  // The format of the message is intended for platform consumption.  The
-  // conversion assumes that the background color will be black.
+  // The format of the message is intended for platform consumption.
   static Json::Value GdkColorToArgs(const GdkRGBA *color) {
     Json::Value result;
-    result[kColorComponentRedKey] = color->red * color->alpha;
-    result[kColorComponentGreenKey] = color->green * color->alpha;
-    result[kColorComponentBlueKey] = color->blue * color->alpha;
+    result[kColorComponentAlphaKey] = color->alpha;
+    result[kColorComponentRedKey] = color->red;
+    result[kColorComponentGreenKey] = color->green;
+    result[kColorComponentBlueKey] = color->blue;
     return result;
   }
 

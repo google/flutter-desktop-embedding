@@ -36,11 +36,13 @@ extern const char kClosedCallbackMethod[];
 extern const char kColorPanelShowAlpha[];
 
 // Keys for the ARGB color JSON object sent to kColorPanelCallback.
-// The values should be numbers between 0 and 1.
+// The values should be numbers between 0 and 1. Native color pickers on
+// macOS and Linux always return a value of 1 on the Alpha channel if the
+// opacity slider is not shown.
+extern const char kColorComponentAlphaKey[];
 extern const char kColorComponentRedKey[];
 extern const char kColorComponentGreenKey[];
 extern const char kColorComponentBlueKey[];
-extern const char kColorComponentAlphaKey[];
 }  // namespace plugins_color_panel
 
 #endif  // PLUGINS_COLOR_PANEL_COMMON_CHANNEL_CONSTANTS_H_

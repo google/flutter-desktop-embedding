@@ -35,7 +35,7 @@
   if ([call.methodName isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
     if ([call.arguments isKindOfClass:[NSDictionary class]]) {
       BOOL showAlpha =
-      [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlpha)] boolValue];
+          [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlpha)] boolValue];
       [self showColorPanelWithAlpha:showAlpha];
     } else {
       NSLog(@"Malformed call for %@. Expected an NSDictionary but got %@",
@@ -112,12 +112,12 @@
  */
 - (NSDictionary *)dictionaryWithColor:(NSColor *)color {
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
-  // Consider being able to pass other type of color space (Gray scale, CMYK, etc).
+  // TODO: Consider being able to pass other type of color space (Gray scale, CMYK, etc).
   NSColor *rgbColor = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
+  result[@(plugins_color_panel::kColorComponentAlphaKey)] = @(rgbColor.alphaComponent);
   result[@(plugins_color_panel::kColorComponentRedKey)] = @(rgbColor.redComponent);
   result[@(plugins_color_panel::kColorComponentGreenKey)] = @(rgbColor.greenComponent);
   result[@(plugins_color_panel::kColorComponentBlueKey)] = @(rgbColor.blueComponent);
-  result[@(plugins_color_panel::kColorComponentAlphaKey)] = @(rgbColor.alphaComponent);
   return result;
 }
 
