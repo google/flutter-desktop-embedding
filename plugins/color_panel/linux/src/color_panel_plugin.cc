@@ -29,8 +29,12 @@ using flutter_desktop_embedding::MethodResult;
 // This is to avoid having the user import extra GTK headers.
 class ColorPanelPlugin::ColorPanel {
  public:
-  explicit ColorPanel(ColorPanelPlugin *parent) {
+  explicit ColorPanel(ColorPanelPlugin *parent,
+                      const Json::Value &method_args) {
     gtk_widget_ = gtk_color_chooser_dialog_new(kWindowTitle, nullptr);
+    gtk_color_chooser_set_use_alpha(
+        reinterpret_cast<GtkColorChooser *>(gtk_widget_),
+        method_args[kColorPanelShowAlpha].asBool());
     gtk_widget_show_all(gtk_widget_);
     g_signal_connect(gtk_widget_, "close", G_CALLBACK(CloseCallback), parent);
     g_signal_connect(gtk_widget_, "response", G_CALLBACK(ResponseCallback),
@@ -44,15 +48,15 @@ class ColorPanelPlugin::ColorPanel {
     }
   }
 
-  // Converts a color from RGBA to RGB in the form of a JSON object.
+  // Converts a color from ARGB to a JSON object.
   //
-  // The format of the message is intended for platform consumption.  The
-  // conversion assumes that the background color will be black.
+  // The format of the message is intended for platform consumption.
   static Json::Value GdkColorToArgs(const GdkRGBA *color) {
     Json::Value result;
-    result[kColorComponentRedKey] = color->red * color->alpha;
-    result[kColorComponentGreenKey] = color->green * color->alpha;
-    result[kColorComponentBlueKey] = color->blue * color->alpha;
+    result[kColorComponentAlphaKey] = color->alpha;
+    result[kColorComponentRedKey] = color->red;
+    result[kColorComponentGreenKey] = color->green;
+    result[kColorComponentBlueKey] = color->blue;
     return result;
   }
 
@@ -99,7 +103,8 @@ void ColorPanelPlugin::HandleJsonMethodCall(
     if (color_panel_) {
       return;
     }
-    color_panel_ = std::make_unique<ColorPanelPlugin::ColorPanel>(this);
+    color_panel_ = std::make_unique<ColorPanelPlugin::ColorPanel>(
+        this, method_call.GetArgumentsAsJson());
   } else if (method_call.method_name().compare(kHideColorPanelMethod) == 0) {
     result->Success();
     if (color_panel_ == nullptr) {
