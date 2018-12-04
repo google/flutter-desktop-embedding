@@ -32,6 +32,7 @@ LDFLAGS= -L$(CURDIR) \
 
 LIBRARIES=$(FLUTTER_ENGINE_LIB_FILE)
 HEADERS=$(shell find include/ -type f -name '*.h')
+SHAREDHEADERS=$(shell find ../shared/include/ -type f -name '*.h')
 SOURCES=$(shell find src/ -type f -name '*.cc')
 
 .PHONY: all

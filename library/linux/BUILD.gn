@@ -20,6 +20,7 @@ import("//library/engine.gni")
 config("relative_public_headers") {
   include_dirs = [
     "include",
+    "../shared/include"
   ]
 }
 
