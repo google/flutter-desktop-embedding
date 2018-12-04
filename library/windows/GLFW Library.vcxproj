@@ -205,7 +205,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW</Command>
+      <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW &amp;&amp; $(ProjectDir)scripts\get_jsonlib</Command>
       <Message>Get the flutter engine, engine artifacts and GLFW</Message>
     </PreBuildEvent>
     <ProjectReference>
