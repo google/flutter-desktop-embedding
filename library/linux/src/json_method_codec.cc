@@ -49,10 +49,6 @@ std::unique_ptr<MethodCall> JsonMethodCodec::DecodeMethodCallInternal(
 std::unique_ptr<std::vector<uint8_t>> JsonMethodCodec::EncodeMethodCallInternal(
     const MethodCall &method_call) const {
   Json::Value message(Json::objectValue);
-  if (method_call.method_name().empty()) {
-    return EncodeJsonObject(
-        *static_cast<const Json::Value *>(method_call.arguments()));
-  }
   message[kMessageMethodKey] = method_call.method_name();
   message[kMessageArgumentsKey] =
       *static_cast<const Json::Value *>(method_call.arguments());

@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include "library/linux/src/internal/key_event_plugin.h"
+#include "library/linux/src/internal/json_message_codec.h"
+
 #include <flutter_embedder.h>
+#include <json/json.h>
 #include <iostream>
 
 static constexpr char kChannelName[] = "flutter/keyevent";
@@ -28,9 +31,12 @@ static constexpr char kKeyDown[] = "keydown";
 static constexpr char kRepeat[] = "repeat";
 
 namespace flutter_desktop_embedding {
-KeyEventPlugin::KeyEventPlugin() : JsonPlugin(kChannelName, false) {}
-
+KeyEventPlugin::KeyEventPlugin() : channel_(kChannelName) {}
 KeyEventPlugin::~KeyEventPlugin() {}
+
+void KeyEventPlugin::SetBinaryMessenger(BinaryMessenger *messenger) {
+  messenger_ = messenger;
+}
 
 void KeyEventPlugin::CharHook(GLFWwindow *window, unsigned int code_point) {}
 
@@ -49,12 +55,9 @@ void KeyEventPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
     default:
       break;
   }
-  /// Messages to flutter/keyevent channels have no method name.
-  InvokeMethod("", args);
+
+  auto message = JsonMessageCodec::GetInstance().EncodeMessage(args);
+  messenger_->Send(channel_, message->data(), message->size());
 }
 
-void KeyEventPlugin::HandleJsonMethodCall(
-    const JsonMethodCall &method_call, std::unique_ptr<MethodResult> result) {
-        // There are no methods invoked from Flutter on this channel.
-    }
 }  // namespace flutter_desktop_embedding

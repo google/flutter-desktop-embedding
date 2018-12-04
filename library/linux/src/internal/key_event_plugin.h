@@ -14,18 +14,17 @@
 #ifndef LIBRARY_LINUX_SRC_INTERNAL_KEY_EVENT_PLUGIN_H_
 #define LIBRARY_LINUX_SRC_INTERNAL_kEY_EVENT_PLUGIN_H_
 
-#include "library/linux/include/flutter_desktop_embedding/json_plugin.h"
+#include "library/linux/include/flutter_desktop_embedding/binary_messenger.h"
+
 #include "library/linux/src/internal/keyboard_hook_handler.h"
 
-namespace flutter_desktop_embedding {
-class KeyEventPlugin : public KeyboardHookHandler, public JsonPlugin {
- public:
-  KeyEventPlugin();
-  virtual ~KeyEventPlugin();
+#include <memory>
 
-  // Plugin.
-  void HandleJsonMethodCall(const JsonMethodCall &method_call,
-                            std::unique_ptr<MethodResult> result) override;
+namespace flutter_desktop_embedding {
+class KeyEventPlugin : public KeyboardHookHandler {
+ public:
+  explicit KeyEventPlugin();
+  virtual ~KeyEventPlugin();
 
   // KeyboardHookHandler.
   void KeyboardHook(GLFWwindow *window, int key, int scancode, int action,
@@ -33,7 +32,16 @@ class KeyEventPlugin : public KeyboardHookHandler, public JsonPlugin {
 
   // KeyboardHookHandler.
   void CharHook(GLFWwindow *window, unsigned int code_point) override;
+
+  // Binds this plugin to the given caller-owned binary messenger. It must
+  // remain valid for the life of the plugin.
+  void SetBinaryMessenger(BinaryMessenger *messenger);
+
+ private:
+  const BinaryMessenger *messenger_;
+  std::string channel_;
 };
+
 }  // namespace flutter_desktop_embedding
 
 #endif  // LIBRARY_LINUX_SRC_INTERNAL_KEY_EVENT_PLUGIN_H_

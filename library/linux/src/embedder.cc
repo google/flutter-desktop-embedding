@@ -51,6 +51,7 @@ struct FlutterEmbedderState {
   // deleted from the heap.
   std::vector<flutter_desktop_embedding::KeyboardHookHandler *>
       keyboard_hook_handlers;
+  std::unique_ptr<flutter_desktop_embedding::KeyEventPlugin> key_event_plugin;
 };
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
@@ -273,17 +274,17 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   FlutterEmbedderState *state = new FlutterEmbedderState();
   state->plugin_handler = std::make_unique<PluginHandler>(engine);
   state->engine = engine;
-  
-  auto key_event_plugin = std::make_unique<KeyEventPlugin>();
-  state->keyboard_hook_handlers.push_back(key_event_plugin.get());
+
+  state->key_event_plugin = std::make_unique<KeyEventPlugin>();
+  state->key_event_plugin->SetBinaryMessenger(state->plugin_handler.get());
+  state->keyboard_hook_handlers.push_back(state->key_event_plugin.get());
   auto input_plugin = std::make_unique<TextInputPlugin>();
   state->keyboard_hook_handlers.push_back(input_plugin.get());
-  
+
   glfwSetWindowUserPointer(window, state);
 
-  AddPlugin(window, std::move(key_event_plugin));
   AddPlugin(window, std::move(input_plugin));
-  
+
   int width, height;
   glfwGetWindowSize(window, &width, &height);
   GLFWwindowSizeCallback(window, width, height);
