@@ -12,17 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEBasicMessageChannel.h"
-#import "FLEBinaryMessenger.h"
-#import "FLEJSONMessageCodec.h"
-#import "FLEJSONMethodCodec.h"
-#import "FLEMessageCodec.h"
-#import "FLEMethodCall.h"
-#import "FLEMethodChannel.h"
-#import "FLEMethodCodec.h"
-#import "FLEMethodError.h"
-#import "FLEOpenGLContextHandling.h"
-#import "FLEPlugin.h"
-#import "FLEReshapeListener.h"
-#import "FLEView.h"
-#import "FLEViewController.h"
+#import <Foundation/Foundation.h>
+
+/**
+ * Translates between a binary message and higher-level message objects.
+ */
+@protocol FLEMessageCodec
+
+/**
+ * Returns the shared instance of the codec.
+ */
++ (nonnull instancetype)sharedInstance;
+
+/**
+ * Returns a binary encoding of the given |message|, or nil if the message cannot be
+ * serialized by this codec.
+ */
+- (nullable NSData*)encode:(nullable id)message;
+
+/**
+ * Returns the decoded mesasge, or nil if it cannot be decoded.
+ */
+- (nullable id)decode:(nullable NSData*)messageData;
+
+@end

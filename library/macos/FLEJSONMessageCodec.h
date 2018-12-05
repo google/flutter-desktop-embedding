@@ -12,17 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEBasicMessageChannel.h"
-#import "FLEBinaryMessenger.h"
-#import "FLEJSONMessageCodec.h"
-#import "FLEJSONMethodCodec.h"
+#import <Foundation/Foundation.h>
+
 #import "FLEMessageCodec.h"
-#import "FLEMethodCall.h"
-#import "FLEMethodChannel.h"
-#import "FLEMethodCodec.h"
-#import "FLEMethodError.h"
-#import "FLEOpenGLContextHandling.h"
-#import "FLEPlugin.h"
-#import "FLEReshapeListener.h"
-#import "FLEView.h"
-#import "FLEViewController.h"
+
+/**
+ * A codec that uses JSON as the encoding format. Messages using this codec must be serializable
+ * to JSON.
+ */
+@interface FLEJSONMessageCodec : NSObject <FLEMessageCodec>
+@end
