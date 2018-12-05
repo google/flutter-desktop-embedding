@@ -16,9 +16,7 @@
 
 @implementation FLEMethodError
 
-- (nonnull instancetype)initWithCode:(nonnull NSString *)code
-                             message:(nullable NSString *)message
-                             details:(nullable id)details {
+- (instancetype)initWithCode:(NSString *)code message:(NSString *)message details:(id)details {
   self = [super init];
   if (self) {
     _code = code;

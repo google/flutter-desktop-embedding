@@ -16,8 +16,7 @@
 
 @implementation FLEMethodCall
 
-- (nonnull instancetype)initWithMethodName:(nonnull NSString *)name
-                                 arguments:(nullable id)arguments {
+- (instancetype)initWithMethodName:(NSString *)name arguments:(id)arguments {
   self = [super init];
   if (self) {
     _methodName = name;
