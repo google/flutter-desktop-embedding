@@ -14,6 +14,60 @@
 
 #import "FLECodecs.h"
 
+@implementation FLEJSONMessageCodec
+
++ (instancetype)sharedInstance {
+  static FLEJSONMessageCodec *sharedInstance;
+  if (!sharedInstance) {
+    sharedInstance = [[FLEJSONMessageCodec alloc] init];
+  }
+  return sharedInstance;
+}
+
+- (NSData *)encode:(id)message {
+  if (!message) {
+    return nil;
+  }
+
+  NSData *encoding;
+  NSError *error = nil;
+  if ([message isKindOfClass:[NSArray class]] || [message isKindOfClass:[NSDictionary class]]) {
+    encoding = [NSJSONSerialization dataWithJSONObject:message options:0 error:&error];
+  } else {
+    // Wrap then unwrap non-collection objects; see FlutterCodecs.mm in the Flutter engine.
+    encoding = [NSJSONSerialization dataWithJSONObject:@[ message ] options:0 error:&error];
+    const NSUInteger kJSONArrayStartLength = 1;
+    const NSUInteger kJSONArrayEndLength = 1;
+    encoding = [encoding subdataWithRange:NSMakeRange(kJSONArrayStartLength,
+                                                      encoding.length - (kJSONArrayStartLength +
+                                                                         kJSONArrayEndLength))];
+  }
+  if (error) {
+    NSLog(@"Error: Failed to create JSON message for %@: %@", message, error.debugDescription);
+  }
+  return encoding;
+}
+
+// See FlutterCodecs.mm in the Flutter engine for implementation notes.
+- (id)decode:(NSData *)messageData {
+  if (!messageData) {
+    return nil;
+  }
+
+  NSError *error = nil;
+  id message = [NSJSONSerialization JSONObjectWithData:messageData
+                                               options:NSJSONReadingAllowFragments
+                                                 error:&error];
+  if (error) {
+    NSLog(@"Error: Failed to decode JSON message: %@", error.debugDescription);
+  }
+  return message;
+}
+
+@end
+
+#pragma mark -
+
 // Keys for JSON-encoded method calls.
 static NSString *const kMessageMethodKey = @"method";
 static NSString *const kMessageArgumentsKey = @"args";
@@ -70,7 +124,7 @@ static NSData *SerializeAsJSON(id object) {
   return [[FLEMethodCall alloc] initWithMethodName:method arguments:arguments];
 }
 
-- (NSData *)encodeSuccessEnvelope:(id _Nullable)result {
+- (NSData *)encodeSuccessEnvelope:(id)result {
   return SerializeAsJSON(@[ result ?: [NSNull null] ]);
 }
 

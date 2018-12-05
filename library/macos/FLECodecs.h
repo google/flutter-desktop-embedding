@@ -16,6 +16,33 @@
 
 #import "FLEMethods.h"
 
+@protocol FLEMessageCodec
+/**
+ * Returns the shared instance of the codec.
+ */
++ (nonnull instancetype)sharedInstance;
+
+/**
+ * Returns a binary encoding of the given |message|, or nil if the message cannot be
+ * serialized by this codec.
+ */
+- (nullable NSData*)encode:(nullable id)message;
+
+/**
+ * Returns the decoded mesasge, or nil if it cannot be decoded.
+ */
+- (nullable id)decode:(nullable NSData*)messageData;
+@end
+
+/**
+ * A codec that uses JSON as the encoding format. Messages using this codec must be serializable
+ * to JSON.
+ */
+@interface FLEJSONMessageCodec : NSObject <FLEMessageCodec>
+@end
+
+#pragma mark -
+
 /**
  * Translates between a binary message and higher-level method call and response/error objects.
  */

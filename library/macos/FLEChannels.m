@@ -14,23 +14,20 @@
 
 #import "FLEChannels.h"
 
-NSString const *FLEMethodNotImplemented = @"notimplemented";
-
-@implementation FLEMethodChannel {
+@implementation FLEBasicMessageChannel {
   NSString *_name;
   __weak id<FLEBinaryMessenger> _messenger;
-  id<FLEMethodCodec> _codec;
+  id<FLEMessageCodec> _codec;
 }
-
-+ (instancetype)methodChannelWithName:(nonnull NSString *)name
-                      binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
-                                codec:(nonnull NSObject<FLEMethodCodec> *)codec {
++ (instancetype)messageChannelWithName:(NSString *)name
+                       binaryMessenger:(NSObject<FLEBinaryMessenger> *)messenger
+                                 codec:(NSObject<FLEMessageCodec> *)codec {
   return [[[self class] alloc] initWithName:name binaryMessenger:messenger codec:codec];
 }
 
-- (instancetype)initWithName:(nonnull NSString *)name
-             binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
-                       codec:(nonnull id<FLEMethodCodec>)codec {
+- (instancetype)initWithName:(NSString *)name
+             binaryMessenger:(NSObject<FLEBinaryMessenger> *)messenger
+                       codec:(NSObject<FLEMessageCodec> *)codec {
   self = [super init];
   if (self) {
     _name = [name copy];
@@ -40,7 +37,59 @@ NSString const *FLEMethodNotImplemented = @"notimplemented";
   return self;
 }
 
-- (void)invokeMethod:(NSString *)method arguments:(id _Nullable)arguments {
+- (void)sendMessage:(id)message {
+  [_messenger sendOnChannel:_name message:[_codec encode:message]];
+}
+
+- (void)setMessageHandler:(FLEMessageHandler)handler {
+  if (!handler) {
+    [_messenger setMessageHandlerOnChannel:_name binaryMessageHandler:nil];
+    return;
+  }
+
+  // Don't capture the channel in the callback, since that makes lifetimes harder to reason about.
+  id<FLEMessageCodec> codec = _codec;
+
+  FLEBinaryMessageHandler messageHandler = ^(NSData *message, FLEBinaryReply callback) {
+    handler([codec decode:message], ^(id reply) {
+      callback([codec encode:reply]);
+    });
+  };
+
+  [_messenger setMessageHandlerOnChannel:_name binaryMessageHandler:messageHandler];
+}
+
+@end
+
+#pragma mark -
+
+NSString const *FLEMethodNotImplemented = @"notimplemented";
+
+@implementation FLEMethodChannel {
+  NSString *_name;
+  __weak id<FLEBinaryMessenger> _messenger;
+  id<FLEMethodCodec> _codec;
+}
+
++ (instancetype)methodChannelWithName:(NSString *)name
+                      binaryMessenger:(id<FLEBinaryMessenger>)messenger
+                                codec:(NSObject<FLEMethodCodec> *)codec {
+  return [[[self class] alloc] initWithName:name binaryMessenger:messenger codec:codec];
+}
+
+- (instancetype)initWithName:(NSString *)name
+             binaryMessenger:(id<FLEBinaryMessenger>)messenger
+                       codec:(id<FLEMethodCodec>)codec {
+  self = [super init];
+  if (self) {
+    _name = [name copy];
+    _messenger = messenger;
+    _codec = codec;
+  }
+  return self;
+}
+
+- (void)invokeMethod:(NSString *)method arguments:(id)arguments {
   FLEMethodCall *methodCall = [[FLEMethodCall alloc] initWithMethodName:method arguments:arguments];
   NSData *message = [_codec encodeMethodCall:methodCall];
   if (!message) {
@@ -50,7 +99,7 @@ NSString const *FLEMethodNotImplemented = @"notimplemented";
   [_messenger sendOnChannel:_name message:message];
 }
 
-- (void)setMethodCallHandler:(FLEMethodCallHandler _Nullable)handler {
+- (void)setMethodCallHandler:(FLEMethodCallHandler)handler {
   if (!handler) {
     [_messenger setMessageHandlerOnChannel:_name binaryMessageHandler:nil];
     return;

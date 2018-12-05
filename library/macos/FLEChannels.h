@@ -19,6 +19,57 @@
 #import "FLEMethods.h"
 
 /**
+ * A message response callback. Used for sending a message's reply back to the Flutter engine.
+ * The reply must be serializable by the codec used to encode the message.
+ */
+typedef void (^FLEMessageReply)(id _Nullable reply);
+
+/**
+ * A handler for receiving a message. Implementations should asynchronously call |callback|
+ * exactly once with the reply to the message (or nil if there is none).
+ */
+typedef void (^FLEMessageHandler)(id _Nullable message, FLEMessageReply _Nonnull callback);
+
+@interface FLEBasicMessageChannel : NSObject
+
+// TODO: support +messageChannelWithName:binaryMessenger: once the standard codec is supported
+// (Issue #67).
+
+/**
+ * Returns a new channel that sends and receives messages on the channel named |name|, encoded
+ * with |codec| and dispatched via |messenger|.
+ */
++ (nonnull instancetype)messageChannelWithName:(nonnull NSString *)name
+                               binaryMessenger:(nonnull NSObject<FLEBinaryMessenger> *)messenger
+                                         codec:(nonnull NSObject<FLEMessageCodec> *)codec;
+
+/**
+ * Initializes a channel to send and receive messages on the channel named |name|, encoded
+ * with |codec| and dispatched via |messenger|.
+ */
+- (nonnull instancetype)initWithName:(nonnull NSString *)name
+                     binaryMessenger:(nonnull NSObject<FLEBinaryMessenger> *)messenger
+                               codec:(nonnull NSObject<FLEMessageCodec> *)codec;
+
+/**
+ * Sends a message to the Flutter engine on this channel.
+ *
+ * The message must be encodable using this channel's codec.
+ */
+- (void)sendMessage:(nullable id)message;
+
+// TODO: Support sendMessage:result: once
+// https://github.com/flutter/flutter/issues/18852 is resolved
+
+/**
+ * Registers a handler that should be called any time a message is received on this channel.
+ */
+- (void)setMessageHandler:(nullable FLEMessageHandler)handler;
+@end
+
+#pragma mark -
+
+/**
  * A method call result callback. Used for sending a method call's response back to the
  * Flutter engine. The result must be serializable by the codec used to encode the message.
  */
@@ -50,14 +101,15 @@ extern NSString const *_Nonnull FLEMethodNotImplemented;
 // (Issue #67).
 
 /**
- * Returns a new channel that sends and receives method calls on the channel name |name|, encoded
+ * Returns a new channel that sends and receives method calls on the channel named |name|, encoded
  * with |codec| and dispatched via |messenger|.
  */
 + (nonnull instancetype)methodChannelWithName:(nonnull NSString *)name
                               binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
                                         codec:(nonnull id<FLEMethodCodec>)codec;
+
 /**
- * Initializes a channel to send and receive method calls on the channel name |name|, encoded
+ * Initializes a channel to send and receive method calls on the channel named |name|, encoded
  * with |codec| and dispatched via |messenger|.
  */
 - (nonnull instancetype)initWithName:(nonnull NSString *)name
@@ -69,7 +121,7 @@ extern NSString const *_Nonnull FLEMethodNotImplemented;
  *
  * The arguments, if any, must be encodable using this channel's codec.
  */
-- (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments;
+- (void)invokeMethod:(nonnull NSString *)method arguments:(nullable id)arguments;
 
 // TODO: Support invokeMethod:arguments:result: once
 // https://github.com/flutter/flutter/issues/18852 is resolved
@@ -77,6 +129,6 @@ extern NSString const *_Nonnull FLEMethodNotImplemented;
 /**
  * Registers a handler that should be called any time a method call is received on this channel.
  */
-- (void)setMethodCallHandler:(FLEMethodCallHandler _Nullable)handler;
+- (void)setMethodCallHandler:(nullable FLEMethodCallHandler)handler;
 
 @end
