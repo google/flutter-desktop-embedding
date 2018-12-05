@@ -26,7 +26,7 @@
 
 #include <flutter_embedder.h>
 
-#include "library/linux/src/internal/key_event_plugin.h"
+#include "library/linux/src/internal/key_event_handler.h"
 #include "library/linux/src/internal/keyboard_hook_handler.h"
 #include "library/linux/src/internal/plugin_handler.h"
 #include "library/linux/src/internal/text_input_plugin.h"
@@ -51,7 +51,7 @@ struct FlutterEmbedderState {
   // deleted from the heap.
   std::vector<flutter_desktop_embedding::KeyboardHookHandler *>
       keyboard_hook_handlers;
-  std::unique_ptr<flutter_desktop_embedding::KeyEventPlugin> key_event_plugin;
+  std::unique_ptr<flutter_desktop_embedding::KeyEventHandler> key_event_handler;
 };
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
@@ -275,9 +275,9 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   state->plugin_handler = std::make_unique<PluginHandler>(engine);
   state->engine = engine;
 
-  state->key_event_plugin = std::make_unique<KeyEventPlugin>();
-  state->key_event_plugin->SetBinaryMessenger(state->plugin_handler.get());
-  state->keyboard_hook_handlers.push_back(state->key_event_plugin.get());
+  state->key_event_handler = std::make_unique<KeyEventHandler>();
+  state->key_event_handler->SetBinaryMessenger(state->plugin_handler.get());
+  state->keyboard_hook_handlers.push_back(state->key_event_handler.get());
   auto input_plugin = std::make_unique<TextInputPlugin>();
   state->keyboard_hook_handlers.push_back(input_plugin.get());
 

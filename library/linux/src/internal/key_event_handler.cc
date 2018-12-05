@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "library/linux/src/internal/key_event_plugin.h"
+#include "library/linux/src/internal/key_event_handler.h"
 #include "library/linux/src/internal/json_message_codec.h"
 
 #include <flutter_embedder.h>
@@ -31,20 +31,23 @@ static constexpr char kKeyDown[] = "keydown";
 static constexpr char kRepeat[] = "repeat";
 
 namespace flutter_desktop_embedding {
-KeyEventPlugin::KeyEventPlugin() : channel_(kChannelName) {}
-KeyEventPlugin::~KeyEventPlugin() {}
+KeyEventHandler::KeyEventHandler() : channel_(kChannelName) {}
+KeyEventHandler::~KeyEventHandler() {}
 
-void KeyEventPlugin::SetBinaryMessenger(BinaryMessenger *messenger) {
+void KeyEventHandler::SetBinaryMessenger(BinaryMessenger *messenger) {
   messenger_ = messenger;
 }
 
-void KeyEventPlugin::CharHook(GLFWwindow *window, unsigned int code_point) {}
+void KeyEventHandler::CharHook(GLFWwindow *window, unsigned int code_point) {}
 
-void KeyEventPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
+void KeyEventHandler::KeyboardHook(GLFWwindow *window, int key, int scancode,
                                   int action, int mods) {
+  // TODO: Translate to a cross-platform key code system rather than passing
+  // the native key code.
   Json::Value args;
   args[kKeyCodeKey] = key;
   args[kKeyMapKey] = kAndroidKeyMap;
+
   switch (action) {
     case GLFW_PRESS:
       args[kTypeKey] = kKeyDown;
@@ -55,7 +58,6 @@ void KeyEventPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
     default:
       break;
   }
-
   auto message = JsonMessageCodec::GetInstance().EncodeMessage(args);
   messenger_->Send(channel_, message->data(), message->size());
 }

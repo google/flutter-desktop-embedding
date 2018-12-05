@@ -15,16 +15,18 @@
 #define LIBRARY_LINUX_SRC_INTERNAL_kEY_EVENT_PLUGIN_H_
 
 #include "library/linux/include/flutter_desktop_embedding/binary_messenger.h"
-
 #include "library/linux/src/internal/keyboard_hook_handler.h"
 
 #include <memory>
 
 namespace flutter_desktop_embedding {
-class KeyEventPlugin : public KeyboardHookHandler {
+// Implements a KeyboardHookHandler
+//
+// Handles key events and forwards them to the Flutter engine.
+class KeyEventHandler : public KeyboardHookHandler {
  public:
-  explicit KeyEventPlugin();
-  virtual ~KeyEventPlugin();
+  explicit KeyEventHandler();
+  virtual ~KeyEventHandler();
 
   // KeyboardHookHandler.
   void KeyboardHook(GLFWwindow *window, int key, int scancode, int action,
