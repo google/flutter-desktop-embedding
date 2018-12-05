@@ -15,59 +15,7 @@
 #import <Foundation/Foundation.h>
 
 #import "FLEBinaryMessenger.h"
-#import "FLECodecs.h"
-#import "FLEMethods.h"
-
-/**
- * A message response callback. Used for sending a message's reply back to the Flutter engine.
- * The reply must be serializable by the codec used to encode the message.
- */
-typedef void (^FLEMessageReply)(id _Nullable reply);
-
-/**
- * A handler for receiving a message. Implementations should asynchronously call |callback|
- * exactly once with the reply to the message (or nil if there is none).
- */
-typedef void (^FLEMessageHandler)(id _Nullable message, FLEMessageReply _Nonnull callback);
-
-@interface FLEBasicMessageChannel : NSObject
-
-// TODO: support +messageChannelWithName:binaryMessenger: once the standard codec is supported
-// (Issue #67).
-
-/**
- * Returns a new channel that sends and receives messages on the channel named |name|, encoded
- * with |codec| and dispatched via |messenger|.
- */
-+ (nonnull instancetype)messageChannelWithName:(nonnull NSString *)name
-                               binaryMessenger:(nonnull NSObject<FLEBinaryMessenger> *)messenger
-                                         codec:(nonnull NSObject<FLEMessageCodec> *)codec;
-
-/**
- * Initializes a channel to send and receive messages on the channel named |name|, encoded
- * with |codec| and dispatched via |messenger|.
- */
-- (nonnull instancetype)initWithName:(nonnull NSString *)name
-                     binaryMessenger:(nonnull NSObject<FLEBinaryMessenger> *)messenger
-                               codec:(nonnull NSObject<FLEMessageCodec> *)codec;
-
-/**
- * Sends a message to the Flutter engine on this channel.
- *
- * The message must be encodable using this channel's codec.
- */
-- (void)sendMessage:(nullable id)message;
-
-// TODO: Support sendMessage:result: once
-// https://github.com/flutter/flutter/issues/18852 is resolved
-
-/**
- * Registers a handler that should be called any time a message is received on this channel.
- */
-- (void)setMessageHandler:(nullable FLEMessageHandler)handler;
-@end
-
-#pragma mark -
+#import "FLEMethodCodec.h"
 
 /**
  * A method call result callback. Used for sending a method call's response back to the

@@ -12,23 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEMethods.h"
-
-@implementation FLEMethodCall
-
-- (nonnull instancetype)initWithMethodName:(nonnull NSString *)name
-                                 arguments:(nullable id)arguments {
-  self = [super init];
-  if (self) {
-    _methodName = name;
-    _arguments = arguments;
-  }
-  return self;
-}
-
-@end
-
-#pragma mark -
+#import "FLEMethodError.h"
 
 @implementation FLEMethodError
 

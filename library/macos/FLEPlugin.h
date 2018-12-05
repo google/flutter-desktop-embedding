@@ -14,8 +14,9 @@
 
 #import <Foundation/Foundation.h>
 
-#import "FLEChannels.h"
-#import "FLECodecs.h"
+#import "FLEMethodCall.h"
+#import "FLEMethodChannel.h"
+#import "FLEMethodCodec.h"
 
 @class FLEViewController;
 

@@ -12,56 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEChannels.h"
-
-@implementation FLEBasicMessageChannel {
-  NSString *_name;
-  __weak id<FLEBinaryMessenger> _messenger;
-  id<FLEMessageCodec> _codec;
-}
-+ (instancetype)messageChannelWithName:(NSString *)name
-                       binaryMessenger:(NSObject<FLEBinaryMessenger> *)messenger
-                                 codec:(NSObject<FLEMessageCodec> *)codec {
-  return [[[self class] alloc] initWithName:name binaryMessenger:messenger codec:codec];
-}
-
-- (instancetype)initWithName:(NSString *)name
-             binaryMessenger:(NSObject<FLEBinaryMessenger> *)messenger
-                       codec:(NSObject<FLEMessageCodec> *)codec {
-  self = [super init];
-  if (self) {
-    _name = [name copy];
-    _messenger = messenger;
-    _codec = codec;
-  }
-  return self;
-}
-
-- (void)sendMessage:(id)message {
-  [_messenger sendOnChannel:_name message:[_codec encode:message]];
-}
-
-- (void)setMessageHandler:(FLEMessageHandler)handler {
-  if (!handler) {
-    [_messenger setMessageHandlerOnChannel:_name binaryMessageHandler:nil];
-    return;
-  }
-
-  // Don't capture the channel in the callback, since that makes lifetimes harder to reason about.
-  id<FLEMessageCodec> codec = _codec;
-
-  FLEBinaryMessageHandler messageHandler = ^(NSData *message, FLEBinaryReply callback) {
-    handler([codec decode:message], ^(id reply) {
-      callback([codec encode:reply]);
-    });
-  };
-
-  [_messenger setMessageHandlerOnChannel:_name binaryMessageHandler:messageHandler];
-}
-
-@end
-
-#pragma mark -
+#import "FLEMethodChannel.h"
 
 NSString const *FLEMethodNotImplemented = @"notimplemented";
 
