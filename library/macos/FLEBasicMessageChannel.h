@@ -29,6 +29,9 @@ typedef void (^FLEMessageReply)(id _Nullable reply);
  */
 typedef void (^FLEMessageHandler)(id _Nullable message, FLEMessageReply _Nonnull callback);
 
+/**
+ * A channel for communicating with the Flutter engine by sending asynchronous messages.
+ */
 @interface FLEBasicMessageChannel : NSObject
 
 // TODO: support +messageChannelWithName:binaryMessenger: once the standard codec is supported
