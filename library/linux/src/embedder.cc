@@ -155,9 +155,6 @@ static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
        GetSavedEmbedderState(window)->keyboard_hook_handlers) {
     handler->KeyboardHook(window, key, scancode, action, mods);
   }
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, GLFW_TRUE);
-  }
 }
 
 static bool GLFWMakeContextCurrent(void *user_data) {
