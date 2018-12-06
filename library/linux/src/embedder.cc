@@ -51,6 +51,9 @@ struct FlutterEmbedderState {
   // deleted from the heap.
   std::vector<flutter_desktop_embedding::KeyboardHookHandler *>
       keyboard_hook_handlers;
+  // Handles raw key interactions from GLFW.
+  // TODO: Move key_event_handler once
+  // https://github.com/google/flutter-desktop-embedding/issues/102 is resolved.
   std::unique_ptr<flutter_desktop_embedding::KeyEventHandler> key_event_handler;
 };
 
@@ -275,8 +278,8 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   state->plugin_handler = std::make_unique<PluginHandler>(engine);
   state->engine = engine;
 
-  state->key_event_handler = std::make_unique<KeyEventHandler>();
-  state->key_event_handler->SetBinaryMessenger(state->plugin_handler.get());
+  state->key_event_handler =
+      std::make_unique<KeyEventHandler>(state->plugin_handler.get());
   state->keyboard_hook_handlers.push_back(state->key_event_handler.get());
   auto input_plugin = std::make_unique<TextInputPlugin>();
   state->keyboard_hook_handlers.push_back(input_plugin.get());
