@@ -11,6 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# ================================== Variables ==================================
+
 FLUTTER_ENGINE_LIB_NAME=flutter_engine
 FLUTTER_ENGINE_LIB_FILE=lib$(FLUTTER_ENGINE_LIB_NAME).so
 FLUTTER_ENGINE_HEADER=flutter_embedder.h
@@ -34,8 +37,15 @@ LIBRARIES=$(FLUTTER_ENGINE_LIB_FILE)
 HEADERS=$(shell find include/ -type f -name '*.h')
 SOURCES=$(shell find src/ -type f -name '*.cc')
 
-.PHONY: all
+
+# ================================== Targets ==================================
+
+.PHONY: all clean
+
 all: $(LIBRARY_OUT)
+
+clean:
+	$(RM) -f $(LIBRARY_OUT)
 
 $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
 	$(CXX) $(CXXFLAGS) $(SOURCES) $(LDFLAGS) -o $@
@@ -50,7 +60,3 @@ $(FLUTTER_ENGINE_LIB_FILE): $(FLUTTER_DIR)/bin/internal/engine.version
 	if [ -f $(FLUTTER_ENGINE_HEADER) ]; then \
 		mv $(FLUTTER_ENGINE_HEADER) include/; \
 		fi
-
-.PHONY: clean
-clean:
-	rm -f $(LIBRARY_OUT)
