@@ -46,12 +46,19 @@ In addition, there is:
   by the build systems, but in the future developer utilities providing
   some functionality similar to the `flutter` tool may be added.
 
-## Flutter Application Requirements
+## Flutter Application
+
+### Requirements
 
 Since desktop is not a supported platform for Flutter, be sure to read the
 [Flutter application requirements document](Flutter-Requirements.md) for
 important information about how to set up your Flutter application for use
 with this library.
+
+### Debugging
+
+Debugging of the Flutter side of a desktop application is possible, but requires
+[a modified workflow](Debugging.md).
 
 ## Feedback and Discussion
 
