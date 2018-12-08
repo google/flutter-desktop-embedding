@@ -39,7 +39,9 @@ There are two options:
 ### Command Line
 
 The `flutter attach` command can connect to a desktop Flutter application
-and provide the same interactive command line that `flutter run` would provide:
+and provide the same interactive command line that `flutter run` would provide.
+In the directory of the Flutter portion of your application (e.g.,
+`/example/flutter_app`) run:
 
 ```
 $ flutter attach --device-id=flutter-tester --debug-port=49494
@@ -68,7 +70,7 @@ like the following, substituting your Observatory port:
 You will likely want to hard-code your observatory port, otherwise you will
 need to change `launch.json` every time you relaunch the app.
 
-In addition to the Flutter debug commands, source-level debugging with pausee,
+In addition to the Flutter debug commands, source-level debugging with pause,
 continue, variable inspection, etc. should all work.
 
 
