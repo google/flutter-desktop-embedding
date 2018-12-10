@@ -11,9 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "library/shared/include/flutter_desktop_embedding/plugin.h"
+#include "library/common/include/flutter_desktop_embedding/plugin.h"
 
-#include "library/shared/include/flutter_desktop_embedding/json_method_codec.h"
+#include "library/common/include/flutter_desktop_embedding/json_method_codec.h"
 
 namespace flutter_desktop_embedding {
 

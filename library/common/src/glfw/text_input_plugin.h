@@ -17,9 +17,9 @@
 #include <map>
 #include <memory>
 
-#include "library/shared/include/flutter_desktop_embedding/json_plugin.h"
-#include "library/shared/src/internal/keyboard_hook_handler.h"
-#include "library/shared/src/internal/text_input_model.h"
+#include "library/common/include/flutter_desktop_embedding/json_plugin.h"
+#include "library/common/src/glfw/keyboard_hook_handler.h"
+#include "library/common/src/internal/text_input_model.h"
 
 namespace flutter_desktop_embedding {
 

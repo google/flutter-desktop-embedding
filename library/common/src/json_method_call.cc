@@ -11,13 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "library/shared/include/flutter_desktop_embedding/method_call.h"
+#include "library/common/include/flutter_desktop_embedding/json_method_call.h"
 
 namespace flutter_desktop_embedding {
 
-MethodCall::MethodCall(const std::string &method_name)
-    : method_name_(method_name) {}
+JsonMethodCall::JsonMethodCall(const std::string &method_name,
+                               const Json::Value &arguments)
+    : MethodCall(method_name), arguments_(arguments) {}
 
-MethodCall::~MethodCall() {}
+JsonMethodCall::~JsonMethodCall() {}
+
+const void *JsonMethodCall::arguments() const { return &arguments_; }
+
+const Json::Value &JsonMethodCall::GetArgumentsAsJson() const {
+  return arguments_;
+}
 
 }  // namespace flutter_desktop_embedding

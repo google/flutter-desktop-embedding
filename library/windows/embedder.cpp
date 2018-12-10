@@ -21,9 +21,9 @@
 
 #include <flutter_embedder.h>
 
-#include "library/shared/src/internal/keyboard_hook_handler.h"
-#include "library/shared/src/internal/plugin_handler.h"
-#include "library/shared/src/internal/text_input_plugin.h"
+#include "library/common/src/glfw/keyboard_hook_handler.h"
+#include "library/common/src/internal/plugin_handler.h"
+#include "library/common/src/glfw/text_input_plugin.h"
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
@@ -40,12 +40,13 @@ struct FlutterEmbedderState {
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
 
-
+// Retreaves state bag for the window in question from the GLFWWindow
 static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
   return reinterpret_cast<FlutterEmbedderState *>(
       glfwGetWindowUserPointer(window));
 }
 
+// When GLFW calls back to the window with a cursor position move, forward to FlutterEngine as a pointer event with appropriate phase
 static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
                                               FlutterPointerPhase phase,
                                               double x, double y) {
@@ -62,6 +63,7 @@ static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
       1);
 }
 
+// Report cursor move to engine
 static void GLFWcursorPositionCallback(GLFWwindow *window, double x, double y) {
   GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kMove, x, y);
 }
@@ -125,6 +127,7 @@ static void GLFWClearEventCallbacks(GLFWwindow *window) {
   glfwSetMouseButtonCallback(window, nullptr);
 }
 
+// The Flutter Engine calls out to this function when new platform messages are available
 static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
                                          void *user_data) {
   if (message->struct_size != sizeof(FlutterPlatformMessage)) {
@@ -221,10 +224,13 @@ static FlutterEngine RunFlutterEngine(
 
 namespace flutter_desktop_embedding {
 	
+// Initialize glfw
 bool FlutterInit() { return glfwInit(); }
 
+// Tear down glfw
 void FlutterTerminate() { glfwTerminate(); }
 
+// set up embedder state and add the plugin to the plugin_handler
 bool AddPlugin(GLFWwindow *flutter_window,
                std::unique_ptr<Plugin> plugin) {
   auto state = GetSavedEmbedderState(flutter_window);

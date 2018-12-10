@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "library/shared/src/internal/json_message_codec.h"
+#include "library/common/src/internal/json_message_codec.h"
 
 #include <iostream>
 #include <string>

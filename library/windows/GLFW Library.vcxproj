@@ -263,19 +263,19 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\shared\src\internal\engine_method_result.cc" />
-    <ClCompile Include="..\shared\src\internal\json_message_codec.cc" />
-    <ClCompile Include="..\shared\src\internal\plugin_handler.cc" />
-    <ClCompile Include="..\shared\src\internal\text_input_model.cc" />
-    <ClCompile Include="..\shared\src\internal\text_input_plugin.cc" />
-    <ClCompile Include="..\shared\src\json_method_call.cc" />
-    <ClCompile Include="..\shared\src\json_method_codec.cc" />
-    <ClCompile Include="..\shared\src\json_plugin.cc" />
-    <ClCompile Include="..\shared\src\method_call.cc" />
-    <ClCompile Include="..\shared\src\method_channel.cc" />
-    <ClCompile Include="..\shared\src\method_codec.cc" />
-    <ClCompile Include="..\shared\src\method_result.cc" />
-    <ClCompile Include="..\shared\src\plugin.cc" />
+    <ClCompile Include="..\common\src\glfw\text_input_plugin.cc" />
+    <ClCompile Include="..\common\src\internal\engine_method_result.cc" />
+    <ClCompile Include="..\common\src\internal\json_message_codec.cc" />
+    <ClCompile Include="..\common\src\internal\plugin_handler.cc" />
+    <ClCompile Include="..\common\src\internal\text_input_model.cc" />
+    <ClCompile Include="..\common\src\json_method_call.cc" />
+    <ClCompile Include="..\common\src\json_method_codec.cc" />
+    <ClCompile Include="..\common\src\json_plugin.cc" />
+    <ClCompile Include="..\common\src\method_call.cc" />
+    <ClCompile Include="..\common\src\method_channel.cc" />
+    <ClCompile Include="..\common\src\method_codec.cc" />
+    <ClCompile Include="..\common\src\method_result.cc" />
+    <ClCompile Include="..\common\src\plugin.cc" />
     <ClCompile Include="embedder.cpp" />
   </ItemGroup>
   <ItemGroup>
