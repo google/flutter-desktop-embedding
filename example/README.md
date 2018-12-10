@@ -54,7 +54,7 @@ Open the `Example Embedder` Visual Studio solution file under `windows\` and
 build the GLFW Example project.
 
 The resulting binary will be in `bin\x64\$(Configuration)\GLFW Example\`. It
-currently uses relative paths so much be run from the `windows\` directory:
+currently uses relative paths so must be run from the `windows\` directory:
 
 ```
 > ".\bin\x64\$(Configuration)\GLFW Example\GLFW Example.exe"
