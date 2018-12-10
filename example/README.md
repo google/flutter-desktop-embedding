@@ -13,7 +13,7 @@ functionality rather than a usable application.
 
 ## Building and Running the Example
 
-Since the exmaple is meant to show how the library would actually be used, it
+Since the example is meant to show how the library would actually be used, it
 deliberately uses platform-specific build systems that are separate from the
 rest of the project's build system.
 
