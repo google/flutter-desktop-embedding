@@ -26,9 +26,9 @@
 
 #include <flutter_embedder.h>
 
-#include "library/linux/src/internal/keyboard_hook_handler.h"
-#include "library/linux/src/internal/plugin_handler.h"
-#include "library/linux/src/internal/text_input_plugin.h"
+#include "library/common/glfw/keyboard_hook_handler.h"
+#include "library/common/glfw/text_input_plugin.h"
+#include "library/common/internal/plugin_handler.h"
 
 // GLFW_TRUE & GLFW_FALSE are introduced since libglfw-3.3,
 // add definitions here to compile under the old versions.

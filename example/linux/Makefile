@@ -37,7 +37,7 @@ ALL_LIBS=$(FLUTTER_EMBEDDER_LIB) $(FLUTTER_ENGINE_LIB) $(PLUGIN_LIBS)
 # Headers
 PLUGIN_DIRS=$(patsubst %,$(PLUGINS_DIR)/%/linux,$(PLUGIN_NAMES))
 LIBRARY_DIRS=$(FLUTTER_EMBEDDER_LIB_DIR) $(PLUGIN_DIRS)
-INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS))
+INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS)) $(PROJECT_ROOT)/library/include
 
 # Tools
 BUILD_ASSETS_BIN=$(TOOLS_DIR)/build_flutter_assets

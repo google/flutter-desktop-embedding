@@ -14,6 +14,8 @@
 FLUTTER_ENGINE_LIB_NAME=flutter_engine
 FLUTTER_ENGINE_LIB_FILE=lib$(FLUTTER_ENGINE_LIB_NAME).so
 FLUTTER_ENGINE_HEADER=flutter_embedder.h
+# Use an include/ directory for the engine header for consistency.
+FLUTTER_ENGINE_HEADER_DIR=$(CURDIR)/include
 PROJECT_ROOT=../..
 TOOLS_DIR=$(PROJECT_ROOT)/tools
 ENGINE_UPDATER=$(TOOLS_DIR)/update_flutter_engine
@@ -22,7 +24,8 @@ LIBRARY_OUT=libflutter_embedder.so
 CXX=g++ -std=c++14
 CXXFLAGS= -Wall -Werror -shared -fPIC \
 	-I$(PROJECT_ROOT) \
-	-I$(CURDIR)/include \
+	-I$(PROJECT_ROOT)/library/include \
+	-I$(FLUTTER_ENGINE_HEADER_DIR) \
 	$(shell pkg-config --cflags gtk+-3.0 epoxy x11 jsoncpp)
 LDFLAGS= -L$(CURDIR) \
 	$(shell pkg-config --libs gtk+-3.0 epoxy x11 jsoncpp) \
@@ -31,9 +34,9 @@ LDFLAGS= -L$(CURDIR) \
 
 
 LIBRARIES=$(FLUTTER_ENGINE_LIB_FILE)
-HEADERS=$(shell find include/ -type f -name '*.h')
-SHAREDHEADERS=$(shell find ../shared/include/ -type f -name '*.h')
-SOURCES=$(shell find src/ -type f -name '*.cc')
+HEADERS=$(shell find $(PROJECT_ROOT)/library/include/ -type f -name '*.h') \
+	$(FLUTTER_ENGINE_HEADER_DIR)/$(FLUTTER_ENGINE_HEADER)
+SOURCES=$(shell find src/ $(PROJECT_ROOT)/library/common/ -type f -name '*.cc')
 
 .PHONY: all
 all: $(LIBRARY_OUT)
@@ -46,10 +49,12 @@ $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
 # time. Instead, this duplicates the dependency information that the script
 # already has, and makes things slightly more fragile, in exchange for
 # avoiding unnecessary relinks.
-$(FLUTTER_ENGINE_LIB_FILE): $(FLUTTER_DIR)/bin/internal/engine.version
+$(FLUTTER_ENGINE_LIB_FILE) $(FLUTTER_ENGINE_HEADER_DIR)/$(FLUTTER_ENGINE_HEADER): \
+		$(FLUTTER_DIR)/bin/internal/engine.version
 	$(ENGINE_UPDATER) --flutter_root=$(FLUTTER_DIR) ./
 	if [ -f $(FLUTTER_ENGINE_HEADER) ]; then \
-		mv $(FLUTTER_ENGINE_HEADER) include/; \
+		mkdir -p $(FLUTTER_ENGINE_HEADER_DIR) && \
+		mv $(FLUTTER_ENGINE_HEADER) $(FLUTTER_ENGINE_HEADER_DIR)/; \
 		fi
 
 .PHONY: clean
