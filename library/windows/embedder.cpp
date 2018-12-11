@@ -21,9 +21,9 @@
 
 #include <flutter_embedder.h>
 
-#include "library/common/src/glfw/keyboard_hook_handler.h"
-#include "library/common/src/internal/plugin_handler.h"
-#include "library/common/src/glfw/text_input_plugin.h"
+#include "library/common/glfw/keyboard_hook_handler.h"
+#include "library/common/glfw/text_input_plugin.h"
+#include "library/common/internal/plugin_handler.h"
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 

@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter_desktop_embedding/embedder.h>
+#include <flutter_desktop_embedding/linux/embedder.h>
 
 #include <X11/Xlib.h>
 #include <assert.h>

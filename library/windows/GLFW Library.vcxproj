@@ -77,7 +77,7 @@
     <TargetExt>.dll</TargetExt>
     <IncludePath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\x64\debug;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(ProjectDir)..\..\library\shared\src\internal;$(SourcePath)</SourcePath>
+    <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
@@ -94,7 +94,7 @@
     <TargetExt>.dll</TargetExt>
     <IncludePath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\x64\release;;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(ProjectDir)..\..\library\shared\src\internal;$(SourcePath)</SourcePath>
+    <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Static Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
@@ -263,19 +263,19 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\src\glfw\text_input_plugin.cc" />
-    <ClCompile Include="..\common\src\internal\engine_method_result.cc" />
-    <ClCompile Include="..\common\src\internal\json_message_codec.cc" />
-    <ClCompile Include="..\common\src\internal\plugin_handler.cc" />
-    <ClCompile Include="..\common\src\internal\text_input_model.cc" />
-    <ClCompile Include="..\common\src\json_method_call.cc" />
-    <ClCompile Include="..\common\src\json_method_codec.cc" />
-    <ClCompile Include="..\common\src\json_plugin.cc" />
-    <ClCompile Include="..\common\src\method_call.cc" />
-    <ClCompile Include="..\common\src\method_channel.cc" />
-    <ClCompile Include="..\common\src\method_codec.cc" />
-    <ClCompile Include="..\common\src\method_result.cc" />
-    <ClCompile Include="..\common\src\plugin.cc" />
+    <ClCompile Include="..\common\glfw\text_input_plugin.cc" />
+    <ClCompile Include="..\common\internal\engine_method_result.cc" />
+    <ClCompile Include="..\common\internal\json_message_codec.cc" />
+    <ClCompile Include="..\common\internal\plugin_handler.cc" />
+    <ClCompile Include="..\common\internal\text_input_model.cc" />
+    <ClCompile Include="..\common\json_method_call.cc" />
+    <ClCompile Include="..\common\json_method_codec.cc" />
+    <ClCompile Include="..\common\json_plugin.cc" />
+    <ClCompile Include="..\common\method_call.cc" />
+    <ClCompile Include="..\common\method_channel.cc" />
+    <ClCompile Include="..\common\method_codec.cc" />
+    <ClCompile Include="..\common\method_result.cc" />
+    <ClCompile Include="..\common\plugin.cc" />
     <ClCompile Include="embedder.cpp" />
   </ItemGroup>
   <ItemGroup>
