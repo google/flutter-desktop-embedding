@@ -23,6 +23,8 @@ published_shared_library("flutter_embedder") {
       "linux/src/internal/engine_method_result.h",
       "linux/src/internal/json_message_codec.cc",
       "linux/src/internal/json_message_codec.h",
+      "linux/src/internal/key_event_handler.cc",
+      "linux/src/internal/key_event_handler.h",
       "linux/src/internal/keyboard_hook_handler.h",
       "linux/src/internal/plugin_handler.cc",
       "linux/src/internal/plugin_handler.h",
