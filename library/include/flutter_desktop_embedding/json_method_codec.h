@@ -14,15 +14,15 @@
 #ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
 #define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
 
+#include <json/json.h>
+
+#include "method_call.h"
 #include "method_codec.h"
 
 namespace flutter_desktop_embedding {
 
 // An implementation of MethodCodec that uses JSON strings as the serialization.
-//
-// void* types in this implementation must always be Json::Value* types (from
-// the jsoncpp library).
-class JsonMethodCodec : public MethodCodec {
+class JsonMethodCodec : public MethodCodec<Json::Value> {
  public:
   // Returns the shared instance of the codec.
   static const JsonMethodCodec &GetInstance();
@@ -38,15 +38,15 @@ class JsonMethodCodec : public MethodCodec {
   JsonMethodCodec() = default;
 
   // MethodCodec:
-  std::unique_ptr<MethodCall> DecodeMethodCallInternal(
+  std::unique_ptr<MethodCall<Json::Value>> DecodeMethodCallInternal(
       const uint8_t *message, const size_t message_size) const override;
   std::unique_ptr<std::vector<uint8_t>> EncodeMethodCallInternal(
-      const MethodCall &method_call) const override;
+      const MethodCall<Json::Value> &method_call) const override;
   std::unique_ptr<std::vector<uint8_t>> EncodeSuccessEnvelopeInternal(
-      const void *result) const override;
+      const Json::Value *result) const override;
   std::unique_ptr<std::vector<uint8_t>> EncodeErrorEnvelopeInternal(
       const std::string &error_code, const std::string &error_message,
-      const void *error_details) const override;
+      const Json::Value *error_details) const override;
 };
 
 }  // namespace flutter_desktop_embedding

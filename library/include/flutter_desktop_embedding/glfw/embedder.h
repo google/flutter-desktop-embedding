@@ -27,9 +27,9 @@
 #include <GLFW/glfw3.h>
 
 #ifdef USE_FLATTENED_INCLUDES
-#include "plugin.h"
+#include "plugin_registrar.h"
 #else
-#include "../plugin.h"
+#include "../plugin_registrar.h"
 #endif
 
 namespace flutter_desktop_embedding {
@@ -79,11 +79,13 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(
     const std::string &icu_data_path,
     const std::vector<std::string> &arguments);
 
-// Adds a plugin to the flutter_window.
+// Returns the PluginRegistrar to register a plugin with the given name with
+// the flutter_window.
 //
-// If a plugin already exists for this plugin's channel, returns false.
-// Otherwise returns true.
-bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin);
+// The name must be unique across the application, so the recommended approach
+// is to use the fully namespace-qualified name of the plugin class.
+PluginRegistrar *GetRegistrarForPlugin(GLFWwindow *flutter_window,
+                                       const std::string &plugin_name);
 
 // Loops on flutter window events until termination.
 //

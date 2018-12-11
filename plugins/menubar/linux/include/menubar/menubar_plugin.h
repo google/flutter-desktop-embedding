@@ -14,22 +14,39 @@
 #ifndef PLUGINS_MENUBAR_LINUX_INCLUDE_MENUBAR_MENUBAR_PLUGIN_H_
 #define PLUGINS_MENUBAR_LINUX_INCLUDE_MENUBAR_MENUBAR_PLUGIN_H_
 
-#include <flutter_desktop_embedding/json_plugin.h>
+#include <memory>
+
+#include <json/json.h>
+
+#include <flutter_desktop_embedding/method_channel.h>
+#include <flutter_desktop_embedding/plugin_registrar.h>
 
 namespace plugins_menubar {
 
 // A plugin to control a native menubar.
-class MenubarPlugin : public flutter_desktop_embedding::JsonPlugin {
+class MenubarPlugin : public flutter_desktop_embedding::Plugin {
  public:
-  // See Plugin for constructor details.
-  MenubarPlugin();
+  static void RegisterWithRegistrar(
+      flutter_desktop_embedding::PluginRegistrar *registrar);
+
   virtual ~MenubarPlugin();
 
-  void HandleJsonMethodCall(
-      const flutter_desktop_embedding::JsonMethodCall &method_call,
-      std::unique_ptr<flutter_desktop_embedding::MethodResult> result) override;
-
  private:
+  // Creates a plugin that communicates on the given channel.
+  MenubarPlugin(
+      std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+          channel);
+
+  // Called when a method is called on |channel_|;
+  void HandleMethodCall(
+      const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
+      std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
+          result);
+
+  // The MethodChannel used for communication with the Flutter engine.
+  std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+      channel_;
+
   class Menubar;
   std::unique_ptr<Menubar> menubar_;
 };
