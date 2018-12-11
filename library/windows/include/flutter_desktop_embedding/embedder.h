@@ -15,6 +15,7 @@
 #ifndef WINDOWS_LIBRARY_EMBEDDER_H_
 #define WINDOWS_LIBRARY_EMBEDDER_H_
 
+#include <iterator>
 #include <string>
 #include <vector>
 

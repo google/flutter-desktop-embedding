@@ -54,22 +54,31 @@ published_shared_library("flutter_embedder") {
     ]
   }
 
+  if (is_win) {
+    sources = [
+      "windows/src/embedder.cpp",
+    ]
+    public = [
+      "windows/include/flutter_desktop_embedding/embedder.h",
+    ]
+  }
+
   deps = [
     ":fetch_flutter_engine",
   ]
 
+  public_header_subdir = "flutter_desktop_embedding"
+
   if (is_linux) {
-    public_header_subdir = "flutter_desktop_embedding"
-
-    deps += [
-      "//library/linux:publish_flutter_engine",
-    ]
-
     libs = [
       "glfw",
       "GL",
     ]
 
+    deps += [
+      "//library/linux:publish_flutter_engine",
+    ]
+    
     configs += [
       "//build/linux/config:epoxy",
       "//build/linux/config:gtk3",
@@ -79,6 +88,31 @@ published_shared_library("flutter_embedder") {
 
     public_configs = [
       "//library/linux:relative_public_headers",
+    ]
+  }
+
+  if (is_win) {
+    dll_exports = rebase_path("windows/exports.def")
+    ldflags = [
+      "/DEF:$dll_exports",
+    ]
+
+    deps += [
+      "//library/windows:publish_flutter_engine",
+      "//library/windows:fetch_glfw",
+    ]
+
+    libs = [
+      engine_files[2],
+    ]
+
+    configs += [
+      "//build/win/config:glfw3"
+    ]
+    
+    public_configs = [
+      "//library/windows:relative_public_headers",
+      "//library/windows:relative_dependency_headers",
     ]
   }
 }
@@ -99,9 +133,7 @@ action("fetch_flutter_engine") {
     "--flutter_root=$flutter_tree_path",
     rebase_path(engine_download_dir, root_build_dir),
   ]
-  if (is_linux) {
-    public_configs = [
-      ":relative_engine_headers",
-    ]
-  }
+  public_configs = [
+    ":relative_engine_headers",
+  ]
 }

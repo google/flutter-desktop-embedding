@@ -12,30 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-config("defaults") {
-  if(is_linux) {
-    cflags = [
-      "-std=c++14",
-      "-Wall",
-      "-Werror",
-      "-pthread",
-    ]
-  }
-  if(is_win) {
-    cflags = [
-      "/EHsc",
-    ]
-  }
-  include_dirs = [
-    "//",
-  ]
-}
+config("glfw3") {
+  libs = [
+    "glfw3.lib",
+    "opengl32.lib",
 
-config("shared_library_defaults") {
-  if(is_linux) {
-    cflags = [
-      "-shared",
-      "-fPIC",
-    ]
-  }
+    "user32.lib",
+    "gdi32.lib",
+    "winspool.lib",
+    "comdlg32.lib",
+    "advapi32.lib",
+    "shell32.lib",
+    "ole32.lib",
+    "oleaut32.lib",
+    "uuid.lib",
+    "odbc32.lib",
+    "odbccp32.lib",
+  ]
 }

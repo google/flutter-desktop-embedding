@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set_default_toolchain("//third_party/chromium/build/toolchain:gcc")
-
 set_defaults("executable") {
   configs = [ "//build:defaults" ]
 }
@@ -28,6 +26,7 @@ set_defaults("published_shared_library") {
 }
 
 if (host_os == "linux") {
+  set_default_toolchain("//third_party/chromium/build/toolchain:gcc")
   is_linux = true
   is_mac = false
   is_win = false
@@ -36,6 +35,7 @@ if (host_os == "linux") {
   is_mac = true
   is_win = false
 } else if (host_os == "win") {
+  set_default_toolchain("//build/win/toolchain:msvc")
   is_linux = false
   is_mac = false
   is_win = true

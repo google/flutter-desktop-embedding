@@ -1,6 +1,7 @@
 # Using GN
 
-If you are building on Linux, you can use GN instead of Make.
+If you are building on Linux or Windows, you can use GN instead of Make or
+Visual Studio.
 
 This is currently optional and is under evaluation, but in the future it may
 become the build system used on all platforms.
@@ -9,9 +10,22 @@ become the build system used on all platforms.
 
 In addition to the normal dependencies, you will need to install:
 * [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
-* [gn](https://gn.googlesource.com/gn/) 
+* [gn](https://gn.googlesource.com/gn/)
 
 Ensure that both binaries are in your path.
+
+Windows also requires the 64 bit compiler, linker and setup scripts to be in
+your path. They are found under:
+
+```
+Visual Studio Install Path\VC\bin\amd64
+```
+
+e.g.:
+
+```
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64
+```
 
 ## Building
 
@@ -41,13 +55,21 @@ $ ninja -C out
 
 ### Example
 
+#### Linux
+
 To use the GN build for the depedencies of the example application, when
 running `make` for the example add `USE_GN=1` to the end of the command.
 
 The resulting binary will be in `out/example/` rather than `example/linux/out/`.
 
+#### Windows
+
+Building the example with GN is not currently supported. Follow the [Visual
+Studio example build instructions](../example/README.md) to build the example
+app.
+
 ## Feedback
 
-If you encounter issues with the GN build, please test with Make before filing
-a bug so that the report can include whether the issue is specific to GN, or
-a general build issue.
+If you encounter issues with the GN build, please test with Make or Visual
+Studio before filing a bug so that the report can include whether the issue is
+specific to GN, or a general build issue.
