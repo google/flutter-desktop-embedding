@@ -21,8 +21,13 @@
 
 #include <color_panel/color_panel_plugin.h>
 #include <file_chooser/file_chooser_plugin.h>
-#include <flutter_desktop_embedding/linux/embedder.h>
 #include <menubar/menubar_plugin.h>
+
+#ifdef USE_FLATTENED_INCLUDES
+#include <flutter_desktop_embedding/embedder.h>
+#else
+#include <flutter_desktop_embedding/linux/embedder.h>
+#endif
 
 namespace {
 

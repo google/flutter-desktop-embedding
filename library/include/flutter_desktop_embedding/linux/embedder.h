@@ -22,7 +22,11 @@
 #include <memory>
 #include <string>
 
+#ifdef USE_FLATTENED_INCLUDES
+#include "plugin.h"
+#else
 #include "../plugin.h"
+#endif
 
 namespace flutter_desktop_embedding {
 

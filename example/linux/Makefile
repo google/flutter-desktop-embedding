@@ -85,6 +85,9 @@ endif
 CXX=g++ -std=c++14
 CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp)
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
+ifdef USE_GN
+CPPFLAGS+=-DUSE_FLATTENED_INCLUDES
+endif
 LDFLAGS=-L$(OUT_LIB_DIR) \
 	-lglfw \
 	$(shell pkg-config --libs jsoncpp) \
