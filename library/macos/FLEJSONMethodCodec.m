@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLECodecs.h"
+#import "FLEJSONMethodCodec.h"
 
 // Keys for JSON-encoded method calls.
 static NSString *const kMessageMethodKey = @"method";
@@ -70,7 +70,7 @@ static NSData *SerializeAsJSON(id object) {
   return [[FLEMethodCall alloc] initWithMethodName:method arguments:arguments];
 }
 
-- (NSData *)encodeSuccessEnvelope:(id _Nullable)result {
+- (NSData *)encodeSuccessEnvelope:(id)result {
   return SerializeAsJSON(@[ result ?: [NSNull null] ]);
 }
 

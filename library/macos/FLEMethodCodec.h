@@ -14,7 +14,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import "FLEMethods.h"
+#import "FLEMethodCall.h"
+#import "FLEMethodError.h"
 
 /**
  * Translates between a binary message and higher-level method call and response/error objects.
@@ -50,12 +51,3 @@
 - (nullable NSData*)encodeErrorEnvelope:(nonnull FLEMethodError*)error;
 
 @end
-
-/**
- * A codec that uses JSON as the encoding format. Method arguments and error details for plugins
- * using this codec must be serializable to JSON.
- */
-@interface FLEJSONMethodCodec : NSObject <FLEMethodCodec>
-@end
-
-// TODO: Implement the other core Flutter codecs. Issue #67.
