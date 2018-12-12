@@ -21,6 +21,8 @@
 
 #include <glfw3.h>
 
+namespace flutter_desktop_embedding {
+
 // Calls glfwInit()
 //
 // glfwInit() must be called in the same library as glfwCreateWindow()
@@ -76,3 +78,5 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(
 void FlutterWindowLoop(GLFWwindow *flutter_window);
 
 #endif  // WINDOWS_LIBRARY_EMBEDDER_H_
+
+}  // namespace flutter_desktop_embedding

@@ -25,10 +25,6 @@ static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
 
-bool FlutterInit() { return glfwInit(); }
-
-void FlutterTerminate() { glfwTerminate(); }
-
 static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
                                               FlutterPointerPhase phase,
                                               double x, double y) {
@@ -161,6 +157,12 @@ static FlutterEngine RunFlutterEngine(
   return engine;
 }
 
+namespace flutter_desktop_embedding {
+
+bool FlutterInit() { return glfwInit(); }
+
+void FlutterTerminate() { glfwTerminate(); }
+
 GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
                                 const std::string &main_path,
                                 const std::string &assets_path,
@@ -205,3 +207,5 @@ void FlutterWindowLoop(GLFWwindow *flutter_window) {
       glfwGetWindowUserPointer(flutter_window)));
   glfwDestroyWindow(flutter_window);
 }
+
+}  // namespace flutter_desktop_embedder
