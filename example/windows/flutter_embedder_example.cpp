@@ -18,7 +18,7 @@
 #include <flutter_desktop_embedding/embedder.h>
 
 int main(int argc, char **argv) {
-  if (!FlutterInit()) {
+  if (!flutter_desktop_embedding::FlutterInit()) {
     std::cout << "Couldn't init GLFW" << std::endl;
   }
   // Arguments for the Flutter Engine.
@@ -31,15 +31,15 @@ int main(int argc, char **argv) {
 #endif
   // Start the engine.
   // TODO: Make paths relative to the executable so it can be run from anywhere.
-  auto window = CreateFlutterWindowInSnapshotMode(
+  auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(
       640, 480, "..\\..\\example\\flutter_app\\build\\flutter_assets",
       "..\\..\\library\\windows\\dependencies\\engine\\icudtl.dat", arguments);
   if (window == nullptr) {
-    FlutterTerminate();
+    flutter_desktop_embedding::FlutterTerminate();
     return EXIT_FAILURE;
   }
 
-  FlutterWindowLoop(window);
-  FlutterTerminate();
+  flutter_desktop_embedding::FlutterWindowLoop(window);
+  flutter_desktop_embedding::FlutterTerminate();
   return EXIT_SUCCESS;
 }
