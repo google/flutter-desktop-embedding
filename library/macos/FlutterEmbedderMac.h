@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import "FLEBasicMessageChannel.h"
 #import "FLEBinaryMessenger.h"
-#import "FLEChannels.h"
-#import "FLECodecs.h"
-#import "FLEMethods.h"
+#import "FLEJSONMessageCodec.h"
+#import "FLEJSONMethodCodec.h"
+#import "FLEMessageCodec.h"
+#import "FLEMethodCall.h"
+#import "FLEMethodChannel.h"
+#import "FLEMethodCodec.h"
+#import "FLEMethodError.h"
 #import "FLEOpenGLContextHandling.h"
 #import "FLEPlugin.h"
 #import "FLEReshapeListener.h"

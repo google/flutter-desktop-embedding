@@ -17,8 +17,7 @@
 #include <string>
 #include <vector>
 
-#include <flutter_embedder.h>
-
+#include "library/linux/include/flutter_desktop_embedding/binary_messenger.h"
 #include "library/linux/include/flutter_desktop_embedding/method_codec.h"
 #include "library/linux/include/flutter_desktop_embedding/method_result.h"
 
@@ -27,15 +26,12 @@ namespace flutter_desktop_embedding {
 // Implemention of MethodResult that sends responses to the Flutter egnine.
 class EngineMethodResult : public MethodResult {
  public:
-  // Creates a result object that will send results to |engine|, tagged as
-  // associated with |response_handle|, encoded using |codec|. The |engine|
-  // and |codec| pointers must remain valid for as long as this object exists.
+  // Creates a result object that will send results to |reply_handler|, encoded
+  // using |codec|. The |codec| pointer must remain valid for as long as this
+  // object exists.
   //
   // If the codec is null, only NotImplemented() may be called.
-  EngineMethodResult(
-      FlutterEngine engine,
-      const FlutterPlatformMessageResponseHandle *response_handle,
-      const MethodCodec *codec);
+  EngineMethodResult(BinaryReply reply_handler, const MethodCodec *codec);
   ~EngineMethodResult();
 
  protected:
@@ -52,8 +48,7 @@ class EngineMethodResult : public MethodResult {
   // the engine.
   void SendResponseData(const std::vector<uint8_t> *data);
 
-  FlutterEngine engine_;
-  const FlutterPlatformMessageResponseHandle *response_handle_;
+  BinaryReply reply_handler_;
   const MethodCodec *codec_;
 };
 

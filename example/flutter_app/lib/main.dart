@@ -150,7 +150,8 @@ class _MyHomePage extends StatelessWidget {
     if (!colorPanel.showing) {
       colorPanel.show((color) {
         _AppState.of(context).setPrimaryColor(color);
-      });
+      // Setting the primary color to a non-opaque color raises an exception.
+      }, showAlpha: false); 
     }
   }
 
@@ -212,9 +213,9 @@ class FileChooserTestWidget extends StatelessWidget {
           onPressed: () {
             file_chooser.showSavePanel((result, paths) {
               Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text(_resultTextForFileChooserOperation(
-                        _FileChooserType.save, result, paths)),
-                  ));
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.save, result, paths)),
+              ));
             }, suggestedFileName: 'save_test.txt');
           },
         ),
@@ -223,9 +224,9 @@ class FileChooserTestWidget extends StatelessWidget {
           onPressed: () {
             file_chooser.showOpenPanel((result, paths) {
               Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text(_resultTextForFileChooserOperation(
-                        _FileChooserType.open, result, paths)),
-                  ));
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.open, result, paths)),
+              ));
             }, allowsMultipleSelection: true);
           },
         ),

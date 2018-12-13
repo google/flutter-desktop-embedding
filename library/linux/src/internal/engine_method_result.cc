@@ -17,19 +17,17 @@
 
 namespace flutter_desktop_embedding {
 
-EngineMethodResult::EngineMethodResult(
-    FlutterEngine engine,
-    const FlutterPlatformMessageResponseHandle *response_handle,
-    const MethodCodec *codec)
-    : engine_(engine), response_handle_(response_handle), codec_(codec) {
-  if (!response_handle_) {
-    std::cerr << "Error: Response handle must be provided for a response."
+EngineMethodResult::EngineMethodResult(BinaryReply reply_handler,
+                                       const MethodCodec *codec)
+    : reply_handler_(std::move(reply_handler)), codec_(codec) {
+  if (!reply_handler_) {
+    std::cerr << "Error: Reply handler must be provided for a response."
               << std::endl;
   }
 }
 
 EngineMethodResult::~EngineMethodResult() {
-  if (response_handle_) {
+  if (reply_handler_) {
     // Warn, rather than send a not-implemented response, since the engine may
     // no longer be valid at this point.
     std::cerr
@@ -55,20 +53,18 @@ void EngineMethodResult::ErrorInternal(const std::string &error_code,
 void EngineMethodResult::NotImplementedInternal() { SendResponseData(nullptr); }
 
 void EngineMethodResult::SendResponseData(const std::vector<uint8_t> *data) {
-  if (!response_handle_) {
+  if (!reply_handler_) {
     std::cerr
-        << "Error: Response can be set only once. Ignoring duplicate response."
+        << "Error: Only one of Success, Error, or NotImplemented can be called,"
+        << " and it can be called exactyl once. Ignoring duplicate result."
         << std::endl;
     return;
   }
 
   const uint8_t *message = data && !data->empty() ? data->data() : nullptr;
   size_t message_size = data ? data->size() : 0;
-  FlutterEngineSendPlatformMessageResponse(engine_, response_handle_, message,
-                                           message_size);
-  // The engine frees the response handle once
-  // FlutterEngineSendPlatformMessageResponse is called.
-  response_handle_ = nullptr;
+  reply_handler_(message, message_size);
+  reply_handler_ = nullptr;
 }
 
 }  // namespace flutter_desktop_embedding

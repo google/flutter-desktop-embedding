@@ -18,8 +18,7 @@
 #include <memory>
 #include <string>
 
-#include <flutter_embedder.h>
-
+#include "binary_messenger.h"
 #include "method_call.h"
 #include "method_codec.h"
 #include "method_result.h"
@@ -60,19 +59,26 @@ class Plugin {
   // while waiting for this plugin to handle its platform message.
   virtual bool input_blocking() const { return input_blocking_; }
 
-  // Sets the pointer to the caller-owned Flutter Engine.
+  // Binds this plugin to the given caller-owned binary messenger. It must
+  // remain valid for the life of the plugin.
   //
   // The embedder typically sets this pointer rather than the client.
-  virtual void set_flutter_engine(FlutterEngine engine) { engine_ = engine; }
+  void SetBinaryMessenger(BinaryMessenger *messenger);
 
  protected:
+  // Implementers should register any MethodChannels that should receive
+  // messages from Flutter with |messenger| when this is called.
+  virtual void RegisterMethodChannels(BinaryMessenger *messenger) = 0;
+
   // Calls a method in the Flutter engine on this Plugin's channel.
+  //
+  // Deprecated. Use MethodChannel's InvokeMethodCall instead.
   void InvokeMethodCall(const MethodCall &method_call);
 
  private:
   std::string channel_;
-  // Caller-owned instance of the Flutter Engine.
-  FlutterEngine engine_;
+  // Caller-owned instance of the binary messenger used to message the engine.
+  const BinaryMessenger *messenger_;
   bool input_blocking_;
 };
 

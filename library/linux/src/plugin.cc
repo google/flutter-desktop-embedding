@@ -18,23 +18,22 @@
 namespace flutter_desktop_embedding {
 
 Plugin::Plugin(const std::string &channel, bool input_blocking)
-    : channel_(channel), engine_(nullptr), input_blocking_(input_blocking) {}
+    : channel_(channel), messenger_(nullptr), input_blocking_(input_blocking) {}
 
 Plugin::~Plugin() {}
 
+void Plugin::SetBinaryMessenger(BinaryMessenger *messenger) {
+  messenger_ = messenger;
+  RegisterMethodChannels(messenger);
+}
+
 void Plugin::InvokeMethodCall(const MethodCall &method_call) {
-  if (!engine_) {
+  if (!messenger_) {
     return;
   }
   std::unique_ptr<std::vector<uint8_t>> message =
       GetCodec().EncodeMethodCall(method_call);
-  FlutterPlatformMessage platform_message_response = {
-      .struct_size = sizeof(FlutterPlatformMessage),
-      .channel = channel_.c_str(),
-      .message = message->data(),
-      .message_size = message->size(),
-  };
-  FlutterEngineSendPlatformMessage(engine_, &platform_message_response);
+  messenger_->Send(channel_, message->data(), message->size());
 }
 
 }  // namespace flutter_desktop_embedding

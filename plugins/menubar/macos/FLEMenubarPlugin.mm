@@ -14,7 +14,7 @@
 
 #import "FLEMenubarPlugin.h"
 
-#include "../common/channel_constants.h"
+#include "plugins/menubar/common/channel_constants.h"
 
 @implementation FLEMenubarPlugin
 

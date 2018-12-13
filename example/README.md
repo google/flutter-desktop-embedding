@@ -13,7 +13,7 @@ functionality rather than a usable application.
 
 ## Building and Running the Example
 
-Since the exmaple is meant to show how the library would actually be used, it
+Since the example is meant to show how the library would actually be used, it
 deliberately uses platform-specific build systems that are separate from the
 rest of the project's build system.
 
@@ -54,7 +54,7 @@ Open the `Example Embedder` Visual Studio solution file under `windows\` and
 build the GLFW Example project.
 
 The resulting binary will be in `bin\x64\$(Configuration)\GLFW Example\`. It
-currently uses relative paths so much be run from the `windows\` directory:
+currently uses relative paths so must be run from the `windows\` directory:
 
 ```
 > ".\bin\x64\$(Configuration)\GLFW Example\GLFW Example.exe"

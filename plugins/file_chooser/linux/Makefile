@@ -13,8 +13,9 @@
 # limitations under the License.
 LIBRARY_OUT=libflutter_embedder_file_chooser.so
 
+PROJECT_ROOT=$(CURDIR)/../../..
 # For dependency on the embedder shared library.
-EMBEDDER_LIBRARY_DIR=$(CURDIR)/../../../library/linux
+EMBEDDER_LIBRARY_DIR=$(PROJECT_ROOT)/library/linux
 EMBEDDER_LIB_NAME=flutter_engine
 EMBEDDER_LIB_FILE=$(EMBEDDER_LIBRARY_DIR)/lib$(EMBEDDER_LIB_NAME).so
 
@@ -22,8 +23,7 @@ COMMON_DIR=$(CURDIR)/../common
 
 CXX=g++ -std=c++14
 CXXFLAGS= -Wall -Werror -shared -fPIC \
-	-I$(CURDIR)/include \
-	-I$(COMMON_DIR) \
+	-I$(PROJECT_ROOT) \
 	-I$(EMBEDDER_LIBRARY_DIR)/include \
 	$(shell pkg-config --cflags gtk+-3.0 jsoncpp)
 LDFLAGS= -L$(EMBEDDER_LIBRARY_DIR) \

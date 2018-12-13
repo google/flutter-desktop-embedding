@@ -16,7 +16,7 @@
 
 #import <AppKit/AppKit.h>
 
-#include "../common/channel_constants.h"
+#include "plugins/color_panel/common/channel_constants.h"
 
 @implementation FLEColorPanelPlugin
 
@@ -33,7 +33,16 @@
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
   BOOL handled = YES;
   if ([call.methodName isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
-    [self showColorPanel];
+    if ([call.arguments isKindOfClass:[NSDictionary class]]) {
+      BOOL showAlpha =
+          [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlpha)] boolValue];
+      [self showColorPanelWithAlpha:showAlpha];
+    } else {
+      NSLog(@"Malformed call for %@. Expected an NSDictionary but got %@",
+            @(plugins_color_panel::kShowColorPanelMethod),
+            NSStringFromClass([call.arguments class]));
+      handled = NO;
+    }
   } else if ([call.methodName isEqualToString:@(plugins_color_panel::kHideColorPanelMethod)]) {
     [self hideColorPanel];
   } else {
@@ -47,9 +56,10 @@
 /**
  * Configures the shared instance of NSColorPanel and makes it the frontmost & key window.
  */
-- (void)showColorPanel {
+- (void)showColorPanelWithAlpha:(BOOL)showAlpha {
   NSColorPanel *sharedColor = [NSColorPanel sharedColorPanel];
   sharedColor.delegate = self;
+  [sharedColor setShowsAlpha:showAlpha];
   [sharedColor setTarget:self];
   [sharedColor setAction:@selector(selectedColorDidChange)];
   if (!sharedColor.isKeyWindow) {
@@ -102,9 +112,12 @@
  */
 - (NSDictionary *)dictionaryWithColor:(NSColor *)color {
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
-  result[@(plugins_color_panel::kColorComponentRedKey)] = @(color.redComponent);
-  result[@(plugins_color_panel::kColorComponentGreenKey)] = @(color.greenComponent);
-  result[@(plugins_color_panel::kColorComponentBlueKey)] = @(color.blueComponent);
+  // TODO: Consider being able to pass other type of color space (Gray scale, CMYK, etc).
+  NSColor *rgbColor = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
+  result[@(plugins_color_panel::kColorComponentAlphaKey)] = @(rgbColor.alphaComponent);
+  result[@(plugins_color_panel::kColorComponentRedKey)] = @(rgbColor.redComponent);
+  result[@(plugins_color_panel::kColorComponentGreenKey)] = @(rgbColor.greenComponent);
+  result[@(plugins_color_panel::kColorComponentBlueKey)] = @(rgbColor.blueComponent);
   return result;
 }
 

@@ -14,7 +14,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "FLECodecs.h"
+#import "FLEMethodCodec.h"
 #import "FLEOpenGLContextHandling.h"
 #import "FLEPlugin.h"
 #import "FLEReshapeListener.h"

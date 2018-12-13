@@ -11,17 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "channel_constants.h"
+#include "plugins/color_panel/common/channel_constants.h"
 
 namespace plugins_color_panel {
 
 const char kChannelName[] = "flutter/colorpanel";
 
 const char kShowColorPanelMethod[] = "ColorPanel.Show";
+const char kColorPanelShowAlpha[] = "ColorPanel.ShowAlpha";
 const char kHideColorPanelMethod[] = "ColorPanel.Hide";
 const char kColorSelectedCallbackMethod[] = "ColorPanel.ColorSelectedCallback";
 const char kClosedCallbackMethod[] = "ColorPanel.ClosedCallback";
 
+const char kColorComponentAlphaKey[] = "alpha";
 const char kColorComponentRedKey[] = "red";
 const char kColorComponentGreenKey[] = "green";
 const char kColorComponentBlueKey[] = "blue";

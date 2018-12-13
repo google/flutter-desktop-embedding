@@ -16,7 +16,7 @@
 
 #import <AppKit/AppKit.h>
 
-#include "../common/channel_constants.h"
+#include "plugins/file_chooser/common/channel_constants.h"
 
 @implementation FLEFileChooserPlugin
 

@@ -25,6 +25,7 @@
  */
 - (nonnull instancetype)initWithMethodName:(nonnull NSString *)name
                                  arguments:(nullable id)arguments NS_DESIGNATED_INITIALIZER;
+
 - (nonnull instancetype)init NS_UNAVAILABLE;
 
 /**
@@ -38,40 +39,5 @@
  * This object must be serializable by the codec used to encode the call.
  */
 @property(readonly, nonatomic, nullable) id arguments;
-
-@end
-
-#pragma mark -
-
-/**
- * An error object that can be passed to an FLEMethodResult to send an error response to the caller
- * on the Flutter side.
- */
-@interface FLEMethodError : NSObject
-
-/**
- * Initializes an FLEMethodError. If |details| is provided, it must be serializable to JSON.
- */
-- (nonnull instancetype)initWithCode:(nonnull NSString *)code
-                             message:(nullable NSString *)message
-                             details:(nullable id)details NS_DESIGNATED_INITIALIZER;
-- (nonnull instancetype)init NS_UNAVAILABLE;
-
-/**
- * The error code, as a string.
- */
-@property(readonly, nonatomic, nonnull) NSString *code;
-
-/**
- * A human-readable description of the error.
- */
-@property(readonly, nonatomic, nullable) NSString *message;
-
-/**
- * Any additional details or context about the error.
- *
- * This object must be serializable to JSON.
- */
-@property(readonly, nonatomic, nullable) id details;
 
 @end

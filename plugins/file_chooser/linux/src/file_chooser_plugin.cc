@@ -11,13 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <file_chooser/file_chooser_plugin.h>
+#include "plugins/file_chooser/linux/include/file_chooser/file_chooser_plugin.h"
 
 #include <gtk/gtk.h>
 #include <iostream>
 #include <vector>
 
-#include "../common/channel_constants.h"
+#include "plugins/file_chooser/common/channel_constants.h"
 
 // File chooser callback results.
 static constexpr int kCancelResultValue = 0;

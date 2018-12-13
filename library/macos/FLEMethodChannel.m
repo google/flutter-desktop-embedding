@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEChannels.h"
+#import "FLEMethodChannel.h"
 
 NSString const *FLEMethodNotImplemented = @"notimplemented";
 
@@ -22,15 +22,15 @@ NSString const *FLEMethodNotImplemented = @"notimplemented";
   id<FLEMethodCodec> _codec;
 }
 
-+ (instancetype)methodChannelWithName:(nonnull NSString *)name
-                      binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
-                                codec:(nonnull NSObject<FLEMethodCodec> *)codec {
++ (instancetype)methodChannelWithName:(NSString *)name
+                      binaryMessenger:(id<FLEBinaryMessenger>)messenger
+                                codec:(NSObject<FLEMethodCodec> *)codec {
   return [[[self class] alloc] initWithName:name binaryMessenger:messenger codec:codec];
 }
 
-- (instancetype)initWithName:(nonnull NSString *)name
-             binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
-                       codec:(nonnull id<FLEMethodCodec>)codec {
+- (instancetype)initWithName:(NSString *)name
+             binaryMessenger:(id<FLEBinaryMessenger>)messenger
+                       codec:(id<FLEMethodCodec>)codec {
   self = [super init];
   if (self) {
     _name = [name copy];
@@ -40,7 +40,7 @@ NSString const *FLEMethodNotImplemented = @"notimplemented";
   return self;
 }
 
-- (void)invokeMethod:(NSString *)method arguments:(id _Nullable)arguments {
+- (void)invokeMethod:(NSString *)method arguments:(id)arguments {
   FLEMethodCall *methodCall = [[FLEMethodCall alloc] initWithMethodName:method arguments:arguments];
   NSData *message = [_codec encodeMethodCall:methodCall];
   if (!message) {
@@ -50,7 +50,7 @@ NSString const *FLEMethodNotImplemented = @"notimplemented";
   [_messenger sendOnChannel:_name message:message];
 }
 
-- (void)setMethodCallHandler:(FLEMethodCallHandler _Nullable)handler {
+- (void)setMethodCallHandler:(FLEMethodCallHandler)handler {
   if (!handler) {
     [_messenger setMessageHandlerOnChannel:_name binaryMessageHandler:nil];
     return;
