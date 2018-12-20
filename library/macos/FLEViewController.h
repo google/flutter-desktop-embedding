@@ -68,13 +68,8 @@
             commandLineArguments:(nonnull NSArray<NSString *> *)arguments;
 
 /**
- * Adds a plugin to the view controller to handle domain-specific system messages. The given plugin
- * class will receive a registerWithRegistrar: callback.
- *
- * In the future, the plugin registration system is likely to change to more closely match iOS
- * plugin registration, but for now clients of this library should register plugins directly with
- * the view controller.
+ * Returns the FLEPluginRegistrar that should be used to register the plugin with the given name.
  */
-- (void)registerPlugin:(nonnull Class<FLEPlugin>)pluginClass;
+- (nonnull id<FLEPluginRegistrar>)registrarForPlugin:(nonnull NSString *)pluginName;
 
 @end
