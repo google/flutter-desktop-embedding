@@ -27,11 +27,6 @@ published_shared_library("flutter_embedder") {
   }
   if (is_linux || is_win) {
     sources += [
-      "common/glfw/key_event_handler.cc",
-      "common/glfw/key_event_handler.h",
-      "common/glfw/keyboard_hook_handler.h",
-      "common/glfw/text_input_plugin.cc",
-      "common/glfw/text_input_plugin.h",
       "common/internal/engine_method_result.cc",
       "common/internal/engine_method_result.h",
       "common/internal/json_message_codec.cc",
@@ -59,6 +54,16 @@ published_shared_library("flutter_embedder") {
       "include/flutter_desktop_embedding/method_codec.h",
       "include/flutter_desktop_embedding/method_result.h",
       "include/flutter_desktop_embedding/plugin.h",
+    ]
+  }
+  # GLFW-specific code.
+  if (is_linux || is_win) {
+    sources += [
+      "common/glfw/key_event_handler.cc",
+      "common/glfw/key_event_handler.h",
+      "common/glfw/keyboard_hook_handler.h",
+      "common/glfw/text_input_plugin.cc",
+      "common/glfw/text_input_plugin.h",
     ]
   }
 

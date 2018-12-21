@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_LINUX_SRC_INTERNAL_PLUGIN_HANDLER_H_
-#define LIBRARY_LINUX_SRC_INTERNAL_PLUGIN_HANDLER_H_
+#ifndef LIBRARY_COMMON_INTERNAL_PLUGIN_HANDLER_H_
+#define LIBRARY_COMMON_INTERNAL_PLUGIN_HANDLER_H_
 
 #include <map>
 #include <memory>
@@ -74,4 +74,4 @@ class PluginHandler : public BinaryMessenger {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_LINUX_SRC_INTERNAL_PLUGIN_HANDLER_H_
+#endif  // LIBRARY_COMMON_INTERNAL_PLUGIN_HANDLER_H_
