@@ -30,6 +30,8 @@ published_shared_library("menubar") {
     ]
   }
 
+  defines = ["USE_FLATTENED_INCLUDES"]
+
   deps = [
     "//library:flutter_embedder",
   ]
