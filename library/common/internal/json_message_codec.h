@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_MESSAGE_CODEC_H_
-#define LIBRARY_LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_MESSAGE_CODEC_H_
+#ifndef LIBRARY_COMMON_INTERNAL_JSON_MESSAGE_CODEC_H_
+#define LIBRARY_COMMON_INTERNAL_JSON_MESSAGE_CODEC_H_
 
 #include <memory>
 #include <vector>
@@ -56,4 +56,4 @@ class JsonMessageCodec {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_LINUX_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_MESSAGE_CODEC_H_
+#endif  // LIBRARY_COMMON_INTERNAL_JSON_MESSAGE_CODEC_H_

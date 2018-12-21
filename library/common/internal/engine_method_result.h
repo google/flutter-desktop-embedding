@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_LINUX_SRC_INTERNAL_ENGINE_METHOD_RESULT_H_
-#define LIBRARY_LINUX_SRC_INTERNAL_ENGINE_METHOD_RESULT_H_
+#ifndef LIBRARY_COMMON_INTERNAL_ENGINE_METHOD_RESULT_H_
+#define LIBRARY_COMMON_INTERNAL_ENGINE_METHOD_RESULT_H_
 
 #include <string>
 #include <vector>
@@ -54,4 +54,4 @@ class EngineMethodResult : public MethodResult {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_LINUX_SRC_INTERNAL_ENGINE_METHOD_RESULT_H_
+#endif  // LIBRARY_COMMON_INTERNAL_ENGINE_METHOD_RESULT_H_
