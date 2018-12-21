@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter_desktop_embedding/embedder.h>
+#include <flutter_desktop_embedding/linux/embedder.h>
 
 #include <X11/Xlib.h>
 #include <assert.h>
@@ -26,10 +26,10 @@
 
 #include <flutter_embedder.h>
 
-#include "library/linux/src/internal/key_event_handler.h"
-#include "library/linux/src/internal/keyboard_hook_handler.h"
-#include "library/linux/src/internal/plugin_handler.h"
-#include "library/linux/src/internal/text_input_plugin.h"
+#include "library/common/glfw/key_event_handler.h"
+#include "library/common/glfw/keyboard_hook_handler.h"
+#include "library/common/glfw/text_input_plugin.h"
+#include "library/common/internal/plugin_handler.h"
 
 // GLFW_TRUE & GLFW_FALSE are introduced since libglfw-3.3,
 // add definitions here to compile under the old versions.
