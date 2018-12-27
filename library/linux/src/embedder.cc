@@ -199,6 +199,12 @@ static void GLFWClearCanvas(GLFWwindow *window) {
   glfwMakeContextCurrent(nullptr);
 }
 
+// Resolves the address of the specified OpenGL or OpenGL ES 
+// core or extension function, if it is supported by the current context.
+static void* GLFWProcResolver(void *user_data, const char *name) {
+  return reinterpret_cast<void*>(glfwGetProcAddress(name));
+}
+
 // Spins up an instance of the Flutter Engine.
 //
 // This function launches the Flutter Engine in a background thread, supplying
@@ -222,6 +228,7 @@ static FlutterEngine RunFlutterEngine(
   config.open_gl.clear_current = GLFWClearContext;
   config.open_gl.present = GLFWPresent;
   config.open_gl.fbo_callback = GLFWGetActiveFbo;
+  config.open_gl.gl_proc_resolver = GLFWProcResolver;
   FlutterProjectArgs args = {};
   args.struct_size = sizeof(FlutterProjectArgs);
   args.assets_path = assets_path.c_str();
