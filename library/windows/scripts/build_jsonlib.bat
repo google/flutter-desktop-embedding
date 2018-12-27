@@ -11,7 +11,7 @@
 :: WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
-@echo off
+::@echo off
 
 :: Find where VS lives and start a VC command prompt
 set pre=Microsoft.VisualStudio.Product.
@@ -25,12 +25,22 @@ pushd %InstallDir%\VC\Auxiliary\Build
 call vcvarsall.bat x86_amd64
 popd
 
-set DEPENDDIREXISTS=true
-if not exist %~dp0..\dependencies\json\allocator.h set DEPENDDIREXISTS=false
+set JSONHEADERSEXIST=true
+if not exist %~dp0..\dependencies\json\allocator.h set JSONHEADERSEXIST=false
 
-if %DEPENDDIREXISTS% == true (
-    echo jsoncpp found.
-    goto DONE
+set JSONDEBUGLIBEXISTS=true
+if not exist %~dp0..\dependencies\json\x64\debug\json_vc71_libmtd.lib set JSONDEBUGLIBEXISTS=false
+
+set JSONRELEASELIBEXISTS=true
+if not exist %~dp0..\dependencies\json\x64\release\json_vc71_libmt.lib set JSONRELEASELIBEXISTS=false
+
+if %JSONHEADERSEXIST% == true (
+    if %JSONDEBUGLIBEXISTS% == true (
+        if %JSONRELEASELIBEXISTS% == true (
+            echo jsoncpp found.
+            goto DONE
+        )
+    )
 )
 
 set THIRDPARTYDIREXISTS=true
@@ -52,13 +62,22 @@ if not exist %~dp0..\third_party\jsoncpp\README.md set JSONEXISTS=false
 
 :: Clone source
 if %JSONEXISTS% == false (
+    :: PR opened on json cpp for VS2017 support: https://github.com/open-source-parsers/jsoncpp/pull/853
     echo Cloning via git clone --branch supportvs2017 https://github.com/clarkezone/jsoncpp.git %~dp0..\third_party\jsoncpp
     call git clone --branch supportvs2017 https://github.com/clarkezone/jsoncpp.git %~dp0..\third_party\jsoncpp
+
+    pushd %~dp0..\third_party\jsoncpp
+
+    call git checkout 3ae7e8073a425c93329c8577a3c813c206322ca4
+
+    popd
 )
 
 :: Copy headers
-copy %~dp0..\third_party\jsoncpp\include\json\*.h %~dp0..\dependencies\json\.
-
+if %JSONHEADERSEXIST% == false (
+    echo Copying jsoncpp headers
+    copy %~dp0..\third_party\jsoncpp\include\json\*.h %~dp0..\dependencies\json\.
+)
 
 :: Build debug lib
 echo Building debug lib: msbuild %~dp0..\third_party\jsoncpp\makefiles\msvc2017\lib_json.vcxproj 
@@ -92,9 +111,6 @@ if %DEPBINRELDIREXISTS% == false (
 )
 
 copy %~dp0..\third_party\jsoncpp\makefiles\msvc2017\x64\release\json_vc71_libmt.lib %~dp0..\dependencies\json\x64\release\.
-
-:: Remove source
-rmdir /s /q %~dp0..\third_party
 
 :DONE
 echo jsoncpplib complete.
