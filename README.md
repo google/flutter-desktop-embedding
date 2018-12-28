@@ -1,6 +1,6 @@
 # Desktop Embedding for Flutter
 
-This purpose of this project is to support building
+The purpose of this project is to support building
 applications that use [Flutter](https://github.com/flutter/flutter)
 on Windows, macOS, and Linux.
 
