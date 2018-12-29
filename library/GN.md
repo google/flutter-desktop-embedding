@@ -38,7 +38,11 @@ $ tools/gn_dart gen out
 $ ninja -C out flutter_embedder
 ```
 
-The build results will be in the top-level `out/` directory.
+The build results will be in the top-level `out/` directory. `out/include/` will
+have the public headers for all build libraries, so you can point dependent
+builds at that single location rather than the `include/` directories in the
+source tree. You will need to set USE\_FLATTENED\_INCLUDES in your build, since
+the embedding header library layout is slightly different under `out/include/`.
 
 Subsequent builds only require the `ninja` step, as the build will automatically
 re-run GN generation if necessary.

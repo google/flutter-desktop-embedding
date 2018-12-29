@@ -1,11 +1,11 @@
 # Desktop Embedding for Flutter
 
-This purpose of this project is to support building
+The purpose of this project is to support building
 applications that use [Flutter](https://github.com/flutter/flutter)
 on Windows, macOS, and Linux.
 
 It consists of libraries that implement [Flutter's embedding
-API](https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders),
+API](https://github.com/flutter/flutter/wiki/Custom-Flutter-Engine-Embedders),
 handling drawing and mouse/keyboard input, as well as
 optional plugins to access other native platform functionality.
 

@@ -19,7 +19,7 @@ import("//library/engine.gni")
 # inculdes for its header rather than project-relative.
 config("relative_public_headers") {
   include_dirs = [
-    "include",
+    "../include"
   ]
 }
 

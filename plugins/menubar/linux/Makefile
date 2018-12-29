@@ -15,21 +15,23 @@ LIBRARY_OUT=libflutter_embedder_menubar.so
 
 PROJECT_ROOT=$(CURDIR)/../../..
 # For dependency on the embedder shared library.
-EMBEDDER_LIBRARY_DIR=$(PROJECT_ROOT)/library/linux
+EMBEDDER_LIBRARY_DIR=$(PROJECT_ROOT)/library
+EMBEDDER_LIBRARY_OUT_DIR=$(EMBEDDER_LIBRARY_DIR)/linux
+EMBEDDER_LIBRARY_HEADER_DIR=$(EMBEDDER_LIBRARY_DIR)/include
 EMBEDDER_LIB_NAME=flutter_engine
-EMBEDDER_LIB_FILE=$(EMBEDDER_LIBRARY_DIR)/lib$(EMBEDDER_LIB_NAME).so
+EMBEDDER_LIB_FILE=$(EMBEDDER_LIBRARY_OUT_DIR)/lib$(EMBEDDER_LIB_NAME).so
 
 COMMON_DIR=$(CURDIR)/../common
 
 CXX=g++ -std=c++14
 CXXFLAGS= -Wall -Werror -shared -fPIC \
 	-I$(PROJECT_ROOT) \
-	-I$(EMBEDDER_LIBRARY_DIR)/include \
+	-I$(EMBEDDER_LIBRARY_HEADER_DIR) \
 	$(shell pkg-config --cflags gtk+-3.0 jsoncpp)
-LDFLAGS= -L$(EMBEDDER_LIBRARY_DIR) \
+LDFLAGS= -L$(EMBEDDER_LIBRARY_OUT_DIR) \
 	$(shell pkg-config --libs gtk+-3.0 jsoncpp) \
 	-l$(EMBEDDER_LIB_NAME) \
-	-Wl,-rpath=$(EMBEDDER_LIBRARY_DIR)
+	-Wl,-rpath=$(EMBEDDER_LIBRARY_OUT_DIR)
 
 LIBRARIES=$(EMBEDDER_LIB_FILE)
 HEADERS=$(shell find include/ $(COMMON_DIR)/ -type f -name '*.h')

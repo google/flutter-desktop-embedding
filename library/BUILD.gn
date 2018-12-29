@@ -19,40 +19,51 @@ import("//library/engine.gni")
 published_shared_library("flutter_embedder") {
   if (is_linux) {
     sources = [
-      "linux/src/internal/engine_method_result.cc",
-      "linux/src/internal/engine_method_result.h",
-      "linux/src/internal/json_message_codec.cc",
-      "linux/src/internal/json_message_codec.h",
-      "linux/src/internal/key_event_handler.cc",
-      "linux/src/internal/key_event_handler.h",
-      "linux/src/internal/keyboard_hook_handler.h",
-      "linux/src/internal/plugin_handler.cc",
-      "linux/src/internal/plugin_handler.h",
-      "linux/src/internal/text_input_model.cc",
-      "linux/src/internal/text_input_model.h",
-      "linux/src/internal/text_input_plugin.cc",
-      "linux/src/internal/text_input_plugin.h",
       "linux/src/embedder.cc",
-      "linux/src/json_method_call.cc",
-      "linux/src/json_method_codec.cc",
-      "linux/src/json_plugin.cc",
-      "linux/src/method_call.cc",
-      "linux/src/method_channel.cc",
-      "linux/src/method_codec.cc",
-      "linux/src/method_result.cc",
-      "linux/src/plugin.cc",
     ]
     public = [
-      "linux/include/flutter_desktop_embedding/binary_messenger.h",
-      "linux/include/flutter_desktop_embedding/embedder.h",
-      "linux/include/flutter_desktop_embedding/json_method_call.h",
-      "linux/include/flutter_desktop_embedding/json_method_codec.h",
-      "linux/include/flutter_desktop_embedding/json_plugin.h",
-      "linux/include/flutter_desktop_embedding/method_call.h",
-      "linux/include/flutter_desktop_embedding/method_channel.h",
-      "linux/include/flutter_desktop_embedding/method_codec.h",
-      "linux/include/flutter_desktop_embedding/method_result.h",
-      "linux/include/flutter_desktop_embedding/plugin.h",
+      "include/flutter_desktop_embedding/linux/embedder.h",
+    ]
+  }
+  if (is_linux || is_win) {
+    sources += [
+      "common/internal/engine_method_result.cc",
+      "common/internal/engine_method_result.h",
+      "common/internal/json_message_codec.cc",
+      "common/internal/json_message_codec.h",
+      "common/internal/plugin_handler.cc",
+      "common/internal/plugin_handler.h",
+      "common/internal/text_input_model.cc",
+      "common/internal/text_input_model.h",
+      "common/json_method_call.cc",
+      "common/json_method_codec.cc",
+      "common/json_plugin.cc",
+      "common/method_call.cc",
+      "common/method_channel.cc",
+      "common/method_codec.cc",
+      "common/method_result.cc",
+      "common/plugin.cc",
+    ]
+    public += [
+      "include/flutter_desktop_embedding/binary_messenger.h",
+      "include/flutter_desktop_embedding/json_method_call.h",
+      "include/flutter_desktop_embedding/json_method_codec.h",
+      "include/flutter_desktop_embedding/json_plugin.h",
+      "include/flutter_desktop_embedding/method_call.h",
+      "include/flutter_desktop_embedding/method_channel.h",
+      "include/flutter_desktop_embedding/method_codec.h",
+      "include/flutter_desktop_embedding/method_result.h",
+      "include/flutter_desktop_embedding/plugin.h",
+    ]
+  }
+  # GLFW-specific code.
+  if (is_linux || is_win) {
+    sources += [
+      "common/glfw/key_event_handler.cc",
+      "common/glfw/key_event_handler.h",
+      "common/glfw/keyboard_hook_handler.h",
+      "common/glfw/text_input_plugin.cc",
+      "common/glfw/text_input_plugin.h",
     ]
   }
 
