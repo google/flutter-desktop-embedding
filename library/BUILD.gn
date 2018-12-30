@@ -25,7 +25,16 @@ published_shared_library("flutter_embedder") {
       "include/flutter_desktop_embedding/linux/embedder.h",
     ]
   }
-  if (is_linux || is_win) {
+  if (is_win) {
+    sources = [
+      "windows/src/embedder.cpp",
+    ]
+    public = [
+      "include/flutter_desktop_embedding/windows/embedder.h",
+    ]
+  }
+  # TODO: Add add common files to Windows build. Requires jsoncpp. Waiting on #161
+  if (is_linux) {
     sources += [
       "common/internal/engine_method_result.cc",
       "common/internal/engine_method_result.h",
@@ -57,22 +66,14 @@ published_shared_library("flutter_embedder") {
     ]
   }
   # GLFW-specific code.
-  if (is_linux || is_win) {
+  # TODO: Add add glfw files to Windows build. Requires jsoncpp. Waiting on #161
+  if (is_linux) {
     sources += [
       "common/glfw/key_event_handler.cc",
       "common/glfw/key_event_handler.h",
       "common/glfw/keyboard_hook_handler.h",
       "common/glfw/text_input_plugin.cc",
       "common/glfw/text_input_plugin.h",
-    ]
-  }
-
-  if (is_win) {
-    sources = [
-      "windows/src/embedder.cpp",
-    ]
-    public = [
-      "windows/include/flutter_desktop_embedding/embedder.h",
     ]
   }
 
@@ -91,7 +92,7 @@ published_shared_library("flutter_embedder") {
     deps += [
       "//library/linux:publish_flutter_engine",
     ]
-    
+
     configs += [
       "//build/linux/config:epoxy",
       "//build/linux/config:gtk3",
@@ -120,9 +121,9 @@ published_shared_library("flutter_embedder") {
     ]
 
     configs += [
-      "//build/win/config:glfw3"
+      "//build/win/config:glfw3",
     ]
-    
+
     public_configs = [
       "//library/windows:relative_public_headers",
       "//library/windows:relative_dependency_headers",

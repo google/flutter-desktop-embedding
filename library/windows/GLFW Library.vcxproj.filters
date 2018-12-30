@@ -25,7 +25,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\flutter_desktop_embedding\embedder.h">
+    <ClInclude Include="..\include\flutter_desktop_embedding\windows\embedder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

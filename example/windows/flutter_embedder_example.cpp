@@ -15,7 +15,7 @@
 #include <iostream>
 #include <vector>
 
-#include <flutter_desktop_embedding/embedder.h>
+#include <flutter_desktop_embedding/windows/embedder.h>
 
 int main(int argc, char **argv) {
   if (!flutter_desktop_embedding::FlutterInit()) {

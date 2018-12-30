@@ -75,7 +75,7 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">
@@ -265,7 +265,7 @@
     <ClCompile Include="src\embedder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\flutter_desktop_embedding\embedder.h" />
+    <ClInclude Include="..\include\flutter_desktop_embedding\windows\embedder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
