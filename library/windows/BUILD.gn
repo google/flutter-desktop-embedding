@@ -16,14 +16,6 @@ import("//build/packaging.gni")
 import("//library/engine.gni")
 import("//library/windows/glfw.gni")
 
-# Allows targets depending on this library to use library-style
-# inculdes for its header rather than project-relative.
-config("relative_public_headers") {
-  include_dirs = [
-    "../include",
-  ]
-}
-
 action("fetch_glfw") {
   script = "//tools/dart_tools/bin/fetch_glfw.dart"
   outputs = glfw_files
@@ -38,7 +30,7 @@ config("relative_dependency_headers") {
 }
 
 copy_includes("_publish_engine_headers") {
-  sources = [ engine_files[1] ]
+  sources = [ engine_files[0] ]
   deps = [ "//library:fetch_flutter_engine" ]
 }
 
@@ -47,7 +39,7 @@ copy_includes("_publish_engine_headers") {
 # special link handling, and publishes its header.
 copy("publish_flutter_engine") {
   sources = [
-    engine_files[0],
+    engine_files[1],
     engine_files[2],
     engine_files[3],
     engine_files[4],

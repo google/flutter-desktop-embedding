@@ -18,15 +18,15 @@ engine_download_dir = "$root_gen_dir/flutter_engine"
 # The files that make up the downloaded engine library on Linux.
 if (is_linux) {
   engine_files = [
-    "$engine_download_dir/libflutter_engine.so",
     "$engine_download_dir/flutter_embedder.h",
+    "$engine_download_dir/libflutter_engine.so",
   ]
 }
 
 if(is_win) {
   engine_files = [
-    "$engine_download_dir/flutter_engine.dll",
     "$engine_download_dir/flutter_embedder.h",
+    "$engine_download_dir/flutter_engine.dll",
     "$engine_download_dir/flutter_engine.dll.lib",
     "$engine_download_dir/flutter_engine.dll.exp",
     "$engine_download_dir/flutter_engine.dll.pdb",

@@ -38,19 +38,21 @@ template("copy_includes") {
 template("published_shared_library") {
   template_target_name = target_name
 
-  copy_includes("_publish_${template_target_name}_headers") {
-    sources = invoker.public
-    subdir = invoker.public_header_subdir
-  }
-
-  shared_library(template_target_name) {
-    forward_variables_from(invoker, "*")
-    assert(defined(public),
-          "|public| must be provided for published_shared_library.")
-
-    if (!defined(deps)) {
-      deps = []
+  if (is_linux || is_win) {
+    copy_includes("_publish_${template_target_name}_headers") {
+      sources = invoker.public
+      subdir = invoker.public_header_subdir
     }
-    deps += [ ":_publish_${template_target_name}_headers" ]
+
+    shared_library(template_target_name) {
+      forward_variables_from(invoker, "*")
+      assert(defined(public),
+            "|public| must be provided for published_shared_library.")
+
+      if (!defined(deps)) {
+        deps = []
+      }
+      deps += [ ":_publish_${template_target_name}_headers" ]
+    }
   }
 }

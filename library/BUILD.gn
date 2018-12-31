@@ -83,6 +83,10 @@ published_shared_library("flutter_embedder") {
 
   public_header_subdir = "flutter_desktop_embedding"
 
+  public_configs = [
+    ":relative_public_headers",
+  ]
+
   if (is_linux) {
     libs = [
       "glfw",
@@ -98,10 +102,6 @@ published_shared_library("flutter_embedder") {
       "//build/linux/config:gtk3",
       "//build/linux/config:jsoncpp",
       "//build/linux/config:x11",
-    ]
-
-    public_configs = [
-      "//library/linux:relative_public_headers",
     ]
   }
 
@@ -124,11 +124,18 @@ published_shared_library("flutter_embedder") {
       "//build/win/config:glfw3",
     ]
 
-    public_configs = [
-      "//library/windows:relative_public_headers",
+    public_configs += [
       "//library/windows:relative_dependency_headers",
     ]
   }
+}
+
+# Allows targets depending on this library to use library-style
+# inculdes for its header rather than project-relative.
+config("relative_public_headers") {
+  include_dirs = [
+    "include",
+  ]
 }
 
 # Allows targets depending on the engine library to use library-style
