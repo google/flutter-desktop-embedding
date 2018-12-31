@@ -15,12 +15,12 @@
 #ifndef WINDOWS_LIBRARY_EMBEDDER_H_
 #define WINDOWS_LIBRARY_EMBEDDER_H_
 
-#include "library/include/flutter_desktop_embedding/plugin.h"
-
 #include <string>
 #include <vector>
 
 #include <GLFW/glfw3.h>
+
+#include "library/include/flutter_desktop_embedding/plugin.h"
 
 namespace flutter_desktop_embedding {
 

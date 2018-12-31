@@ -25,21 +25,16 @@ pushd %InstallDir%\VC\Auxiliary\Build
 call vcvarsall.bat x86_amd64
 popd
 
-set JSONHEADERSEXIST=true
-if not exist %~dp0..\dependencies\json\allocator.h set JSONHEADERSEXIST=false
-
 set JSONDEBUGLIBEXISTS=true
 if not exist %~dp0..\dependencies\json\x64\debug\json_vc71_libmtd.lib set JSONDEBUGLIBEXISTS=false
 
 set JSONRELEASELIBEXISTS=true
 if not exist %~dp0..\dependencies\json\x64\release\json_vc71_libmt.lib set JSONRELEASELIBEXISTS=false
 
-if %JSONHEADERSEXIST% == true (
-    if %JSONDEBUGLIBEXISTS% == true (
-        if %JSONRELEASELIBEXISTS% == true (
-            echo jsoncpp found.
-            goto DONE
-        )
+if %JSONDEBUGLIBEXISTS% == true (
+    if %JSONRELEASELIBEXISTS% == true (
+        echo jsoncpp found.
+        goto DONE
     )
 )
 
@@ -71,12 +66,6 @@ if %JSONEXISTS% == false (
     call git checkout 3ae7e8073a425c93329c8577a3c813c206322ca4
 
     popd
-)
-
-:: Copy headers
-if %JSONHEADERSEXIST% == false (
-    echo Copying jsoncpp headers
-    copy %~dp0..\third_party\jsoncpp\include\json\*.h %~dp0..\dependencies\json\.
 )
 
 :: Build debug lib
