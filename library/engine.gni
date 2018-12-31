@@ -23,7 +23,7 @@ if (is_linux) {
   ]
 }
 
-if(is_win) {
+if (is_win) {
   engine_files = [
     "$engine_download_dir/flutter_embedder.h",
     "$engine_download_dir/flutter_engine.dll",
