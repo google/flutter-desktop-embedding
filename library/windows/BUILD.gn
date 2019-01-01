@@ -15,6 +15,7 @@
 import("//build/packaging.gni")
 import("//library/engine.gni")
 import("//library/windows/glfw.gni")
+import("//library/windows/jsoncpp.gni")
 
 action("fetch_glfw") {
   script = "//tools/dart_tools/bin/fetch_glfw.dart"
@@ -24,9 +25,23 @@ action("fetch_glfw") {
   ]
 }
 
+action("build_jsoncpp") {
+  script = "//tools/dart_tools/bin/build_jsoncpp.dart"
+  outputs = jsoncpp_files
+  args = [
+    rebase_path(jsoncpp_download_dir, root_build_dir)
+  ]
+}
+
 config("relative_dependency_headers") {
-  include_dirs = [ glfw_include_dir ]
-  lib_dirs = [ glfw_download_dir ]
+  include_dirs = [
+    glfw_include_dir,
+    jsoncpp_include_dir,
+  ]
+  lib_dirs = [
+    glfw_download_dir,
+    jsoncpp_lib_dir,
+  ]
 }
 
 copy_includes("_publish_engine_headers") {

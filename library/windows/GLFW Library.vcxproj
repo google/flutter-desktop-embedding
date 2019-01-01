@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug Static Library|x64">
-      <Configuration>Debug Static Library</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug Dynamic Library|x64">
       <Configuration>Debug Dynamic Library</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release Static Library|x64">
-      <Configuration>Release Static Library</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release Dynamic Library|x64">
@@ -32,21 +24,8 @@
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Dynamic Library|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Static Library|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -60,13 +39,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic Library|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release Dynamic Library|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Static Library|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -77,34 +50,18 @@
     <TargetExt>.dll</TargetExt>
     <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies;$(ProjectDir)third_party\jsoncpp\include;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\x64\debug;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)dependencies\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\include\;$(ProjectDir)..\..\;$(ProjectDir)..\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\makefiles\msvc2017\x64\debug;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <TargetName>flutter_embedder</TargetName>
-    <TargetExt>.lib</TargetExt>
-    <IncludePath>$(ProjectDir)include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Dynamic Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies;$(ProjectDir)third_party\jsoncpp\include;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\x64\release;;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)dependencies\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\include;$(ProjectDir)..\..\;$(ProjectDir)..\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\makefiles\msvc2017\x64\release;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Static Library|x64'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <TargetName>flutter_embedder</TargetName>
-    <TargetExt>.lib</TargetExt>
-    <IncludePath>$(ProjectDir)include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic Library|x64'">
     <ClCompile>
@@ -128,46 +85,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW &amp;&amp; $(ProjectDir)scripts\build_jsonlib</Command>
-      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
-    </PreBuildEvent>
-    <ProjectReference>
-      <UseLibraryDependencyInputs>
-      </UseLibraryDependencyInputs>
-      <LinkLibraryDependencies>
-      </LinkLibraryDependencies>
-    </ProjectReference>
-    <Lib>
-      <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
-    <PreLinkEvent>
-      <Command>xcopy /y /d /q "$(ProjectDir)dependencies\engine\flutter_engine.dll" "$(OutputPath)"</Command>
-      <Message>Add flutter_engine.dll to the out dir</Message>
-    </PreLinkEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <Link>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <ImportLibrary>$(OutDir)$(TargetName).dll.lib</ImportLibrary>
-      <ProgramDatabaseFile>$(OutDir)$(TargetName).dll.pdb</ProgramDatabaseFile>
-    </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW</Command>
-      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
+      <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW &amp;&amp; $(ProjectDir)scripts\build_jsonlib --debug</Command>
+      <Message>Get the flutter engine, engine artifacts, GLFW and jsoncpp</Message>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>
@@ -208,47 +127,7 @@
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW &amp;&amp; $(ProjectDir)scripts\build_jsonlib</Command>
-      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
-    </PreBuildEvent>
-    <ProjectReference>
-      <UseLibraryDependencyInputs>
-      </UseLibraryDependencyInputs>
-      <LinkLibraryDependencies>
-      </LinkLibraryDependencies>
-    </ProjectReference>
-    <Lib>
-      <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
-    <PreLinkEvent>
-      <Command>xcopy /y /d /q "$(ProjectDir)dependencies\engine\flutter_engine.dll" "$(OutputPath)"</Command>
-      <Message>Add flutter_engine.dll to the out dir</Message>
-    </PreLinkEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Static Library|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <ImportLibrary>$(OutDir)$(TargetName).dll.lib</ImportLibrary>
-      <ProgramDatabaseFile>$(OutDir)$(TargetName).dll.pdb</ProgramDatabaseFile>
-    </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW</Command>
-      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
+      <Message>Get the flutter engine, engine artifacts, GLFW and jsoncpp</Message>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>
@@ -279,7 +158,6 @@
     <ClCompile Include="..\common\method_codec.cc" />
     <ClCompile Include="..\common\method_result.cc" />
     <ClCompile Include="..\common\plugin.cc" />
-    <ClCompile Include="embedder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\embedder.cpp" />

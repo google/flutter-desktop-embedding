@@ -33,6 +33,20 @@ Future<void> main(List<String> arguments) async {
 
   final outputDirectory = arguments[0];
 
+  const Map<String, String> requiredFiles = {
+    'glfw-3.2.1.bin.WIN64/include/GLFW/glfw3.h': 'glfw3.h',
+    'glfw-3.2.1.bin.WIN64/lib-vc2015/glfw3.lib': 'glfw3.lib',
+  };
+
+  int existingFiles = 0;
+  for (final file in requiredFiles.values) {
+    if (await File("$outputDirectory/$file").exists()) {
+      existingFiles++;
+    }
+  }
+
+  if (existingFiles == requiredFiles.length) exit(0);
+
   final archiveUri = Uri.parse(glfwArchiveUrlString);
 
   final httpClient = new HttpClient();
@@ -45,11 +59,6 @@ Future<void> main(List<String> arguments) async {
   httpClient.close();
 
   await new Directory(outputDirectory).create(recursive: true);
-
-  const Map<String, String> requiredFiles = {
-    'glfw-3.2.1.bin.WIN64/include/GLFW/glfw3.h': 'glfw3.h',
-    'glfw-3.2.1.bin.WIN64/lib-vc2015/glfw3.lib': 'glfw3.lib',
-  };
 
   final archive = new ZipDecoder().decodeBytes(archiveData);
   for (final file in archive) {

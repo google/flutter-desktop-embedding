@@ -18,13 +18,13 @@ Windows also requires the 64 bit compiler, linker and setup scripts to be in
 your path. They are found under:
 
 ```
-Visual Studio Install Path\VC\bin\amd64
+Visual Studio Install Path\2017\Version\VC\Auxiliary\Build
 ```
 
 e.g.:
 
 ```
-C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\amd64
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
 ```
 
 ## Building

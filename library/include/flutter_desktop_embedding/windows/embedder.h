@@ -15,11 +15,12 @@
 #ifndef WINDOWS_LIBRARY_EMBEDDER_H_
 #define WINDOWS_LIBRARY_EMBEDDER_H_
 
-#include <iterator>
 #include <string>
 #include <vector>
 
 #include <GLFW/glfw3.h>
+
+#include <flutter_desktop_embedding/plugin.h>
 
 namespace flutter_desktop_embedding {
 
@@ -68,6 +69,12 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(
     const std::string &icu_data_path,
     const std::vector<std::string> &arguments);
 
+// Adds a plugin to the flutter_window.
+//
+// If a plugin already exists for this plugin's channel, returns false.
+// Otherwise returns true.
+bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin);
+
 // Loops on flutter window events until termination.
 //
 // Must be used instead of glfwWindowShouldClose as it cleans up engine state
@@ -77,6 +84,6 @@ GLFWwindow *CreateFlutterWindowInSnapshotMode(
 // cleanup.
 void FlutterWindowLoop(GLFWwindow *flutter_window);
 
-#endif  // WINDOWS_LIBRARY_EMBEDDER_H_
-
 }  // namespace flutter_desktop_embedding
+
+#endif  // WINDOWS_LIBRARY_EMBEDDER_H_

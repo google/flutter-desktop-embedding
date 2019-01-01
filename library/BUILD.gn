@@ -33,8 +33,7 @@ published_shared_library("flutter_embedder") {
       "include/flutter_desktop_embedding/windows/embedder.h",
     ]
   }
-  # TODO: Add add common files to Windows build. Requires jsoncpp. Waiting on #161
-  if (is_linux) {
+  if (is_linux || is_win) {
     sources += [
       "common/internal/engine_method_result.cc",
       "common/internal/engine_method_result.h",
@@ -66,8 +65,7 @@ published_shared_library("flutter_embedder") {
     ]
   }
   # GLFW-specific code.
-  # TODO: Add add glfw files to Windows build. Requires jsoncpp. Waiting on #161
-  if (is_linux) {
+  if (is_linux || is_win) {
     sources += [
       "common/glfw/key_event_handler.cc",
       "common/glfw/key_event_handler.h",
@@ -114,6 +112,7 @@ published_shared_library("flutter_embedder") {
     deps += [
       "//library/windows:publish_flutter_engine",
       "//library/windows:fetch_glfw",
+      "//library/windows:build_jsoncpp",
     ]
 
     libs = [
@@ -122,6 +121,7 @@ published_shared_library("flutter_embedder") {
 
     configs += [
       "//build/win/config:glfw3",
+      "//build/win/config:jsoncpp",
     ]
 
     public_configs += [
