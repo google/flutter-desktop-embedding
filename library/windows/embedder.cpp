@@ -46,7 +46,8 @@ static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
       glfwGetWindowUserPointer(window));
 }
 
-// When GLFW calls back to the window with a cursor position move, forward to FlutterEngine as a pointer event with appropriate phase
+// When GLFW calls back to the window with a cursor position move, forward to
+// FlutterEngine as a pointer event with appropriate phase
 static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
                                               FlutterPointerPhase phase,
                                               double x, double y) {
@@ -60,7 +61,7 @@ static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
           std::chrono::high_resolution_clock::now().time_since_epoch())
           .count();
   FlutterEngineSendPointerEvent(GetSavedEmbedderState(window)->engine, &event,
-      1);
+                                1);
 }
 
 // Report cursor move to engine
@@ -96,7 +97,7 @@ static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
        GetSavedEmbedderState(window)->keyboard_hook_handlers) {
     handler->KeyboardHook(window, key, scancode, action, mods);
   }
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GLFW_TRUE);
   }
 }
@@ -108,8 +109,8 @@ static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
   event.height = height;
   // TODO: Handle pixel ratio for different DPI monitors.
   event.pixel_ratio = 1.0;
-	FlutterEngineSendWindowMetricsEvent(GetSavedEmbedderState(window)->engine,
-      &event);
+  FlutterEngineSendWindowMetricsEvent(GetSavedEmbedderState(window)->engine,
+                                      &event);
 }
 
 // Flushes event queue and then assigns default window callbacks.
@@ -127,7 +128,8 @@ static void GLFWClearEventCallbacks(GLFWwindow *window) {
   glfwSetMouseButtonCallback(window, nullptr);
 }
 
-// The Flutter Engine calls out to this function when new platform messages are available
+// The Flutter Engine calls out to this function when new platform messages are
+// available
 static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
                                          void *user_data) {
   if (message->struct_size != sizeof(FlutterPlatformMessage)) {
@@ -223,7 +225,7 @@ static FlutterEngine RunFlutterEngine(
 }
 
 namespace flutter_desktop_embedding {
-	
+
 // Initialize glfw
 bool FlutterInit() { return glfwInit(); }
 
@@ -231,8 +233,7 @@ bool FlutterInit() { return glfwInit(); }
 void FlutterTerminate() { glfwTerminate(); }
 
 // set up embedder state and add the plugin to the plugin_handler
-bool AddPlugin(GLFWwindow *flutter_window,
-               std::unique_ptr<Plugin> plugin) {
+bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
   auto state = GetSavedEmbedderState(flutter_window);
   return state->plugin_handler->AddPlugin(std::move(plugin));
 }
@@ -257,8 +258,8 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
     return nullptr;
   }
   GLFWClearCanvas(window);
-  auto engine = RunFlutterEngine(
-      window, main_path, assets_path, packages_path, icu_data_path, arguments);
+  auto engine = RunFlutterEngine(window, main_path, assets_path, packages_path,
+                                 icu_data_path, arguments);
   if (engine == nullptr) {
     glfwDestroyWindow(window);
     return nullptr;
@@ -267,8 +268,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   FlutterEmbedderState *state = new FlutterEmbedderState();
   state->plugin_handler = std::make_unique<PluginHandler>(engine);
   state->engine = engine;
-  auto input_plugin =
-      std::make_unique<TextInputPlugin>();
+  auto input_plugin = std::make_unique<TextInputPlugin>();
   state->keyboard_hook_handlers.push_back(input_plugin.get());
 
   glfwSetWindowUserPointer(window, state);
