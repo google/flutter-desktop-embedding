@@ -23,6 +23,9 @@
     <ClCompile Include="src\embedder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\internal\plugin_handler.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\flutter_desktop_embedding\windows\embedder.h">
