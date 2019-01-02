@@ -24,7 +24,7 @@
     <ClCompile Include="..\common\glfw\text_input_plugin.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\internal\engine_method_result.cc">
+    <ClCompile Include="..\common\engine_method_result.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\internal\json_message_codec.cc">
@@ -33,28 +33,7 @@
     <ClCompile Include="..\common\internal\text_input_model.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\json_method_call.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\json_method_codec.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\json_plugin.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\method_call.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\method_channel.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\method_codec.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\method_result.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\plugin.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\glfw\key_event_handler.cc">
