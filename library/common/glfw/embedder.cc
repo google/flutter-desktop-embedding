@@ -28,7 +28,7 @@
 #include "library/common/internal/plugin_handler.h"
 
 #ifdef __linux__
-#include <X11/xlib.h>
+#include <X11/Xlib.h>
 #include <gtk/gtk.h>
 #endif
 

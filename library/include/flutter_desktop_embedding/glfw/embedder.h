@@ -21,7 +21,7 @@
 
 #ifdef __linux__
 // Epoxy must be included before any graphics-related code.
-#include<epoxy / gl.h>
+#include <epoxy/gl.h>
 #endif
 
 #include <GLFW/glfw3.h>
