@@ -17,7 +17,7 @@ toolchain("msvc") {
 
   tool("cc") {
     pdbfile = "{{target_out_dir}}/{{label_name}}_c.pdb"
-    command = "$env_setup cl /nologo /showIncludes /MD /FC {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} /c {{source}} /Fo{{output}} /Fd$pdbfile"
+    command = "$env_setup cl /nologo /showIncludes /MDd /FC {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} /c {{source}} /Fo{{output}} /Fd$pdbfile"
     depsformat = "msvc"
     description = "CC {{output}}"
     outputs = [
@@ -27,7 +27,7 @@ toolchain("msvc") {
 
   tool("cxx") {
     pdbfile = "{{target_out_dir}}/{{label_name}}_c.pdb"
-    command = "$env_setup cl /nologo /showIncludes /MD /FC {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} /c {{source}} /Fo{{output}} /Fd$pdbfile"
+    command = "$env_setup cl /nologo /showIncludes /MDd /FC {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} /c {{source}} /Fo{{output}} /Fd$pdbfile"
     depsformat = "msvc"
     description = "CXX {{output}}"
     outputs = [

@@ -21,7 +21,7 @@ action("fetch_glfw") {
   script = "//tools/dart_tools/bin/fetch_glfw.dart"
   outputs = glfw_files
   args = [
-    rebase_path(glfw_download_dir, root_build_dir)
+    rebase_path(glfw_download_dir, root_build_dir),
   ]
 }
 
@@ -29,7 +29,8 @@ action("build_jsoncpp") {
   script = "//tools/dart_tools/bin/build_jsoncpp.dart"
   outputs = jsoncpp_files
   args = [
-    rebase_path(jsoncpp_download_dir, root_build_dir)
+    rebase_path(jsoncpp_download_dir, root_build_dir),
+    "--debug",
   ]
 }
 
