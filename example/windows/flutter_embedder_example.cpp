@@ -15,7 +15,7 @@
 #include <iostream>
 #include <vector>
 
-#include "embedder.h"
+#include "flutter_desktop_embedding/glfw/embedder.h"
 
 int main(int argc, char **argv) {
   if (!flutter_desktop_embedding::FlutterInit()) {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "embedder.h"
+#include "library/include/flutter_desktop_embedding/glfw/embedder.h"
 
 #include <assert.h>
 #include <algorithm>

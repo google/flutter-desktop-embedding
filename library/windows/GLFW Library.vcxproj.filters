@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="embedder.cpp">
+    <ClCompile Include="..\common\glfw\embedder.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\internal\plugin_handler.cc">

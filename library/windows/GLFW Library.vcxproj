@@ -263,6 +263,7 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\glfw\embedder.cc" />
     <ClCompile Include="..\common\glfw\key_event_handler.cc" />
     <ClCompile Include="..\common\glfw\text_input_plugin.cc" />
     <ClCompile Include="..\common\internal\engine_method_result.cc" />
@@ -277,7 +278,6 @@
     <ClCompile Include="..\common\method_codec.cc" />
     <ClCompile Include="..\common\method_result.cc" />
     <ClCompile Include="..\common\plugin.cc" />
-    <ClCompile Include="embedder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="embedder.h" />
