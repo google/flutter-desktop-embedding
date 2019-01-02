@@ -28,6 +28,7 @@
 #include "library/common/internal/plugin_handler.h"
 
 #ifdef __linux__
+// For plugin-compatible event handling (e.g., modal windows).
 #include <X11/Xlib.h>
 #include <gtk/gtk.h>
 #endif
