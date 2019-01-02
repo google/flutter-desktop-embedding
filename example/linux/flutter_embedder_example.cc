@@ -26,7 +26,7 @@
 #ifdef USE_FLATTENED_INCLUDES
 #include <flutter_desktop_embedding/embedder.h>
 #else
-#include <flutter_desktop_embedding/linux/embedder.h>
+#include <flutter_desktop_embedding/glfw/embedder.h>
 #endif
 
 namespace {
@@ -53,7 +53,7 @@ std::string GetExecutableDirectory() {
 }  // namespace
 
 int main(int argc, char **argv) {
-  if (!glfwInit()) {
+  if (!flutter_desktop_embedding::FlutterInit()) {
     std::cerr << "Couldn't init GLFW" << std::endl;
   }
 
@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
   auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(
       640, 480, assets_path, icu_data_path, arguments);
   if (window == nullptr) {
-    glfwTerminate();
+    flutter_desktop_embedding::FlutterTerminate();
     return EXIT_FAILURE;
   }
 

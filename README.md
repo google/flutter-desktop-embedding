@@ -1,6 +1,6 @@
 # Desktop Embedding for Flutter
 
-This purpose of this project is to support building
+The purpose of this project is to support building
 applications that use [Flutter](https://github.com/flutter/flutter)
 on Windows, macOS, and Linux.
 
@@ -82,4 +82,3 @@ speed up the debugging process.
   request, or [write a plugin](plugins/README.md#writing-your-own-plugins)!
 * The Linux and Windows implementations currently use GLFW. This is not going
   to be the final implementation for either platform.
-* Plugins and text input do not yet work on Windows.
