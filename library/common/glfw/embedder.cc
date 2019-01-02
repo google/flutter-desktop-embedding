@@ -11,18 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <flutter_desktop_embedding/linux/embedder.h>
 
-#include <X11/Xlib.h>
+#include "library/include/flutter_desktop_embedding/glfw/embedder.h"
+
 #include <assert.h>
-#include <gtk/gtk.h>
-
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
-#include <memory>
-#include <string>
 
 #include <flutter_embedder.h>
 
@@ -30,6 +26,12 @@
 #include "library/common/glfw/keyboard_hook_handler.h"
 #include "library/common/glfw/text_input_plugin.h"
 #include "library/common/internal/plugin_handler.h"
+
+#ifdef __linux__
+// For plugin-compatible event handling (e.g., modal windows).
+#include <X11/Xlib.h>
+#include <gtk/gtk.h>
+#endif
 
 // GLFW_TRUE & GLFW_FALSE are introduced since libglfw-3.3,
 // add definitions here to compile under the old versions.
@@ -51,24 +53,86 @@ struct FlutterEmbedderState {
   // deleted from the heap.
   std::vector<flutter_desktop_embedding::KeyboardHookHandler *>
       keyboard_hook_handlers;
+
   // Handles raw key interactions from GLFW.
-  // TODO: Move key_event_handler once
-  // https://github.com/google/flutter-desktop-embedding/issues/102 is resolved.
+  // TODO: Revisit ownership model once Issue #102 is resolved.
   std::unique_ptr<flutter_desktop_embedding::KeyEventHandler> key_event_handler;
 };
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
 
-// Callback forward declarations.
-static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
-                            int action, int mods);
-static void GLFWCharCallback(GLFWwindow *window, unsigned int code_point);
-static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
-                                    int mods);
-
+// Retrieves state bag for the window in question from the GLFWWindow.
 static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
   return reinterpret_cast<FlutterEmbedderState *>(
       glfwGetWindowUserPointer(window));
+}
+
+// When GLFW calls back to the window with a cursor position move, forwards to
+// FlutterEngine as a pointer event with appropriate phase.
+static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
+                                              FlutterPointerPhase phase,
+                                              double x, double y) {
+  FlutterPointerEvent event = {};
+  event.struct_size = sizeof(event);
+  event.phase = phase;
+  event.x = x;
+  event.y = y;
+  event.timestamp =
+      std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::high_resolution_clock::now().time_since_epoch())
+          .count();
+  FlutterEngineSendPointerEvent(GetSavedEmbedderState(window)->engine, &event,
+                                1);
+}
+
+// Reports cursor move to the Flutter engine.
+static void GLFWcursorPositionCallback(GLFWwindow *window, double x, double y) {
+  GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kMove, x, y);
+}
+
+// Reports mouse button press to the Flutter engine.
+static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
+                                    int mods) {
+  double x, y;
+  if (key == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
+    glfwGetCursorPos(window, &x, &y);
+    GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kDown, x, y);
+    glfwSetCursorPosCallback(window, GLFWcursorPositionCallback);
+  }
+  if (key == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
+    glfwGetCursorPos(window, &x, &y);
+    GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kUp, x, y);
+    glfwSetCursorPosCallback(window, nullptr);
+  }
+}
+
+// Passes character input events to registered handlers.
+static void GLFWCharCallback(GLFWwindow *window, unsigned int code_point) {
+  for (flutter_desktop_embedding::KeyboardHookHandler *handler :
+       GetSavedEmbedderState(window)->keyboard_hook_handlers) {
+    handler->CharHook(window, code_point);
+  }
+}
+
+// Passes raw key events to registered handlers.
+static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
+                            int action, int mods) {
+  for (flutter_desktop_embedding::KeyboardHookHandler *handler :
+       GetSavedEmbedderState(window)->keyboard_hook_handlers) {
+    handler->KeyboardHook(window, key, scancode, action, mods);
+  }
+}
+
+// Reports window size changes to the Flutter engine.
+static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
+  FlutterWindowMetricsEvent event = {};
+  event.struct_size = sizeof(event);
+  event.width = width;
+  event.height = height;
+  // TODO: Handle pixel ratio for different DPI monitors.
+  event.pixel_ratio = 1.0;
+  FlutterEngineSendWindowMetricsEvent(GetSavedEmbedderState(window)->engine,
+                                      &event);
 }
 
 // Flushes event queue and then assigns default window callbacks.
@@ -86,16 +150,8 @@ static void GLFWClearEventCallbacks(GLFWwindow *window) {
   glfwSetMouseButtonCallback(window, nullptr);
 }
 
-static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
-  FlutterWindowMetricsEvent event = {};
-  event.struct_size = sizeof(event);
-  event.width = width;
-  event.height = height;
-  event.pixel_ratio = 1.0;
-  auto state = GetSavedEmbedderState(window);
-  FlutterEngineSendWindowMetricsEvent(state->engine, &event);
-}
-
+// The Flutter Engine calls out to this function when new platform messages are
+// available
 static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
                                          void *user_data) {
   if (message->struct_size != sizeof(FlutterPlatformMessage)) {
@@ -110,56 +166,6 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
   state->plugin_handler->HandleMethodCallMessage(
       message, [window] { GLFWClearEventCallbacks(window); },
       [window] { GLFWAssignEventCallbacks(window); });
-}
-
-static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
-                                              FlutterPointerPhase phase,
-                                              double x, double y) {
-  FlutterPointerEvent event = {};
-  event.struct_size = sizeof(event);
-  event.phase = phase;
-  event.x = x;
-  event.y = y;
-  event.timestamp =
-      std::chrono::duration_cast<std::chrono::microseconds>(
-          std::chrono::high_resolution_clock::now().time_since_epoch())
-          .count();
-  auto state = GetSavedEmbedderState(window);
-  FlutterEngineSendPointerEvent(state->engine, &event, 1);
-}
-
-static void GLFWcursorPositionCallback(GLFWwindow *window, double x, double y) {
-  GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kMove, x, y);
-}
-
-static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
-                                    int mods) {
-  double x, y;
-  if (key == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-    glfwGetCursorPos(window, &x, &y);
-    GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kDown, x, y);
-    glfwSetCursorPosCallback(window, GLFWcursorPositionCallback);
-  }
-  if (key == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
-    glfwGetCursorPos(window, &x, &y);
-    GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kUp, x, y);
-    glfwSetCursorPosCallback(window, nullptr);
-  }
-}
-
-static void GLFWCharCallback(GLFWwindow *window, unsigned int code_point) {
-  for (flutter_desktop_embedding::KeyboardHookHandler *handler :
-       GetSavedEmbedderState(window)->keyboard_hook_handlers) {
-    handler->CharHook(window, code_point);
-  }
-}
-
-static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
-                            int action, int mods) {
-  for (flutter_desktop_embedding::KeyboardHookHandler *handler :
-       GetSavedEmbedderState(window)->keyboard_hook_handlers) {
-    handler->KeyboardHook(window, key, scancode, action, mods);
-  }
 }
 
 static bool GLFWMakeContextCurrent(void *user_data) {
@@ -192,7 +198,7 @@ static uint32_t GLFWGetActiveFbo(void *user_data) { return 0; }
 static void GLFWClearCanvas(GLFWwindow *window) {
   glfwMakeContextCurrent(window);
   // This color is Material Blue Grey.
-  glClearColor(0.92549, 0.93725, 0.9451, 0);
+  glClearColor(236.0 / 255.0, 239.0 / 255.0, 241.0 / 255.0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
   glfwSwapBuffers(window);
@@ -242,6 +248,13 @@ static FlutterEngine RunFlutterEngine(
 
 namespace flutter_desktop_embedding {
 
+// Initialize glfw
+bool FlutterInit() { return glfwInit(); }
+
+// Tear down glfw
+void FlutterTerminate() { glfwTerminate(); }
+
+// set up embedder state and add the plugin to the plugin_handler
 bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
   auto state = GetSavedEmbedderState(flutter_window);
   return state->plugin_handler->AddPlugin(std::move(plugin));
@@ -261,7 +274,9 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
                                 const std::string &packages_path,
                                 const std::string &icu_data_path,
                                 const std::vector<std::string> &arguments) {
+#ifdef __linux__
   gtk_init(0, nullptr);
+#endif
   auto window = glfwCreateWindow(initial_width, initial_height,
                                  kDefaultWindowTitle, NULL, NULL);
   if (window == nullptr) {
@@ -274,6 +289,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
     glfwDestroyWindow(window);
     return nullptr;
   }
+
   FlutterEmbedderState *state = new FlutterEmbedderState();
   state->plugin_handler = std::make_unique<PluginHandler>(engine);
   state->engine = engine;
@@ -297,13 +313,19 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 }
 
 void FlutterWindowLoop(GLFWwindow *flutter_window) {
+#ifdef __linux__
   // Necessary for GTK thread safety.
   XInitThreads();
+#endif
   while (!glfwWindowShouldClose(flutter_window)) {
+#ifdef __linux__
     glfwPollEvents();
     if (gtk_events_pending()) {
       gtk_main_iteration();
     }
+#else
+    glfwWaitEvents();
+#endif
     // TODO(awdavies): This will be deprecated soon.
     __FlutterEngineFlushPendingTasksNow();
   }

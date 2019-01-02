@@ -49,7 +49,7 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
 #### Using the Library
 
 Run `make` under `linux/`, then link `libflutter_embedder.so` into your
-binary. See [embedder.h](linux/include/flutter_desktop_embedding/embedder.h)
+binary. See [embedder.h](include/flutter_desktop_embedding/glfw/embedder.h)
 for details on calling into the library.
 
 You will also need to link `libflutter_engine.so` into your binary.

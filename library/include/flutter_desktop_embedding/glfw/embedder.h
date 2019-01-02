@@ -12,15 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef WINDOWS_LIBRARY_EMBEDDER_H_
-#define WINDOWS_LIBRARY_EMBEDDER_H_
+#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
+#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#ifdef __linux__
+// Epoxy must be included before any graphics-related code.
+#include <epoxy/gl.h>
+#endif
+
 #include <GLFW/glfw3.h>
 
-#include "library/include/flutter_desktop_embedding/plugin.h"
+#ifdef USE_FLATTENED_INCLUDES
+#include "plugin.h"
+#else
+#include "../plugin.h"
+#endif
 
 namespace flutter_desktop_embedding {
 
@@ -86,4 +96,4 @@ void FlutterWindowLoop(GLFWwindow *flutter_window);
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // WINDOWS_LIBRARY_EMBEDDER_H_
+#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
