@@ -15,12 +15,22 @@
 #ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
 #define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#ifdef __linux__
+// Epoxy must be included before any graphics-related code.
+#include<epoxy / gl.h>
+#endif
+
 #include <GLFW/glfw3.h>
 
+#ifdef USE_FLATTENED_INCLUDES
+#include "plugin.h"
+#else
 #include "../plugin.h"
+#endif
 
 namespace flutter_desktop_embedding {
 
