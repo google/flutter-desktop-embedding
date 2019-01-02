@@ -48,10 +48,10 @@ class PluginHandler : public BinaryMessenger, public PluginRegistrar {
   //
   // If no handler is registered for the message's channel, sends a
   // NotImplemented response to the engine.
-  void HandleMethodCallMessage(const FlutterPlatformMessage *message,
-                               std::function<void(void)> input_block_cb = [] {},
-                               std::function<void(void)> input_unblock_cb =
-                                   [] {});
+  void HandleMethodCallMessage(
+      const FlutterPlatformMessage *message,
+      std::function<void(void)> input_block_cb = [] {},
+      std::function<void(void)> input_unblock_cb = [] {});
 
   // BinaryMessenger implementation:
   void Send(const std::string &channel, const uint8_t *message,
