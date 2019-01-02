@@ -263,6 +263,7 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\glfw\key_event_handler.cc" />
     <ClCompile Include="..\common\glfw\text_input_plugin.cc" />
     <ClCompile Include="..\common\internal\engine_method_result.cc" />
     <ClCompile Include="..\common\internal\json_message_codec.cc" />
