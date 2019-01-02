@@ -205,10 +205,10 @@ static void GLFWClearCanvas(GLFWwindow *window) {
   glfwMakeContextCurrent(nullptr);
 }
 
-// Resolves the address of the specified OpenGL or OpenGL ES 
+// Resolves the address of the specified OpenGL or OpenGL ES
 // core or extension function, if it is supported by the current context.
-static void* GLFWProcResolver(void *user_data, const char *name) {
-  return reinterpret_cast<void*>(glfwGetProcAddress(name));
+static void *GLFWProcResolver(void *user_data, const char *name) {
+  return reinterpret_cast<void *>(glfwGetProcAddress(name));
 }
 
 // Spins up an instance of the Flutter Engine.
