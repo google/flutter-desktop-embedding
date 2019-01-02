@@ -11,16 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_LINUX_EMBEDDER_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_LINUX_EMBEDDER_H_
 
-// Epoxy must be included before any graphics-related code.
-#include <epoxy/gl.h>
-
-#include <GLFW/glfw3.h>
+#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
+#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
 
 #include <memory>
 #include <string>
+#include <vector>
+
+#ifdef __linux__
+// Epoxy must be included before any graphics-related code.
+#include <epoxy/gl.h>
+#endif
+
+#include <GLFW/glfw3.h>
 
 #ifdef USE_FLATTENED_INCLUDES
 #include "plugin.h"
@@ -30,9 +34,19 @@
 
 namespace flutter_desktop_embedding {
 
+// Calls glfwInit()
+//
+// glfwInit() must be called in the same library as glfwCreateWindow()
+bool FlutterInit();
+
+// Calls glfwTerminate()
+//
+// glfwTerminate() must be called in the same library as glfwCreateWindow()
+void FlutterTerminate();
+
 // Creates a GLFW Window running a Flutter Application.
 //
-// glfwInit() must be called prior to this function.
+// FlutterInit() must be called prior to this function.
 //
 // The arguments are to configure the paths when launching the engine. See:
 // https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for
@@ -49,7 +63,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 
 // Creates a GLFW Window running a Flutter Application in snapshot mode.
 //
-// glfwInit() must be called prior to this function.
+// FlutterInit() must be called prior to this function.
 //
 // In snapshot mode the assets directory snapshot is used to run the application
 // instead of the sources.
@@ -76,10 +90,10 @@ bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin);
 // Must be used instead of glfwWindowShouldClose as it cleans up engine state
 // after termination.
 //
-// After this function the user must eventually call glfwTerminate() if doing
+// After this function the user must eventually call FlutterTerminate() if doing
 // cleanup.
 void FlutterWindowLoop(GLFWwindow *flutter_window);
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_LINUX_EMBEDDER_H_
+#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_

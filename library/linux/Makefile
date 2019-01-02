@@ -36,7 +36,7 @@ LDFLAGS= -L$(CURDIR) \
 LIBRARIES=$(FLUTTER_ENGINE_LIB_FILE)
 HEADERS=$(shell find $(PROJECT_ROOT)/library/include/ -type f -name '*.h') \
 	$(FLUTTER_ENGINE_HEADER_DIR)/$(FLUTTER_ENGINE_HEADER)
-SOURCES=$(shell find src/ $(PROJECT_ROOT)/library/common/ -type f -name '*.cc')
+SOURCES=$(shell find $(PROJECT_ROOT)/library/common/ -type f -name '*.cc')
 
 .PHONY: all
 all: $(LIBRARY_OUT)
