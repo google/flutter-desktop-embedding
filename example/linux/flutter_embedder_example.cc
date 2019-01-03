@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
   // args.
   arguments.push_back(argv[0]);
 #ifdef NDEBUG
-  arguments.push_back("--dart-non-checked-mode");
+  arguments.push_back("--disable-dart-asserts");
 #endif
   // Start the engine.
   auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(

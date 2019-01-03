@@ -30,7 +30,7 @@ There are two options:
 1. **Hard-code the port**. In your embedder code, add `--observatory-port=49494`
    (substituting a port of your choice) to the list of arguments passed to the
    engine. If you are using `example/`, or code based on it, look for the
-   line that adds `--dart-non-checked-mode` for an example of adding arguments.
+   line that adds `--disable-dart-asserts` for an example of adding arguments.
    (Be sure not to add the `observatory-port` argument inside the `#if`,
    however.)
 
