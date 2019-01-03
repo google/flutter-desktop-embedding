@@ -337,8 +337,6 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   glfwSetFramebufferSizeCallback(window, GLFWFramebufferSizeCallback);
   GLFWFramebufferSizeCallback(window, width_px, height_px);
 
-  SyncWindowMetrics(window);
-
   GLFWAssignEventCallbacks(window);
   return window;
 }
