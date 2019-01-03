@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
   // args.
   arguments.push_back(argv[0]);
 #ifndef _DEBUG
-  arguments.push_back("--dart-non-checked-mode");
+  arguments.push_back("--disable-dart-asserts");
 #endif
   // Start the engine.
   // TODO: Make paths relative to the executable so it can be run from anywhere.

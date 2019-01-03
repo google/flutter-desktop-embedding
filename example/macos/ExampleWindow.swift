@@ -27,7 +27,7 @@ class ExampleWindow: NSWindow {
     // command line string.
     var arguments = [CommandLine.arguments[0]];
 #if !DEBUG
-    arguments.append("--dart-non-checked-mode");
+    arguments.append("--disable-dart-asserts");
 #endif
     flutterViewController.launchEngine(
       withAssetsPath: assets,
