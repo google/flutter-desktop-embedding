@@ -58,16 +58,12 @@ struct FlutterEmbedderState {
   // TODO: Revisit ownership model once Issue #102 is resolved.
   std::unique_ptr<flutter_desktop_embedding::KeyEventHandler> key_event_handler;
 
-  // window dimensions, in screen coordinates.
-  int width, height = 1;
-  // window framebuffer dimensions, in pixels.
-  int widthPx, heightPx = 1;
-  // primary monitor dimensions, in screen coordinates.
-  int monitorWidth, monitorHeight = 1;
-  // primary monitor dimensions, in screen milimeters.
-  int monitorWidthMm, monitorHeightMm = 1;
-  // ratio of pixels (framebuffer) per screen coordinate (window)
-  double pixelsPerScreenCoordinate = 1.0;
+  // Window framebuffer dimensions, in pixels.
+  int width_px, height_px = 1;
+  // The screen coordinates per inch on the primary monitor. Defaults to a sane value based on pixel_ratio 1.0.
+  double monitor_screen_coordinates_per_inch = 160.0;
+  // The ratio of pixels per screen coordinate for the window.
+  double window_pixels_per_screen_coordinate = 1.0;
 };
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
@@ -81,50 +77,27 @@ static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
 // SyncWindowMetrics uses cached stats to send a window metrics event to
 // the Flutter Engine. It calculates the pixel_ratio based on pixel to screen coordinate
 // ratio and monitor DPI.
-// The Android/Flutter pixel_ratio is based on 160 dpi = 1.0
+// The Flutter pixel_ratio is defined as DPI/dp.
 static void SyncWindowMetrics(GLFWwindow *window) {
   auto state = GetSavedEmbedderState(window);
-  double screenCoordinatesPerInch = state->monitorWidth / (state->monitorWidthMm/25.4);
-  double dpi = screenCoordinatesPerInch * state->pixelsPerScreenCoordinate;
-  double pixel_ratio = dpi / 160.0;
+  double dpi = state->window_pixels_per_screen_coordinate * state->monitor_screen_coordinates_per_inch;
 
   FlutterWindowMetricsEvent event = {};
   event.struct_size = sizeof(event);
-  event.width = state->widthPx;
-  event.height = state->heightPx;
-  event.pixel_ratio = pixel_ratio;
+  event.width = state->width_px;
+  event.height = state->height_px;
+  event.pixel_ratio = dpi / 160.0;
   FlutterEngineSendWindowMetricsEvent(state->engine, &event);
 }
 
-static void UpdateMonitorStats(GLFWwindow *window) {
+static void GLFWFramebufferSizeCallback(GLFWwindow *window, int width_px, int height_px) {
+  int width;
+  glfwGetWindowSize(window, &width, nullptr);
+
   auto state = GetSavedEmbedderState(window);
-
-  auto monitor = glfwGetPrimaryMonitor();
-  int monitorWidthMm, monitorHeightMm;
-  glfwGetMonitorPhysicalSize(monitor, &monitorWidthMm, &monitorHeightMm);
-  state->monitorWidthMm = monitorWidthMm;
-  state->monitorHeightMm = monitorHeightMm;
-
-  auto monitorMode = glfwGetVideoMode(monitor);
-  state->monitorWidth = monitorMode->width;
-  state->monitorHeight = monitorMode->height;
-
-  SyncWindowMetrics(window);
-}
-
-static void GLFWWindowSizeCallback(GLFWwindow *window, int width, int height) {
-  auto state = GetSavedEmbedderState(window);
-  state->width = width;
-  state->height = height;
-  state->pixelsPerScreenCoordinate = state->widthPx / state->width;
-  SyncWindowMetrics(window);
-}
-
-static void GLFWFramebufferSizeCallback(GLFWwindow *window, int widthPx, int heightPx) {
-  auto state = GetSavedEmbedderState(window);
-  state->widthPx = widthPx;
-  state->heightPx = heightPx;
-  state->pixelsPerScreenCoordinate = state->widthPx / state->width;
+  state->width_px = width_px;
+  state->height_px = height_px;
+  state->window_pixels_per_screen_coordinate = state->width_px / width;
   SyncWindowMetrics(window);
 }
 
@@ -137,8 +110,8 @@ static void GLFWCursorPositionCallbackAtPhase(GLFWwindow *window,
   FlutterPointerEvent event = {};
   event.struct_size = sizeof(event);
   event.phase = phase;
-  event.x = x * state->pixelsPerScreenCoordinate;
-  event.y = y * state->pixelsPerScreenCoordinate;
+  event.x = x * state->window_pixels_per_screen_coordinate;
+  event.y = y * state->window_pixels_per_screen_coordinate;
   event.timestamp =
       std::chrono::duration_cast<std::chrono::microseconds>(
           std::chrono::high_resolution_clock::now().time_since_epoch())
@@ -182,18 +155,6 @@ static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
        GetSavedEmbedderState(window)->keyboard_hook_handlers) {
     handler->KeyboardHook(window, key, scancode, action, mods);
   }
-}
-
-// Reports window size changes to the Flutter engine.
-static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
-  FlutterWindowMetricsEvent event = {};
-  event.struct_size = sizeof(event);
-  event.width = width;
-  event.height = height;
-  // TODO: Handle pixel ratio for different DPI monitors.
-  event.pixel_ratio = 1.0;
-  FlutterEngineSendWindowMetricsEvent(GetSavedEmbedderState(window)->engine,
-                                      &event);
 }
 
 // Flushes event queue and then assigns default window callbacks.
@@ -365,17 +326,16 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 
   AddPlugin(window, std::move(input_plugin));
 
-  UpdateMonitorStats(window);
+  auto primary_monitor = glfwGetPrimaryMonitor();
+  auto primar_monitor_mode = glfwGetVideoMode(primary_monitor);
+  int primary_monitor_width_mm;
+  glfwGetMonitorPhysicalSize(primary_monitor, &primary_monitor_width_mm, nullptr);
+  state->monitor_screen_coordinates_per_inch = primar_monitor_mode->width / (primary_monitor_width_mm/25.4);
 
-  int width, height;
-  glfwGetWindowSize(window, &width, &height);
-  glfwSetWindowSizeCallback(window, GLFWWindowSizeCallback);
-  GLFWWindowSizeCallback(window, width, height);
-
-  int widthPx, heightPx;
-  glfwGetFramebufferSize(window, &widthPx, &heightPx);
+  int width_px, height_px;
+  glfwGetFramebufferSize(window, &width_px, &height_px);
   glfwSetFramebufferSizeCallback(window, GLFWFramebufferSizeCallback);
-  GLFWFramebufferSizeCallback(window, widthPx, heightPx);
+  GLFWFramebufferSizeCallback(window, width_px, height_px);
 
   SyncWindowMetrics(window);
 

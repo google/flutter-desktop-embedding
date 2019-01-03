@@ -151,7 +151,7 @@ class _MyHomePage extends StatelessWidget {
       colorPanel.show((color) {
         _AppState.of(context).setPrimaryColor(color);
       // Setting the primary color to a non-opaque color raises an exception.
-      }, showAlpha: false);
+      }, showAlpha: false); 
     }
   }
 
