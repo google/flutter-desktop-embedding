@@ -13,12 +13,13 @@
 // limitations under the License.
 import 'dart:io' show Platform;
 
-import 'package:color_panel/color_panel.dart';
-import 'package:example_flutter/keyboard_test_page.dart';
-import 'package:file_chooser/file_chooser.dart' as file_chooser;
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
+
+import 'package:color_panel/color_panel.dart';
+import 'package:example_flutter/keyboard_test_page.dart';
+import 'package:file_chooser/file_chooser.dart' as file_chooser;
 import 'package:menubar/menubar.dart';
 
 void main() {
@@ -149,7 +150,7 @@ class _MyHomePage extends StatelessWidget {
     if (!colorPanel.showing) {
       colorPanel.show((color) {
         _AppState.of(context).setPrimaryColor(color);
-        // Setting the primary color to a non-opaque color raises an exception.
+      // Setting the primary color to a non-opaque color raises an exception.
       }, showAlpha: false);
     }
   }
