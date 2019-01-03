@@ -72,7 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\library\windows\dependencies\;$(ProjectDir)..\..\library\include\;$(IncludePath)</IncludePath> 
+    <IncludePath>$(ProjectDir)..\..\library\windows\dependencies\;$(ProjectDir)..\..\;$(IncludePath);$(ProjectDir)..\..\library\windows\;$(ProjectDir)..\..\library\include\</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\library\windows\dependencies\GLFW\;$(SolutionDir)bin\$(Platform)\$(Configuration)\GLFW Library\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">

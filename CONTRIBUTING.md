@@ -21,3 +21,19 @@ All submissions, including submissions by project members, require review. We
 use GitHub pull requests for this purpose. Consult
 [GitHub Help](https://help.github.com/articles/about-pull-requests/) for more
 information on using pull requests.
+
+## Project Standards
+
+- C++ code should follow
+  [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
+- Objective-C code should follow
+  [Google's Objective-C style guide](http://google.github.io/styleguide/objcguide.html).
+- For C++ and Objective-C code, please run `clang-format -style=file` on files
+  you have changed if possible. If you don't have `clang-format`, don't worry;
+  a project member can do it prior to submission.
+- Dart code should follow the
+  [Dart style guide](https://www.dartlang.org/guides/language/effective-dart/style)
+  and use `dartfmt`.
+- Build scripts and other tooling should be written it Dart. (Some existing
+  scripts are `bash` or `.bat` scripts; if you need to make non-trivial changes
+  to one of those scripts, please convert it to Dart first if possible.)
