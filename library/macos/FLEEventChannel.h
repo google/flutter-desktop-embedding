@@ -48,7 +48,7 @@ extern NSString const *_Nonnull FLEEndOfEventStream;
  *     successful events.
  * @return A FLEMethodError instance, if setup fails.
  */
-- (FLEMethodError *_Nonnull)onListenWithArguments:(id _Nullable)arguments
+- (nullable FLEMethodError *)onListenWithArguments:(id _Nullable)arguments
                                         eventSink:(FLEEventSink)events;
 
 /**
@@ -64,7 +64,8 @@ extern NSString const *_Nonnull FLEEndOfEventStream;
  * @param arguments Arguments for the stream.
  * @return A FLEMethodError instance, if teardown fails.
  */
-- (FLEMethodError *_Nonnull)onCancelWithArguments:(id _Nullable)arguments;
+- (nullable FLEMethodError *)onCancelWithArguments:(id _Nullable)arguments;
+
 @end
 
 /**
