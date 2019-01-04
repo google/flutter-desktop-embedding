@@ -80,7 +80,7 @@ extern NSString const *_Nonnull FLEEndOfEventStream;
  * interfere with each other's communication.
  *
  * The binary messenger is a facility for sending raw, binary messages to the
- * Flutter side. This protocol is implemented by `FLEViewController`.
+ * Flutter side.
  *
  * The channel uses `FLEMethodCodec` to decode stream setup and
  * teardown requests, and to encode event envelopes.
