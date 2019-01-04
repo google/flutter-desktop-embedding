@@ -21,7 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		00380F9521DF178D00097171 /* ExampleEmbedderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00380F9421DF178D00097171 /* ExampleEmbedderUITests.swift */; };
 		3329005320D2EC9E002E5F16 /* FlutterEmbedderFileChooser.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 3329004F20D2EC7C002E5F16 /* FlutterEmbedderFileChooser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3329009620D84F99002E5F16 /* FlutterEmbedderMenubar.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 3329009320D84F6E002E5F16 /* FlutterEmbedderMenubar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3329FFFF20C9F5D9002E5F16 /* FlutterEmbedderColorPanel.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 3329FFFB20C9F5AC002E5F16 /* FlutterEmbedderColorPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -38,13 +37,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		00380F9721DF178D00097171 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33CC10E52044A3C60003C045 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 33CC10EC2044A3C60003C045;
-			remoteInfo = "Example Embedder";
-		};
 		3329004E20D2EC7C002E5F16 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */;
@@ -128,9 +120,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00380F9221DF178D00097171 /* ExampleEmbedderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleEmbedderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		00380F9421DF178D00097171 /* ExampleEmbedderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleEmbedderUITests.swift; sourceTree = "<group>"; };
-		00380F9621DF178D00097171 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderFileChooser.xcodeproj; path = ../../plugins/file_chooser/macos/FlutterEmbedderFileChooser.xcodeproj; sourceTree = "<group>"; };
 		3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMenubar.xcodeproj; path = ../../plugins/menubar/macos/FlutterEmbedderMenubar.xcodeproj; sourceTree = "<group>"; };
 		3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderColorPanel.xcodeproj; path = ../../plugins/color_panel/macos/FlutterEmbedderColorPanel.xcodeproj; sourceTree = "<group>"; };
@@ -146,13 +135,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		00380F8F21DF178D00097171 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		33CC10EA2044A3C60003C045 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -167,15 +149,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00380F9321DF178D00097171 /* ExampleEmbedderUITests */ = {
-			isa = PBXGroup;
-			children = (
-				00380F9421DF178D00097171 /* ExampleEmbedderUITests.swift */,
-				00380F9621DF178D00097171 /* Info.plist */,
-			);
-			path = ExampleEmbedderUITests;
-			sourceTree = "<group>";
-		};
 		3329004A20D2EC7C002E5F16 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -207,7 +180,6 @@
 				33CC11122044BFA00003C045 /* ExampleWindow.swift */,
 				33CC11162044C3600003C045 /* Example Embedder-Bridging-Header.h */,
 				33CC11242044D66E0003C045 /* Resources */,
-				00380F9321DF178D00097171 /* ExampleEmbedderUITests */,
 				33CC10EE2044A3C60003C045 /* Products */,
 				33CC10FE2044A7620003C045 /* FlutterEmbedderMac.xcodeproj */,
 				3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */,
@@ -220,7 +192,6 @@
 			isa = PBXGroup;
 			children = (
 				33CC10ED2044A3C60003C045 /* Example Embedder.app */,
-				00380F9221DF178D00097171 /* ExampleEmbedderUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -247,24 +218,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00380F9121DF178D00097171 /* ExampleEmbedderUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 00380F9C21DF178D00097171 /* Build configuration list for PBXNativeTarget "ExampleEmbedderUITests" */;
-			buildPhases = (
-				00380F8E21DF178D00097171 /* Sources */,
-				00380F8F21DF178D00097171 /* Frameworks */,
-				00380F9021DF178D00097171 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				00380F9821DF178D00097171 /* PBXTargetDependency */,
-			);
-			name = ExampleEmbedderUITests;
-			productName = ExampleEmbedderUITests;
-			productReference = 00380F9221DF178D00097171 /* ExampleEmbedderUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		33CC10EC2044A3C60003C045 /* Example Embedder */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 33CC10FB2044A3C60003C045 /* Build configuration list for PBXNativeTarget "Example Embedder" */;
@@ -298,11 +251,6 @@
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Google LLC";
 				TargetAttributes = {
-					00380F9121DF178D00097171 = {
-						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Automatic;
-						TestTargetID = 33CC10EC2044A3C60003C045;
-					};
 					33CC10EC2044A3C60003C045 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 0920;
@@ -347,7 +295,6 @@
 			targets = (
 				33CC10EC2044A3C60003C045 /* Example Embedder */,
 				33CC111A2044C6BA0003C045 /* Build Flutter Bundle */,
-				00380F9121DF178D00097171 /* ExampleEmbedderUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -384,13 +331,6 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		00380F9021DF178D00097171 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		33CC10EB2044A3C60003C045 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -420,14 +360,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		00380F8E21DF178D00097171 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				00380F9521DF178D00097171 /* ExampleEmbedderUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		33CC10E92044A3C60003C045 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -440,11 +372,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		00380F9821DF178D00097171 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 33CC10EC2044A3C60003C045 /* Example Embedder */;
-			targetProxy = 00380F9721DF178D00097171 /* PBXContainerItemProxy */;
-		};
 		3329005220D2EC90002E5F16 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = FlutterEmbedderFileChooser;
@@ -484,38 +411,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		00380F9921DF178D00097171 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = ExampleEmbedderUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.ExampleEmbedderUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TEST_TARGET_NAME = "Example Embedder";
-			};
-			name = Debug;
-		};
-		00380F9A21DF178D00097171 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = ExampleEmbedderUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.ExampleEmbedderUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-				TEST_TARGET_NAME = "Example Embedder";
-			};
-			name = Release;
-		};
 		33CC10F92044A3C60003C045 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -682,15 +577,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00380F9C21DF178D00097171 /* Build configuration list for PBXNativeTarget "ExampleEmbedderUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				00380F9921DF178D00097171 /* Debug */,
-				00380F9A21DF178D00097171 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		33CC10E82044A3C60003C045 /* Build configuration list for PBXProject "ExampleEmbedder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
