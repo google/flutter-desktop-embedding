@@ -14,33 +14,33 @@
 
 #import "FLEEventChannel.h"
 
-NSObject const* FLEEndOfEventStream = @"EndOfEventStream";
+NSString const *FLEEndOfEventStream = @"EndOfEventStream";
 
 @implementation FLEEventChannel {
-    NSString* _name;
+    NSString *_name;
     __weak id<FLEBinaryMessenger> _messenger;
     id<FLEMethodCodec> _codec;
 }
 
-+ (instancetype)eventChannelWithName:(nonnull NSString*)name
-                     binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
-                               codec:(nonnull id<FLEMethodCodec>)codec {
-    return [[FLEEventChannel alloc] initWithName:name binaryMessenger:messenger codec:codec];
++ (instancetype)eventChannelWithName:(NSString *)name
+                     binaryMessenger:(id<FLEBinaryMessenger>)messenger
+                               codec:(id<FLEMethodCodec>)codec {
+    return [[[self class] alloc] initWithName:name binaryMessenger:messenger codec:codec];
 }
 
-- (instancetype)initWithName:(nonnull NSString*)name
-             binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
-                       codec:(nonnull id<FLEMethodCodec>)codec {
+- (instancetype)initWithName:(NSString *)name
+             binaryMessenger:(id<FLEBinaryMessenger>)messenger
+                       codec:(id<FLEMethodCodec>)codec {
     self = [super init];
-    NSAssert(self, @"Super init cannot be nil");
-    _name = name;
-    _messenger = messenger;
-    _codec = codec;
-    
+    if (self) {
+        _name = [name copy];
+        _messenger = messenger;
+        _codec = codec;
+    }
     return self;
 }
 
-- (void)setStreamHandler:(NSObject<FLEStreamHandler>*)handler {
+- (void)setStreamHandler:(NSObject<FLEStreamHandler> *)handler {
     if (!handler) {
         [_messenger setMessageHandlerOnChannel:_name binaryMessageHandler:nil];
         return;
@@ -51,7 +51,7 @@ NSObject const* FLEEndOfEventStream = @"EndOfEventStream";
     NSString *channelName = _name;
     
     __block FLEEventSink currentSink = nil;
-    FLEBinaryMessageHandler messageHandler = ^(NSData* message, FLEBinaryReply callback) {
+    FLEBinaryMessageHandler messageHandler = ^(NSData *message, FLEBinaryReply callback) {
         FLEMethodCall* call = [codec decodeMethodCall:message];
         if ([call.methodName isEqual:@"listen"]) {
             if (currentSink) {
@@ -65,11 +65,11 @@ NSObject const* FLEEndOfEventStream = @"EndOfEventStream";
                     [messenger sendOnChannel:channelName message:nil];
                 else if ([event isKindOfClass:[FLEMethodError class]])
                     [messenger sendOnChannel:channelName
-                                      message:[codec encodeErrorEnvelope:(FLEMethodError*)event]];
+                                      message:[codec encodeErrorEnvelope:(FLEMethodError *)event]];
                 else
                     [messenger sendOnChannel:channelName message:[codec encodeSuccessEnvelope:event]];
             };
-            FLEMethodError* error = [handler onListenWithArguments:call.arguments eventSink:currentSink];
+            FLEMethodError *error = [handler onListenWithArguments:call.arguments eventSink:currentSink];
             if (error)
                 callback([codec encodeErrorEnvelope:error]);
             else
@@ -83,7 +83,7 @@ NSObject const* FLEEndOfEventStream = @"EndOfEventStream";
                 return;
             }
             currentSink = nil;
-            FLEMethodError* error = [handler onCancelWithArguments:call.arguments];
+            FLEMethodError *error = [handler onCancelWithArguments:call.arguments];
             if (error)
                 callback([codec encodeErrorEnvelope:error]);
             else
@@ -94,4 +94,5 @@ NSObject const* FLEEndOfEventStream = @"EndOfEventStream";
     };
     [_messenger setMessageHandlerOnChannel:_name binaryMessageHandler:messageHandler];
 }
+
 @end

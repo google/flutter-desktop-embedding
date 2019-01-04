@@ -23,14 +23,17 @@
  * @param event The event.
  */
 typedef void (^FLEEventSink)(id _Nullable event);
+
 /**
  * A constant used with `FLEEventChannel` to indicate end of stream.
  */
-extern NSObject const* FLEEndOfEventStream;
+extern NSString const *_Nonnull FLEEndOfEventStream;
+
 /**
  * A strategy for exposing an event stream to the Flutter side.
  */
 @protocol FLEStreamHandler
+
 /**
  * Sets up an event stream and begin emitting events.
  *
@@ -45,8 +48,9 @@ extern NSObject const* FLEEndOfEventStream;
  *     successful events.
  * @return A FLEMethodError instance, if setup fails.
  */
-- (FLEMethodError* _Nullable)onListenWithArguments:(id _Nullable)arguments
-                                       eventSink:(FLEEventSink)events;
+- (FLEMethodError *_Nonnull)onListenWithArguments:(id _Nullable)arguments
+                                        eventSink:(FLEEventSink)events;
+
 /**
  * Tears down an event stream.
  *
@@ -60,12 +64,14 @@ extern NSObject const* FLEEndOfEventStream;
  * @param arguments Arguments for the stream.
  * @return A FLEMethodError instance, if teardown fails.
  */
-- (FLEMethodError* _Nullable)onCancelWithArguments:(id _Nullable)arguments;
+- (FLEMethodError *_Nonnull)onCancelWithArguments:(id _Nullable)arguments;
 @end
+
 /**
  * A channel for communicating with the Flutter side using event streams.
  */
 @interface FLEEventChannel : NSObject
+
 /**
  * Creates a `FLEEventChannel` with the specified name and binary messenger.
  *
@@ -81,10 +87,12 @@ extern NSObject const* FLEEndOfEventStream;
  * @param name The channel name.
  * @param messenger The binary messenger.
  * @param codec The method codec.
+ * @return A new channel.
  */
-+ (instancetype)eventChannelWithName:(nonnull NSString *)name
-                     binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
-                               codec:(nonnull id<FLEMethodCodec>)codec;
++ (nonnull instancetype)eventChannelWithName:(nonnull NSString *)name
+                             binaryMessenger:(nonnull id<FLEBinaryMessenger>)messenger
+                                       codec:(nonnull id<FLEMethodCodec>)codec;
+
 /**
  * Registers a handler for stream setup requests from the Flutter side.
  *
@@ -94,5 +102,5 @@ extern NSObject const* FLEEndOfEventStream;
  * @param handler The stream handler.
  */
 - (void)setStreamHandler:(nullable id<FLEStreamHandler>)handler;
-@end
 
+@end
