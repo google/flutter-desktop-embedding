@@ -13,4 +13,4 @@
 :: limitations under the License.
 @echo off
 for /f "delims=" %%i in ('%~dp0..\..\..\tools\flutter_location') do set FLUTTER_DIR=%%i
-%FLUTTER_DIR%\bin\cache\dart-sdk\bin\dart %~dp0..\..\..\tools\dart_tools\bin\build_jsoncpp.dart %~dp0..\dependencies\JSON %*
+%FLUTTER_DIR%\bin\cache\dart-sdk\bin\dart %~dp0..\..\..\tools\dart_tools\bin\build_jsoncpp.dart %~dp0..\third_party\jsoncpp %~dp0..\dependencies\JSON %*

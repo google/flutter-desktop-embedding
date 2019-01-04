@@ -60,6 +60,9 @@
     <ClCompile Include="..\common\glfw\key_event_handler.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\internal\plugin_handler.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">

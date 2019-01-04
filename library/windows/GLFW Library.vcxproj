@@ -75,8 +75,8 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)dependencies\json\include;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\makefiles\msvc2017\x64\debug;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)third_party\jsoncpp\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\JSON\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Static Library|x64'">
@@ -95,8 +95,8 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)dependencies\json\include;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\makefiles\msvc2017\x64\release;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)third_party\jsoncpp\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\JSON\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Static Library|x64'">
