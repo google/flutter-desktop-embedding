@@ -109,13 +109,9 @@ published_shared_library("flutter_embedder") {
       engine_files[2],
     ]
 
-    configs += [
-      "//build/win/config:glfw3",
-      "//build/win/config:jsoncpp",
-    ]
-
     public_configs += [
-      "//library/windows:relative_dependency_headers",
+      "//library/windows:relative_glfw_dependencies",
+      "//library/windows:relative_jsoncpp_dependencies",
     ]
   }
 }

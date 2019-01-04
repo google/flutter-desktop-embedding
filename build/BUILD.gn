@@ -24,6 +24,8 @@ config("defaults") {
   if (is_win) {
     cflags = [
       "/EHsc",
+      "/W3",
+      "/Od",
     ]
   }
   include_dirs = [

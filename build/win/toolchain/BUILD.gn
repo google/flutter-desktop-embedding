@@ -13,7 +13,7 @@
 # limitations under the License.
 
 toolchain("msvc") {
-  env_setup = "vcvars64.bat &&"
+  env_setup = "vcvars64.bat 1> nul &&"
 
   tool("cc") {
     pdbfile = "{{target_out_dir}}/{{label_name}}_c.pdb"
