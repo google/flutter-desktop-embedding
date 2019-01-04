@@ -21,7 +21,6 @@ matrix:
       install:
         - build/travis/linux/install_dependencies
         - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
-        - sudo apt-get install -y ninja-build
         - build/travis/linux/install_gn bin
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
