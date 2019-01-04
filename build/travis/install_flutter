@@ -36,5 +36,5 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
   tar xf "${TEMP_LOCATION}" -C "$1"
 else
   curl -o "${TEMP_LOCATION}" "${DOWNLOAD_URI}"
-  unzip "${TEMP_LOCATION}" -d "$1"
+  unzip -q "${TEMP_LOCATION}" -d "$1"
 fi
