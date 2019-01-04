@@ -108,7 +108,7 @@ static void GLFWFramebufferSizeCallback(GLFWwindow *window, int width_px,
   event.struct_size = sizeof(event);
   event.width = width_px;
   event.height = height_px;
-  event.pixel_ratio = dpi / 160.0;
+  event.pixel_ratio = dpi / kDpPerInch;
   FlutterEngineSendWindowMetricsEvent(state->engine, &event);
 }
 
