@@ -58,7 +58,8 @@ struct FlutterEmbedderState {
   // TODO: Revisit ownership model once Issue #102 is resolved.
   std::unique_ptr<flutter_desktop_embedding::KeyEventHandler> key_event_handler;
 
-  // The screen coordinates per inch on the primary monitor. Defaults to a sane value based on pixel_ratio 1.0.
+  // The screen coordinates per inch on the primary monitor. Defaults to a sane
+  // value based on pixel_ratio 1.0.
   double monitor_screen_coordinates_per_inch = 160.0;
   // The ratio of pixels per screen coordinate for the window.
   double window_pixels_per_screen_coordinate = 1.0;
@@ -75,14 +76,16 @@ static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
 // When GLFW calls back to the window with a framebuffer size change, notify
 // FlutterEngine about the new window metrics.
 // The Flutter pixel_ratio is defined as DPI/dp.
-static void GLFWFramebufferSizeCallback(GLFWwindow *window, int width_px, int height_px) {
+static void GLFWFramebufferSizeCallback(GLFWwindow *window, int width_px,
+                                        int height_px) {
   int width;
   glfwGetWindowSize(window, &width, nullptr);
 
   auto state = GetSavedEmbedderState(window);
   state->window_pixels_per_screen_coordinate = width_px / width;
 
-  double dpi = state->window_pixels_per_screen_coordinate * state->monitor_screen_coordinates_per_inch;
+  double dpi = state->window_pixels_per_screen_coordinate *
+               state->monitor_screen_coordinates_per_inch;
 
   FlutterWindowMetricsEvent event = {};
   event.struct_size = sizeof(event);
@@ -327,8 +330,10 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   auto primary_monitor = glfwGetPrimaryMonitor();
   auto primar_monitor_mode = glfwGetVideoMode(primary_monitor);
   int primary_monitor_width_mm;
-  glfwGetMonitorPhysicalSize(primary_monitor, &primary_monitor_width_mm, nullptr);
-  state->monitor_screen_coordinates_per_inch = primar_monitor_mode->width / (primary_monitor_width_mm/25.4);
+  glfwGetMonitorPhysicalSize(primary_monitor, &primary_monitor_width_mm,
+                             nullptr);
+  state->monitor_screen_coordinates_per_inch =
+      primar_monitor_mode->width / (primary_monitor_width_mm / 25.4);
 
   int width_px, height_px;
   glfwGetFramebufferSize(window, &width_px, &height_px);
