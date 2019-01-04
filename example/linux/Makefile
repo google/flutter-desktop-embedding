@@ -37,7 +37,7 @@ ALL_LIBS=$(FLUTTER_EMBEDDER_LIB) $(FLUTTER_ENGINE_LIB) $(PLUGIN_LIBS)
 # Headers
 PLUGIN_DIRS=$(patsubst %,$(PLUGINS_DIR)/%/linux,$(PLUGIN_NAMES))
 LIBRARY_DIRS=$(FLUTTER_EMBEDDER_LIB_DIR) $(PLUGIN_DIRS)
-INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS))
+INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS)) $(PROJECT_ROOT)/library/include
 
 # Tools
 BUILD_ASSETS_BIN=$(TOOLS_DIR)/build_flutter_assets
@@ -85,6 +85,9 @@ endif
 CXX=g++ -std=c++14
 CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp)
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
+ifdef USE_GN
+CPPFLAGS+=-DUSE_FLATTENED_INCLUDES
+endif
 LDFLAGS=-L$(OUT_LIB_DIR) \
 	-lglfw \
 	$(shell pkg-config --libs jsoncpp) \

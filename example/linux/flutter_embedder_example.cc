@@ -21,8 +21,13 @@
 
 #include <color_panel/color_panel_plugin.h>
 #include <file_chooser/file_chooser_plugin.h>
-#include <flutter_desktop_embedding/embedder.h>
 #include <menubar/menubar_plugin.h>
+
+#ifdef USE_FLATTENED_INCLUDES
+#include <flutter_desktop_embedding/embedder.h>
+#else
+#include <flutter_desktop_embedding/glfw/embedder.h>
+#endif
 
 namespace {
 
@@ -48,7 +53,7 @@ std::string GetExecutableDirectory() {
 }  // namespace
 
 int main(int argc, char **argv) {
-  if (!glfwInit()) {
+  if (!flutter_desktop_embedding::FlutterInit()) {
     std::cerr << "Couldn't init GLFW" << std::endl;
   }
 
@@ -67,13 +72,13 @@ int main(int argc, char **argv) {
   // args.
   arguments.push_back(argv[0]);
 #ifdef NDEBUG
-  arguments.push_back("--dart-non-checked-mode");
+  arguments.push_back("--disable-dart-asserts");
 #endif
   // Start the engine.
   auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(
       640, 480, assets_path, icu_data_path, arguments);
   if (window == nullptr) {
-    glfwTerminate();
+    flutter_desktop_embedding::FlutterTerminate();
     return EXIT_FAILURE;
   }
 

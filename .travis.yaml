@@ -1,0 +1,35 @@
+matrix:
+  include:
+    - os: linux
+      languge: cpp
+      before_install:
+        - sudo apt-get update
+      install:
+        - build/travis/linux/install_dependencies
+        - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
+      before_script:
+        - export PATH=$PATH:$TRAVIS_BUILD_DIR/../flutter/bin:$TRAVIS_BUILD_DIR/bin
+      script:
+        - make -C example/linux
+
+    - os: linux
+      languge: cpp
+      before_install:
+        - sudo apt-get update
+      install:
+        - build/travis/linux/install_dependencies
+        - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
+        - sudo apt-get install -y ninja-build
+        - build/travis/linux/install_gn bin
+      before_script:
+        - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
+      script:
+        - make -C example/linux USE_GN=1
+
+    - os: osx
+      language: objective-c
+      xcode_project: example/macos/ExmapleEmbedder.xcodeproj
+      xcode_scheme: ExampleEmbedder
+      install:
+        - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
+

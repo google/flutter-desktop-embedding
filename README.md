@@ -1,11 +1,11 @@
 # Desktop Embedding for Flutter
 
-This purpose of this project is to support building
+The purpose of this project is to support building
 applications that use [Flutter](https://github.com/flutter/flutter)
 on Windows, macOS, and Linux.
 
 It consists of libraries that implement [Flutter's embedding
-API](https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders),
+API](https://github.com/flutter/flutter/wiki/Custom-Flutter-Engine-Embedders),
 handling drawing and mouse/keyboard input, as well as
 optional plugins to access other native platform functionality.
 
@@ -25,7 +25,7 @@ a Flutter tree in the same parent directory as the clone of this project:
 Alternately, you can place a `.flutter_location_config` file in the directory
 containing flutter-desktop-embedding, containing a path to the Flutter tree to
 use, if you prefer not to have the Flutter tree next to
-flutter-desktop-emebbing.
+flutter-desktop-embedding.
 
 ### Repository Structure
 
@@ -82,4 +82,3 @@ speed up the debugging process.
   request, or [write a plugin](plugins/README.md#writing-your-own-plugins)!
 * The Linux and Windows implementations currently use GLFW. This is not going
   to be the final implementation for either platform.
-* Plugins and text input do not yet work on Windows.
