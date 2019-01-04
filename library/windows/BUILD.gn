@@ -23,24 +23,38 @@ action("fetch_glfw") {
   args = [
     rebase_path(glfw_download_dir, root_build_dir),
   ]
+  public_configs = [
+    "//build/win/config:glfw3",
+  ]
+}
+
+config("relative_glfw_dependencies") {
+  include_dirs = [
+    glfw_include_dir,
+  ]
+  lib_dirs = [
+    glfw_download_dir,
+  ]
 }
 
 action("build_jsoncpp") {
   script = "//tools/dart_tools/bin/build_jsoncpp.dart"
-  outputs = jsoncpp_files
+  outputs = [ jsoncpp_files[1] ]
   args = [
     rebase_path(jsoncpp_download_dir, root_build_dir),
+    rebase_path(jsoncpp_lib_dir, root_build_dir),
     "--debug",
+  ]
+  public_configs = [
+    "//build/win/config:jsoncpp",
   ]
 }
 
-config("relative_dependency_headers") {
+config("relative_jsoncpp_dependencies") {
   include_dirs = [
-    glfw_include_dir,
     jsoncpp_include_dir,
   ]
   lib_dirs = [
-    glfw_download_dir,
     jsoncpp_lib_dir,
   ]
 }

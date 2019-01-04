@@ -12,9 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// This script builds jsoncpp using Visual Studio 2017 in a provided directory.
+// An additional directory can be provided which will have to built library
+// copied to it. Optionally using the --debug flag will build in debug mode.
+
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:path/path.dart' as path;
+
+import '../lib/runCommand.dart';
 
 Future<void> main(List<String> arguments) async {
   if (!Platform.isWindows) {
@@ -22,56 +29,37 @@ Future<void> main(List<String> arguments) async {
         'windows.');
   }
 
-  final parser = new ArgParser()
-    ..addFlag('debug', abbr: 'd', negatable: false);
+  final parser = new ArgParser()..addFlag('debug', abbr: 'd', negatable: false);
   final args = parser.parse(arguments);
 
-  final downloadDirectory = arguments[0];
+  if (args.rest.length == 0) {
+    throw new Exception('One argument must be provided, the directory where '
+        'jsoncpp is downloaded.');
+  }
+
+  final downloadDirectory = args.rest[0];
   final debug = args['debug'];
 
-  await Process.run('git', [
-    'init',
-    downloadDirectory,
-  ]);
-
-  await Process.run(
-      'git',
-      [
-        'remote',
-        'add',
-        'origin',
-        'https://github.com/clarkezone/jsoncpp.git',
-      ],
-      workingDirectory: downloadDirectory);
-
-  await Process.run(
-      'git',
-      [
-        'fetch',
-      ],
-      workingDirectory: downloadDirectory);
-
-  await Process.run(
-      'git',
-      [
-        'checkout',
-        '3ae7e8073a425c93329c8577a3c813c206322ca4',
-      ],
-      workingDirectory: downloadDirectory);
-
-  final jsoncppBuildProcess = await Process.run(
-      'vcvars64.bat &&',
+  await runCommand(
+      'vcvars64.bat 1> nul &&',
       [
         'msbuild',
         'lib_json.vcxproj',
         !debug ? '/p:Configuration=Release' : '',
       ],
-      workingDirectory: '$downloadDirectory/makefiles/msvc2017',
-      runInShell: true);
+      workingDirectory: '$downloadDirectory/makefiles/msvc2017');
 
-  if (jsoncppBuildProcess.exitCode != 0) {
-    print(jsoncppBuildProcess.stdout);
-    print(jsoncppBuildProcess.stderr);
-    throw new Exception('jsoncpp Build Failed');
+  if (args.rest.length != 2) {
+    print('Copy directory not provided.');
+    exit(0);
   }
+
+  final outputDirectory =
+      "$downloadDirectory/makefiles/msvc2017/x64/${debug ? "Debug" : "Release"}";
+  final outputLibrary =
+      "$outputDirectory/json_vc71_libmt${debug ? "d" : ""}.lib";
+  final copyDirectory = args.rest[1];
+
+  await File(outputLibrary)
+      .copy(path.join(copyDirectory, path.basename(outputLibrary)));
 }

@@ -18,13 +18,22 @@ Windows also requires the 64 bit compiler, linker and setup scripts to be in
 your path. They are found under:
 
 ```
-Visual Studio Install Path\2017\Version\VC\Auxiliary\Build
+> Visual Studio Install Path\2017\Version\VC\Auxiliary\Build
 ```
 
 e.g.:
 
 ```
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
+> C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
+```
+
+Windows requires jsoncpp to be downloaded to
+`library/windows/third_party/jsoncpp`. Use
+`tools/dart_tools/bin/fetch_jsoncpp.dart` to automatically download `jsoncpp`
+with Visual Studio 2017 support as shown below:
+
+```
+> tools\run_dart_tool.bat tools\dart_tools\bin\fetch_jsoncpp.dart library\windows\third_party\jsoncpp
 ```
 
 ## Building
