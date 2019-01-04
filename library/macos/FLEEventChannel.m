@@ -48,8 +48,17 @@ NSString const *FLEEndOfEventStream = @"EndOfEventStream";
 
     id<FLEMethodCodec> codec = _codec;
     __weak id<FLEBinaryMessenger> messenger =  _messenger;
-    NSString *channelName = _name;
-    
+    NSString *name = _name;
+    FLEEventSink eventSink = ^(id event) {
+        if (event == FLEEndOfEventStream)
+            [messenger sendOnChannel:name message:nil];
+        else if ([event isKindOfClass:[FLEMethodError class]])
+            [messenger sendOnChannel:name
+                             message:[codec encodeErrorEnvelope:(FLEMethodError *)event]];
+        else
+            [messenger sendOnChannel:name message:[codec encodeSuccessEnvelope:event]];
+    };
+
     __block FLEEventSink currentSink = nil;
     FLEBinaryMessageHandler messageHandler = ^(NSData *message, FLEBinaryReply callback) {
         FLEMethodCall* call = [codec decodeMethodCall:message];
@@ -60,15 +69,7 @@ NSString const *FLEEndOfEventStream = @"EndOfEventStream";
                     NSLog(@"Failed to cancel existing stream: %@. %@ (%@)", error.code, error.message,
                           error.details);
             }
-            currentSink = ^(id event) {
-                if (event == FLEEndOfEventStream)
-                    [messenger sendOnChannel:channelName message:nil];
-                else if ([event isKindOfClass:[FLEMethodError class]])
-                    [messenger sendOnChannel:channelName
-                                      message:[codec encodeErrorEnvelope:(FLEMethodError *)event]];
-                else
-                    [messenger sendOnChannel:channelName message:[codec encodeSuccessEnvelope:event]];
-            };
+            currentSink = eventSink;
             FLEMethodError *error = [handler onListenWithArguments:call.arguments eventSink:currentSink];
             if (error)
                 callback([codec encodeErrorEnvelope:error]);
