@@ -57,6 +57,11 @@ struct FlutterEmbedderState {
   // Handles raw key interactions from GLFW.
   // TODO: Revisit ownership model once Issue #102 is resolved.
   std::unique_ptr<flutter_desktop_embedding::KeyEventHandler> key_event_handler;
+
+  // The screen coordinates per inch on the primary monitor. Defaults to a sane value based on pixel_ratio 1.0.
+  double monitor_screen_coordinates_per_inch = 160.0;
+  // The ratio of pixels per screen coordinate for the window.
+  double window_pixels_per_screen_coordinate = 1.0;
 };
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
@@ -67,41 +72,61 @@ static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
       glfwGetWindowUserPointer(window));
 }
 
+// When GLFW calls back to the window with a framebuffer size change, notify
+// FlutterEngine about the new window metrics.
+// The Flutter pixel_ratio is defined as DPI/dp.
+static void GLFWFramebufferSizeCallback(GLFWwindow *window, int width_px, int height_px) {
+  int width;
+  glfwGetWindowSize(window, &width, nullptr);
+
+  auto state = GetSavedEmbedderState(window);
+  state->window_pixels_per_screen_coordinate = width_px / width;
+
+  double dpi = state->window_pixels_per_screen_coordinate * state->monitor_screen_coordinates_per_inch;
+
+  FlutterWindowMetricsEvent event = {};
+  event.struct_size = sizeof(event);
+  event.width = width_px;
+  event.height = height_px;
+  event.pixel_ratio = dpi / 160.0;
+  FlutterEngineSendWindowMetricsEvent(state->engine, &event);
+}
+
 // When GLFW calls back to the window with a cursor position move, forwards to
 // FlutterEngine as a pointer event with appropriate phase.
-static void GLFWcursorPositionCallbackAtPhase(GLFWwindow *window,
+static void GLFWCursorPositionCallbackAtPhase(GLFWwindow *window,
                                               FlutterPointerPhase phase,
                                               double x, double y) {
+  auto state = GetSavedEmbedderState(window);
   FlutterPointerEvent event = {};
   event.struct_size = sizeof(event);
   event.phase = phase;
-  event.x = x;
-  event.y = y;
+  event.x = x * state->window_pixels_per_screen_coordinate;
+  event.y = y * state->window_pixels_per_screen_coordinate;
   event.timestamp =
       std::chrono::duration_cast<std::chrono::microseconds>(
           std::chrono::high_resolution_clock::now().time_since_epoch())
           .count();
-  FlutterEngineSendPointerEvent(GetSavedEmbedderState(window)->engine, &event,
-                                1);
+  FlutterEngineSendPointerEvent(state->engine, &event, 1);
 }
 
 // Reports cursor move to the Flutter engine.
-static void GLFWcursorPositionCallback(GLFWwindow *window, double x, double y) {
-  GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kMove, x, y);
+static void GLFWCursorPositionCallback(GLFWwindow *window, double x, double y) {
+  GLFWCursorPositionCallbackAtPhase(window, FlutterPointerPhase::kMove, x, y);
 }
 
 // Reports mouse button press to the Flutter engine.
-static void GLFWmouseButtonCallback(GLFWwindow *window, int key, int action,
+static void GLFWMouseButtonCallback(GLFWwindow *window, int key, int action,
                                     int mods) {
   double x, y;
   if (key == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
     glfwGetCursorPos(window, &x, &y);
-    GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kDown, x, y);
-    glfwSetCursorPosCallback(window, GLFWcursorPositionCallback);
+    GLFWCursorPositionCallbackAtPhase(window, FlutterPointerPhase::kDown, x, y);
+    glfwSetCursorPosCallback(window, GLFWCursorPositionCallback);
   }
   if (key == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
     glfwGetCursorPos(window, &x, &y);
-    GLFWcursorPositionCallbackAtPhase(window, FlutterPointerPhase::kUp, x, y);
+    GLFWCursorPositionCallbackAtPhase(window, FlutterPointerPhase::kUp, x, y);
     glfwSetCursorPosCallback(window, nullptr);
   }
 }
@@ -123,24 +148,12 @@ static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
   }
 }
 
-// Reports window size changes to the Flutter engine.
-static void GLFWwindowSizeCallback(GLFWwindow *window, int width, int height) {
-  FlutterWindowMetricsEvent event = {};
-  event.struct_size = sizeof(event);
-  event.width = width;
-  event.height = height;
-  // TODO: Handle pixel ratio for different DPI monitors.
-  event.pixel_ratio = 1.0;
-  FlutterEngineSendWindowMetricsEvent(GetSavedEmbedderState(window)->engine,
-                                      &event);
-}
-
 // Flushes event queue and then assigns default window callbacks.
 static void GLFWAssignEventCallbacks(GLFWwindow *window) {
   glfwPollEvents();
   glfwSetKeyCallback(window, GLFWKeyCallback);
   glfwSetCharCallback(window, GLFWCharCallback);
-  glfwSetMouseButtonCallback(window, GLFWmouseButtonCallback);
+  glfwSetMouseButtonCallback(window, GLFWMouseButtonCallback);
 }
 
 // Clears default window events.
@@ -311,10 +324,17 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 
   AddPlugin(window, std::move(input_plugin));
 
-  int width, height;
-  glfwGetWindowSize(window, &width, &height);
-  GLFWwindowSizeCallback(window, width, height);
-  glfwSetWindowSizeCallback(window, GLFWwindowSizeCallback);
+  auto primary_monitor = glfwGetPrimaryMonitor();
+  auto primar_monitor_mode = glfwGetVideoMode(primary_monitor);
+  int primary_monitor_width_mm;
+  glfwGetMonitorPhysicalSize(primary_monitor, &primary_monitor_width_mm, nullptr);
+  state->monitor_screen_coordinates_per_inch = primar_monitor_mode->width / (primary_monitor_width_mm/25.4);
+
+  int width_px, height_px;
+  glfwGetFramebufferSize(window, &width_px, &height_px);
+  glfwSetFramebufferSizeCallback(window, GLFWFramebufferSizeCallback);
+  GLFWFramebufferSizeCallback(window, width_px, height_px);
+
   GLFWAssignEventCallbacks(window);
   return window;
 }
