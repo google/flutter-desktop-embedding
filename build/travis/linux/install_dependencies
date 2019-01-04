@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 
+#
 # Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-readonly base_dir="$(dirname "$0")"
-readonly flutter_dir="$("$base_dir/flutter_location")"
-readonly flutter_bin_dir="$flutter_dir/bin"
-readonly dart_bin_dir="$flutter_bin_dir/cache/dart-sdk/bin"
-# Ensure that the Dart SDK has been downloaded.
-if [[ ! -e $dart_bin_dir ]]; then
-  "$flutter_bin_dir/flutter" precache
-fi
-exec "$dart_bin_dir/dart" "$base_dir/dart_tools/bin/update_flutter_engine.dart" "$@"
+
+set -e
+
+sudo apt-get install -y libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
+  libx11-dev pkg-config
