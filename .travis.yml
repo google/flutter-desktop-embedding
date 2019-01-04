@@ -33,4 +33,10 @@ matrix:
       xcode_scheme: ExampleEmbedder
       install:
         - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
+      # Override the build command to remove 'test'. The example embedder
+      # doesn't have any unit tests, and while a UI test to ensure that it
+      # launches would be useful, that's currently broken by:
+      # https://travis-ci.community/t/issue-cant-run-macos-ui-tests-with-xcode10-1-image/1445
+      script:
+        - set -o pipefail && xcodebuild -project $TRAVIS_XCODE_PROJECT -scheme $TRAVIS_XCODE_SCHEME build | xcpretty
 
