@@ -1,7 +1,7 @@
 matrix:
   include:
     - os: linux
-      languge: cpp
+      language: cpp
       before_install:
         - sudo apt-get update
       install:
@@ -13,7 +13,7 @@ matrix:
         - make -C example/linux
 
     - os: linux
-      languge: cpp
+      language: cpp
       before_install:
         - sudo apt-get update
       install:
