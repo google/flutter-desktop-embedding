@@ -1,6 +1,7 @@
 matrix:
   include:
     - os: linux
+      dist: xenial
       language: cpp
       before_install:
         - sudo apt-get update
@@ -13,6 +14,7 @@ matrix:
         - make -C example/linux
 
     - os: linux
+      dist: xenial
       language: cpp
       before_install:
         - sudo apt-get update
