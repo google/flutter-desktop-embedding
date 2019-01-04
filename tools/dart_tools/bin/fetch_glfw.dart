@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// This script downloads a prebuilt glfw library into a provided directory.
+
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
@@ -19,6 +21,11 @@ import 'package:archive/archive.dart';
 
 const String glfwArchiveUrlString =
     'http://github.com/glfw/glfw/releases/download/3.2.1/glfw-3.2.1.bin.WIN64.zip';
+
+const List<String> requiredFiles = [
+  'glfw-3.2.1.bin.WIN64/include/GLFW/glfw3.h',
+  'glfw-3.2.1.bin.WIN64/lib-vc2015/glfw3.lib',
+];
 
 Future<void> main(List<String> arguments) async {
   if (!Platform.isWindows) {
@@ -33,20 +40,33 @@ Future<void> main(List<String> arguments) async {
 
   final outputDirectory = arguments[0];
 
-  const Map<String, String> requiredFiles = {
-    'glfw-3.2.1.bin.WIN64/include/GLFW/glfw3.h': 'glfw3.h',
-    'glfw-3.2.1.bin.WIN64/lib-vc2015/glfw3.lib': 'glfw3.lib',
-  };
+  if (await downloadExists(outputDirectory)) {
+    print('GLFW files already exist.');
+    exit(0);
+  }
 
+  final archiveData = await downloadLibrary();
+
+  await new Directory(outputDirectory).create(recursive: true);
+
+  await extractRequiredFiles(archiveData, outputDirectory);
+}
+
+Future<bool> downloadExists(String outputDirectory) async {
   int existingFiles = 0;
-  for (final file in requiredFiles.values) {
-    if (await File("$outputDirectory/$file").exists()) {
+  for (final file in requiredFiles) {
+    if (await File("$outputDirectory/${path.basename(file)}").exists()) {
       existingFiles++;
     }
   }
 
-  if (existingFiles == requiredFiles.length) exit(0);
+  if (existingFiles == requiredFiles.length) {
+    return true;
+  }
+  return false;
+}
 
+Future<List<int>> downloadLibrary() async {
   final archiveUri = Uri.parse(glfwArchiveUrlString);
 
   final httpClient = new HttpClient();
@@ -57,17 +77,19 @@ Future<void> main(List<String> arguments) async {
     archiveData.addAll(data);
   }
   httpClient.close();
+  return archiveData;
+}
 
-  await new Directory(outputDirectory).create(recursive: true);
-
+Future<void> extractRequiredFiles(
+    List<int> archiveData, String outputDirectory) async {
   final archive = new ZipDecoder().decodeBytes(archiveData);
   for (final file in archive) {
-    if (!requiredFiles.containsKey(file.name)) {
+    if (!requiredFiles.contains(file.name)) {
       continue;
     }
 
     final extractedFile =
-        new File(path.join(outputDirectory, requiredFiles[file.name]));
+        new File(path.join(outputDirectory, path.basename(file.name)));
     extractedFile.writeAsBytes(file.content);
   }
 }

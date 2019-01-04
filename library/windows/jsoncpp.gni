@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-jsoncpp_download_dir = "$root_gen_dir/json"
+jsoncpp_download_dir = rebase_path("third_party/jsoncpp")
 jsoncpp_include_dir = "$jsoncpp_download_dir/include"
-jsoncpp_lib_dir = "$jsoncpp_download_dir/makefiles/msvc2017/x64/Debug"
+jsoncpp_lib_dir = "$root_gen_dir/JSON"
 jsoncpp_lib_name = "json_vc71_libmtd.lib"
 
 jsoncpp_files = [
