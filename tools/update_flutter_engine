@@ -21,4 +21,4 @@ readonly dart_bin_dir="$flutter_bin_dir/cache/dart-sdk/bin"
 if [[ ! -e $dart_bin_dir ]]; then
   "$flutter_bin_dir/flutter" precache
 fi
-exec "$dart_bin_dir/dart" "$base_dir/dart_tools/bin/update_flutter_engine.dart" $@
+exec "$dart_bin_dir/dart" "$base_dir/dart_tools/bin/update_flutter_engine.dart" "$@"
