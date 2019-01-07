@@ -68,12 +68,14 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>_WINDLL;FLUTTER_DESKTOP_EMBEDDING_IMPL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies);json_vc71_libmtd.lib</AdditionalDependencies>
     </Link>
     <Link>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
@@ -109,12 +111,14 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>_WINDLL;FLUTTER_DESKTOP_EMBEDDING_IMPL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies);json_vc71_libmt.lib</AdditionalDependencies>
-      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
@@ -153,9 +157,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\flutter_desktop_embedding\windows\embedder.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="exports.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
