@@ -151,6 +151,7 @@ void FileChooserPlugin::RegisterWithRegistrar(
           &flutter_desktop_embedding::JsonMethodCodec::GetInstance());
   auto *channel_pointer = channel.get();
 
+  // Uses new instead of make_unique due to private constructor.
   std::unique_ptr<FileChooserPlugin> plugin(
       new FileChooserPlugin(std::move(channel)));
 

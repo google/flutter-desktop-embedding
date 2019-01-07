@@ -26,7 +26,7 @@ namespace flutter_desktop_embedding {
 
 namespace internal {
 // Manages the one-time sending of response data. This is an internal helper
-// class for EngineMethodResult, separated out since the implmentation doesn't
+// class for EngineMethodResult, separated out since the implementation doesn't
 // vary based on the template type.
 class ReplyManager {
  public:

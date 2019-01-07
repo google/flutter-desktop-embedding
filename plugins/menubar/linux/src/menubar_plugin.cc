@@ -34,6 +34,7 @@ void MenubarPlugin::RegisterWithRegistrar(
           &flutter_desktop_embedding::JsonMethodCodec::GetInstance());
   auto *channel_pointer = channel.get();
 
+  // Uses new instead of make_unique due to private constructor.
   std::unique_ptr<MenubarPlugin> plugin(new MenubarPlugin(std::move(channel)));
 
   channel_pointer->SetMethodCallHandler(
