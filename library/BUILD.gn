@@ -47,6 +47,7 @@ published_shared_library("flutter_embedder") {
     public += [
       "include/flutter_desktop_embedding/binary_messenger.h",
       "include/flutter_desktop_embedding/engine_method_result.h",
+      "include/flutter_desktop_embedding/fde_export.h",
       "include/flutter_desktop_embedding/json_method_codec.h",
       "include/flutter_desktop_embedding/method_call.h",
       "include/flutter_desktop_embedding/method_channel.h",
@@ -58,6 +59,10 @@ published_shared_library("flutter_embedder") {
 
   deps = [
     ":fetch_flutter_engine",
+  ]
+
+  defines = [
+    "FLUTTER_DESKTOP_EMBEDDING_IMPL",
   ]
 
   public_header_subdir = "flutter_desktop_embedding"

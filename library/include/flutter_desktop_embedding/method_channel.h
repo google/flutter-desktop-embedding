@@ -19,6 +19,7 @@
 
 #include "binary_messenger.h"
 #include "engine_method_result.h"
+#include "fde_export.h"
 #include "method_call.h"
 #include "method_codec.h"
 #include "method_result.h"
@@ -36,7 +37,7 @@ using MethodCallHandler = std::function<void(
 // A channel for communicating with the Flutter engine using invocation of
 // asynchronous methods.
 template <typename T>
-class MethodChannel {
+class FDE_EXPORT MethodChannel {
  public:
   // Creates an instance that sends and receives method calls on the channel
   // named |name|, encoded with |codec| and dispatched via |messenger|.

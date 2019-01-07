@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "fde_export.h"
 #include "method_call.h"
 
 namespace flutter_desktop_embedding {
@@ -25,7 +26,7 @@ namespace flutter_desktop_embedding {
 // Translates between a binary message and higher-level method call and
 // response/error objects.
 template <typename T>
-class MethodCodec {
+class FDE_EXPORT MethodCodec {
  public:
   MethodCodec() = default;
   virtual ~MethodCodec() = default;

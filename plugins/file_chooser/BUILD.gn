@@ -30,7 +30,10 @@ published_shared_library("file_chooser") {
     ]
   }
 
-  defines = ["USE_FLATTENED_INCLUDES"]
+  defines = [
+    "FILE_CHOOSER_PLUGIN_IMPL",
+    "USE_FLATTENED_INCLUDES",
+  ]
 
   deps = [
     "//library:flutter_embedder",

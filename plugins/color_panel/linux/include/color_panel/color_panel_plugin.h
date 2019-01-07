@@ -21,10 +21,17 @@
 #include <flutter_desktop_embedding/method_channel.h>
 #include <flutter_desktop_embedding/plugin_registrar.h>
 
+#ifdef COLOR_PANEL_PLUGIN_IMPL
+#define COLOR_PANEL_PLUGIN_EXPORT __attribute__((visibility("default")))
+#else
+#define COLOR_PANEL_PLUGIN_EXPORT
+#endif
+
 namespace plugins_color_panel {
 
 // A plugin for communicating with a native color picker panel.
-class ColorPanelPlugin : public flutter_desktop_embedding::Plugin {
+class COLOR_PANEL_PLUGIN_EXPORT ColorPanelPlugin
+    : public flutter_desktop_embedding::Plugin {
  public:
   static void RegisterWithRegistrar(
       flutter_desktop_embedding::PluginRegistrar *registrar);

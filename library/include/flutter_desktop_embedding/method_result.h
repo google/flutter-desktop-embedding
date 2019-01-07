@@ -16,12 +16,14 @@
 
 #include <string>
 
+#include "fde_export.h"
+
 namespace flutter_desktop_embedding {
 
 // Encapsulates a result sent back to the Flutter engine in response to a
 // MethodCall. Only one method should be called on any given instance.
 template <typename T>
-class MethodResult {
+class FDE_EXPORT MethodResult {
  public:
   MethodResult() = default;
   virtual ~MethodResult() = default;
