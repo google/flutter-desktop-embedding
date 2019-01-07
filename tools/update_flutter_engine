@@ -13,5 +13,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# Runs update_flutter_engine.dart, using the output of flutter_location as
+# --flutter_root
+
 readonly base_dir="$(dirname "$0")"
-exec "${base_dir}/run_dart_tool" update_flutter_engine "$@"
+readonly flutter_dir="$("${base_dir}/flutter_location")"
+exec "${base_dir}/run_dart_tool" update_flutter_engine \
+	--flutter_root="${flutter_dir}" "$@"

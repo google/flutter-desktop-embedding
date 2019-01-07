@@ -11,6 +11,9 @@
 :: WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
+
+:: Runs update_flutter_engine.dart, using the output of flutter_location.bat as
+:: --flutter_root
 @echo off
 
 for /f "delims=" %%i in ('%~dp0flutter_location') do set FLUTTER_DIR=%%i
