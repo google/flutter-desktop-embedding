@@ -30,6 +30,6 @@ readonly flutter_binary="$flutter_dir/bin/flutter"
 #readonly build_type=host_debug_unopt
 #readonly extra_flags=(--local-engine-src-path $engine_src_path --local-engine=$build_type)
 
-cd $1
+cd "$1"
 echo Running "$flutter_binary" ${extra_flags[*]} build bundle
 exec "$flutter_binary" ${extra_flags[*]} build bundle
