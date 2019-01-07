@@ -40,12 +40,12 @@ typedef ColorPanelCallback = void Function(Color color);
 /// This class is a singleton, since the OS may not allow multiple color panels
 /// simultaneously.
 class ColorPanel {
-  ColorPanelCallback _callback;
-
   /// Private constructor.
   ColorPanel._() {
     _platformChannel.setMethodCallHandler(_wrappedColorPanelCallback);
   }
+
+  ColorPanelCallback _callback;
 
   /// The static instance of the panel.
   static ColorPanel instance = new ColorPanel._();

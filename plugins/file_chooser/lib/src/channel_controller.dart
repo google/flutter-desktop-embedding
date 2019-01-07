@@ -37,15 +37,6 @@ enum FileChooserType {
 
 /// A set of configuration options for a file chooser.
 class FileChooserConfigurationOptions {
-  // See channel_constants.h for documentation; these correspond exactly to
-  // the configuration parameters defined in the channel protocol.
-  final String initialDirectory; // ignore: public_member_api_docs
-  final String initialFileName; // ignore: public_member_api_docs
-  final List<String> allowedFileTypes; // ignore: public_member_api_docs
-  final bool allowsMultipleSelection; // ignore: public_member_api_docs
-  final bool canSelectDirectories; // ignore: public_member_api_docs
-  final String confirmButtonText; // ignore: public_member_api_docs
-
   /// Creates a new configuration options object with the given settings.
   const FileChooserConfigurationOptions(
       {this.initialDirectory,
@@ -54,6 +45,15 @@ class FileChooserConfigurationOptions {
       this.allowsMultipleSelection,
       this.canSelectDirectories,
       this.confirmButtonText});
+
+  // See channel_constants.h for documentation; these correspond exactly to
+  // the configuration parameters defined in the channel protocol.
+  final String initialDirectory; // ignore: public_member_api_docs
+  final String initialFileName; // ignore: public_member_api_docs
+  final List<String> allowedFileTypes; // ignore: public_member_api_docs
+  final bool allowsMultipleSelection; // ignore: public_member_api_docs
+  final bool canSelectDirectories; // ignore: public_member_api_docs
+  final String confirmButtonText; // ignore: public_member_api_docs
 
   /// Returns the configuration as a map that can be passed as the
   /// arguments to invokeMethod for [_kShowOpenPanelMethod] or
@@ -87,10 +87,10 @@ class FileChooserConfigurationOptions {
 
 /// A singleton object that controls file-choosing interactions with macOS.
 class FileChooserChannelController {
+  FileChooserChannelController._();
+
   /// The platform channel used to manage native file chooser affordances.
   final _channel = new MethodChannel(_kChannelName, new JSONMethodCodec());
-
-  FileChooserChannelController._();
 
   /// A reference to the singleton instance of the class.
   static final FileChooserChannelController instance =
