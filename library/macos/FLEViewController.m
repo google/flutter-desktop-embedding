@@ -166,7 +166,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   // A mapping of channel names to the registered handlers for those channels.
   NSMutableDictionary<NSString *, FLEBinaryMessageHandler> *_messageHandlers;
 
-  // The plugin used to handle text input. This is not an FLEPlugin, so much be owned separately.
+  // The plugin used to handle text input. This is not an FLEPlugin, so must be owned separately.
   FLETextInputPlugin *_textInputPlugin;
 
   // A message channel for passing key events to the Flutter engine. This should be replaced with
