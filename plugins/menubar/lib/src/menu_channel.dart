@@ -30,6 +30,11 @@ const String _kDividerKey = 'isDivider';
 /// A singleton object that handles the interaction with the menu bar platform
 /// channel.
 class MenuChannel {
+  /// Private constructor.
+  MenuChannel._() {
+    _platformChannel.setMethodCallHandler(_callbackHandler);
+  }
+
   final MethodChannel _platformChannel =
       const MethodChannel(_kMenuChannelName, const JSONMethodCodec());
 
@@ -46,11 +51,6 @@ class MenuChannel {
   /// after a new call to setMenu, so that clients don't received unexpected
   /// stale callbacks.
   bool _updateInProgress;
-
-  /// Private constructor.
-  MenuChannel._() {
-    _platformChannel.setMethodCallHandler(_callbackHandler);
-  }
 
   /// The static instance of the menu channel.
   static final MenuChannel instance = new MenuChannel._();
