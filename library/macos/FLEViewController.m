@@ -16,7 +16,9 @@
 #import "FLEViewController+Internal.h"
 
 #import <FlutterEmbedder/FlutterEmbedder.h>
-#import "FLEKeyEventPlugin.h"
+
+#import "FLEBasicMessageChannel.h"
+#import "FLEJSONMessageCodec.h"
 #import "FLEReshapeListener.h"
 #import "FLETextInputPlugin.h"
 #import "FLEView.h"
@@ -34,12 +36,7 @@ static const int kDefaultWindowFramebuffer = 0;
 /**
  * Private interface declaration for FLEViewController.
  */
-@interface FLEViewController () {
-  NSOpenGLContext *_resourceContext;
-
-  // A mapping of channel names to the registered handlers for those channels.
-  NSMutableDictionary<NSString *, FLEBinaryMessageHandler> *_messageHandlers;
-}
+@interface FLEViewController ()
 
 /**
  * A list of additional responders to keyboard events. Keybord events are forwarded to all of them.
@@ -91,6 +88,11 @@ static const int kDefaultWindowFramebuffer = 0;
  * Converts |event| to a FlutterPointerEvent with the given phase, and sends it to the engine.
  */
 - (void)dispatchMouseEvent:(nonnull NSEvent *)event phase:(FlutterPointerPhase)phase;
+
+/**
+ * Converts |event| to a key event channel message, and sends it to the engine.
+ */
+- (void)dispatchKeyEvent:(NSEvent *)event ofType:(NSString *)type;
 
 @end
 
@@ -157,6 +159,19 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 
 @implementation FLEViewController {
   FlutterEngine _engine;
+
+  // The additional context provided to the Flutter engine for resource loading.
+  NSOpenGLContext *_resourceContext;
+
+  // A mapping of channel names to the registered handlers for those channels.
+  NSMutableDictionary<NSString *, FLEBinaryMessageHandler> *_messageHandlers;
+
+  // The plugin used to handle text input. This is not an FLEPlugin, so must be owned separately.
+  FLETextInputPlugin *_textInputPlugin;
+
+  // A message channel for passing key events to the Flutter engine. This should be replaced with
+  // an embedding API; see Issue #47.
+  FLEBasicMessageChannel *_keyEventChannel;
 }
 
 @dynamic view;
@@ -219,53 +234,11 @@ static void CommonInit(FLEViewController *controller) {
                              commandLineArguments:arguments];
 }
 
-- (BOOL)addPlugin:(id<FLEPlugin>)plugin {
-  NSString *channelName = plugin.channel;
-  if (_messageHandlers[channelName] != nil) {
-    NSLog(@"Warning: channel %@ already has an associated plugin", channelName);
-    return NO;
-  }
-
-  plugin.controller = self;
-  // See the note on the |codec| property of FLEPlugin for the reason this defaults to JSON.
-  id<FLEMethodCodec> codec = [FLEJSONMethodCodec sharedInstance];
-  if ([plugin respondsToSelector:@selector(codec)]) {
-    codec = plugin.codec;
-  }
-
-  // TODO: Move the channel into the plugin implementations, matching Flutter's iOS plugin
-  // structure. This is is a temporary shim to add FLEMethodChannel without coupling it to the
-  // breaking API change.
-  FLEMethodChannel *channel = [FLEMethodChannel methodChannelWithName:channelName
-                                                      binaryMessenger:self
-                                                                codec:codec];
-  // This will end up calling back to setMessageHandlerOnChannel:binaryMessageHandler: below, which
-  // retains the handler, so the strong reference to |plugin| here will keep the plugin alive.
-  [channel setMethodCallHandler:^(FLEMethodCall *call, FLEMethodResult result) {
-    [plugin handleMethodCall:call result:result];
-  }];
-
-  return YES;
-}
-
-- (void)invokeMethod:(NSString *)method
-           arguments:(id)arguments
-           onChannel:(NSString *)channelName
-           withCodec:(id<FLEMethodCodec>)codec {
-  // TODO: Move the channel into the plugin implementations, matching Flutter's iOS plugin
-  // structure. This is is a temporary shim to add FLEMethodChannel without coupling it to the
-  // breaking API change.
-  FLEMethodChannel *channel = [FLEMethodChannel methodChannelWithName:channelName
-                                                      binaryMessenger:self
-                                                                codec:codec];
-  [channel invokeMethod:method arguments:arguments];
-}
-
-- (void)invokeMethod:(NSString *)method arguments:(id)arguments onChannel:(NSString *)channel {
-  [self invokeMethod:method
-           arguments:arguments
-           onChannel:channel
-           withCodec:[FLEJSONMethodCodec sharedInstance]];
+- (id<FLEPluginRegistrar>)registrarForPlugin:(NSString *)pluginName {
+  // Currently, the view controller acts as the registrar for all plugins, so the
+  // name is ignored. It is part of the API to reduce churn in the future when
+  // aligning more closely with the Flutter registrar system.
+  return self;
 }
 
 #pragma mark - Framework-internal methods
@@ -278,31 +251,14 @@ static void CommonInit(FLEViewController *controller) {
   [self.additionalKeyResponders removeObject:responder];
 }
 
-- (void)dispatchMessage:(NSDictionary *)message onChannel:(NSString *)channel {
-  if (![NSJSONSerialization isValidJSONObject:message]) {
-    NSLog(@"Error: Unable to construct a valid JSON object from %@", message);
-    return;
-  }
-
-  NSError *error = nil;
-  NSData *messageData = [NSJSONSerialization dataWithJSONObject:message options:0 error:&error];
-  if (!messageData) {
-    NSLog(@"Error: Failed to create JSON message data for %@: %@", message, error.debugDescription);
-    return;
-  }
-
-  [self sendOnChannel:channel message:messageData];
-}
-
 #pragma mark - Private methods
 
 - (void)addInternalPlugins {
-  FLETextInputPlugin *textPlugin = [[FLETextInputPlugin alloc] init];
-  [self addPlugin:textPlugin];
-
-  FLEKeyEventPlugin *keyEventPlugin = [[FLEKeyEventPlugin alloc] init];
-  [self addPlugin:keyEventPlugin];
-  [_additionalKeyResponders addObject:keyEventPlugin];
+  _textInputPlugin = [[FLETextInputPlugin alloc] initWithViewController:self];
+  _keyEventChannel =
+      [FLEBasicMessageChannel messageChannelWithName:@"flutter/keyevent"
+                                     binaryMessenger:self
+                                               codec:[FLEJSONMessageCodec sharedInstance]];
 }
 
 - (BOOL)launchEngineInternalWithAssetsPath:(NSURL *)assets
@@ -433,6 +389,14 @@ static void CommonInit(FLEViewController *controller) {
   FlutterEngineSendPointerEvent(_engine, &flutterEvent, 1);
 }
 
+- (void)dispatchKeyEvent:(NSEvent *)event ofType:(NSString *)type {
+  [_keyEventChannel sendMessage:@{
+    @"keymap" : @"android",
+    @"type" : type,
+    @"keyCode" : @(event.keyCode),
+  }];
+}
+
 #pragma mark - FLEReshapeListener
 
 /**
@@ -470,6 +434,19 @@ static void CommonInit(FLEViewController *controller) {
   _messageHandlers[channel] = [handler copy];
 }
 
+#pragma mark - FLEPluginRegistrar
+
+- (id<FLEBinaryMessenger>)messenger {
+  return self;
+}
+
+- (void)addMethodCallDelegate:(nonnull id<FLEPlugin>)delegate
+                      channel:(nonnull FLEMethodChannel *)channel {
+  [channel setMethodCallHandler:^(FLEMethodCall *call, FLEMethodResult result) {
+    [delegate handleMethodCall:call result:result];
+  }];
+}
+
 #pragma mark - NSResponder
 
 - (BOOL)acceptsFirstResponder {
@@ -477,6 +454,7 @@ static void CommonInit(FLEViewController *controller) {
 }
 
 - (void)keyDown:(NSEvent *)event {
+  [self dispatchKeyEvent:event ofType:@"keydown"];
   for (NSResponder *responder in self.additionalKeyResponders) {
     if ([responder respondsToSelector:@selector(keyDown:)]) {
       [responder keyDown:event];
@@ -485,6 +463,7 @@ static void CommonInit(FLEViewController *controller) {
 }
 
 - (void)keyUp:(NSEvent *)event {
+  [self dispatchKeyEvent:event ofType:@"keyup"];
   for (NSResponder *responder in self.additionalKeyResponders) {
     if ([responder respondsToSelector:@selector(keyUp:)]) {
       [responder keyUp:event];

@@ -18,9 +18,12 @@ class ExampleWindow: NSWindow {
   @IBOutlet weak var flutterViewController: FLEViewController!
 
   override func awakeFromNib() {
-    flutterViewController.add(FLEColorPanelPlugin())
-    flutterViewController.add(FLEFileChooserPlugin())
-    flutterViewController.add(FLEMenubarPlugin())
+    FLEColorPanelPlugin.register(
+      with: flutterViewController.registrar(forPlugin: "FLEColorPanelPlugin"))
+    FLEFileChooserPlugin.register(
+      with: flutterViewController.registrar(forPlugin: "FLEFileChooserPlugin"))
+    FLEMenubarPlugin.register(
+      with: flutterViewController.registrar(forPlugin: "FLEMenubarPlugin"))
 
     let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
     // Pass through argument zero, since the Flutter engine expects to be processing a full

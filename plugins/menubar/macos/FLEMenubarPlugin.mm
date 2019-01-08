@@ -16,9 +16,18 @@
 
 #include "plugins/menubar/common/channel_constants.h"
 
-@implementation FLEMenubarPlugin
+@implementation FLEMenubarPlugin {
+// The channel used to communicate with Flutter.
+FLEMethodChannel *_channel;
+}
 
-@synthesize controller = _controller;
+- (instancetype)initWithChannel:(FLEMethodChannel*)channel {
+  self = [super init];
+  if (self) {
+    _channel = channel;
+  }
+  return self;
+}
 
 /**
  * Removes any top-level menus added by this plugin.
@@ -102,15 +111,19 @@
  */
 - (void)flutterMenuItemSelected:(id)sender {
   NSMenuItem *item = sender;
-  [_controller invokeMethod:@(plugins_menubar::kMenuItemSelectedCallbackMethod)
-                  arguments:@(item.tag)
-                  onChannel:@(plugins_menubar::kChannelName)];
+  [_channel invokeMethod:@(plugins_menubar::kMenuItemSelectedCallbackMethod)
+                  arguments:@(item.tag)];
 }
 
 #pragma FLEPlugin implementation
 
-- (NSString *)channel {
-  return @(plugins_menubar::kChannelName);
++ (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
+  FLEMethodChannel* channel = [FLEMethodChannel
+                               methodChannelWithName:@(plugins_menubar::kChannelName)
+                               binaryMessenger:registrar.messenger
+                               codec:[FLEJSONMethodCodec sharedInstance]];
+  FLEMenubarPlugin* instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
+  [registrar addMethodCallDelegate:instance channel:channel];
 }
 
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
