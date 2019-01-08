@@ -17,6 +17,7 @@
 #include <memory>
 
 #include "binary_messenger.h"
+#include "fde_export.h"
 
 namespace flutter_desktop_embedding {
 
@@ -27,7 +28,7 @@ class Plugin;
 // Currently this class has very limited functionality, but is expected to
 // expand over time to more closely match the functionality of
 // the Flutter mobile plugin APIs' plugin registrars.
-class PluginRegistrar {
+class FDE_EXPORT PluginRegistrar {
  public:
   virtual ~PluginRegistrar() {}
 
@@ -53,7 +54,7 @@ class PluginRegistrar {
 };
 
 // A plugin that can be registered for ownership by a PluginRegistrar.
-class Plugin {
+class FDE_EXPORT Plugin {
  public:
   virtual ~Plugin() {}
 };

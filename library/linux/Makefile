@@ -22,10 +22,11 @@ ENGINE_UPDATER=$(TOOLS_DIR)/update_flutter_engine
 FLUTTER_DIR=$(shell "$(TOOLS_DIR)/flutter_location")
 LIBRARY_OUT=libflutter_embedder.so
 CXX=g++ -std=c++14
-CXXFLAGS= -Wall -Werror -shared -fPIC \
+CXXFLAGS= -Wall -Werror -shared -fPIC -fvisibility=hidden \
 	-I$(PROJECT_ROOT) \
 	-I$(PROJECT_ROOT)/library/include \
 	-I$(FLUTTER_ENGINE_HEADER_DIR) \
+	-DFLUTTER_DESKTOP_EMBEDDING_IMPL \
 	$(shell pkg-config --cflags gtk+-3.0 epoxy x11 jsoncpp)
 LDFLAGS= -L$(CURDIR) \
 	$(shell pkg-config --libs gtk+-3.0 epoxy x11 jsoncpp) \

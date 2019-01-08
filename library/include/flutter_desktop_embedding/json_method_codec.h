@@ -16,13 +16,14 @@
 
 #include <json/json.h>
 
+#include "fde_export.h"
 #include "method_call.h"
 #include "method_codec.h"
 
 namespace flutter_desktop_embedding {
 
 // An implementation of MethodCodec that uses JSON strings as the serialization.
-class JsonMethodCodec : public MethodCodec<Json::Value> {
+class FDE_EXPORT JsonMethodCodec : public MethodCodec<Json::Value> {
  public:
   // Returns the shared instance of the codec.
   static const JsonMethodCodec &GetInstance();

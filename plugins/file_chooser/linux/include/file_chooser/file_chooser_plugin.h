@@ -21,10 +21,17 @@
 #include <flutter_desktop_embedding/method_channel.h>
 #include <flutter_desktop_embedding/plugin_registrar.h>
 
+#ifdef FILE_CHOOSER_PLUGIN_IMPL
+#define FILE_CHOOSER_PLUGIN_EXPORT __attribute__((visibility("default")))
+#else
+#define FILE_CHOOSER_PLUGIN_EXPORT
+#endif
+
 namespace plugins_file_chooser {
 
 // Implements a file chooser plugin.
-class FileChooserPlugin : public flutter_desktop_embedding::Plugin {
+class FILE_CHOOSER_PLUGIN_EXPORT FileChooserPlugin
+    : public flutter_desktop_embedding::Plugin {
  public:
   static void RegisterWithRegistrar(
       flutter_desktop_embedding::PluginRegistrar *registrar);

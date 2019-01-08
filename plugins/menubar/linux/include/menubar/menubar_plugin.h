@@ -21,10 +21,17 @@
 #include <flutter_desktop_embedding/method_channel.h>
 #include <flutter_desktop_embedding/plugin_registrar.h>
 
+#ifdef MENUBAR_PLUGIN_IMPL
+#define MENUBAR_PLUGIN_EXPORT __attribute__((visibility("default")))
+#else
+#define MENUBAR_PLUGIN_EXPORT
+#endif
+
 namespace plugins_menubar {
 
 // A plugin to control a native menubar.
-class MenubarPlugin : public flutter_desktop_embedding::Plugin {
+class MENUBAR_PLUGIN_EXPORT MenubarPlugin
+    : public flutter_desktop_embedding::Plugin {
  public:
   static void RegisterWithRegistrar(
       flutter_desktop_embedding::PluginRegistrar *registrar);

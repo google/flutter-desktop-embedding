@@ -30,7 +30,10 @@ published_shared_library("color_panel") {
     ]
   }
 
-  defines = ["USE_FLATTENED_INCLUDES"]
+  defines = [
+    "COLOR_PANEL_PLUGIN_IMPL",
+    "USE_FLATTENED_INCLUDES",
+  ]
 
   deps = [
     "//library:flutter_embedder",
