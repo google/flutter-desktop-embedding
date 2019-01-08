@@ -28,8 +28,8 @@ Future<int> runCommand(String command, List<String> arguments,
 
   final process = await Process.start(command, arguments,
       workingDirectory: workingDirectory, runInShell: true);
-  stdout.addStream(process.stdout);
-  stderr.addStream(process.stderr);
+  await stdout.addStream(process.stdout);
+  await stderr.addStream(process.stderr);
 
   final exitCode = await process.exitCode;
   if (!allowFail && exitCode != 0) {

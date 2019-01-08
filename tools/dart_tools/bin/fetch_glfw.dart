@@ -53,9 +53,9 @@ Future<void> main(List<String> arguments) async {
 }
 
 Future<bool> downloadExists(String outputDirectory) async {
-  int existingFiles = 0;
+  var existingFiles = 0;
   for (final file in requiredFiles) {
-    if (await File("$outputDirectory/${path.basename(file)}").exists()) {
+    if (File('$outputDirectory/${path.basename(file)}').existsSync()) {
       existingFiles++;
     }
   }
@@ -90,6 +90,6 @@ Future<void> extractRequiredFiles(
 
     final extractedFile =
         new File(path.join(outputDirectory, path.basename(file.name)));
-    extractedFile.writeAsBytes(file.content);
+    await extractedFile.writeAsBytes(file.content);
   }
 }

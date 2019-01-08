@@ -32,7 +32,7 @@ Future<void> main(List<String> arguments) async {
   final parser = new ArgParser()..addFlag('debug', abbr: 'd', negatable: false);
   final args = parser.parse(arguments);
 
-  if (args.rest.length == 0) {
+  if (args.rest.isEmpty) {
     throw new Exception('One argument must be provided, the directory where '
         'jsoncpp is downloaded.');
   }
@@ -41,7 +41,7 @@ Future<void> main(List<String> arguments) async {
   final debug = args['debug'];
 
   final buildDirectory = '$downloadDirectory/makefiles/msvc2017';
-  await buildLibrary(buildDirectory, debug);
+  await buildLibrary(buildDirectory, debug: debug);
 
   if (args.rest.length != 2) {
     print('Copy directory not provided.');
@@ -49,11 +49,11 @@ Future<void> main(List<String> arguments) async {
   }
 
   final copyDirectory = args.rest[1];
-  await copyLibraryToOutputDirectory(buildDirectory, copyDirectory, debug);
+  await copyLibraryToOutputDirectory(buildDirectory, copyDirectory, debug: debug);
 }
 
-void buildLibrary(String buildDirectory, bool debug) async {
-  var arguments = [
+Future<void> buildLibrary(String buildDirectory, {bool debug}) async {
+  final arguments = [
     'msbuild',
     'lib_json.vcxproj',
   ];
@@ -64,8 +64,8 @@ void buildLibrary(String buildDirectory, bool debug) async {
       workingDirectory: buildDirectory);
 }
 
-void copyLibraryToOutputDirectory(
-    String buildDirectory, String copyDirectory, bool debug) async {
+Future<void> copyLibraryToOutputDirectory(
+    String buildDirectory, String copyDirectory, {bool debug}) async {
   final outputDirectory = "$buildDirectory/x64/${debug ? "Debug" : "Release"}";
   final outputLibrary =
       "$outputDirectory/json_vc71_libmt${debug ? "d" : ""}.lib";
