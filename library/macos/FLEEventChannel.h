@@ -35,7 +35,7 @@ extern NSString const *_Nonnull FLEEndOfEventStream;
 @protocol FLEStreamHandler
 
 /**
- * Sets up an event stream and begin emitting events.
+ * Sets up an event stream and begins emitting events.
  *
  * Invoked when the first listener is registered with the Stream associated to
  * this channel on the Flutter side.
@@ -48,8 +48,8 @@ extern NSString const *_Nonnull FLEEndOfEventStream;
  *     successful events.
  * @return A FLEMethodError instance, if setup fails.
  */
-- (nullable FLEMethodError *)onListenWithArguments:(id _Nullable)arguments
-                                        eventSink:(FLEEventSink)events;
+- (nullable FLEMethodError *)onListenWithArguments:(nullable id)arguments
+                                         eventSink:(FLEEventSink _Nonnull)events;
 
 /**
  * Tears down an event stream.
@@ -64,7 +64,7 @@ extern NSString const *_Nonnull FLEEndOfEventStream;
  * @param arguments Arguments for the stream.
  * @return A FLEMethodError instance, if teardown fails.
  */
-- (nullable FLEMethodError *)onCancelWithArguments:(id _Nullable)arguments;
+- (nullable FLEMethodError *)onCancelWithArguments:(nullable id)arguments;
 
 @end
 

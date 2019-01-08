@@ -14,6 +14,7 @@
 
 #import "FLEBasicMessageChannel.h"
 #import "FLEBinaryMessenger.h"
+#import "FLEEventChannel.h"
 #import "FLEJSONMessageCodec.h"
 #import "FLEJSONMethodCodec.h"
 #import "FLEMessageCodec.h"
