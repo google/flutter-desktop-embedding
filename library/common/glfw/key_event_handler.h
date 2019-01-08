@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #ifndef LIBRARY_COMMON_GLFW_KEY_EVENT_HANDLER_H_
-#define LIBRARY_COMMON_GLFW_kEY_EVENT_HANDLER_H_
+#define LIBRARY_COMMON_GLFW_KEY_EVENT_HANDLER_H_
 
 #include "library/common/glfw/keyboard_hook_handler.h"
 #include "library/include/flutter_desktop_embedding/binary_messenger.h"
