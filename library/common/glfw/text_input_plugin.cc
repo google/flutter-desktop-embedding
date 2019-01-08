@@ -16,6 +16,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include "library/include/flutter_desktop_embedding/json_method_codec.h"
+
 static constexpr char kSetEditingStateMethod[] = "TextInput.setEditingState";
 static constexpr char kClearClientMethod[] = "TextInput.clearClient";
 static constexpr char kSetClientMethod[] = "TextInput.setClient";
@@ -97,13 +99,23 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
   }
 }
 
-TextInputPlugin::TextInputPlugin()
-    : JsonPlugin(kChannelName, false), active_model_(nullptr) {}
+TextInputPlugin::TextInputPlugin(PluginRegistrar *registrar)
+    : channel_(std::make_unique<MethodChannel<Json::Value>>(
+          registrar->messenger(), kChannelName,
+          &JsonMethodCodec::GetInstance())),
+      active_model_(nullptr) {
+  channel_->SetMethodCallHandler(
+      [this](const MethodCall<Json::Value> &call,
+             std::unique_ptr<MethodResult<Json::Value>> result) {
+        HandleMethodCall(call, std::move(result));
+      });
+}
 
 TextInputPlugin::~TextInputPlugin() {}
 
-void TextInputPlugin::HandleJsonMethodCall(
-    const JsonMethodCall &method_call, std::unique_ptr<MethodResult> result) {
+void TextInputPlugin::HandleMethodCall(
+    const MethodCall<Json::Value> &method_call,
+    std::unique_ptr<MethodResult<Json::Value>> result) {
   const std::string &method = method_call.method_name();
 
   if (method.compare(kShowMethod) == 0 || method.compare(kHideMethod) == 0) {
@@ -112,11 +124,11 @@ void TextInputPlugin::HandleJsonMethodCall(
     active_model_ = nullptr;
   } else {
     // Every following method requires args.
-    const Json::Value &args = method_call.GetArgumentsAsJson();
-    if (args.isNull()) {
+    if (!method_call.arguments() || method_call.arguments()->isNull()) {
       result->Error(kBadArgumentError, "Method invoked without args");
       return;
     }
+    const Json::Value &args = *method_call.arguments();
 
     if (method.compare(kSetClientMethod) == 0) {
       // TODO(awdavies): There's quite a wealth of arguments supplied with this
@@ -173,15 +185,16 @@ void TextInputPlugin::HandleJsonMethodCall(
 }
 
 void TextInputPlugin::SendStateUpdate(const TextInputModel &model) {
-  InvokeMethod(kUpdateEditingStateMethod, model.GetState());
+  channel_->InvokeMethod(kUpdateEditingStateMethod,
+                         std::make_unique<Json::Value>(model.GetState()));
 }
 
 void TextInputPlugin::EnterPressed(const TextInputModel &model) {
-  Json::Value args = Json::arrayValue;
-  args.append(model.client_id());
-  args.append(kDoneAction);
+  auto args = std::make_unique<Json::Value>(Json::arrayValue);
+  args->append(model.client_id());
+  args->append(kDoneAction);
 
-  InvokeMethod(kPerformActionMethod, args);
+  channel_->InvokeMethod(kPerformActionMethod, std::move(args));
 }
 
 }  // namespace flutter_desktop_embedding

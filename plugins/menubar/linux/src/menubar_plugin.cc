@@ -17,16 +17,38 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
 
+#include <flutter_desktop_embedding/json_method_codec.h>
+
 #include "plugins/menubar/common/channel_constants.h"
 
 static constexpr char kWindowTitle[] = "Flutter Menubar";
 
 namespace plugins_menubar {
-using flutter_desktop_embedding::JsonMethodCall;
-using flutter_desktop_embedding::MethodResult;
 
-MenubarPlugin::MenubarPlugin()
-    : JsonPlugin(kChannelName, false) {}
+// static
+void MenubarPlugin::RegisterWithRegistrar(
+    flutter_desktop_embedding::PluginRegistrar *registrar) {
+  auto channel =
+      std::make_unique<flutter_desktop_embedding::MethodChannel<Json::Value>>(
+          registrar->messenger(), kChannelName,
+          &flutter_desktop_embedding::JsonMethodCodec::GetInstance());
+  auto *channel_pointer = channel.get();
+
+  // Uses new instead of make_unique due to private constructor.
+  std::unique_ptr<MenubarPlugin> plugin(new MenubarPlugin(std::move(channel)));
+
+  channel_pointer->SetMethodCallHandler(
+      [plugin_pointer = plugin.get()](const auto &call, auto result) {
+        plugin_pointer->HandleMethodCall(call, std::move(result));
+      });
+
+  registrar->AddPlugin(std::move(plugin));
+}
+
+MenubarPlugin::MenubarPlugin(
+    std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+        channel)
+    : channel_(std::move(channel)) {}
 
 MenubarPlugin::~MenubarPlugin() {}
 
@@ -61,8 +83,9 @@ class MenubarPlugin::Menubar {
   static void MenuItemSelected(GtkWidget *menuItem, gpointer *data) {
     auto plugin = reinterpret_cast<MenubarPlugin *>(data);
 
-    plugin->InvokeMethod(kMenuItemSelectedCallbackMethod,
-                         std::stoi(gtk_widget_get_name(menuItem)));
+    plugin->channel_->InvokeMethod(kMenuItemSelectedCallbackMethod,
+                                   std::make_unique<Json::Value>(std::stoi(
+                                       gtk_widget_get_name(menuItem))));
   }
 
   // Creates the menu items heirarchy from a given Json object.
@@ -88,8 +111,8 @@ class MenubarPlugin::Menubar {
       std::string label = root[kLabelKey].asString();
 
       if (root[kChildrenKey].isArray()) {
-        // A parent menu item. Creates a widget with its label and then build the
-        // children.
+        // A parent menu item. Creates a widget with its label and then build
+        // the children.
         auto array = root[kChildrenKey];
         auto menu = gtk_menu_new();
         auto menuItem = gtk_menu_item_new_with_label(label.c_str());
@@ -140,18 +163,25 @@ class MenubarPlugin::Menubar {
   GtkWidget *menubar_;
 };
 
-void MenubarPlugin::HandleJsonMethodCall(const JsonMethodCall &method_call,
-                                         std::unique_ptr<MethodResult> result) {
+void MenubarPlugin::HandleMethodCall(
+    const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
+    std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
+        result) {
   if (method_call.method_name().compare(kMenuSetMethod) == 0) {
-    result->Success();
+    if (!method_call.arguments()) {
+      result->Error("Bad Arguments", "Null menu bar arguments received");
+      return;
+    }
+
     if (menubar_ == nullptr) {
       menubar_ = std::make_unique<MenubarPlugin::Menubar>(this);
     }
     // The menubar will be redrawn after every interaction. Clear items to avoid
     // duplication.
     menubar_->ClearMenuItems();
-    menubar_->SetMenuItems(method_call.GetArgumentsAsJson(), this,
+    menubar_->SetMenuItems(*method_call.arguments(), this,
                            menubar_->GetRootMenuBar());
+    result->Success();
   } else {
     result->NotImplemented();
   }

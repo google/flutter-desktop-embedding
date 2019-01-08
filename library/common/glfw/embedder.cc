@@ -51,14 +51,9 @@ struct FlutterEmbedderState {
   FlutterEngine engine;
   std::unique_ptr<flutter_desktop_embedding::PluginHandler> plugin_handler;
 
-  // plugin_handler owns these pointers. Destruction happens when this struct is
-  // deleted from the heap.
-  std::vector<flutter_desktop_embedding::KeyboardHookHandler *>
+  // Handlers for keyboard events from GLFW.
+  std::vector<std::unique_ptr<flutter_desktop_embedding::KeyboardHookHandler>>
       keyboard_hook_handlers;
-
-  // Handles raw key interactions from GLFW.
-  // TODO: Revisit ownership model once Issue #102 is resolved.
-  std::unique_ptr<flutter_desktop_embedding::KeyEventHandler> key_event_handler;
 
   // The screen coordinates per inch on the primary monitor. Defaults to a sane
   // value based on pixel_ratio 1.0.
@@ -153,7 +148,7 @@ static void GLFWMouseButtonCallback(GLFWwindow *window, int key, int action,
 
 // Passes character input events to registered handlers.
 static void GLFWCharCallback(GLFWwindow *window, unsigned int code_point) {
-  for (flutter_desktop_embedding::KeyboardHookHandler *handler :
+  for (const auto &handler :
        GetSavedEmbedderState(window)->keyboard_hook_handlers) {
     handler->CharHook(window, code_point);
   }
@@ -162,7 +157,7 @@ static void GLFWCharCallback(GLFWwindow *window, unsigned int code_point) {
 // Passes raw key events to registered handlers.
 static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
                             int action, int mods) {
-  for (flutter_desktop_embedding::KeyboardHookHandler *handler :
+  for (const auto &handler :
        GetSavedEmbedderState(window)->keyboard_hook_handlers) {
     handler->KeyboardHook(window, key, scancode, action, mods);
   }
@@ -294,10 +289,13 @@ bool FlutterInit() { return glfwInit(); }
 // Tear down glfw
 void FlutterTerminate() { glfwTerminate(); }
 
-// set up embedder state and add the plugin to the plugin_handler
-bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin) {
-  auto state = GetSavedEmbedderState(flutter_window);
-  return state->plugin_handler->AddPlugin(std::move(plugin));
+PluginRegistrar *GetRegistrarForPlugin(GLFWwindow *flutter_window,
+                                       const std::string &plugin_name) {
+  auto *state = GetSavedEmbedderState(flutter_window);
+  // Currently, PluginHandler acts as the registrar for all plugins, so the
+  // name is ignored. It is part of the API to reduce churn in the future when
+  // aligning more closely with the Flutter registrar system.
+  return state->plugin_handler.get();
 }
 
 GLFWwindow *CreateFlutterWindowInSnapshotMode(
@@ -334,15 +332,13 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   state->plugin_handler = std::make_unique<PluginHandler>(engine);
   state->engine = engine;
 
-  state->key_event_handler =
-      std::make_unique<KeyEventHandler>(state->plugin_handler.get());
-  state->keyboard_hook_handlers.push_back(state->key_event_handler.get());
-  auto input_plugin = std::make_unique<TextInputPlugin>();
-  state->keyboard_hook_handlers.push_back(input_plugin.get());
+  // Set up the keyboard handlers.
+  state->keyboard_hook_handlers.push_back(
+      std::make_unique<KeyEventHandler>(state->plugin_handler.get()));
+  state->keyboard_hook_handlers.push_back(
+      std::make_unique<TextInputPlugin>(state->plugin_handler.get()));
 
   glfwSetWindowUserPointer(window, state);
-
-  AddPlugin(window, std::move(input_plugin));
 
   state->monitor_screen_coordinates_per_inch = GetScreenCoordinatesPerInch();
   int width_px, height_px;

@@ -83,10 +83,15 @@ int main(int argc, char **argv) {
   }
 
   // Register any native plugins.
-  AddPlugin(window, std::make_unique<plugins_menubar::MenubarPlugin>());
-  AddPlugin(window, std::make_unique<plugins_color_panel::ColorPanelPlugin>());
-  AddPlugin(window,
-            std::make_unique<plugins_file_chooser::FileChooserPlugin>());
+  plugins_menubar::MenubarPlugin::RegisterWithRegistrar(
+      flutter_desktop_embedding::GetRegistrarForPlugin(
+          window, "plugins_menubar::MenubarPlugin"));
+  plugins_color_panel::ColorPanelPlugin::RegisterWithRegistrar(
+      flutter_desktop_embedding::GetRegistrarForPlugin(
+          window, "plugins_color_panel::ColorPanelPlugin"));
+  plugins_file_chooser::FileChooserPlugin::RegisterWithRegistrar(
+      flutter_desktop_embedding::GetRegistrarForPlugin(
+          window, "plugins_file_chooser::FileChooserPlugin"));
 
   flutter_desktop_embedding::FlutterWindowLoop(window);
   glfwTerminate();
