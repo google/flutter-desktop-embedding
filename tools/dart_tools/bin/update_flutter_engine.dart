@@ -32,18 +32,19 @@ const String engineArchiveBaseUrlString =
 
 /// Simple container for platform-specific information.
 class PlatformInfo {
+  PlatformInfo(this.archiveSubpath, this.libraryFile);
+
   // The subpath on storage.googleapis.com for a platform's engine archive.
   final String archiveSubpath;
   // The extracted engine library filename for a platform.
   final String libraryFile;
-
-  PlatformInfo(this.archiveSubpath, this.libraryFile);
 }
 
 /// Exceptions for known error cases in updating the engine.
 class EngineUpdateException implements Exception {
-  final String message;
   EngineUpdateException(this.message);
+
+  final String message;
 }
 
 /// PlatformInfo for each supported platform.
@@ -83,16 +84,16 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
-  if (parsedArguments['help'] || parsedArguments.rest.length != 1) {
+  if (parsedArguments['help'] != null || parsedArguments.rest.length != 1) {
     printUsage(parser);
-    exit(parsedArguments['help'] ? 0 : 1);
+    exit(parsedArguments['help'] != null ? 0 : 1);
   }
 
   try {
-    final platform = parsedArguments['platform'];
+    final String platform = parsedArguments['platform'];
     final outputRoot =
         path.canonicalize(path.absolute(parsedArguments.rest[0]));
-    final targetHash = parsedArguments['hash'] ??
+    final String targetHash = parsedArguments['hash'] ??
         await engineHashForFlutterTree(parsedArguments['flutter_root']);
     final libraryFile = platformInfo[platform].libraryFile;
 
@@ -213,7 +214,8 @@ Future<void> extractEngineArchive(
     // Unwrap the outer zip via Archive to avoid starting an extra process.
     final isDoubleZipped =
         archive.numberOfFiles() == 1 && archive[0].name.endsWith('.zip');
-    final innermostZipData = isDoubleZipped ? archive[0].content : archiveData;
+    final List<int> innermostZipData =
+        isDoubleZipped ? archive[0].content : archiveData;
     await unzipMacOSEngineFramework(innermostZipData, outputDirectory);
   } else {
     // Windows and Linux have flat archives, so can be easily extracted via
@@ -249,8 +251,8 @@ Future<void> unzipMacOSEngineFramework(
   // Temporarily write the data to a file, since unzip doesn't accept piped
   // input, then delete the file.
   await temporaryArchiveFile.writeAsBytes(archiveData);
-  final result = await Process
-      .run('/usr/bin/unzip', [temporaryArchiveFile.path, '-d', targetPath]);
+  final result = await Process.run(
+      '/usr/bin/unzip', [temporaryArchiveFile.path, '-d', targetPath]);
   await temporaryArchiveFile.delete();
   if (result.exitCode != 0) {
     throw new EngineUpdateException(
