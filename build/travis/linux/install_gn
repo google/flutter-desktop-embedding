@@ -16,8 +16,18 @@
 
 set -e
 
-readonly DOWNLOAD_URI=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest
-readonly TEMP_LOCATION=/tmp/gn.zip
+readonly GN_URI=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest
+readonly NINJA_URI=https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
+readonly TEMP_LOCATION=/tmp/tool.zip
 
-wget -O "${TEMP_LOCATION}" "${DOWNLOAD_URI}"
+# Download and install GN.
+wget -O "${TEMP_LOCATION}" "${GN_URI}"
 unzip -d "$1" "${TEMP_LOCATION}"
+rm "${TEMP_LOCATION}"
+
+# Download and install ninja.
+# This is done directly, instead of via apt-get, because the version
+# available in apt-get may not be new enough for the latest GN.
+wget -O "${TEMP_LOCATION}" "${NINJA_URI}"
+unzip -d "$1" "${TEMP_LOCATION}"
+rm "${TEMP_LOCATION}"

@@ -1,7 +1,8 @@
 matrix:
   include:
     - os: linux
-      languge: cpp
+      dist: xenial
+      language: cpp
       before_install:
         - sudo apt-get update
       install:
@@ -13,13 +14,13 @@ matrix:
         - make -C example/linux
 
     - os: linux
-      languge: cpp
+      dist: xenial
+      language: cpp
       before_install:
         - sudo apt-get update
       install:
         - build/travis/linux/install_dependencies
         - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
-        - sudo apt-get install -y ninja-build
         - build/travis/linux/install_gn bin
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
@@ -28,8 +29,14 @@ matrix:
 
     - os: osx
       language: objective-c
-      xcode_project: example/macos/ExmapleEmbedder.xcodeproj
+      xcode_project: example/macos/ExampleEmbedder.xcodeproj
       xcode_scheme: ExampleEmbedder
       install:
         - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
+      # Override the build command to remove 'test'. The example embedder
+      # doesn't have any unit tests, and while a UI test to ensure that it
+      # launches would be useful, that's currently broken by:
+      # https://travis-ci.community/t/issue-cant-run-macos-ui-tests-with-xcode10-1-image/1445
+      script:
+        - set -o pipefail && xcodebuild -project $TRAVIS_XCODE_PROJECT -scheme $TRAVIS_XCODE_SCHEME build | xcpretty
 

@@ -51,7 +51,7 @@ $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
 # avoiding unnecessary relinks.
 $(FLUTTER_ENGINE_LIB_FILE) $(FLUTTER_ENGINE_HEADER_DIR)/$(FLUTTER_ENGINE_HEADER): \
 		$(FLUTTER_DIR)/bin/internal/engine.version
-	$(ENGINE_UPDATER) --flutter_root=$(FLUTTER_DIR) ./
+	$(ENGINE_UPDATER) ./
 	if [ -f $(FLUTTER_ENGINE_HEADER) ]; then \
 		mkdir -p $(FLUTTER_ENGINE_HEADER_DIR) && \
 		mv $(FLUTTER_ENGINE_HEADER) $(FLUTTER_ENGINE_HEADER_DIR)/; \
