@@ -49,7 +49,8 @@ Future<void> main(List<String> arguments) async {
   }
 
   final copyDirectory = args.rest[1];
-  await copyLibraryToOutputDirectory(buildDirectory, copyDirectory, debug: debug);
+  await copyLibraryToOutputDirectory(buildDirectory, copyDirectory,
+      debug: debug);
 }
 
 Future<void> buildLibrary(String buildDirectory, {bool debug}) async {
@@ -65,7 +66,8 @@ Future<void> buildLibrary(String buildDirectory, {bool debug}) async {
 }
 
 Future<void> copyLibraryToOutputDirectory(
-    String buildDirectory, String copyDirectory, {bool debug}) async {
+    String buildDirectory, String copyDirectory,
+    {bool debug}) async {
   final outputDirectory = "$buildDirectory/x64/${debug ? "Debug" : "Release"}";
   final outputLibrary =
       "$outputDirectory/json_vc71_libmt${debug ? "d" : ""}.lib";
