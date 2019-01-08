@@ -14,7 +14,12 @@
 #ifndef LIBRARY_COMMON_GLFW_KEY_EVENT_HANDLER_H_
 #define LIBRARY_COMMON_GLFW_KEY_EVENT_HANDLER_H_
 
+#include <memory>
+
+#include <json/json.h>
+
 #include "library/common/glfw/keyboard_hook_handler.h"
+#include "library/include/flutter_desktop_embedding/basic_message_channel.h"
 #include "library/include/flutter_desktop_embedding/binary_messenger.h"
 
 namespace flutter_desktop_embedding {
@@ -24,7 +29,7 @@ namespace flutter_desktop_embedding {
 // Handles key events and forwards them to the Flutter engine.
 class KeyEventHandler : public KeyboardHookHandler {
  public:
-  explicit KeyEventHandler(const BinaryMessenger *messenger);
+  explicit KeyEventHandler(BinaryMessenger *messenger);
   virtual ~KeyEventHandler();
 
   // KeyboardHookHandler.
@@ -33,10 +38,8 @@ class KeyEventHandler : public KeyboardHookHandler {
   void CharHook(GLFWwindow *window, unsigned int code_point) override;
 
  private:
-  // Binds this plugin to the given caller-owned binary messenger. It must
-  // remain valid for the life of the plugin.
-  const BinaryMessenger *messenger_;
-  std::string channel_;
+  // The Flutter system channel for key event messages.
+  std::unique_ptr<BasicMessageChannel<Json::Value>> channel_;
 };
 
 }  // namespace flutter_desktop_embedding

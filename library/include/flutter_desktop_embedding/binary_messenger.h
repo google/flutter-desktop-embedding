@@ -23,9 +23,9 @@
 // the message/message_size pairs.
 namespace flutter_desktop_embedding {
 
-// A message reply callback.
+// A binary message reply callback.
 //
-// Used for submitting a reply back to a Flutter message sender.
+// Used for submitting a binary reply back to a Flutter message sender.
 typedef std::function<void(const uint8_t *reply, const size_t reply_size)>
     BinaryReply;
 
