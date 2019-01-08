@@ -14,6 +14,8 @@ In addition to the normal dependencies, you will need to install:
 
 Ensure that both binaries are in your path.
 
+### Windows
+
 Windows also requires the 64 bit compiler, linker and setup scripts to be in
 your path. They are found under:
 
@@ -33,8 +35,12 @@ Windows requires jsoncpp to be downloaded to
 with Visual Studio 2017 support as shown below:
 
 ```
-> tools\run_dart_tool.bat tools\dart_tools\bin\fetch_jsoncpp.dart library\windows\third_party\jsoncpp
+> tools\run_dart_tool.bat fetch_jsoncpp library\windows\third_party\jsoncpp
 ```
+
+Currently the GN build rule for `jsoncpp` if a placeholder that will eventually
+be replaced with full GN build capabilities. Currently if you modify the source
+of `jsoncpp`, `out/gen/JSON` will need to be deleted for GN to rebuild it.
 
 ## Building
 

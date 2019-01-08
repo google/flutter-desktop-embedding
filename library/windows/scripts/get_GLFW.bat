@@ -12,5 +12,4 @@
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
 @echo off
-for /f "delims=" %%i in ('%~dp0..\..\..\tools\flutter_location') do set FLUTTER_DIR=%%i
-%FLUTTER_DIR%\bin\cache\dart-sdk\bin\dart %~dp0..\..\..\tools\dart_tools\bin\fetch_glfw.dart %~dp0..\dependencies\GLFW
+%~dp0..\..\..\tools\run_dart_tool.bat fetch_glfw %~dp0..\dependencies\GLFW

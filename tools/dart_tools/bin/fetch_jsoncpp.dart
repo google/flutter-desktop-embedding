@@ -39,26 +39,10 @@ Future<void> main(List<String> arguments) async {
   final downloadDirectory = arguments[0];
 
   await runCommand('git', [
-    'init',
+    'clone',
+    gitRepo,
     downloadDirectory,
   ]);
-
-  await runCommand(
-      'git',
-      [
-        'remote',
-        'add',
-        'origin',
-        gitRepo,
-      ],
-      workingDirectory: downloadDirectory, allowFail: true);
-
-  await runCommand(
-      'git',
-      [
-        'fetch',
-      ],
-      workingDirectory: downloadDirectory);
 
   await runCommand(
       'git',

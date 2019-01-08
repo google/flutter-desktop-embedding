@@ -40,25 +40,35 @@ Future<void> main(List<String> arguments) async {
   final downloadDirectory = args.rest[0];
   final debug = args['debug'];
 
-  await runCommand(
-      'vcvars64.bat 1> nul &&',
-      [
-        'msbuild',
-        'lib_json.vcxproj',
-        !debug ? '/p:Configuration=Release' : '',
-      ],
-      workingDirectory: '$downloadDirectory/makefiles/msvc2017');
+  final buildDirectory = '$downloadDirectory/makefiles/msvc2017';
+  await buildLibrary(buildDirectory, debug);
 
   if (args.rest.length != 2) {
     print('Copy directory not provided.');
     exit(0);
   }
 
-  final outputDirectory =
-      "$downloadDirectory/makefiles/msvc2017/x64/${debug ? "Debug" : "Release"}";
+  final copyDirectory = args.rest[1];
+  await copyLibraryToOutputDirectory(buildDirectory, copyDirectory, debug);
+}
+
+void buildLibrary(String buildDirectory, bool debug) async {
+  var arguments = [
+    'msbuild',
+    'lib_json.vcxproj',
+  ];
+  if (!debug) {
+    arguments.add('/p:Configuration=Release');
+  }
+  await runCommand('vcvars64.bat 1> nul &&', arguments,
+      workingDirectory: buildDirectory);
+}
+
+void copyLibraryToOutputDirectory(
+    String buildDirectory, String copyDirectory, bool debug) async {
+  final outputDirectory = "$buildDirectory/x64/${debug ? "Debug" : "Release"}";
   final outputLibrary =
       "$outputDirectory/json_vc71_libmt${debug ? "d" : ""}.lib";
-  final copyDirectory = args.rest[1];
 
   await File(outputLibrary)
       .copy(path.join(copyDirectory, path.basename(outputLibrary)));

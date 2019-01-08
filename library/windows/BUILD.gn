@@ -37,6 +37,9 @@ config("relative_glfw_dependencies") {
   ]
 }
 
+# TODO: Replace this with actual GN build rules for jsoncpp.
+# This target is a placeholder, and will not actually rebuild jsoncpp if any of its
+# source changes.
 action("build_jsoncpp") {
   script = "//tools/dart_tools/bin/build_jsoncpp.dart"
   outputs = [ jsoncpp_files[1] ]
