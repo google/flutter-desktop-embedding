@@ -30,6 +30,8 @@
 		1E2492411FCF50BE00DD3BBB /* FlutterEmbedderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492371FCF50BE00DD3BBB /* FlutterEmbedderMac.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1EEF8E071FD1F0C300DD563C /* FLEView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EEF8E051FD1F0C300DD563C /* FLEView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1EEF8E081FD1F0C300DD563C /* FLEView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EEF8E061FD1F0C300DD563C /* FLEView.m */; };
+		2CCADF9A21C74690001B4026 /* FLEEventChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CCADF9821C74690001B4026 /* FLEEventChannel.m */; };
+		2CCADF9B21C74690001B4026 /* FLEEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CCADF9921C74690001B4026 /* FLEEventChannel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3389A6872159359200A27898 /* FLEBinaryMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3389A6862159359200A27898 /* FLEBinaryMessenger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3389A68D215949CB00A27898 /* FLEMethodError.m in Sources */ = {isa = PBXBuildFile; fileRef = 3389A68C215949CB00A27898 /* FLEMethodError.m */; };
 		3389A68F215949D600A27898 /* FLEMethodError.h in Headers */ = {isa = PBXBuildFile; fileRef = 3389A68E215949D600A27898 /* FLEMethodError.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -90,6 +92,8 @@
 		1E2492381FCF50BE00DD3BBB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		1EEF8E051FD1F0C300DD563C /* FLEView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEView.h; sourceTree = "<group>"; };
 		1EEF8E061FD1F0C300DD563C /* FLEView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEView.m; sourceTree = "<group>"; };
+		2CCADF9821C74690001B4026 /* FLEEventChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEEventChannel.m; sourceTree = "<group>"; };
+		2CCADF9921C74690001B4026 /* FLEEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEEventChannel.h; sourceTree = "<group>"; };
 		3389A6862159359200A27898 /* FLEBinaryMessenger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEBinaryMessenger.h; sourceTree = "<group>"; };
 		3389A68C215949CB00A27898 /* FLEMethodError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEMethodError.m; sourceTree = "<group>"; };
 		3389A68E215949D600A27898 /* FLEMethodError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEMethodError.h; sourceTree = "<group>"; };
@@ -132,6 +136,7 @@
 				1E2492371FCF50BE00DD3BBB /* FlutterEmbedderMac.h */,
 				1E2492451FCF536200DD3BBB /* Public */,
 				33C0FA1821B845EF008F8959 /* FLEBasicMessageChannel.m */,
+				2CCADF9821C74690001B4026 /* FLEEventChannel.m */,
 				33C0FA1C21B84810008F8959 /* FLEJSONMessageCodec.m */,
 				33A87EB520F6BCDB0086D21D /* FLEJSONMethodCodec.m */,
 				33C0FA2521B84AA4008F8959 /* FLEMethodCall.m */,
@@ -163,6 +168,7 @@
 			children = (
 				33C0FA1921B845F0008F8959 /* FLEBasicMessageChannel.h */,
 				3389A6862159359200A27898 /* FLEBinaryMessenger.h */,
+				2CCADF9921C74690001B4026 /* FLEEventChannel.h */,
 				33C0FA1E21B84810008F8959 /* FLEJSONMessageCodec.h */,
 				33C0FA1D21B84810008F8959 /* FLEJSONMethodCodec.h */,
 				33C0FA1F21B84810008F8959 /* FLEMessageCodec.h */,
@@ -197,6 +203,7 @@
 			files = (
 				33C0FA2621B84AA4008F8959 /* FLEMethodCall.h in Headers */,
 				1E24923B1FCF50BE00DD3BBB /* FLEPlugin.h in Headers */,
+				2CCADF9B21C74690001B4026 /* FLEEventChannel.h in Headers */,
 				3389A6872159359200A27898 /* FLEBinaryMessenger.h in Headers */,
 				33D7B59920A4F54400296EFC /* FLEMethodChannel.h in Headers */,
 				1E24923F1FCF50BE00DD3BBB /* FLEViewController.h in Headers */,
@@ -317,6 +324,7 @@
 				1E24923E1FCF50BE00DD3BBB /* FLETextInputPlugin.m in Sources */,
 				1EEF8E081FD1F0C300DD563C /* FLEView.m in Sources */,
 				33A87EB720F6BCDB0086D21D /* FLEJSONMethodCodec.m in Sources */,
+				2CCADF9A21C74690001B4026 /* FLEEventChannel.m in Sources */,
 				AA8AE8BA1FD948BA00B6FB31 /* FLETextInputModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
