@@ -30,11 +30,6 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
   final ScrollController _scrollController = new ScrollController();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     FocusScope.of(context).requestFocus(_focusNode);

@@ -18,21 +18,15 @@ typedef MenuSelectedCallback = void Function();
 
 /// The base type for an individual menu item that can be shown in a menu.
 abstract class AbstractMenuItem {
-  /// The displayed label for the menu item.
-  final String label;
-
   /// Creates a new menu item with the give label.
   const AbstractMenuItem(this.label);
+
+  /// The displayed label for the menu item.
+  final String label;
 }
 
 /// A standard menu item, with no submenus.
 class MenuItem extends AbstractMenuItem {
-  /// The callback to call whenever the menu item is selected.
-  final MenuSelectedCallback onClicked;
-
-  /// Whether or not the menu item is enabled.
-  final bool enabled;
-
   /// Creates a new menu item with the given [label] and options.
   ///
   /// Note that onClicked should generally be set unless [enabled] is false,
@@ -42,18 +36,24 @@ class MenuItem extends AbstractMenuItem {
     this.enabled = true,
     this.onClicked,
   }) : super(label);
+
+  /// The callback to call whenever the menu item is selected.
+  final MenuSelectedCallback onClicked;
+
+  /// Whether or not the menu item is enabled.
+  final bool enabled;
 }
 
 /// A menu item continaing a submenu.
 ///
 /// The item itself can't be selected, it just displays the submenu.
 class Submenu extends AbstractMenuItem {
-  /// The menu items contained in the submenu.
-  final List<AbstractMenuItem> children;
-
   /// Creates a new submenu with the given [label] and [children].
   const Submenu({@required String label, @required this.children})
       : super(label);
+
+  /// The menu items contained in the submenu.
+  final List<AbstractMenuItem> children;
 }
 
 /// A menu item that serves as a divider, generally drawn as a line.

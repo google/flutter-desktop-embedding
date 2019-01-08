@@ -12,32 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-config("defaults") {
-  if (is_linux) {
-    cflags = [
-      "-std=c++14",
-      "-Wall",
-      "-Werror",
-      "-pthread",
-    ]
-  }
-  if (is_win) {
-    cflags = [
-      "/EHsc",
-      "/W3",
-      "/Od",
-    ]
-  }
-  include_dirs = [
-    "//",
-  ]
-}
+jsoncpp_download_dir = rebase_path("third_party/jsoncpp")
+jsoncpp_include_dir = "$jsoncpp_download_dir/include"
+jsoncpp_lib_dir = "$root_gen_dir/JSON"
+jsoncpp_lib_name = "json_vc71_libmtd.lib"
 
-config("shared_library_defaults") {
-  if (is_linux) {
-    cflags = [
-      "-shared",
-      "-fPIC",
-    ]
-  }
-}
+jsoncpp_files = [
+  "$jsoncpp_include_dir/json/json.h",
+  "$jsoncpp_lib_dir/$jsoncpp_lib_name",
+]

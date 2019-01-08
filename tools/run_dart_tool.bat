@@ -1,4 +1,4 @@
-:: Copyright 2018 Google LLC
+:: Copyright 2019 Google LLC
 ::
 :: Licensed under the Apache License, Version 2.0 (the "License");
 :: you may not use this file except in compliance with the License.
@@ -12,4 +12,15 @@
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
 @echo off
-%~dp0..\..\..\tools\run_dart_tool.bat fetch_glfw %~dp0..\dependencies\GLFW
+
+for /f "delims=" %%i in ('%~dp0flutter_location') do set FLUTTER_DIR=%%i
+set FLUTTER_BIN_DIR=%FLUTTER_DIR%\bin
+set DART_BIN_DIR=%FLUTTER_BIN_DIR%\cache\dart-sdk\bin
+
+:: Ensure that the Dart SDK has been downloaded.
+if not exist %DART_BIN_DIR%\ call %FLUTTER_BIN_DIR%\flutter precache
+
+set DART_TOOL=%1
+for /f "tokens=1,*" %%a in ("%*") do set TOOL_PARAMS=%%b
+
+call %DART_BIN_DIR%\dart %~dp0.\dart_tools\bin\%DART_TOOL%.dart %TOOL_PARAMS%

@@ -12,4 +12,15 @@
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
 @echo off
-%~dp0..\..\..\tools\run_dart_tool.bat fetch_glfw %~dp0..\dependencies\GLFW
+
+:: This script wraps GN with a --script-executable pointing at the Dart binary
+:: packaged with the Flutter tree.
+set BASE_DIR=%~dp0
+for /f "delims=" %%i in ('%~dp0flutter_location') do set FLUTTER_DIR=%%i
+set FLUTTER_BIN_DIR=%FLUTTER_DIR%\bin
+set DART_BIN_DIR=%FLUTTER_BIN_DIR%\cache\dart-sdk\bin
+
+:: Ensure that the Dart SDK has been downloaded.
+if not exist %DART_BIN_DIR%\ call %FLUTTER_BIN_DIR%\flutter precache
+
+call gn --script-executable=%DART_BIN_DIR%\dart %*

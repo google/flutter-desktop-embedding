@@ -1,0 +1,85 @@
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/packaging.gni")
+import("//library/engine.gni")
+import("//library/windows/glfw.gni")
+import("//library/windows/jsoncpp.gni")
+
+action("fetch_glfw") {
+  script = "//tools/dart_tools/bin/fetch_glfw.dart"
+  outputs = glfw_files
+  args = [
+    rebase_path(glfw_download_dir, root_build_dir),
+  ]
+  public_configs = [
+    "//build/win/config:glfw3",
+  ]
+}
+
+config("relative_glfw_dependencies") {
+  include_dirs = [
+    glfw_include_dir,
+  ]
+  lib_dirs = [
+    glfw_download_dir,
+  ]
+}
+
+# TODO: Replace this with actual GN build rules for jsoncpp.
+# This target is a placeholder, and will not actually rebuild jsoncpp if any of its
+# source changes.
+action("build_jsoncpp") {
+  script = "//tools/dart_tools/bin/build_jsoncpp.dart"
+  outputs = [ jsoncpp_files[1] ]
+  args = [
+    rebase_path(jsoncpp_download_dir, root_build_dir),
+    rebase_path(jsoncpp_lib_dir, root_build_dir),
+    "--debug",
+  ]
+  public_configs = [
+    "//build/win/config:jsoncpp",
+  ]
+}
+
+config("relative_jsoncpp_dependencies") {
+  include_dirs = [
+    jsoncpp_include_dir,
+  ]
+  lib_dirs = [
+    jsoncpp_lib_dir,
+  ]
+}
+
+copy_includes("_publish_engine_headers") {
+  sources = [ engine_files[0] ]
+  deps = [ "//library:fetch_flutter_engine" ]
+}
+
+# Places the downloaded Flutter engine library at the top level of the
+# output directory where built libraries go, so that it doesn't require
+# special link handling, and publishes its header.
+copy("publish_flutter_engine") {
+  sources = [
+    engine_files[1],
+    engine_files[2],
+    engine_files[3],
+    engine_files[4],
+  ]
+  outputs = [ "$root_out_dir/{{source_file_part}}" ]
+  deps = [
+    ":_publish_engine_headers",
+    "//library:fetch_flutter_engine",
+  ]
+}

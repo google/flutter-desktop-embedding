@@ -60,16 +60,20 @@ published_shared_library("flutter_embedder") {
     ":fetch_flutter_engine",
   ]
 
+  public_header_subdir = "flutter_desktop_embedding"
+
+  public_configs = [
+    ":relative_public_headers",
+  ]
+
   if (is_linux) {
-    public_header_subdir = "flutter_desktop_embedding"
-
-    deps += [
-      "//library/linux:publish_flutter_engine",
-    ]
-
     libs = [
       "glfw",
       "GL",
+    ]
+
+    deps += [
+      "//library/linux:publish_flutter_engine",
     ]
 
     configs += [
@@ -78,11 +82,37 @@ published_shared_library("flutter_embedder") {
       "//build/linux/config:jsoncpp",
       "//build/linux/config:x11",
     ]
+  }
 
-    public_configs = [
-      "//library/linux:relative_public_headers",
+  if (is_win) {
+    dll_exports = rebase_path("windows/exports.def")
+    ldflags = [
+      "/DEF:$dll_exports",
+    ]
+
+    deps += [
+      "//library/windows:publish_flutter_engine",
+      "//library/windows:fetch_glfw",
+      "//library/windows:build_jsoncpp",
+    ]
+
+    libs = [
+      engine_files[2],
+    ]
+
+    public_configs += [
+      "//library/windows:relative_glfw_dependencies",
+      "//library/windows:relative_jsoncpp_dependencies",
     ]
   }
+}
+
+# Allows targets depending on this library to use library-style
+# inculdes for its header rather than project-relative.
+config("relative_public_headers") {
+  include_dirs = [
+    "include",
+  ]
 }
 
 # Allows targets depending on the engine library to use library-style
@@ -101,9 +131,7 @@ action("fetch_flutter_engine") {
     "--flutter_root=$flutter_tree_path",
     rebase_path(engine_download_dir, root_build_dir),
   ]
-  if (is_linux) {
-    public_configs = [
-      ":relative_engine_headers",
-    ]
-  }
+  public_configs = [
+    ":relative_engine_headers",
+  ]
 }
