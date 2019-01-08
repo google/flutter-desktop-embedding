@@ -48,8 +48,8 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies;$(ProjectDir)third_party\jsoncpp\include;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\x64\debug;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)third_party\jsoncpp\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\JSON\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Dynamic Library|x64'">
@@ -57,8 +57,8 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies;$(ProjectDir)third_party\jsoncpp\include;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\json\x64\release;;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)third_party\jsoncpp\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\JSON\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic Library|x64'">
@@ -83,8 +83,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW &amp;&amp; $(ProjectDir)scripts\build_jsonlib</Command>
-      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
+      <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW &amp;&amp; $(ProjectDir)scripts\build_jsonlib --debug</Command>
+      <Message>Get the flutter engine, engine artifacts, GLFW and jsoncpp</Message>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>
@@ -125,7 +125,7 @@
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(ProjectDir)scripts\update_flutter_engine &amp;&amp; $(ProjectDir)scripts\get_engine_artifacts &amp;&amp; $(ProjectDir)scripts\get_GLFW &amp;&amp; $(ProjectDir)scripts\build_jsonlib</Command>
-      <Message>Get the flutter engine, engine artifacts and GLFW</Message>
+      <Message>Get the flutter engine, engine artifacts, GLFW and jsoncpp</Message>
     </PreBuildEvent>
     <ProjectReference>
       <UseLibraryDependencyInputs>
@@ -159,7 +159,7 @@
     <ClCompile Include="..\common\plugin.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="embedder.h" />
+    <ClInclude Include="..\include\flutter_desktop_embedding\windows\embedder.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

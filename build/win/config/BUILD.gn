@@ -12,32 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-config("defaults") {
-  if (is_linux) {
-    cflags = [
-      "-std=c++14",
-      "-Wall",
-      "-Werror",
-      "-pthread",
-    ]
-  }
-  if (is_win) {
-    cflags = [
-      "/EHsc",
-      "/W3",
-      "/Od",
-    ]
-  }
-  include_dirs = [
-    "//",
+import("//library/windows/glfw.gni")
+import("//library/windows/jsoncpp.gni")
+
+config("glfw3") {
+  libs = [
+    "$glfw_lib_name",
+    "opengl32.lib",
+
+    "user32.lib",
+    "gdi32.lib",
+    "shell32.lib",
   ]
 }
 
-config("shared_library_defaults") {
-  if (is_linux) {
-    cflags = [
-      "-shared",
-      "-fPIC",
-    ]
-  }
+config("jsoncpp") {
+  libs = [
+    "$jsoncpp_lib_name",
+  ]
 }

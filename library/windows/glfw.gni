@@ -12,32 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-config("defaults") {
-  if (is_linux) {
-    cflags = [
-      "-std=c++14",
-      "-Wall",
-      "-Werror",
-      "-pthread",
-    ]
-  }
-  if (is_win) {
-    cflags = [
-      "/EHsc",
-      "/W3",
-      "/Od",
-    ]
-  }
-  include_dirs = [
-    "//",
-  ]
-}
+glfw_include_dir = "$root_gen_dir/glfw"
+glfw_download_dir = "$glfw_include_dir/GLFW"
+glfw_lib_name = "glfw3.lib"
 
-config("shared_library_defaults") {
-  if (is_linux) {
-    cflags = [
-      "-shared",
-      "-fPIC",
-    ]
-  }
-}
+glfw_files = [
+  "$glfw_download_dir/glfw3.h",
+  "$glfw_download_dir/$glfw_lib_name",
+]

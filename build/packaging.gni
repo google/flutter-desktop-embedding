@@ -16,31 +16,29 @@
 # under the top-level include/ directory in the build output.
 #
 # This is intended to make consuming public headers of all the libraries built
-# by GN easy for outside build systems on Linux, by requiring only a single
-# include directory.
-if (is_linux) {
-  template("copy_includes") {
-    copy(target_name) {
-      assert(defined(invoker.sources),
-            "|sources| must be provided for copy_includes.")
-      forward_variables_from(invoker, [ "deps", "sources", "subdir" ])
-      output_dir = "$root_out_dir/include"
-      if (defined(subdir)) {
-        output_dir = "$output_dir/$subdir"
-      }
-      outputs = [ "$output_dir/{{source_file_part}}"]
+# by GN easy for outside build systems, by requiring only a single include
+# directory.
+template("copy_includes") {
+  copy(target_name) {
+    assert(defined(invoker.sources),
+          "|sources| must be provided for copy_includes.")
+    forward_variables_from(invoker, [ "deps", "sources", "subdir" ])
+    output_dir = "$root_out_dir/include"
+    if (defined(subdir)) {
+      output_dir = "$output_dir/$subdir"
     }
+    outputs = [ "$output_dir/{{source_file_part}}"]
   }
 }
 
 # An abstraction for a shared library with associated headers that is intended
 # to be consumed from the build output.
 #
-# On Linux, this performs a copy_includes in addition to building the library.
+# This performs a copy_includes in addition to building the library.
 template("published_shared_library") {
   template_target_name = target_name
 
-  if (is_linux) {
+  if (is_linux || is_win) {
     copy_includes("_publish_${template_target_name}_headers") {
       sources = invoker.public
       subdir = invoker.public_header_subdir

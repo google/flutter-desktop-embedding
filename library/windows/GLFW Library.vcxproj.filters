@@ -18,7 +18,7 @@
     <ClCompile Include="..\common\glfw\embedder.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\internal\plugin_handler.cc">
+    <ClCompile Include="..\common\json_plugin.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\glfw\text_input_plugin.cc">
@@ -60,15 +60,18 @@
     <ClCompile Include="..\common\glfw\key_event_handler.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="embedder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="..\common\internal\plugin_handler.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">
       <Filter>Source Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\flutter_desktop_embedding\windows\embedder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
