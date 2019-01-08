@@ -38,11 +38,15 @@ Future<void> main(List<String> arguments) async {
 
   final downloadDirectory = arguments[0];
 
-  await runCommand('git', [
-    'clone',
-    gitRepo,
-    downloadDirectory,
-  ]);
+  if (Directory(downloadDirectory).existsSync()) {
+    print('$downloadDirectory already exists; skipping clone');
+  } else {
+    await runCommand('git', [
+      'clone',
+      gitRepo,
+      downloadDirectory,
+    ]);
+  }
 
   await runCommand(
       'git',
