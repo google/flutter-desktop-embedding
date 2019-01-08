@@ -38,7 +38,7 @@ with Visual Studio 2017 support as shown below:
 > tools\run_dart_tool.bat fetch_jsoncpp library\windows\third_party\jsoncpp
 ```
 
-Currently the GN build rule for `jsoncpp` if a placeholder that will eventually
+Currently the GN build rule for `jsoncpp` is a placeholder that will eventually
 be replaced with full GN build capabilities. Currently if you modify the source
 of `jsoncpp`, `out/gen/JSON` will need to be deleted for GN to rebuild it.
 
