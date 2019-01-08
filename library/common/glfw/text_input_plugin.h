@@ -42,7 +42,7 @@ class TextInputPlugin : public KeyboardHookHandler {
   void SendStateUpdate(const TextInputModel &model);
 
   // Sends an action triggered by the Enter key to the Flutter engine.
-  void EnterPressed(const TextInputModel &model);
+  void EnterPressed(TextInputModel *model);
 
   // Called when a method is called on |channel_|;
   void HandleMethodCall(const MethodCall<Json::Value> &method_call,

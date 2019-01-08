@@ -41,6 +41,12 @@ typedef void (^FLEMethodCallHandler)(FLEMethodCall *_Nonnull call, FLEMethodResu
 extern NSString const *_Nonnull FLEMethodNotImplemented;
 
 /**
+ * A constant that can be passed to an FLEMethodResult to indicate that the message is
+ * missing required arguments.
+ */
+extern NSString const *_Nonnull FLEBadArguments;
+
+/**
  * A channel for communicating with the Flutter engine using invocation of asynchronous methods.
  */
 @interface FLEMethodChannel : NSObject

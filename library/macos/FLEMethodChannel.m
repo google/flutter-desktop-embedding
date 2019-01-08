@@ -14,7 +14,8 @@
 
 #import "FLEMethodChannel.h"
 
-NSString const *FLEMethodNotImplemented = @"notimplemented";
+NSString const *FLEMethodNotImplemented = @"Not Implemented";
+NSString const *FLEBadArguments = @"Bad Arguments";
 
 @implementation FLEMethodChannel {
   NSString *_name;

@@ -31,8 +31,7 @@ static NSString *const kClearClientMethod = @"TextInput.clearClient";
 static NSString *const kSetEditingStateMethod = @"TextInput.setEditingState";
 static NSString *const kUpdateEditStateResponseMethod = @"TextInputClient.updateEditingState";
 static NSString *const kPerformAction = @"TextInputClient.performAction";
-static NSString *const kNewLine = @"TextInputAction.newline";
-static NSString *const kDone = @"TextInputAction.done";
+static NSString *const kMultilineInputType = @"TextInputType.multiline";
 
 /**
  * Private properties of FlutterTextInputPlugin.
@@ -106,12 +105,17 @@ static NSString *const kDone = @"TextInputAction.done";
   BOOL handled = YES;
   NSString *method = call.methodName;
   if ([method isEqualToString:kSetClientMethod]) {
+    if (!call.arguments[0] || !call.arguments[1]) {
+      result(FLEBadArguments);
+      return;
+    }
     NSNumber *clientID = call.arguments[0];
     if (clientID != nil &&
         (_activeClientID == nil || ![_activeClientID isEqualToNumber:clientID])) {
       _activeClientID = clientID;
       // TODO: Do we need to preserve state across setClient calls?
-      _textInputModels[_activeClientID] = [[FLETextInputModel alloc] init];
+      _textInputModels[_activeClientID] =
+          [[FLETextInputModel alloc] initWithClientId:clientID configuration:call.arguments[1]];
     }
   } else if ([method isEqualToString:kShowMethod]) {
     [self.flutterViewController addKeyResponder:self];
@@ -238,13 +242,11 @@ static NSString *const kDone = @"TextInputAction.done";
 }
 
 - (void)insertNewline:(id)sender {
-  // This method is called when the user hits the Enter key. Since the embedder can't distinguish
-  // if the current widget is multiline or not, this method will be considered a "submit" action,
-  // To insert a new line, the user should hit ctrl + Enter to call insertLineBreak.
-  // There is a PR in Flutter to identify if the widget is multiline, and act accordingly
-  // (https://github.com/flutter/flutter/pull/23015). Once merged, this action should be changed
-  // to kNewLine.
-  [_channel invokeMethod:kPerformAction arguments:@[ _activeClientID, kDone ]];
+  if ([self.activeModel.inputType isEqualToString:kMultilineInputType]) {
+    [self insertText:@"\n" replacementRange:self.activeModel.selectedRange];
+  }
+  [_channel invokeMethod:kPerformAction
+               arguments:@[ _activeClientID, self.activeModel.inputAction ]];
 }
 
 - (void)setMarkedText:(id)string
