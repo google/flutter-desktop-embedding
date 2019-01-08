@@ -84,9 +84,9 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
-  if (parsedArguments['help'] != null || parsedArguments.rest.length != 1) {
+  if (parsedArguments['help'] || parsedArguments.rest.length != 1) {
     printUsage(parser);
-    exit(parsedArguments['help'] != null ? 0 : 1);
+    exit(parsedArguments['help'] ? 0 : 1);
   }
 
   try {
