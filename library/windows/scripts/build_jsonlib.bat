@@ -12,4 +12,10 @@
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
 @echo off
-%~dp0..\..\..\tools\run_dart_tool.bat build_jsoncpp %~dp0..\third_party\jsoncpp %~dp0..\dependencies\JSON %*
+
+set RUN_DART_TOOL=%~dp0..\..\..\tools\run_dart_tool.bat
+set CHECKOUT_DIR=%~dp0..\third_party\jsoncpp
+set ARTIFACT_DIR=%~dp0..\dependencies\JSON
+
+call %RUN_DART_TOOL% fetch_jsoncpp %CHECKOUT_DIR%
+call %RUN_DART_TOOL% build_jsoncpp %CHECKOUT_DIR% %ARTIFACT_DIR% %*
