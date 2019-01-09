@@ -90,11 +90,6 @@ published_shared_library("flutter_embedder") {
   }
 
   if (is_win) {
-    dll_exports = rebase_path("windows/exports.def")
-    ldflags = [
-      "/DEF:$dll_exports",
-    ]
-
     deps += [
       "//library/windows:publish_flutter_engine",
       "//library/windows:fetch_glfw",
