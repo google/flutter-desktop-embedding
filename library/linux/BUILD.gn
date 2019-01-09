@@ -15,16 +15,8 @@
 import("//build/packaging.gni")
 import("//library/engine.gni")
 
-# Allows targets depending on this library to use library-style
-# inculdes for its header rather than project-relative.
-config("relative_public_headers") {
-  include_dirs = [
-    "../include"
-  ]
-}
-
 copy_includes("_publish_engine_headers") {
-  sources = [ engine_files[1] ]
+  sources = [ engine_files[0] ]
   deps = [ "//library:fetch_flutter_engine" ]
 }
 
@@ -32,7 +24,7 @@ copy_includes("_publish_engine_headers") {
 # output directory where built libraries go, so that it doesn't require
 # special link handling, and publishes its header.
 copy("publish_flutter_engine") {
-  sources = [ engine_files[0] ]
+  sources = [ engine_files[1] ]
   outputs = [ "$root_out_dir/{{source_file_part}}" ]
   deps = [
     ":_publish_engine_headers",

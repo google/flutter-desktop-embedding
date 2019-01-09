@@ -14,13 +14,23 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "FLEPlugin.h"
+#import "FLEBinaryMessenger.h"
+#import "FLEViewController.h"
 
 /**
- * A FlutterPlugin to handle text input. Owned by the FlutterViewController.
- * Responsible for bridging the native macOS text input system with the
- * Flutter framework text editing classes, via system channels.
+ * A plugin to handle text input.
+ *
+ * Responsible for bridging the native macOS text input system with the Flutter framework text
+ * editing classes, via system channels.
+ *
+ * This is not an FLEPlugin since it needs access to FLEViewController internals, so needs to be
+ * managed differently.
  */
-@interface FLETextInputPlugin : NSResponder <FLEPlugin>
+@interface FLETextInputPlugin : NSResponder
+
+/**
+ * Initializes a text input plugin that coordinates key event handling with |viewController|.
+ */
+- (instancetype)initWithViewController:(FLEViewController*)viewController;
 
 @end

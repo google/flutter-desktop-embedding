@@ -11,22 +11,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "library/common/internal/engine_method_result.h"
+#include "library/include/flutter_desktop_embedding/engine_method_result.h"
 
 #include <iostream>
 
 namespace flutter_desktop_embedding {
+namespace internal {
 
-EngineMethodResult::EngineMethodResult(BinaryReply reply_handler,
-                                       const MethodCodec *codec)
-    : reply_handler_(std::move(reply_handler)), codec_(codec) {
+ReplyManager::ReplyManager(BinaryReply reply_handler)
+    : reply_handler_(std::move(reply_handler)) {
   if (!reply_handler_) {
     std::cerr << "Error: Reply handler must be provided for a response."
               << std::endl;
   }
 }
 
-EngineMethodResult::~EngineMethodResult() {
+ReplyManager::~ReplyManager() {
   if (reply_handler_) {
     // Warn, rather than send a not-implemented response, since the engine may
     // no longer be valid at this point.
@@ -36,27 +36,12 @@ EngineMethodResult::~EngineMethodResult() {
   }
 }
 
-void EngineMethodResult::SuccessInternal(const void *result) {
-  std::unique_ptr<std::vector<uint8_t>> data =
-      codec_->EncodeSuccessEnvelope(result);
-  SendResponseData(data.get());
-}
-
-void EngineMethodResult::ErrorInternal(const std::string &error_code,
-                                       const std::string &error_message,
-                                       const void *error_details) {
-  std::unique_ptr<std::vector<uint8_t>> data =
-      codec_->EncodeErrorEnvelope(error_code, error_message, error_details);
-  SendResponseData(data.get());
-}
-
-void EngineMethodResult::NotImplementedInternal() { SendResponseData(nullptr); }
-
-void EngineMethodResult::SendResponseData(const std::vector<uint8_t> *data) {
+void ReplyManager::SendResponseData(const std::vector<uint8_t> *data) {
   if (!reply_handler_) {
     std::cerr
-        << "Error: Only one of Success, Error, or NotImplemented can be called,"
-        << " and it can be called exactyl once. Ignoring duplicate result."
+        << "Error: Only one of Success, Error, or NotImplemented can be "
+           "called,"
+        << " and it can be called exactly once. Ignoring duplicate result."
         << std::endl;
     return;
   }
@@ -67,4 +52,5 @@ void EngineMethodResult::SendResponseData(const std::vector<uint8_t> *data) {
   reply_handler_ = nullptr;
 }
 
+}  // namespace internal
 }  // namespace flutter_desktop_embedding

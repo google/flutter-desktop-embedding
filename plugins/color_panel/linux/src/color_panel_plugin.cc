@@ -16,13 +16,13 @@
 #include <gtk/gtk.h>
 #include <iostream>
 
+#include <flutter_desktop_embedding/json_method_codec.h>
+
 #include "plugins/color_panel/common/channel_constants.h"
 
 static constexpr char kWindowTitle[] = "Flutter Color Picker";
 
 namespace plugins_color_panel {
-using flutter_desktop_embedding::JsonMethodCall;
-using flutter_desktop_embedding::MethodResult;
 
 // Private implementation class containing the color picker widget.
 //
@@ -30,11 +30,11 @@ using flutter_desktop_embedding::MethodResult;
 class ColorPanelPlugin::ColorPanel {
  public:
   explicit ColorPanel(ColorPanelPlugin *parent,
-                      const Json::Value &method_args) {
+                      const Json::Value *method_args) {
     gtk_widget_ = gtk_color_chooser_dialog_new(kWindowTitle, nullptr);
     gtk_color_chooser_set_use_alpha(
         reinterpret_cast<GtkColorChooser *>(gtk_widget_),
-        method_args[kColorPanelShowAlpha].asBool());
+        method_args && (*method_args)[kColorPanelShowAlpha].asBool());
     gtk_widget_show_all(gtk_widget_);
     g_signal_connect(gtk_widget_, "close", G_CALLBACK(CloseCallback), parent);
     g_signal_connect(gtk_widget_, "response", G_CALLBACK(ResponseCallback),
@@ -78,8 +78,9 @@ class ColorPanelPlugin::ColorPanel {
     if (response_id == GTK_RESPONSE_OK) {
       GdkRGBA color;
       gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dialog), &color);
-      plugin->InvokeMethod(kColorSelectedCallbackMethod,
-                           GdkColorToArgs(&color));
+      plugin->channel_->InvokeMethod(
+          kColorSelectedCallbackMethod,
+          std::make_unique<Json::Value>(GdkColorToArgs(&color)));
     }
     // Need this to close the color handler.
     plugin->HidePanel(CloseRequestSource::kUserAction);
@@ -89,13 +90,38 @@ class ColorPanelPlugin::ColorPanel {
   GtkWidget *gtk_widget_;
 };
 
-ColorPanelPlugin::ColorPanelPlugin()
-    : JsonPlugin(kChannelName), color_panel_(nullptr) {}
+// static
+void ColorPanelPlugin::RegisterWithRegistrar(
+    flutter_desktop_embedding::PluginRegistrar *registrar) {
+  auto channel =
+      std::make_unique<flutter_desktop_embedding::MethodChannel<Json::Value>>(
+          registrar->messenger(), kChannelName,
+          &flutter_desktop_embedding::JsonMethodCodec::GetInstance());
+  auto *channel_pointer = channel.get();
+
+  // Uses new instead of make_unique due to private constructor.
+  std::unique_ptr<ColorPanelPlugin> plugin(
+      new ColorPanelPlugin(std::move(channel)));
+
+  channel_pointer->SetMethodCallHandler(
+      [plugin_pointer = plugin.get()](const auto &call, auto result) {
+        plugin_pointer->HandleMethodCall(call, std::move(result));
+      });
+
+  registrar->AddPlugin(std::move(plugin));
+}
+
+ColorPanelPlugin::ColorPanelPlugin(
+    std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+        channel)
+    : channel_(std::move(channel)), color_panel_(nullptr) {}
 
 ColorPanelPlugin::~ColorPanelPlugin() {}
 
-void ColorPanelPlugin::HandleJsonMethodCall(
-    const JsonMethodCall &method_call, std::unique_ptr<MethodResult> result) {
+void ColorPanelPlugin::HandleMethodCall(
+    const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
+    std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
+        result) {
   if (method_call.method_name().compare(kShowColorPanelMethod) == 0) {
     result->Success();
     // There is only one color panel that can be displayed at once.
@@ -104,7 +130,7 @@ void ColorPanelPlugin::HandleJsonMethodCall(
       return;
     }
     color_panel_ = std::make_unique<ColorPanelPlugin::ColorPanel>(
-        this, method_call.GetArgumentsAsJson());
+        this, method_call.arguments());
   } else if (method_call.method_name().compare(kHideColorPanelMethod) == 0) {
     result->Success();
     if (color_panel_ == nullptr) {
@@ -119,7 +145,7 @@ void ColorPanelPlugin::HandleJsonMethodCall(
 void ColorPanelPlugin::HidePanel(CloseRequestSource source) {
   color_panel_.reset();
   if (source == CloseRequestSource::kUserAction) {
-    InvokeMethod(kClosedCallbackMethod);
+    channel_->InvokeMethod(kClosedCallbackMethod, nullptr);
   }
 }
 

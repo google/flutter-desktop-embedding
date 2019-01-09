@@ -11,36 +11,42 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CALL_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CALL_H_
+#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TYPED_METHOD_CALL_H_
+#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TYPED_METHOD_CALL_H_
 
+#include <memory>
 #include <string>
+
+#include "fde_export.h"
 
 namespace flutter_desktop_embedding {
 
-// An object encapsulating a method call from Flutter.
-class MethodCall {
+// An object encapsulating a method call from Flutter whose arguments are of
+// type T.
+template <typename T>
+class FDE_EXPORT MethodCall {
  public:
-  // Creates a MethodCall with the given name. Used only as a superclass
-  // constructor for subclasses, which should also take the arguments.
-  explicit MethodCall(const std::string &method_name);
-  virtual ~MethodCall();
+  // Creates a MethodCall with the given name and arguments.
+  explicit MethodCall(const std::string &method_name,
+                      std::unique_ptr<T> arguments)
+      : method_name_(method_name), arguments_(std::move(arguments)) {}
+  virtual ~MethodCall() = default;
 
   // Prevent copying.
-  MethodCall(MethodCall const &) = delete;
-  MethodCall &operator=(MethodCall const &) = delete;
+  MethodCall(MethodCall<T> const &) = delete;
+  MethodCall &operator=(MethodCall<T> const &) = delete;
 
   // The name of the method being called.
   const std::string &method_name() const { return method_name_; }
 
-  // The arguments to the method call, or NULL if there are none. The type of
-  // the object being pointed to is determined by the concrete subclasses.
-  virtual const void *arguments() const = 0;
+  // The arguments to the method call, or NULL if there are none.
+  const T *arguments() const { return arguments_.get(); }
 
  private:
   std::string method_name_;
+  std::unique_ptr<T> arguments_;
 };
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CALL_H_
+#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_TYPED_METHOD_CALL_H_

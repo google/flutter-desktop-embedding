@@ -24,6 +24,7 @@
 #import "FLEMethodError.h"
 #import "FLEOpenGLContextHandling.h"
 #import "FLEPlugin.h"
+#import "FLEPluginRegistrar.h"
 #import "FLEReshapeListener.h"
 #import "FLEView.h"
 #import "FLEViewController.h"

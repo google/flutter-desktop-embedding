@@ -27,9 +27,11 @@
 #include <GLFW/glfw3.h>
 
 #ifdef USE_FLATTENED_INCLUDES
-#include "plugin.h"
+#include "fde_export.h"
+#include "plugin_registrar.h"
 #else
-#include "../plugin.h"
+#include "../fde_export.h"
+#include "../plugin_registrar.h"
 #endif
 
 namespace flutter_desktop_embedding {
@@ -37,12 +39,12 @@ namespace flutter_desktop_embedding {
 // Calls glfwInit()
 //
 // glfwInit() must be called in the same library as glfwCreateWindow()
-bool FlutterInit();
+FDE_EXPORT bool FlutterInit();
 
 // Calls glfwTerminate()
 //
 // glfwTerminate() must be called in the same library as glfwCreateWindow()
-void FlutterTerminate();
+FDE_EXPORT void FlutterTerminate();
 
 // Creates a GLFW Window running a Flutter Application.
 //
@@ -54,12 +56,11 @@ void FlutterTerminate();
 //
 // Returns a null pointer in the event of an error. The caller owns the pointer
 // when it is non-null.
-GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
-                                const std::string &main_path,
-                                const std::string &assets_path,
-                                const std::string &packages_path,
-                                const std::string &icu_data_path,
-                                const std::vector<std::string> &arguments);
+FDE_EXPORT GLFWwindow *CreateFlutterWindow(
+    size_t initial_width, size_t initial_height, const std::string &main_path,
+    const std::string &assets_path, const std::string &packages_path,
+    const std::string &icu_data_path,
+    const std::vector<std::string> &arguments);
 
 // Creates a GLFW Window running a Flutter Application in snapshot mode.
 //
@@ -74,16 +75,18 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
 //
 // Returns a null pointer in the event of an error. The caller owns the pointer
 // when it is non-null.
-GLFWwindow *CreateFlutterWindowInSnapshotMode(
+FDE_EXPORT GLFWwindow *CreateFlutterWindowInSnapshotMode(
     size_t initial_width, size_t initial_height, const std::string &assets_path,
     const std::string &icu_data_path,
     const std::vector<std::string> &arguments);
 
-// Adds a plugin to the flutter_window.
+// Returns the PluginRegistrar to register a plugin with the given name with
+// the flutter_window.
 //
-// If a plugin already exists for this plugin's channel, returns false.
-// Otherwise returns true.
-bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin);
+// The name must be unique across the application, so the recommended approach
+// is to use the fully namespace-qualified name of the plugin class.
+FDE_EXPORT PluginRegistrar *GetRegistrarForPlugin(
+    GLFWwindow *flutter_window, const std::string &plugin_name);
 
 // Loops on flutter window events until termination.
 //
@@ -92,7 +95,7 @@ bool AddPlugin(GLFWwindow *flutter_window, std::unique_ptr<Plugin> plugin);
 //
 // After this function the user must eventually call FlutterTerminate() if doing
 // cleanup.
-void FlutterWindowLoop(GLFWwindow *flutter_window);
+FDE_EXPORT void FlutterWindowLoop(GLFWwindow *flutter_window);
 
 }  // namespace flutter_desktop_embedding
 

@@ -18,12 +18,26 @@
 
 #include "plugins/color_panel/common/channel_constants.h"
 
-@implementation FLEColorPanelPlugin
+@implementation FLEColorPanelPlugin {
+  // The channel used to communicate with Flutter.
+  FLEMethodChannel *_channel;
+}
 
-@synthesize controller = _controller;
++ (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
+  FLEMethodChannel* channel = [FLEMethodChannel
+                                   methodChannelWithName:@(plugins_color_panel::kChannelName)
+                                   binaryMessenger:registrar.messenger
+                               codec:[FLEJSONMethodCodec sharedInstance]];
+  FLEColorPanelPlugin* instance = [[FLEColorPanelPlugin alloc] initWithChannel:channel];
+  [registrar addMethodCallDelegate:instance channel:channel];
+}
 
-- (NSString *)channel {
-  return @(plugins_color_panel::kChannelName);
+- (instancetype)initWithChannel:(FLEMethodChannel*)channel {
+  self = [super init];
+  if (self) {
+    _channel = channel;
+  }
+  return self;
 }
 
 /**
@@ -94,14 +108,13 @@
 
 /**
  * Called when the user selects a color in the color panel. Grabs the selected color from the
- * panel and sends it to Flutter via the '_controller'.
+ * panel and sends it to Flutter via the '_channel'.
  */
 - (void)selectedColorDidChange {
   NSColor *color = [NSColorPanel sharedColorPanel].color;
   NSDictionary *colorDictionary = [self dictionaryWithColor:color];
-  [_controller invokeMethod:@(plugins_color_panel::kColorSelectedCallbackMethod)
-                  arguments:colorDictionary
-                  onChannel:@(plugins_color_panel::kChannelName)];
+  [_channel invokeMethod:@(plugins_color_panel::kColorSelectedCallbackMethod)
+                  arguments:colorDictionary];
 }
 
 /**
@@ -125,9 +138,8 @@
 
 - (void)windowWillClose:(NSNotification *)notification {
   [self removeColorPanelConnections];
-  [_controller invokeMethod:@(plugins_color_panel::kClosedCallbackMethod)
-                  arguments:nil
-                  onChannel:@(plugins_color_panel::kChannelName)];
+  [_channel invokeMethod:@(plugins_color_panel::kClosedCallbackMethod)
+                  arguments:nil];
 }
 
 @end

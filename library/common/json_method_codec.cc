@@ -14,7 +14,6 @@
 #include "library/include/flutter_desktop_embedding/json_method_codec.h"
 
 #include "library/common/internal/json_message_codec.h"
-#include "library/include/flutter_desktop_embedding/json_method_call.h"
 
 namespace flutter_desktop_embedding {
 
@@ -30,8 +29,9 @@ const JsonMethodCodec &JsonMethodCodec::GetInstance() {
   return sInstance;
 }
 
-std::unique_ptr<MethodCall> JsonMethodCodec::DecodeMethodCallInternal(
-    const uint8_t *message, const size_t message_size) const {
+std::unique_ptr<MethodCall<Json::Value>>
+JsonMethodCodec::DecodeMethodCallInternal(const uint8_t *message,
+                                          const size_t message_size) const {
   std::unique_ptr<Json::Value> json_message =
       JsonMessageCodec::GetInstance().DecodeMessage(message, message_size);
   if (!json_message) {
@@ -42,39 +42,37 @@ std::unique_ptr<MethodCall> JsonMethodCodec::DecodeMethodCallInternal(
   if (method.isNull()) {
     return nullptr;
   }
-  Json::Value arguments = (*json_message)[kMessageArgumentsKey];
-  return std::make_unique<JsonMethodCall>(method.asString(), arguments);
+  return std::make_unique<MethodCall<Json::Value>>(
+      method.asString(),
+      std::make_unique<Json::Value>((*json_message)[kMessageArgumentsKey]));
 }
 
 std::unique_ptr<std::vector<uint8_t>> JsonMethodCodec::EncodeMethodCallInternal(
-    const MethodCall &method_call) const {
+    const MethodCall<Json::Value> &method_call) const {
   Json::Value message(Json::objectValue);
   message[kMessageMethodKey] = method_call.method_name();
-  message[kMessageArgumentsKey] =
-      *static_cast<const Json::Value *>(method_call.arguments());
+  const Json::Value *arguments = method_call.arguments();
+  message[kMessageArgumentsKey] = arguments ? *arguments : Json::Value();
 
   return JsonMessageCodec::GetInstance().EncodeMessage(message);
 }
 
 std::unique_ptr<std::vector<uint8_t>>
-JsonMethodCodec::EncodeSuccessEnvelopeInternal(const void *result) const {
+JsonMethodCodec::EncodeSuccessEnvelopeInternal(
+    const Json::Value *result) const {
   Json::Value envelope(Json::arrayValue);
-  envelope.append(result == nullptr
-                      ? Json::Value()
-                      : *static_cast<const Json::Value *>(result));
+  envelope.append(result == nullptr ? Json::Value() : *result);
   return JsonMessageCodec::GetInstance().EncodeMessage(envelope);
 }
 
 std::unique_ptr<std::vector<uint8_t>>
-JsonMethodCodec::EncodeErrorEnvelopeInternal(const std::string &error_code,
-                                             const std::string &error_message,
-                                             const void *error_details) const {
+JsonMethodCodec::EncodeErrorEnvelopeInternal(
+    const std::string &error_code, const std::string &error_message,
+    const Json::Value *error_details) const {
   Json::Value envelope(Json::arrayValue);
   envelope.append(error_code);
   envelope.append(error_message.empty() ? Json::Value() : error_message);
-  envelope.append(error_details == nullptr
-                      ? Json::Value()
-                      : *static_cast<const Json::Value *>(error_details));
+  envelope.append(error_details == nullptr ? Json::Value() : *error_details);
   return JsonMessageCodec::GetInstance().EncodeMessage(envelope);
 }
 

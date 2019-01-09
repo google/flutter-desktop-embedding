@@ -24,9 +24,10 @@ EMBEDDER_LIB_FILE=$(EMBEDDER_LIBRARY_OUT_DIR)/lib$(EMBEDDER_LIB_NAME).so
 COMMON_DIR=$(CURDIR)/../common
 
 CXX=g++ -std=c++14
-CXXFLAGS= -Wall -Werror -shared -fPIC \
+CXXFLAGS= -Wall -Werror -shared -fPIC -fvisibility=hidden \
 	-I$(PROJECT_ROOT) \
 	-I$(EMBEDDER_LIBRARY_HEADER_DIR) \
+	-DFILE_CHOOSER_PLUGIN_IMPL \
 	$(shell pkg-config --cflags gtk+-3.0 jsoncpp)
 LDFLAGS= -L$(EMBEDDER_LIBRARY_OUT_DIR) \
 	$(shell pkg-config --libs gtk+-3.0 jsoncpp) \

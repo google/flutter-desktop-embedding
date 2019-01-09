@@ -13,7 +13,7 @@
 // limitations under the License.
 #include "library/common/internal/plugin_handler.h"
 
-#include "library/common/internal/engine_method_result.h"
+#include "library/include/flutter_desktop_embedding/engine_method_result.h"
 #include "library/include/flutter_desktop_embedding/method_channel.h"
 
 #include <iostream>
@@ -23,15 +23,6 @@ namespace flutter_desktop_embedding {
 PluginHandler::PluginHandler(FlutterEngine engine) : engine_(engine) {}
 
 PluginHandler::~PluginHandler() {}
-
-bool PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
-  if (plugins_.find(plugin->channel()) != plugins_.end()) {
-    return false;
-  }
-  plugin->SetBinaryMessenger(this);
-  plugins_.insert(std::make_pair(plugin->channel(), std::move(plugin)));
-  return true;
-}
 
 void PluginHandler::HandleMethodCallMessage(
     const FlutterPlatformMessage *message,
@@ -58,25 +49,24 @@ void PluginHandler::HandleMethodCallMessage(
 
   // Find the handler for the channel; if there isn't one, report the failure.
   if (handlers_.find(channel) == handlers_.end()) {
-    auto result =
-        std::make_unique<flutter_desktop_embedding::EngineMethodResult>(
-            std::move(reply_handler), nullptr);
-    result->NotImplemented();
+    reply_handler(nullptr, 0);
     return;
   }
   const BinaryMessageHandler &message_handler = handlers_[channel];
-  const std::unique_ptr<Plugin> &plugin = plugins_[channel];
 
-  // Process the call, handling input blocking if requested by the plugin.
-  if (plugin && plugin->input_blocking()) {
+  // Process the call, handling input blocking if requested.
+  bool block_input = input_blocking_channels_.count(channel) > 0;
+  if (block_input) {
     input_block_cb();
   }
   message_handler(message->message, message->message_size,
                   std::move(reply_handler));
-  if (plugin && plugin->input_blocking()) {
+  if (block_input) {
     input_unblock_cb();
   }
 }
+
+// BinaryMessenger:
 
 void PluginHandler::Send(const std::string &channel, const uint8_t *message,
                          const size_t message_size) const {
@@ -92,6 +82,16 @@ void PluginHandler::Send(const std::string &channel, const uint8_t *message,
 void PluginHandler::SetMessageHandler(const std::string &channel,
                                       BinaryMessageHandler handler) {
   handlers_[channel] = std::move(handler);
+}
+
+// PluginRegistrar:
+
+void PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
+  plugins_.insert(std::move(plugin));
+}
+
+void PluginHandler::EnableInputBlockingForChannel(const std::string &channel) {
+  input_blocking_channels_.insert(channel);
 }
 
 }  // namespace flutter_desktop_embedding

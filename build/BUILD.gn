@@ -13,20 +13,33 @@
 # limitations under the License.
 
 config("defaults") {
-  cflags = [
-    "-std=c++14",
-    "-Wall",
-    "-Werror",
-    "-pthread",
-  ]
+  if (is_linux) {
+    cflags = [
+      "-std=c++14",
+      "-Wall",
+      "-Werror",
+      "-pthread",
+    ]
+  }
+  if (is_win) {
+    cflags = [
+      "/EHsc",
+      "/W3",
+      "/Od",
+    ]
+  }
   include_dirs = [
-    "//"
+    "//",
   ]
 }
 
 config("shared_library_defaults") {
-  cflags = [
-    "-shared",
-    "-fPIC",
-  ]
+  if (is_linux) {
+    cflags = [
+      "-shared",
+      "-fPIC",
+      # Default to hidden for consistency with Windows builds.
+      "-fvisibility=hidden",
+    ]
+  }
 }

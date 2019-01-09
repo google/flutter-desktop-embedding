@@ -17,6 +17,8 @@
 #include <functional>
 #include <string>
 
+#include "fde_export.h"
+
 // TODO: Consider adding absl as a dependency and using absl::Span for all of
 // the message/message_size pairs.
 namespace flutter_desktop_embedding {
@@ -36,7 +38,7 @@ typedef std::function<void(const uint8_t *message, const size_t message_size,
 
 // A protocol for a class that handles communication of binary data on named
 // channels to and from the Flutter engine.
-class BinaryMessenger {
+class FDE_EXPORT BinaryMessenger {
  public:
   // Sends a binary message to the Flutter side on the specified channel,
   // expecting no reply.

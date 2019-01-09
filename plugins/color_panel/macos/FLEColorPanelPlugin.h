@@ -17,9 +17,8 @@
 #import <FlutterEmbedderMac/FlutterEmbedderMac.h>
 
 /**
- * A FlutterPlugin to manage macOS's shared NSColorPanel singleton. Owned by
- * the FlutterViewController. Responsible for managing the panel's display state
- * and sending selected color data to Flutter, via system channels.
+ * A FlutterPlugin to manage macOS's shared NSColorPanel singleton.
+ * Responsible for managing the panel's display state and sending selected color data to Flutter.
  */
 @interface FLEColorPanelPlugin : NSObject <FLEPlugin, NSWindowDelegate>
 

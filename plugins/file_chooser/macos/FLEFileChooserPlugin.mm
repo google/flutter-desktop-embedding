@@ -18,9 +18,18 @@
 
 #include "plugins/file_chooser/common/channel_constants.h"
 
-@implementation FLEFileChooserPlugin
+@implementation FLEFileChooserPlugin {
+  // The view displaying Flutter content.
+  NSView* _flutterView;
+}
 
-@synthesize controller = _controller;
+- (instancetype)initWithView:(NSView*)view {
+  self = [super init];
+  if (self != nil) {
+    _flutterView = view;
+  }
+  return self;
+}
 
 /**
  * Configures an NSSavePanel instance on behalf of a flutter client.
@@ -69,8 +78,13 @@
 
 #pragma FLEPlugin implementation
 
-- (NSString *)channel {
-  return @(plugins_file_chooser::kChannelName);
++ (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
+  FLEMethodChannel* channel = [FLEMethodChannel
+                               methodChannelWithName:@(plugins_file_chooser::kChannelName)
+                               binaryMessenger:registrar.messenger
+codec:[FLEJSONMethodCodec sharedInstance]];
+  FLEFileChooserPlugin* instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
+  [registrar addMethodCallDelegate:instance channel:channel];
 }
 
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
@@ -80,7 +94,7 @@
     NSSavePanel *savePanel = [NSSavePanel savePanel];
     savePanel.canCreateDirectories = YES;
     [self configureSavePanel:savePanel withArguments:arguments];
-    [savePanel beginSheetModalForWindow:_controller.view.window
+    [savePanel beginSheetModalForWindow:_flutterView.window
                       completionHandler:^(NSModalResponse panelResult) {
                         NSArray<NSURL *> *URLs =
                             (panelResult == NSModalResponseOK) ? @[ savePanel.URL ] : nil;
@@ -91,7 +105,7 @@
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [self configureSavePanel:openPanel withArguments:arguments];
     [self configureOpenPanel:openPanel withArguments:arguments];
-    [openPanel beginSheetModalForWindow:_controller.view.window
+    [openPanel beginSheetModalForWindow:_flutterView.window
                       completionHandler:^(NSModalResponse panelResult) {
                         NSArray<NSURL *> *URLs =
                             (panelResult == NSModalResponseOK) ? openPanel.URLs : nil;

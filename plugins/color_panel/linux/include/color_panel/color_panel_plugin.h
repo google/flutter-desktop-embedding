@@ -16,19 +16,27 @@
 
 #include <memory>
 
-#include <flutter_desktop_embedding/json_plugin.h>
+#include <json/json.h>
+
+#include <flutter_desktop_embedding/method_channel.h>
+#include <flutter_desktop_embedding/plugin_registrar.h>
+
+#ifdef COLOR_PANEL_PLUGIN_IMPL
+#define COLOR_PANEL_PLUGIN_EXPORT __attribute__((visibility("default")))
+#else
+#define COLOR_PANEL_PLUGIN_EXPORT
+#endif
 
 namespace plugins_color_panel {
 
 // A plugin for communicating with a native color picker panel.
-class ColorPanelPlugin : public flutter_desktop_embedding::JsonPlugin {
+class COLOR_PANEL_PLUGIN_EXPORT ColorPanelPlugin
+    : public flutter_desktop_embedding::Plugin {
  public:
-  ColorPanelPlugin();
-  virtual ~ColorPanelPlugin();
+  static void RegisterWithRegistrar(
+      flutter_desktop_embedding::PluginRegistrar *registrar);
 
-  void HandleJsonMethodCall(
-      const flutter_desktop_embedding::JsonMethodCall &method_call,
-      std::unique_ptr<flutter_desktop_embedding::MethodResult> result) override;
+  virtual ~ColorPanelPlugin();
 
  protected:
   // The source of a request to hide the panel, either a user action or
@@ -39,6 +47,21 @@ class ColorPanelPlugin : public flutter_desktop_embedding::JsonPlugin {
   void HidePanel(CloseRequestSource source);
 
  private:
+  // Creates a plugin that communicates on the given channel.
+  ColorPanelPlugin(
+      std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+          channel);
+
+  // Called when a method is called on |channel_|;
+  void HandleMethodCall(
+      const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
+      std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
+          result);
+
+  // The MethodChannel used for communication with the Flutter engine.
+  std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+      channel_;
+
   // Private implementation.
   class ColorPanel;
   std::unique_ptr<ColorPanel> color_panel_;

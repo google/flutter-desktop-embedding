@@ -140,18 +140,18 @@ class _AppState extends State<MyApp> {
 }
 
 class _MyHomePage extends StatelessWidget {
+  const _MyHomePage({this.title, this.counter = 0});
+
   final String title;
   final int counter;
-
-  const _MyHomePage({this.title, this.counter = 0});
 
   void _changePrimaryThemeColor(BuildContext context) {
     final colorPanel = ColorPanel.instance;
     if (!colorPanel.showing) {
       colorPanel.show((color) {
         _AppState.of(context).setPrimaryColor(color);
-      // Setting the primary color to a non-opaque color raises an exception.
-      }, showAlpha: false); 
+        // Setting the primary color to a non-opaque color raises an exception.
+      }, showAlpha: false);
     }
   }
 

@@ -19,27 +19,22 @@
 
 #include "library/common/glfw/keyboard_hook_handler.h"
 #include "library/common/internal/text_input_model.h"
-#include "library/include/flutter_desktop_embedding/json_plugin.h"
+#include "library/include/flutter_desktop_embedding/method_channel.h"
+#include "library/include/flutter_desktop_embedding/plugin_registrar.h"
 
 namespace flutter_desktop_embedding {
 
 // Implements a text input plugin.
 //
 // Specifically handles window events within GLFW.
-class TextInputPlugin : public KeyboardHookHandler, public JsonPlugin {
+class TextInputPlugin : public KeyboardHookHandler {
  public:
-  TextInputPlugin();
+  TextInputPlugin(PluginRegistrar *registrar);
   virtual ~TextInputPlugin();
 
-  // Plugin.
-  void HandleJsonMethodCall(const JsonMethodCall &method_call,
-                            std::unique_ptr<MethodResult> result) override;
-
-  // KeyboardHookHandler.
+  // KeyboardHookHandler:
   void KeyboardHook(GLFWwindow *window, int key, int scancode, int action,
                     int mods) override;
-
-  // KeyboardHookHandler.
   void CharHook(GLFWwindow *window, unsigned int code_point) override;
 
  private:
@@ -48,6 +43,13 @@ class TextInputPlugin : public KeyboardHookHandler, public JsonPlugin {
 
   // Sends an action triggered by the Enter key to the Flutter engine.
   void EnterPressed(const TextInputModel &model);
+
+  // Called when a method is called on |channel_|;
+  void HandleMethodCall(const MethodCall<Json::Value> &method_call,
+                        std::unique_ptr<MethodResult<Json::Value>> result);
+
+  // The MethodChannel used for communication with the Flutter engine.
+  std::unique_ptr<MethodChannel<Json::Value>> channel_;
 
   // Mapping of client IDs to text input models.
   std::map<int, std::unique_ptr<TextInputModel>> input_models_;

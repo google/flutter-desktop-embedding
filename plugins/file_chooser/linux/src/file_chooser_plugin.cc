@@ -17,6 +17,8 @@
 #include <iostream>
 #include <vector>
 
+#include <flutter_desktop_embedding/json_method_codec.h>
+
 #include "plugins/file_chooser/common/channel_constants.h"
 
 // File chooser callback results.
@@ -24,8 +26,6 @@ static constexpr int kCancelResultValue = 0;
 static constexpr int kOkResultValue = 1;
 
 namespace plugins_file_chooser {
-using flutter_desktop_embedding::JsonMethodCall;
-using flutter_desktop_embedding::MethodResult;
 
 // Applies filters to the file chooser.
 //
@@ -86,8 +86,8 @@ static void ProcessAttributes(const Json::Value &method_args,
 // string, then this returns a file saver dialog.
 //
 // If the method is not recognized as one of those above, will return a nullptr.
-static GtkWidget *CreateFileChooserFromMethod(
-    const std::string &method, const std::string &ok_button) {
+static GtkWidget *CreateFileChooserFromMethod(const std::string &method,
+                                              const std::string &ok_button) {
   GtkWidget *chooser = nullptr;
   if (method == kShowOpenPanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
@@ -110,14 +110,13 @@ static GtkWidget *CreateFileChooserFromMethod(
 // The JSON args determine the modifications to the file chooser, like filters,
 // being able to choose multiple files, etc.
 static GtkWidget *CreateFileChooser(const std::string &method,
-                                               const Json::Value &args) {
+                                    const Json::Value &args) {
   Json::Value ok_button_value = args[kConfirmButtonTextKey];
   std::string ok_button_str;
   if (!ok_button_value.isNull()) {
     ok_button_str = ok_button_value.asString();
   }
-  GtkWidget *chooser =
-      CreateFileChooserFromMethod(method, ok_button_str);
+  GtkWidget *chooser = CreateFileChooserFromMethod(method, ok_button_str);
   if (chooser == nullptr) {
     std::cerr << "Could not determine method for file chooser from: " << method
               << std::endl;
@@ -143,19 +142,46 @@ static Json::Value CreateResponseObject(
   return response;
 }
 
-FileChooserPlugin::FileChooserPlugin() : JsonPlugin(kChannelName, true) {}
+// static
+void FileChooserPlugin::RegisterWithRegistrar(
+    flutter_desktop_embedding::PluginRegistrar *registrar) {
+  auto channel =
+      std::make_unique<flutter_desktop_embedding::MethodChannel<Json::Value>>(
+          registrar->messenger(), kChannelName,
+          &flutter_desktop_embedding::JsonMethodCodec::GetInstance());
+  auto *channel_pointer = channel.get();
+
+  // Uses new instead of make_unique due to private constructor.
+  std::unique_ptr<FileChooserPlugin> plugin(
+      new FileChooserPlugin(std::move(channel)));
+
+  channel_pointer->SetMethodCallHandler(
+      [plugin_pointer = plugin.get()](const auto &call, auto result) {
+        plugin_pointer->HandleMethodCall(call, std::move(result));
+      });
+  registrar->EnableInputBlockingForChannel(kChannelName);
+
+  registrar->AddPlugin(std::move(plugin));
+}
+
+FileChooserPlugin::FileChooserPlugin(
+    std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+        channel)
+    : channel_(std::move(channel)) {}
 
 FileChooserPlugin::~FileChooserPlugin() {}
 
-void FileChooserPlugin::HandleJsonMethodCall(
-    const JsonMethodCall &method_call, std::unique_ptr<MethodResult> result) {
-  if (method_call.GetArgumentsAsJson().isNull()) {
+void FileChooserPlugin::HandleMethodCall(
+    const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
+    std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
+        result) {
+  if (!method_call.arguments() || method_call.arguments()->isNull()) {
     result->Error("Bad Arguments", "Null file chooser method args received");
     return;
   }
 
-  auto chooser = CreateFileChooser(method_call.method_name(),
-                                   method_call.GetArgumentsAsJson());
+  auto chooser =
+      CreateFileChooser(method_call.method_name(), *method_call.arguments());
   if (chooser == nullptr) {
     result->NotImplemented();
     return;

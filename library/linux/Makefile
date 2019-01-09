@@ -22,10 +22,11 @@ ENGINE_UPDATER=$(TOOLS_DIR)/update_flutter_engine
 FLUTTER_DIR=$(shell "$(TOOLS_DIR)/flutter_location")
 LIBRARY_OUT=libflutter_embedder.so
 CXX=g++ -std=c++14
-CXXFLAGS= -Wall -Werror -shared -fPIC \
+CXXFLAGS= -Wall -Werror -shared -fPIC -fvisibility=hidden \
 	-I$(PROJECT_ROOT) \
 	-I$(PROJECT_ROOT)/library/include \
 	-I$(FLUTTER_ENGINE_HEADER_DIR) \
+	-DFLUTTER_DESKTOP_EMBEDDING_IMPL \
 	$(shell pkg-config --cflags gtk+-3.0 epoxy x11 jsoncpp)
 LDFLAGS= -L$(CURDIR) \
 	$(shell pkg-config --libs gtk+-3.0 epoxy x11 jsoncpp) \
@@ -51,7 +52,7 @@ $(LIBRARY_OUT): $(SOURCES) $(HEADERS) $(LIBRARIES)
 # avoiding unnecessary relinks.
 $(FLUTTER_ENGINE_LIB_FILE) $(FLUTTER_ENGINE_HEADER_DIR)/$(FLUTTER_ENGINE_HEADER): \
 		$(FLUTTER_DIR)/bin/internal/engine.version
-	$(ENGINE_UPDATER) --flutter_root=$(FLUTTER_DIR) ./
+	$(ENGINE_UPDATER) ./
 	if [ -f $(FLUTTER_ENGINE_HEADER) ]; then \
 		mkdir -p $(FLUTTER_ENGINE_HEADER_DIR) && \
 		mv $(FLUTTER_ENGINE_HEADER) $(FLUTTER_ENGINE_HEADER_DIR)/; \
