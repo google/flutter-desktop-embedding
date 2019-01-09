@@ -73,7 +73,6 @@ published_shared_library("flutter_embedder") {
 
   if (is_linux) {
     libs = [
-      "glfw",
       "GL",
     ]
 
@@ -83,6 +82,7 @@ published_shared_library("flutter_embedder") {
 
     configs += [
       "//build/linux/config:epoxy",
+      "//build/linux/config:glfw3",
       "//build/linux/config:gtk3",
       "//build/linux/config:jsoncpp",
       "//build/linux/config:x11",
