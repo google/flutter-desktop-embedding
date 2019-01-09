@@ -24,7 +24,7 @@
     <ClCompile Include="..\common\engine_method_result.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\internal\json_message_codec.cc">
+    <ClCompile Include="..\common\json_message_codec.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\internal\text_input_model.cc">

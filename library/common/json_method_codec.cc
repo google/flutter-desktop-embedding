@@ -13,7 +13,7 @@
 // limitations under the License.
 #include "library/include/flutter_desktop_embedding/json_method_codec.h"
 
-#include "library/common/internal/json_message_codec.h"
+#include "library/include/flutter_desktop_embedding/json_message_codec.h"
 
 namespace flutter_desktop_embedding {
 
