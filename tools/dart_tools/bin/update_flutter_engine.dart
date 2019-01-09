@@ -22,6 +22,8 @@ import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 import 'package:archive/archive.dart';
 
+import '../lib/flutter_utils.dart';
+
 /// The filename stored next to a downloaded engine library to indicate its
 /// version.
 const String lastDownloadedVersionFile = '.last_engine_version';
@@ -68,7 +70,7 @@ Future<void> main(List<String> arguments) async {
         help: 'The root of the Flutter tree to get the engine version from.\n'
             'Ignored if --hash is provided.\n'
             'Defaults to a "flutter" directory next to this repository.',
-        defaultsTo: path.join(path.dirname(getRepositoryParent()), 'flutter'))
+        defaultsTo: getDefaultFlutterRoot())
     ..addOption(
       'hash',
       help: 'The hash of the engine version to use.\n'
@@ -115,14 +117,6 @@ Future<void> main(List<String> arguments) async {
 void printUsage(ArgParser argParser) {
   print('Usage: update_flutter_engine [options] <output directory>\n');
   print(argParser.usage);
-}
-
-/// Returns the path to the parent directory of this project's repository.
-///
-/// Relies on the known location of this script within the repo.
-String getRepositoryParent() {
-  final scriptUri = Platform.script;
-  return new File.fromUri(scriptUri).parent.parent.parent.parent.path;
 }
 
 /// Returns the engine version hash for the Flutter tree at [flutterRoot],
