@@ -27,10 +27,10 @@ CXXFLAGS= -Wall -Werror -shared -fPIC -fvisibility=hidden \
 	-I$(PROJECT_ROOT)/library/include \
 	-I$(FLUTTER_ENGINE_HEADER_DIR) \
 	-DFLUTTER_DESKTOP_EMBEDDING_IMPL \
-	$(shell pkg-config --cflags gtk+-3.0 epoxy x11 jsoncpp)
+	$(shell pkg-config --cflags gtk+-3.0 epoxy x11 jsoncpp glfw3)
 LDFLAGS= -L$(CURDIR) \
-	$(shell pkg-config --libs gtk+-3.0 epoxy x11 jsoncpp) \
-	-lglfw -lGL -l$(FLUTTER_ENGINE_LIB_NAME) \
+	$(shell pkg-config --libs gtk+-3.0 epoxy x11 jsoncpp glfw3) \
+	-lGL -l$(FLUTTER_ENGINE_LIB_NAME) \
 	-Wl,-rpath=$(CURDIR)
 
 
