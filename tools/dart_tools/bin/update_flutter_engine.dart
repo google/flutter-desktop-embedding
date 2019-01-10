@@ -192,6 +192,8 @@ Future<bool> copyLocalEngine(String buildOutputDirectory, String platform,
     }
   }
 
+  print('Copied local engine from $buildOutputDirectory.');
+
   // Update the hash file to indicate that it's a local build, so that it's
   // obvious where it came from.
   await setLastDownloadedEngineHash(
