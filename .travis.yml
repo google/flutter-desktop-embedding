@@ -6,8 +6,8 @@ matrix:
       before_install:
         - sudo apt-get update
       install:
-        - build/travis/linux/install_dependencies
-        - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
+        - build/ci/linux/install_dependencies
+        - build/ci/install_flutter $TRAVIS_BUILD_DIR/..
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/../flutter/bin:$TRAVIS_BUILD_DIR/bin
       script:
@@ -19,9 +19,9 @@ matrix:
       before_install:
         - sudo apt-get update
       install:
-        - build/travis/linux/install_dependencies
-        - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
-        - build/travis/linux/install_gn bin
+        - build/ci/linux/install_dependencies
+        - build/ci/install_flutter $TRAVIS_BUILD_DIR/..
+        - build/ci/linux/install_gn bin
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
       script:
@@ -32,7 +32,7 @@ matrix:
       xcode_project: example/macos/ExampleEmbedder.xcodeproj
       xcode_scheme: ExampleEmbedder
       install:
-        - build/travis/install_flutter $TRAVIS_BUILD_DIR/..
+        - build/ci/install_flutter $TRAVIS_BUILD_DIR/..
       # Override the build command to remove 'test'. The example embedder
       # doesn't have any unit tests, and while a UI test to ensure that it
       # launches would be useful, that's currently broken by:
