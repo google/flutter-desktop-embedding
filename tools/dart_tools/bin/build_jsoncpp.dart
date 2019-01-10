@@ -58,10 +58,17 @@ Future<void> buildLibrary(String buildDirectory, {bool debug}) async {
     'msbuild',
     'lib_json.vcxproj',
   ];
+  if (Platform.environment['APPVEYOR'] != 'True') {
+    arguments.insert(0, 'vcvars64.bat 1> nul &&');
+  }
   if (!debug) {
     arguments.add('/p:Configuration=Release');
   }
-  await runCommand('vcvars64.bat 1> nul &&', arguments,
+
+  final command = arguments[0];
+  arguments.removeAt(0);
+
+  await runCommand(command, arguments,
       workingDirectory: buildDirectory);
 }
 
