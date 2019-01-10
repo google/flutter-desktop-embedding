@@ -40,8 +40,7 @@ String getDefaultFlutterRoot() {
 /// If there is an engine override file, returns the engine build type given in
 /// the file, otherwise returns null.
 Future<String> getEngineOverrideBuildType() async {
-  final overrideFile =
-      File(path.join(path.dirname(getRepositoryRoot()), 'engine_override'));
+  final overrideFile = File(path.join(getRepositoryRoot(), 'engine_override'));
   if (!overrideFile.existsSync()) {
     return null;
   }
