@@ -106,7 +106,10 @@ static NSString *const kMultilineInputType = @"TextInputType.multiline";
   NSString *method = call.methodName;
   if ([method isEqualToString:kSetClientMethod]) {
     if (!call.arguments[0] || !call.arguments[1]) {
-      result(FLEBadArguments);
+      result([[FLEMethodError alloc]
+          initWithCode:@"error"
+               message:@"Missing arguments"
+               details:@"Missing arguments while trying to set a text input client"]);
       return;
     }
     NSNumber *clientID = call.arguments[0];
@@ -115,7 +118,7 @@ static NSString *const kMultilineInputType = @"TextInputType.multiline";
       _activeClientID = clientID;
       // TODO: Do we need to preserve state across setClient calls?
       _textInputModels[_activeClientID] =
-          [[FLETextInputModel alloc] initWithClientId:clientID configuration:call.arguments[1]];
+          [[FLETextInputModel alloc] initWithClientID:clientID configuration:call.arguments[1]];
     }
   } else if ([method isEqualToString:kShowMethod]) {
     [self.flutterViewController addKeyResponder:self];

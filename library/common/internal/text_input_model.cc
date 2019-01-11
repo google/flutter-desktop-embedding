@@ -30,13 +30,14 @@ static constexpr char kSelectionIsDirectionalKey[] = "selectionIsDirectional";
 
 static constexpr char kTextKey[] = "text";
 
+// Input client configuration keys.
 static constexpr char kTextInputAction[] = "inputAction";
 static constexpr char kTextInputType[] = "inputType";
 static constexpr char kTextInputTypeName[] = "name";
 
 namespace flutter_desktop_embedding {
 
-TextInputModel::TextInputModel(int client_id, Json::Value config)
+TextInputModel::TextInputModel(int client_id, Json::Value &config)
     : text_(""),
       client_id_(client_id),
       selection_base_(text_.begin()),

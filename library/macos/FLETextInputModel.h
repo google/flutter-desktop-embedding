@@ -54,17 +54,17 @@ typedef NS_ENUM(NSUInteger, FLETextAffinity) { FLETextAffinityUpstream, FLETextA
 /**
  * Id of the text input client.
  */
-@property(nonatomic, readonly) NSNumber *clientId;
+@property(nonatomic, readonly) NSNumber *clientID;
 
 /**
  * Keyboard type of the client. See available options:
- * https://github.com/flutter/flutter/blob/0468742910c6e9230533e8e2c616520116b906e6/packages/flutter/lib/src/services/text_input.dart#L25
+ * https://docs.flutter.io/flutter/services/TextInputType-class.html
  */
 @property(nonatomic, readonly) NSString *inputType;
 
 /**
  * An action requested by the user on the input client. See available options:
- * https://github.com/flutter/flutter/blob/0468742910c6e9230533e8e2c616520116b906e6/packages
+ * https://docs.flutter.io/flutter/services/TextInputAction-class.html
  */
 @property(nonatomic, readonly) NSString *inputAction;
 
@@ -74,5 +74,5 @@ typedef NS_ENUM(NSUInteger, FLETextAffinity) { FLETextAffinityUpstream, FLETextA
  * Initializes a text input model with a [clientId] and [config] arguments. [config] arguments
  * provide information on the text input connection.
  */
-- (instancetype)initWithClientId:(NSNumber *)clientId configuration:(NSDictionary *)config;
+- (instancetype)initWithClientID:(NSNumber *)clientID configuration:(NSDictionary *)config;
 @end

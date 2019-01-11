@@ -24,7 +24,7 @@ namespace flutter_desktop_embedding {
 // Ignores special states like "insert mode" for now.
 class TextInputModel {
  public:
-  explicit TextInputModel(int client_id, Json::Value config);
+  TextInputModel(int client_id, Json::Value &config);
   virtual ~TextInputModel();
 
   // Attempts to set the text state.
@@ -86,11 +86,11 @@ class TextInputModel {
   int client_id() const { return client_id_; }
 
   // Keyboard type of the client. See available options:
-  // https://github.com/flutter/flutter/blob/0468742910c6e9230533e8e2c616520116b906e6/packages/flutter/lib/src/services/text_input.dart#L25
+  // https://docs.flutter.io/flutter/services/TextInputType-class.html
   std::string input_type() const { return input_type_; }
 
   // An action requested by the user on the input client. See available options:
-  // https://github.com/flutter/flutter/blob/0468742910c6e9230533e8e2c616520116b906e6/packages
+  // https://docs.flutter.io/flutter/services/TextInputAction-class.html
   std::string input_action() const { return input_action_; }
 
  private:

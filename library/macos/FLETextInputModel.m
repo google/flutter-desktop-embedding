@@ -74,10 +74,10 @@ static long GetExtentForRange(NSRange range) {
 
 @implementation FLETextInputModel
 
-- (instancetype)initWithClientId:(NSNumber *)clientId configuration:(NSDictionary *)config {
+- (instancetype)initWithClientID:(NSNumber *)clientID configuration:(NSDictionary *)config {
   self = [super init];
   if (self != nil) {
-    _clientId = clientId;
+    _clientID = clientID;
     _inputAction = config[kTextInputAction];
     // There's more information that can be used from this dictionary.
     // Add more as needed.
