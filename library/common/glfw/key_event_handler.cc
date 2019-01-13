@@ -16,7 +16,7 @@
 #include <json/json.h>
 #include <iostream>
 
-#include "library/common/internal/json_message_codec.h"
+#include "library/include/flutter_desktop_embedding/json_message_codec.h"
 
 static constexpr char kChannelName[] = "flutter/keyevent";
 
@@ -32,8 +32,9 @@ static constexpr char kRepeat[] = "repeat";
 
 namespace flutter_desktop_embedding {
 
-KeyEventHandler::KeyEventHandler(const BinaryMessenger *messenger)
-    : messenger_(messenger), channel_(kChannelName) {}
+KeyEventHandler::KeyEventHandler(BinaryMessenger *messenger)
+    : channel_(std::make_unique<BasicMessageChannel<Json::Value>>(
+          messenger, kChannelName, &JsonMessageCodec::GetInstance())) {}
 
 KeyEventHandler::~KeyEventHandler() {}
 
@@ -43,23 +44,22 @@ void KeyEventHandler::KeyboardHook(GLFWwindow *window, int key, int scancode,
                                    int action, int mods) {
   // TODO: Translate to a cross-platform key code system rather than passing
   // the native key code.
-  Json::Value args;
-  args[kKeyCodeKey] = key;
-  args[kKeyMapKey] = kAndroidKeyMap;
+  Json::Value event;
+  event[kKeyCodeKey] = key;
+  event[kKeyMapKey] = kAndroidKeyMap;
 
   switch (action) {
     case GLFW_PRESS:
-      args[kTypeKey] = kKeyDown;
+      event[kTypeKey] = kKeyDown;
       break;
     case GLFW_RELEASE:
-      args[kTypeKey] = kKeyUp;
+      event[kTypeKey] = kKeyUp;
       break;
     default:
       std::cerr << "Unknown key event action: " << action << std::endl;
       return;
   }
-  auto message = JsonMessageCodec::GetInstance().EncodeMessage(args);
-  messenger_->Send(channel_, message->data(), message->size());
+  channel_->Send(event);
 }
 
 }  // namespace flutter_desktop_embedding

@@ -36,19 +36,21 @@ published_shared_library("flutter_embedder") {
   if (is_linux || is_win) {
     sources += [
       "common/engine_method_result.cc",
-      "common/internal/json_message_codec.cc",
-      "common/internal/json_message_codec.h",
       "common/internal/plugin_handler.cc",
       "common/internal/plugin_handler.h",
       "common/internal/text_input_model.cc",
       "common/internal/text_input_model.h",
+      "common/json_message_codec.cc",
       "common/json_method_codec.cc",
     ]
     public += [
+      "include/flutter_desktop_embedding/basic_message_channel.h",
       "include/flutter_desktop_embedding/binary_messenger.h",
       "include/flutter_desktop_embedding/engine_method_result.h",
       "include/flutter_desktop_embedding/fde_export.h",
+      "include/flutter_desktop_embedding/json_message_codec.h",
       "include/flutter_desktop_embedding/json_method_codec.h",
+      "include/flutter_desktop_embedding/message_codec.h",
       "include/flutter_desktop_embedding/method_call.h",
       "include/flutter_desktop_embedding/method_channel.h",
       "include/flutter_desktop_embedding/method_codec.h",
@@ -73,7 +75,6 @@ published_shared_library("flutter_embedder") {
 
   if (is_linux) {
     libs = [
-      "glfw",
       "GL",
     ]
 
@@ -83,6 +84,7 @@ published_shared_library("flutter_embedder") {
 
     configs += [
       "//build/linux/config:epoxy",
+      "//build/linux/config:glfw3",
       "//build/linux/config:gtk3",
       "//build/linux/config:jsoncpp",
       "//build/linux/config:x11",
@@ -90,11 +92,6 @@ published_shared_library("flutter_embedder") {
   }
 
   if (is_win) {
-    dll_exports = rebase_path("windows/exports.def")
-    ldflags = [
-      "/DEF:$dll_exports",
-    ]
-
     deps += [
       "//library/windows:publish_flutter_engine",
       "//library/windows:fetch_glfw",

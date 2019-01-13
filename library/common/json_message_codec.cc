@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "library/common/internal/json_message_codec.h"
+#include "library/include/flutter_desktop_embedding/json_message_codec.h"
 
 #include <iostream>
 #include <string>
@@ -24,7 +24,7 @@ const JsonMessageCodec &JsonMessageCodec::GetInstance() {
   return sInstance;
 }
 
-std::unique_ptr<std::vector<uint8_t>> JsonMessageCodec::EncodeMessage(
+std::unique_ptr<std::vector<uint8_t>> JsonMessageCodec::EncodeMessageInternal(
     const Json::Value &message) const {
   Json::StreamWriterBuilder writer_builder;
   std::string serialization = Json::writeString(writer_builder, message);
@@ -33,12 +33,12 @@ std::unique_ptr<std::vector<uint8_t>> JsonMessageCodec::EncodeMessage(
                                                 serialization.end());
 }
 
-std::unique_ptr<Json::Value> JsonMessageCodec::DecodeMessage(
-    const uint8_t *message, const size_t message_size) const {
+std::unique_ptr<Json::Value> JsonMessageCodec::DecodeMessageInternal(
+    const uint8_t *binary_message, const size_t message_size) const {
   Json::CharReaderBuilder reader_builder;
   std::unique_ptr<Json::CharReader> parser(reader_builder.newCharReader());
 
-  auto raw_message = reinterpret_cast<const char *>(message);
+  auto raw_message = reinterpret_cast<const char *>(binary_message);
   auto json_message = std::make_unique<Json::Value>();
   std::string parse_errors;
   bool parsing_successful =

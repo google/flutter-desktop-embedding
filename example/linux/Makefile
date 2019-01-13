@@ -83,14 +83,13 @@ endif
 
 # Build settings
 CXX=g++ -std=c++14
-CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp)
+CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp glfw3)
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
 ifdef USE_GN
 CPPFLAGS+=-DUSE_FLATTENED_INCLUDES
 endif
 LDFLAGS=-L$(OUT_LIB_DIR) \
-	-lglfw \
-	$(shell pkg-config --libs jsoncpp) \
+	$(shell pkg-config --libs jsoncpp glfw3) \
 	-l$(FLUTTER_EMBEDDER_LIB_NAME) \
 	-l$(FLUTTER_ENGINE_LIB_NAME) \
 	$(patsubst %,-l$(PLUGIN_LIB_NAME_PREFIX)%,$(PLUGIN_NAMES)) \
