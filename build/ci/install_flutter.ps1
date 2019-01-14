@@ -17,11 +17,10 @@ $VERSION = '1.0.0'
 
 $DOWNLOAD_BASE = 'https://storage.googleapis.com/flutter_infra/releases'
 $DOWNLOAD_URI = '{0}/{1}/windows/flutter_windows_v{2}-{1}.zip' -f $DOWNLOAD_BASE, $CHANNEL, $VERSION
-$TEMP_FOLDER = 'C:\temp'
-$TEMP_LOCATION = '{0}\flutter.zip' -f $TEMP_FOLDER
+$TEMP_LOCATION = '{0}\flutter.zip' -f $env:temp
 
-if(!(Test-Path $TEMP_FOLDER)) {
-  New-Item -ItemType Directory -Path $TEMP_FOLDER | Out-Null
+if (!(Test-Path $env:temp)) {
+  New-Item -ItemType Directory -Path $env:temp | Out-Null
 }
 
 Write-Output ('Downloading {0}' -f $DOWNLOAD_URI)
