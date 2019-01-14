@@ -60,6 +60,8 @@ with this library.
 Debugging of the Flutter side of a desktop application is possible, but requires
 [a modified workflow](Debugging.md).
 
+To debug the Flutter engine, you can [use a local engine build](LocalEngine.md).
+
 ## Feedback and Discussion
 
 For bug reports and specific feature requests, you can file GitHub issues. For

@@ -22,6 +22,8 @@ import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 import 'package:archive/archive.dart';
 
+import '../lib/flutter_utils.dart';
+
 /// The filename stored next to a downloaded engine library to indicate its
 /// version.
 const String lastDownloadedVersionFile = '.last_engine_version';
@@ -32,12 +34,16 @@ const String engineArchiveBaseUrlString =
 
 /// Simple container for platform-specific information.
 class PlatformInfo {
-  PlatformInfo(this.archiveSubpath, this.libraryFile);
+  PlatformInfo(this.archiveSubpath, this.libraryFiles);
 
-  // The subpath on storage.googleapis.com for a platform's engine archive.
+  /// The subpath on storage.googleapis.com for a platform's engine archive.
   final String archiveSubpath;
-  // The extracted engine library filename for a platform.
-  final String libraryFile;
+
+  /// The top-level extracted files for a platform.
+  ///
+  /// The first item in the array is the library itself, and any other items
+  /// are supporting files (headers, symbols, etc.).
+  final List<String> libraryFiles;
 }
 
 /// Exceptions for known error cases in updating the engine.
@@ -49,12 +55,20 @@ class EngineUpdateException implements Exception {
 
 /// PlatformInfo for each supported platform.
 final Map<String, PlatformInfo> platformInfo = {
-  'linux':
-      new PlatformInfo('linux-x64/linux-x64-embedder', 'libflutter_engine.so'),
-  'macos': new PlatformInfo(
-      'darwin-x64/FlutterEmbedder.framework.zip', 'FlutterEmbedder.framework'),
-  'windows': new PlatformInfo(
-      'windows-x64/windows-x64-embedder.zip', 'flutter_engine.dll'),
+  'linux': new PlatformInfo('linux-x64/linux-x64-embedder', [
+    'libflutter_engine.so',
+    'flutter_embedder.h',
+  ]),
+  'macos': new PlatformInfo('darwin-x64/FlutterEmbedder.framework.zip', [
+    'FlutterEmbedder.framework',
+  ]),
+  'windows': new PlatformInfo('windows-x64/windows-x64-embedder.zip', [
+    'flutter_engine.dll',
+    'flutter_engine.dll.exp',
+    'flutter_engine.dll.lib',
+    'flutter_engine.dll.pdb',
+    'flutter_embedder.h',
+  ]),
 };
 
 Future<void> main(List<String> arguments) async {
@@ -66,14 +80,19 @@ Future<void> main(List<String> arguments) async {
         defaultsTo: Platform.operatingSystem)
     ..addOption('flutter_root',
         help: 'The root of the Flutter tree to get the engine version from.\n'
-            'Ignored if --hash is provided.\n'
+            'Ignored if --hash is provided, or if an engine_override file '
+            'is present.\n'
             'Defaults to a "flutter" directory next to this repository.',
-        defaultsTo: path.join(path.dirname(getRepositoryParent()), 'flutter'))
+        defaultsTo: getDefaultFlutterRoot())
     ..addOption(
       'hash',
+      // Note: engine_override takes precedence over this flag so that
+      // individual developers can easily use engine_override for development
+      // even if the project is configured to use --hash.
       help: 'The hash of the engine version to use.\n'
           'This is only required if you want to override the version;\n'
-          'normally you should use flutter_root instead.',
+          'normally you should use flutter_root instead.\n'
+          'Ignored if an engine_override is present\n',
     )
     ..addFlag('help', help: 'Prints this usage message.', negatable: false);
   ArgResults parsedArguments;
@@ -89,25 +108,27 @@ Future<void> main(List<String> arguments) async {
     exit(parsedArguments['help'] ? 0 : 1);
   }
 
-  try {
-    final String platform = parsedArguments['platform'];
-    final outputRoot =
-        path.canonicalize(path.absolute(parsedArguments.rest[0]));
-    final String targetHash = parsedArguments['hash'] ??
-        await engineHashForFlutterTree(parsedArguments['flutter_root']);
-    final libraryFile = platformInfo[platform].libraryFile;
+  final String platform = parsedArguments['platform'];
+  final String flutterRoot = parsedArguments['flutter_root'];
+  final outputRoot = path.canonicalize(path.absolute(parsedArguments.rest[0]));
 
-    final currentHash = await lastDownloadedEngineHash(outputRoot, platform);
-    if (currentHash == null || targetHash != currentHash) {
-      await downloadEngine(targetHash, platform, outputRoot);
-      await setLastDownloadedEngineHash(outputRoot, targetHash);
-      print('Downloaded $libraryFile version $targetHash.');
-    } else {
-      print('$libraryFile version $targetHash already present.');
+  final engineOverrideBuildType = await getEngineOverrideBuildType();
+  if (engineOverrideBuildType == null) {
+    final String targetHash =
+        parsedArguments['hash'] ?? await engineHashForFlutterTree(flutterRoot);
+    if (!await syncPrebuiltEngine(targetHash, platform, outputRoot)) {
+      exit(1);
     }
-  } on EngineUpdateException catch (e) {
-    print(e.message);
-    exit(1);
+  } else {
+    // Currently the only configuration that is supported is a directory
+    // called 'engine' next to the 'flutter' directory (see
+    // https://github.com/flutter/flutter/wiki/The-flutter-tool#using-a-locally-built-engine-with-the-flutter-tool
+    // for context), so look there for the build output.
+    final buildOutputDirectory = path.join(path.dirname(flutterRoot), 'engine',
+        'src', 'out', engineOverrideBuildType);
+    if (!await copyLocalEngine(buildOutputDirectory, platform, outputRoot)) {
+      exit(1);
+    }
   }
 }
 
@@ -117,12 +138,68 @@ void printUsage(ArgParser argParser) {
   print(argParser.usage);
 }
 
-/// Returns the path to the parent directory of this project's repository.
+/// Checks [outputRoot] for an already-downloaded engine with the given
+/// [engineHash], and if it's either not present or not up-to-date, attempts
+/// to download the prebuilt engine for [platform] with that hash.
 ///
-/// Relies on the known location of this script within the repo.
-String getRepositoryParent() {
-  final scriptUri = Platform.script;
-  return new File.fromUri(scriptUri).parent.parent.parent.parent.path;
+/// Returns true if the engine was successfully downloaded, or was already
+/// present with the correct hash.
+Future<bool> syncPrebuiltEngine(
+  String engineHash,
+  String platform,
+  String outputRoot,
+) async {
+  try {
+    final libraryFile = platformInfo[platform].libraryFiles[0];
+
+    final currentHash = await lastDownloadedEngineHash(outputRoot, platform);
+    if (currentHash == null || engineHash != currentHash) {
+      await downloadEngine(engineHash, platform, outputRoot);
+      await setLastDownloadedEngineHash(outputRoot, engineHash);
+      print('Downloaded $libraryFile version $engineHash.');
+    } else {
+      print('$libraryFile version $engineHash already present.');
+    }
+  } on EngineUpdateException catch (e) {
+    print(e.message);
+    return false;
+  }
+  return true;
+}
+
+/// Copies the locally built engine for [platform], as well as any supporting
+/// files that would be present in the prebuilt version, from
+/// [buildOutputDirectory] to [targetDirectory].
+///
+/// Returns true if successful, or false if any necessary files were missing or
+/// couldn't be copied.
+Future<bool> copyLocalEngine(String buildOutputDirectory, String platform,
+    String targetDirectory) async {
+  await new Directory(targetDirectory).create(recursive: true);
+
+  // On macOS, delete the existing framework if any before copying in the new
+  // one, since it's a directory. On the other platforms, where files are just
+  // individual files, this isn't necessary since copying over existing files
+  // will do the right thing.
+  if (platform == 'macos') {
+    await copyMacOSEngineFramework(
+        path.join(buildOutputDirectory, platformInfo[platform].libraryFiles[0]),
+        targetDirectory);
+  } else {
+    for (final filename in platformInfo[platform].libraryFiles) {
+      final sourceFile = File(path.join(buildOutputDirectory, filename));
+      await sourceFile.copy(path.join(targetDirectory, filename));
+    }
+  }
+
+  print('Copied local engine from $buildOutputDirectory.');
+
+  // Update the hash file to indicate that it's a local build, so that it's
+  // obvious where it came from.
+  await setLastDownloadedEngineHash(
+      targetDirectory, 'local engine: $buildOutputDirectory');
+
+  return true;
 }
 
 /// Returns the engine version hash for the Flutter tree at [flutterRoot],
@@ -144,7 +221,7 @@ File lastDownloadedHashEngineFile(String directory) {
 Future<String> lastDownloadedEngineHash(
     String downloadDirectory, String platform) async {
   final engineFilePath =
-      path.join(downloadDirectory, platformInfo[platform].libraryFile);
+      path.join(downloadDirectory, platformInfo[platform].libraryFiles[0]);
   final engineExists = (FileSystemEntity.typeSync(engineFilePath)) !=
       FileSystemEntityType.notFound;
   if (!engineExists) {
@@ -240,13 +317,9 @@ Future<void> unzipMacOSEngineFramework(
   final temporaryArchiveFile =
       new File(path.join(outputDirectory, 'engine_archive.zip'));
   final targetPath =
-      path.join(outputDirectory, platformInfo['macos'].libraryFile);
+      path.join(outputDirectory, platformInfo['macos'].libraryFiles[0]);
 
-  // Delete the framework if it is already present.
-  final frameworkFile = new Directory(targetPath);
-  if (frameworkFile.existsSync()) {
-    await frameworkFile.delete(recursive: true);
-  }
+  await deleteFrameworkIfPresent(targetPath);
 
   // Temporarily write the data to a file, since unzip doesn't accept piped
   // input, then delete the file.
@@ -258,5 +331,42 @@ Future<void> unzipMacOSEngineFramework(
     throw new EngineUpdateException(
         'Failed to unzip archive (exit ${result.exitCode}:\n'
         '${result.stdout}\n---\n${result.stderr}');
+  }
+}
+
+/// Copies the framework at [frameworkPath] to [targetDirectory]
+/// by invoking 'cp -R'.
+///
+/// The shelling out is done to avoid complications with preserving special
+/// files (e.g., symbolic links) in the framework structure.
+///
+/// Removes any previous version of the framework that already exists in the
+/// target directory.
+Future<void> copyMacOSEngineFramework(
+    String frameworkPath, String targetDirectory) async {
+  await deleteFrameworkIfPresent(
+      path.join(targetDirectory, path.basename(frameworkPath)));
+
+  final result =
+      await Process.run('cp', ['-R', frameworkPath, targetDirectory]);
+  if (result.exitCode != 0) {
+    throw new EngineUpdateException(
+        'Failed to copy framework (exit ${result.exitCode}:\n'
+        '${result.stdout}\n---\n${result.stderr}');
+  }
+}
+
+/// Recursively deletes the framework at [frameworkPath], if it exists.
+Future<void> deleteFrameworkIfPresent(String frameworkPath) async {
+  // Ensure that the path is a framework, to minimize the potential for
+  // catastrophic deletion bugs with bad arguments.
+  if (path.extension(frameworkPath) != '.framework') {
+    throw new EngineUpdateException(
+        'Attempted to delete a non-framework directory: $frameworkPath');
+  }
+
+  final directory = new Directory(frameworkPath);
+  if (directory.existsSync()) {
+    await directory.delete(recursive: true);
   }
 }

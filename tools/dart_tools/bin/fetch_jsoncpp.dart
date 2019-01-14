@@ -17,7 +17,7 @@
 
 import 'dart:io';
 
-import '../lib/runCommand.dart';
+import '../lib/run_command.dart';
 
 // For the fork containing V2017 support. Once
 // https://github.com/open-source-parsers/jsoncpp/pull/853

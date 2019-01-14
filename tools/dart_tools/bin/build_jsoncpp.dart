@@ -21,7 +21,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
-import '../lib/runCommand.dart';
+import '../lib/run_command.dart';
 
 Future<void> main(List<String> arguments) async {
   if (!Platform.isWindows) {
