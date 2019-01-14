@@ -14,22 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This script runs the necessary Flutter commands to build the Flutter assets
-# than need to be packaged in an embedding application.
-# It should be called with one argument, which is the directory of the
-# Flutter application to build.
+# Runs build_flutter_assets.dart, using the output of flutter_location as
+# --flutter_root
 
 readonly base_dir="$(dirname "$0")"
-readonly flutter_dir="$("$base_dir/flutter_location")"
-readonly flutter_binary="$flutter_dir/bin/flutter"
-
-# To use a custom Flutter engine, uncomment the following variables, and set
-# engine_src_path to the path on your machine to your Flutter engine tree's
-# src/ directory (and build_type if your engine build is not debug).
-#readonly engine_src_path="/path/to/engine/src"
-#readonly build_type=host_debug_unopt
-#readonly extra_flags=(--local-engine-src-path $engine_src_path --local-engine=$build_type)
-
-cd "$1"
-echo Running "$flutter_binary" ${extra_flags[*]} build bundle
-exec "$flutter_binary" ${extra_flags[*]} build bundle
+readonly flutter_dir="$("${base_dir}/flutter_location")"
+exec "${base_dir}/run_dart_tool" build_flutter_assets \
+	--flutter_root="${flutter_dir}" "$@"

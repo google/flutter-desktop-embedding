@@ -21,7 +21,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
-import '../lib/runCommand.dart';
+import '../lib/run_command.dart';
 
 Future<void> main(List<String> arguments) async {
   if (!Platform.isWindows) {
@@ -62,7 +62,7 @@ Future<void> buildLibrary(String buildDirectory, {bool debug}) async {
     arguments.add('/p:Configuration=Release');
   }
   await runCommand('vcvars64.bat 1> nul &&', arguments,
-      workingDirectory: buildDirectory);
+      workingDirectory: buildDirectory, runInShell: true);
 }
 
 Future<void> copyLibraryToOutputDirectory(
