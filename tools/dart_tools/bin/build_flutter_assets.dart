@@ -46,8 +46,9 @@ Future<void> main(List<String> arguments) async {
   }
   final flutterApplicationDir = parsedArguments.rest[0];
 
+  final flutterName = Platform.isWindows ? 'flutter.bat' : 'flutter';
   final flutterBinary =
-      path.join(parsedArguments['flutter_root'], 'bin', 'flutter');
+      path.join(parsedArguments['flutter_root'], 'bin', flutterName);
   if (!File(flutterBinary).existsSync()) {
     print("Error: No flutter binary at '$flutterBinary'");
     exit(1);
