@@ -69,7 +69,8 @@ Future<void> buildLibrary(String buildDirectory, {bool debug}) async {
   final command = arguments[0];
   arguments.removeAt(0);
 
-  await runCommand(command, arguments, workingDirectory: buildDirectory);
+  await runCommand(command, arguments,
+      workingDirectory: buildDirectory, runInShell: true);
 }
 
 Future<void> copyLibraryToOutputDirectory(
