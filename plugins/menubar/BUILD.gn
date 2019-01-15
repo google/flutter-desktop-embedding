@@ -22,9 +22,7 @@ published_shared_library("menubar") {
     "common/channel_constants.h",
   ]
   if (is_linux) {
-    sources += [
-      "linux/src/menubar_plugin.cc",
-    ]
+    sources += [ "linux/src/menubar_plugin.cc" ]
     public = [
       "linux/include/menubar/menubar_plugin.h",
     ]

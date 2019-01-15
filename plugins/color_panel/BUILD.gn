@@ -22,9 +22,7 @@ published_shared_library("color_panel") {
     "common/channel_constants.h",
   ]
   if (is_linux) {
-    sources += [
-      "linux/src/color_panel_plugin.cc",
-    ]
+    sources += [ "linux/src/color_panel_plugin.cc" ]
     public = [
       "linux/include/color_panel/color_panel_plugin.h",
     ]
