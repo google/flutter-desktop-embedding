@@ -74,6 +74,6 @@ typedef NS_ENUM(NSUInteger, FLETextAffinity) { FLETextAffinityUpstream, FLETextA
  * Initializes a text input model with a [clientId] and [config] arguments. [config] arguments
  * provide information on the text input connection.
  */
-- (nonnull instancetype)initWithClientID:(nonnull NSNumber *)clientID
-                           configuration:(nonnull NSDictionary *)config;
+- (nullable instancetype)initWithClientID:(nonnull NSNumber *)clientID
+                            configuration:(nonnull NSDictionary *)config;
 @end
