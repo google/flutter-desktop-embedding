@@ -74,7 +74,8 @@ static long GetExtentForRange(NSRange range) {
 
 @implementation FLETextInputModel
 
-- (instancetype)initWithClientID:(NSNumber *)clientID configuration:(NSDictionary *)config {
+- (instancetype)initWithClientID:(nonnull NSNumber *)clientID
+                   configuration:(nonnull NSDictionary *)config {
   self = [super init];
   if (self != nil) {
     _clientID = clientID;
@@ -83,6 +84,10 @@ static long GetExtentForRange(NSRange range) {
     // Add more as needed.
     NSDictionary *inputTypeInfo = config[kTextInputType];
     _inputType = inputTypeInfo[kTextInputTypeName];
+    if (!_clientID || !_inputAction || !_inputType) {
+      NSLog(@"Missing arguments for %@ init.", [self class]);
+      return nil;
+    }
 
     _text = [[NSMutableString alloc] init];
     _selectedRange = NSMakeRange(NSNotFound, 0);

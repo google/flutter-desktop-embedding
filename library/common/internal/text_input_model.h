@@ -24,7 +24,7 @@ namespace flutter_desktop_embedding {
 // Ignores special states like "insert mode" for now.
 class TextInputModel {
  public:
-  TextInputModel(int client_id, Json::Value &config);
+  TextInputModel(int client_id, const Json::Value &config);
   virtual ~TextInputModel();
 
   // Attempts to set the text state.

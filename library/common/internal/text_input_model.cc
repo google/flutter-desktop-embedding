@@ -37,7 +37,7 @@ static constexpr char kTextInputTypeName[] = "name";
 
 namespace flutter_desktop_embedding {
 
-TextInputModel::TextInputModel(int client_id, Json::Value &config)
+TextInputModel::TextInputModel(int client_id, const Json::Value &config)
     : text_(""),
       client_id_(client_id),
       selection_base_(text_.begin()),
