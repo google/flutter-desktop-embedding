@@ -34,6 +34,7 @@ information on using pull requests.
 - Dart code should follow the
   [Dart style guide](https://www.dartlang.org/guides/language/effective-dart/style)
   and use `dartfmt`.
-- Build scripts and other tooling should be written it Dart. (Some existing
+- GN files should use `gn format`.
+- Build scripts and other tooling should be written in Dart. (Some existing
   scripts are `bash` or `.bat` scripts; if you need to make non-trivial changes
   to one of those scripts, please convert it to Dart first if possible.)
