@@ -17,6 +17,10 @@
 static NSString *const kTextAffinityDownstream = @"TextAffinity.downstream";
 static NSString *const kTextAffinityUpstream = @"TextAffinity.upstream";
 
+static NSString *const kTextInputAction = @"inputAction";
+static NSString *const kTextInputType = @"inputType";
+static NSString *const kTextInputTypeName = @"name";
+
 static NSString *const kSelectionBaseKey = @"selectionBase";
 static NSString *const kSelectionExtentKey = @"selectionExtent";
 static NSString *const kSelectionAffinityKey = @"selectionAffinity";
@@ -70,9 +74,20 @@ static long GetExtentForRange(NSRange range) {
 
 @implementation FLETextInputModel
 
-- (instancetype)init {
+- (instancetype)initWithClientID:(NSNumber *)clientID configuration:(NSDictionary *)config {
   self = [super init];
   if (self != nil) {
+    _clientID = clientID;
+    _inputAction = config[kTextInputAction];
+    // There's more information that can be used from this dictionary.
+    // Add more as needed.
+    NSDictionary *inputTypeInfo = config[kTextInputType];
+    _inputType = inputTypeInfo[kTextInputTypeName];
+    if (!_clientID || !_inputAction || !_inputType) {
+      NSLog(@"Missing arguments for %@ init.", [self class]);
+      return nil;
+    }
+
     _text = [[NSMutableString alloc] init];
     _selectedRange = NSMakeRange(NSNotFound, 0);
     _markedRange = NSMakeRange(NSNotFound, 0);

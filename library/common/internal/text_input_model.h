@@ -24,7 +24,7 @@ namespace flutter_desktop_embedding {
 // Ignores special states like "insert mode" for now.
 class TextInputModel {
  public:
-  explicit TextInputModel(int client_id);
+  TextInputModel(int client_id, const Json::Value &config);
   virtual ~TextInputModel();
 
   // Attempts to set the text state.
@@ -82,13 +82,24 @@ class TextInputModel {
   // Returns the state in the form of a platform message.
   Json::Value GetState() const;
 
+  // Id of the text input client.
   int client_id() const { return client_id_; }
+
+  // Keyboard type of the client. See available options:
+  // https://docs.flutter.io/flutter/services/TextInputType-class.html
+  std::string input_type() const { return input_type_; }
+
+  // An action requested by the user on the input client. See available options:
+  // https://docs.flutter.io/flutter/services/TextInputAction-class.html
+  std::string input_action() const { return input_action_; }
 
  private:
   void DeleteSelected();
 
   std::string text_;
   int client_id_;
+  std::string input_type_;
+  std::string input_action_;
   std::string::iterator selection_base_;
   std::string::iterator selection_extent_;
 };
