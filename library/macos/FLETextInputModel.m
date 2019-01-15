@@ -74,8 +74,7 @@ static long GetExtentForRange(NSRange range) {
 
 @implementation FLETextInputModel
 
-- (nullable instancetype)initWithClientID:(nonnull NSNumber *)clientID
-                            configuration:(nonnull NSDictionary *)config {
+- (instancetype)initWithClientID:(NSNumber *)clientID configuration:(NSDictionary *)config {
   self = [super init];
   if (self != nil) {
     _clientID = clientID;
