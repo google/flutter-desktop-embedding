@@ -38,34 +38,27 @@
 @property(nullable) NSView<FLEOpenGLContextHandling> *view;
 
 /**
- * Launches the Flutter engine in snapshot mode with the provided configuration. The path argument
- * is used to identify the Flutter application the engine should be configured with. See
- * https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for more information
- * on embedding, including the meaning of various possible arguments.
+ * Launches the Flutter engine with the provided configuration.
  *
- * In snapshot mode, the snapshot in the assets directory will be used instead of the original
- * dart sources.
+ * @param assets The path to the flutter_assets folder for the Flutter application to be run.
+ * @param arguments Arguments to pass to the Flutter engine. See
+ *               https://github.com/flutter/engine/blob/master/shell/common/switches.h
+ *               for details. Not all arguments will apply to embedding mode.
+ *               Note: This API layer will likely abstract arguments in the future, instead of
+ *               providing a direct passthrough.
+ * @return YES if the engine launched successfully.
  */
 - (BOOL)launchEngineWithAssetsPath:(nonnull NSURL *)assets
-                        asHeadless:(BOOL)headless
-              commandLineArguments:(nonnull NSArray<NSString *> *)arguments;
+              commandLineArguments:(nullable NSArray<NSString *> *)arguments;
 
 /**
- * Launches the Flutter engine in source mode with the provided configuration. The path arguments
- * are used to identify the Flutter application the engine should be configured with. See
- * https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for more information
- * on embedding, including the meaning of various possible arguments.
+ * Launches the Flutter engine in headless mode with the provided configuration. In headless mode,
+ * this controller's view should not be displayed.
  *
- * In source mode, the Dart source and its dependencies will be read directly from their locations
- * on disk.
- * TODO: Evaluate whether this mode needs to be present in the long term, and if so reconsider this
- * API structure.
+ * See launcheEngineWithAssetsPath:commandLineArguments: for details.
  */
-- (BOOL)launchEngineWithMainPath:(nonnull NSURL *)main
-                      assetsPath:(nonnull NSURL *)assets
-                    packagesPath:(nonnull NSURL *)packages
-                      asHeadless:(BOOL)headless
-            commandLineArguments:(nonnull NSArray<NSString *> *)arguments;
+- (BOOL)launchHeadlessEngineWithAssetsPath:(nonnull NSURL *)assets
+                      commandLineArguments:(nullable NSArray<NSString *> *)arguments;
 
 /**
  * Returns the FLEPluginRegistrar that should be used to register the plugin with the given name.

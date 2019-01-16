@@ -49,18 +49,11 @@ static const int kDefaultWindowFramebuffer = 0;
 - (void)addInternalPlugins;
 
 /**
- * Identical to the public API except that |main| and |packages| are nullable (and assets and main
- * are swapped to make it clearer that they are the nullable pair; the public API is staying the
- * same for now to avoid needless thrashing for code using it). Per the TODO in the header, this API
- * should be reworked once we have decided whether both versions will stay.
- *
- * If main is nil, the engine will run in snapshot mode.
+ * Shared implementation of the regular and headless public APIs.
  */
 - (BOOL)launchEngineInternalWithAssetsPath:(nonnull NSURL *)assets
-                                  mainPath:(nullable NSURL *)main
-                              packagesPath:(nullable NSURL *)packages
-                                asHeadless:(BOOL)headless
-                      commandLineArguments:(nonnull NSArray<NSString *> *)arguments;
+                                  headless:(BOOL)headless
+                      commandLineArguments:(nullable NSArray<NSString *> *)arguments;
 
 /**
  * Creates a render config with callbacks based on whether the embedder is being run as a headless
@@ -213,24 +206,16 @@ static void CommonInit(FLEViewController *controller) {
 #pragma mark - Public methods
 
 - (BOOL)launchEngineWithAssetsPath:(NSURL *)assets
-                        asHeadless:(BOOL)headless
               commandLineArguments:(NSArray<NSString *> *)arguments {
   return [self launchEngineInternalWithAssetsPath:assets
-                                         mainPath:nil
-                                     packagesPath:nil
-                                       asHeadless:headless
+                                         headless:NO
                              commandLineArguments:arguments];
 }
 
-- (BOOL)launchEngineWithMainPath:(NSURL *)main
-                      assetsPath:(NSURL *)assets
-                    packagesPath:(NSURL *)packages
-                      asHeadless:(BOOL)headless
-            commandLineArguments:(NSArray<NSString *> *)arguments {
+- (BOOL)launchHeadlessEngineWithAssetsPath:(NSURL *)assets
+                      commandLineArguments:(NSArray<NSString *> *)arguments {
   return [self launchEngineInternalWithAssetsPath:assets
-                                         mainPath:main
-                                     packagesPath:packages
-                                       asHeadless:headless
+                                         headless:YES
                              commandLineArguments:arguments];
 }
 
@@ -262,9 +247,7 @@ static void CommonInit(FLEViewController *controller) {
 }
 
 - (BOOL)launchEngineInternalWithAssetsPath:(NSURL *)assets
-                                  mainPath:(NSURL *)main
-                              packagesPath:(NSURL *)packages
-                                asHeadless:(BOOL)headless
+                                  headless:(BOOL)headless
                       commandLineArguments:(NSArray<NSString *> *)arguments {
   if (_engine != NULL) {
     return NO;
@@ -280,38 +263,30 @@ static void CommonInit(FLEViewController *controller) {
   // Register internal plugins before starting the engine.
   [self addInternalPlugins];
 
-  // Strip out the Xcode-added -NSDocumentRevisionsDebugMode YES.
-  // TODO: Improve command line argument handling.
-  const unsigned long argc = arguments.count;
-  unsigned long unused = 0;
-  const char **command_line_args = (const char **)malloc(argc * sizeof(const char *));
-  for (int i = 0; i < argc; ++i) {
-    if ([arguments[i] isEqualToString:kXcodeExtraArgumentOne] && (i + 1 < argc) &&
-        [arguments[i + 1] isEqualToString:kXcodeExtraArgumentTwo]) {
-      unused += 2;
-      ++i;
-      continue;
-    }
-    command_line_args[i - unused] = [arguments[i] UTF8String];
+  // FlutterProjectArgs is expecting a full argv, so when processing it for flags the first
+  // item treated as the executable and ignored. Add a dummy value so that all provided arguments
+  // are used.
+  const unsigned long argc = arguments.count + 1;
+  const char **argv = (const char **)malloc(argc * sizeof(const char *));
+  argv[0] = "placeholder";
+  for (int i = 0; i < arguments.count; ++i) {
+    argv[i + 1] = [arguments[i] UTF8String];
   }
 
   NSString *icuData = [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath
                                                                              ofType:nil];
 
-  const FlutterProjectArgs args = {
-      .struct_size = sizeof(FlutterProjectArgs),
-      .assets_path = assets.fileSystemRepresentation,
-      .main_path = (main != nil) ? main.fileSystemRepresentation : "",
-      .packages_path = (packages != nil) ? packages.fileSystemRepresentation : "",
-      .icu_data_path = icuData.UTF8String,
-      .command_line_argc = (int)(argc - unused),
-      .command_line_argv = command_line_args,
-      .platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage,
-  };
+  FlutterProjectArgs flutterArguments = {};
+  flutterArguments.struct_size = sizeof(FlutterProjectArgs);
+  flutterArguments.assets_path = assets.fileSystemRepresentation;
+  flutterArguments.icu_data_path = icuData.UTF8String;
+  flutterArguments.command_line_argc = (int)(argc);
+  flutterArguments.command_line_argv = argv;
+  flutterArguments.platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage;
 
-  BOOL result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &args, (__bridge void *)(self),
-                                 &_engine) == kSuccess;
-  free(command_line_args);
+  BOOL result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &flutterArguments,
+                                 (__bridge void *)(self), &_engine) == kSuccess;
+  free(argv);
   return result;
 }
 

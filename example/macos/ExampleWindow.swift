@@ -26,15 +26,12 @@ class ExampleWindow: NSWindow {
       with: flutterViewController.registrar(forPlugin: "FLEMenubarPlugin"))
 
     let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
-    // Pass through argument zero, since the Flutter engine expects to be processing a full
-    // command line string.
-    var arguments = [CommandLine.arguments[0]];
+    var arguments: [String] = [];
 #if !DEBUG
     arguments.append("--disable-dart-asserts");
 #endif
     flutterViewController.launchEngine(
       withAssetsPath: assets,
-      asHeadless: false,
       commandLineArguments: arguments)
 
     super.awakeFromNib()
