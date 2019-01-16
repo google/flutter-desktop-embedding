@@ -28,9 +28,7 @@ config("defaults") {
       "/Od",
     ]
   }
-  include_dirs = [
-    "//",
-  ]
+  include_dirs = [ "//" ]
 }
 
 config("shared_library_defaults") {
@@ -38,6 +36,7 @@ config("shared_library_defaults") {
     cflags = [
       "-shared",
       "-fPIC",
+
       # Default to hidden for consistency with Windows builds.
       "-fvisibility=hidden",
     ]

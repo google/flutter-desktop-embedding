@@ -63,24 +63,16 @@ published_shared_library("flutter_embedder") {
     ":fetch_flutter_engine",
   ]
 
-  defines = [
-    "FLUTTER_DESKTOP_EMBEDDING_IMPL",
-  ]
+  defines = [ "FLUTTER_DESKTOP_EMBEDDING_IMPL" ]
 
   public_header_subdir = "flutter_desktop_embedding"
 
-  public_configs = [
-    ":relative_public_headers",
-  ]
+  public_configs = [ ":relative_public_headers" ]
 
   if (is_linux) {
-    libs = [
-      "GL",
-    ]
+    libs = [ "GL" ]
 
-    deps += [
-      "//library/linux:publish_flutter_engine",
-    ]
+    deps += [ "//library/linux:publish_flutter_engine" ]
 
     configs += [
       "//build/linux/config:epoxy",
@@ -93,14 +85,12 @@ published_shared_library("flutter_embedder") {
 
   if (is_win) {
     deps += [
-      "//library/windows:publish_flutter_engine",
-      "//library/windows:fetch_glfw",
       "//library/windows:build_jsoncpp",
+      "//library/windows:fetch_glfw",
+      "//library/windows:publish_flutter_engine",
     ]
 
-    libs = [
-      engine_files[2],
-    ]
+    libs = [ engine_files[2] ]
 
     public_configs += [
       "//library/windows:relative_glfw_dependencies",
@@ -112,28 +102,24 @@ published_shared_library("flutter_embedder") {
 # Allows targets depending on this library to use library-style
 # inculdes for its header rather than project-relative.
 config("relative_public_headers") {
-  include_dirs = [
-    "include",
-  ]
+  include_dirs = [ "include" ]
 }
 
 # Allows targets depending on the engine library to use library-style
 # inculdes for its header rather than project-relative.
 config("relative_engine_headers") {
-  include_dirs = [
-    "$engine_download_dir",
-  ]
+  include_dirs = [ "$engine_download_dir" ]
 }
 
 action("fetch_flutter_engine") {
   script = "//tools/dart_tools/bin/update_flutter_engine.dart"
-  inputs = [ "$flutter_tree_path/bin/internal/engine.version" ]
+  inputs = [
+    "$flutter_tree_path/bin/internal/engine.version",
+  ]
   outputs = engine_files
   args = [
     "--flutter_root=$flutter_tree_path",
     rebase_path(engine_download_dir, root_build_dir),
   ]
-  public_configs = [
-    ":relative_engine_headers",
-  ]
+  public_configs = [ ":relative_engine_headers" ]
 }

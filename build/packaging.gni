@@ -21,13 +21,20 @@
 template("copy_includes") {
   copy(target_name) {
     assert(defined(invoker.sources),
-          "|sources| must be provided for copy_includes.")
-    forward_variables_from(invoker, [ "deps", "sources", "subdir" ])
+           "|sources| must be provided for copy_includes.")
+    forward_variables_from(invoker,
+                           [
+                             "deps",
+                             "sources",
+                             "subdir",
+                           ])
     output_dir = "$root_out_dir/include"
     if (defined(subdir)) {
       output_dir = "$output_dir/$subdir"
     }
-    outputs = [ "$output_dir/{{source_file_part}}"]
+    outputs = [
+      "$output_dir/{{source_file_part}}",
+    ]
   }
 }
 
@@ -47,7 +54,7 @@ template("published_shared_library") {
     shared_library(template_target_name) {
       forward_variables_from(invoker, "*")
       assert(defined(public),
-            "|public| must be provided for published_shared_library.")
+             "|public| must be provided for published_shared_library.")
 
       if (!defined(deps)) {
         deps = []

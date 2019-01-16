@@ -27,7 +27,5 @@ config("glfw3") {
 }
 
 config("jsoncpp") {
-  libs = [
-    "$jsoncpp_lib_name",
-  ]
+  libs = [ "$jsoncpp_lib_name" ]
 }
