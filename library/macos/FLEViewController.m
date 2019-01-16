@@ -26,7 +26,7 @@
 static NSString *const kXcodeExtraArgumentOne = @"-NSDocumentRevisionsDebugMode";
 static NSString *const kXcodeExtraArgumentTwo = @"YES";
 
-static NSString *const kICUBundleID = @"io.flutter.flutter_embedder";
+static NSString *const kICUBundleID = @"io.flutter.flutter-embedder";
 static NSString *const kICUBundlePath = @"icudtl.dat";
 
 static const int kDefaultWindowFramebuffer = 0;
