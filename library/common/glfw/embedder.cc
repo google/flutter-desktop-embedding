@@ -246,11 +246,13 @@ static void *GLFWProcResolver(void *user_data, const char *name) {
 //
 // Returns a caller-owned pointer to the engine.
 static FlutterEngine RunFlutterEngine(
-    GLFWwindow *window, const std::string &main_path,
-    const std::string &assets_path, const std::string &packages_path,
+    GLFWwindow *window, const std::string &assets_path,
     const std::string &icu_data_path,
     const std::vector<std::string> &arguments) {
-  std::vector<const char *> argv;
+  // FlutterProjectArgs is expecting a full argv, so when processing it for
+  // flags the first item is treated as the executable and ignored. Add a dummy
+  // value so that all provided arguments are used.
+  std::vector<const char *> argv = {"placeholder"};
   std::transform(
       arguments.begin(), arguments.end(), std::back_inserter(argv),
       [](const std::string &arg) -> const char * { return arg.c_str(); });
@@ -266,8 +268,6 @@ static FlutterEngine RunFlutterEngine(
   FlutterProjectArgs args = {};
   args.struct_size = sizeof(FlutterProjectArgs);
   args.assets_path = assets_path.c_str();
-  args.main_path = main_path.c_str();
-  args.packages_path = packages_path.c_str();
   args.icu_data_path = icu_data_path.c_str();
   args.command_line_argc = argv.size();
   args.command_line_argv = &argv[0];
@@ -298,18 +298,8 @@ PluginRegistrar *GetRegistrarForPlugin(GLFWwindow *flutter_window,
   return state->plugin_handler.get();
 }
 
-GLFWwindow *CreateFlutterWindowInSnapshotMode(
-    size_t initial_width, size_t initial_height, const std::string &assets_path,
-    const std::string &icu_data_path,
-    const std::vector<std::string> &arguments) {
-  return CreateFlutterWindow(initial_width, initial_height, "", assets_path, "",
-                             icu_data_path, arguments);
-}
-
 GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
-                                const std::string &main_path,
                                 const std::string &assets_path,
-                                const std::string &packages_path,
                                 const std::string &icu_data_path,
                                 const std::vector<std::string> &arguments) {
 #ifdef __linux__
@@ -321,8 +311,7 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
     return nullptr;
   }
   GLFWClearCanvas(window);
-  auto engine = RunFlutterEngine(window, main_path, assets_path, packages_path,
-                                 icu_data_path, arguments);
+  auto engine = RunFlutterEngine(window, assets_path, icu_data_path, arguments);
   if (engine == nullptr) {
     glfwDestroyWindow(window);
     return nullptr;

@@ -50,32 +50,17 @@ FDE_EXPORT void FlutterTerminate();
 //
 // FlutterInit() must be called prior to this function.
 //
-// The arguments are to configure the paths when launching the engine. See:
-// https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for
-// more details on Flutter Engine embedding.
+// The |assets_path| is the path to the flutter_assets folder for the Flutter
+// application to be run. |icu_data_path| is the path to the icudtl.dat file
+// for the version of Flutter you are using.
+//
+// The |arguments| are passed to the Flutter engine. See:
+// https://github.com/flutter/engine/blob/master/shell/common/switches.h for
+// for details. Not all arguments will apply to embedding mode.
 //
 // Returns a null pointer in the event of an error. The caller owns the pointer
 // when it is non-null.
 FDE_EXPORT GLFWwindow *CreateFlutterWindow(
-    size_t initial_width, size_t initial_height, const std::string &main_path,
-    const std::string &assets_path, const std::string &packages_path,
-    const std::string &icu_data_path,
-    const std::vector<std::string> &arguments);
-
-// Creates a GLFW Window running a Flutter Application in snapshot mode.
-//
-// FlutterInit() must be called prior to this function.
-//
-// In snapshot mode the assets directory snapshot is used to run the application
-// instead of the sources.
-//
-// The arguments are to configure the paths when launching the engine. See:
-// https://github.com/flutter/engine/wiki/Custom-Flutter-Engine-Embedders for
-// more details on Flutter Engine embedding.
-//
-// Returns a null pointer in the event of an error. The caller owns the pointer
-// when it is non-null.
-FDE_EXPORT GLFWwindow *CreateFlutterWindowInSnapshotMode(
     size_t initial_width, size_t initial_height, const std::string &assets_path,
     const std::string &icu_data_path,
     const std::vector<std::string> &arguments);
