@@ -27,6 +27,8 @@ static NSString *const kXcodeExtraArgumentOne = @"-NSDocumentRevisionsDebugMode"
 static NSString *const kXcodeExtraArgumentTwo = @"YES";
 
 static NSString *const kICUBundleID = @"io.flutter.flutter-embedder";
+// TODO: Remove this after the next version incompatibility
+static NSString *const kICUBundleOldID = @"io.flutter.flutter_embedder";
 static NSString *const kICUBundlePath = @"icudtl.dat";
 
 static const int kDefaultWindowFramebuffer = 0;
@@ -297,6 +299,11 @@ static void CommonInit(FLEViewController *controller) {
 
   NSString *icuData = [[NSBundle bundleWithIdentifier:kICUBundleID] pathForResource:kICUBundlePath
                                                                              ofType:nil];
+  // TODO: Remove this after the next version incompatibility
+  if (!icuData) {
+    icuData = [[NSBundle bundleWithIdentifier:kICUBundleOldID] pathForResource:kICUBundlePath
+                                                                        ofType:nil];
+  }
 
   const FlutterProjectArgs args = {
       .struct_size = sizeof(FlutterProjectArgs),
