@@ -264,7 +264,7 @@ static void CommonInit(FLEViewController *controller) {
   [self addInternalPlugins];
 
   // FlutterProjectArgs is expecting a full argv, so when processing it for flags the first
-  // item treated as the executable and ignored. Add a dummy value so that all provided arguments
+  // item is treated as the executable and ignored. Add a dummy value so that all provided arguments
   // are used.
   const unsigned long argc = arguments.count + 1;
   const char **argv = (const char **)malloc(argc * sizeof(const char *));

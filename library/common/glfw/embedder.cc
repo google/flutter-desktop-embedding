@@ -250,7 +250,7 @@ static FlutterEngine RunFlutterEngine(
     const std::string &icu_data_path,
     const std::vector<std::string> &arguments) {
   // FlutterProjectArgs is expecting a full argv, so when processing it for
-  // flags the first item treated as the executable and ignored. Add a dummy
+  // flags the first item is treated as the executable and ignored. Add a dummy
   // value so that all provided arguments are used.
   std::vector<const char *> argv = {"placeholder"};
   std::transform(
