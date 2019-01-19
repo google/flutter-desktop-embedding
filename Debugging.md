@@ -41,7 +41,7 @@ There are two options:
 The `flutter attach` command can connect to a desktop Flutter application
 and provide the same interactive command line that `flutter run` would provide.
 In the directory of the Flutter portion of your application (e.g.,
-`/example/flutter_app`) run:
+`/example/` for this project's example application) run:
 
 ```
 $ flutter attach --device-id=flutter-tester --debug-port=49494
@@ -52,7 +52,7 @@ necessary to bypass checks for an attached iOS or Android device.
 
 ### VS Code
 
-Open the Flutter portion of your application (e.g., `/example/flutter_app`).
+Open the Flutter portion of your application (e.g., `/example/`).
 Add a [launch
 configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
 like the following, substituting your Observatory port:

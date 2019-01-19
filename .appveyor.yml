@@ -20,4 +20,4 @@ install:
   - ps: build\ci\install_flutter.ps1 $env:APPVEYOR_BUILD_FOLDER\..
 
 build_script:
-  - msbuild "example\windows\Example Embedder.sln"
+  - msbuild "example\windows_fde\Example Embedder.sln"

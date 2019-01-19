@@ -79,7 +79,8 @@ $ ninja -C out
 To use the GN build for the depedencies of the example application, when
 running `make` for the example add `USE_GN=1` to the end of the command.
 
-The resulting binary will be in `out/example/` rather than `example/linux/out/`.
+The resulting binary will be in `out/example/` rather than
+`example/linux_fde/out/`.
 
 #### Windows
 

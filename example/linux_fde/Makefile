@@ -15,7 +15,7 @@
 # Dependency locations
 PROJECT_ROOT=$(CURDIR)/../..
 FLUTTER_EMBEDDER_LIB_DIR=$(PROJECT_ROOT)/library/linux
-FLUTTER_APP_DIR=$(PROJECT_ROOT)/example/flutter_app
+FLUTTER_APP_DIR=$(CURDIR)/..
 PLUGINS_DIR=$(PROJECT_ROOT)/plugins
 TOOLS_DIR=$(PROJECT_ROOT)/tools
 FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
