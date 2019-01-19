@@ -32,11 +32,11 @@ have all the dependencies for
 
 ### Linux
 
-Run `make` under `linux_fde/`. The example binary and its resources will be
-in `out/`, and can be run from there:
+Run `make -C example/linux_fde/`. The example binary and its resources will be
+in `example/build/linux_fde`, and can be run from there:
 
 ```
-$ ./out/flutter_embedder_example
+$ ./example/build/linux_fde/flutter_embedder_example
 ```
 
 ### macOS
