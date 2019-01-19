@@ -20,21 +20,13 @@ import("//library/windows/jsoncpp.gni")
 action("fetch_glfw") {
   script = "//tools/dart_tools/bin/fetch_glfw.dart"
   outputs = glfw_files
-  args = [
-    rebase_path(glfw_download_dir, root_build_dir),
-  ]
-  public_configs = [
-    "//build/win/config:glfw3",
-  ]
+  args = [ rebase_path(glfw_download_dir, root_build_dir) ]
+  public_configs = [ "//build/win/config:glfw3" ]
 }
 
 config("relative_glfw_dependencies") {
-  include_dirs = [
-    glfw_include_dir,
-  ]
-  lib_dirs = [
-    glfw_download_dir,
-  ]
+  include_dirs = [ glfw_include_dir ]
+  lib_dirs = [ glfw_download_dir ]
 }
 
 # TODO: Replace this with actual GN build rules for jsoncpp.
@@ -42,29 +34,29 @@ config("relative_glfw_dependencies") {
 # source changes.
 action("build_jsoncpp") {
   script = "//tools/dart_tools/bin/build_jsoncpp.dart"
-  outputs = [ jsoncpp_files[1] ]
+  outputs = [
+    jsoncpp_files[1],
+  ]
   args = [
     rebase_path(jsoncpp_download_dir, root_build_dir),
     rebase_path(jsoncpp_lib_dir, root_build_dir),
     "--debug",
   ]
-  public_configs = [
-    "//build/win/config:jsoncpp",
-  ]
+  public_configs = [ "//build/win/config:jsoncpp" ]
 }
 
 config("relative_jsoncpp_dependencies") {
-  include_dirs = [
-    jsoncpp_include_dir,
-  ]
-  lib_dirs = [
-    jsoncpp_lib_dir,
-  ]
+  include_dirs = [ jsoncpp_include_dir ]
+  lib_dirs = [ jsoncpp_lib_dir ]
 }
 
 copy_includes("_publish_engine_headers") {
-  sources = [ engine_files[0] ]
-  deps = [ "//library:fetch_flutter_engine" ]
+  sources = [
+    engine_files[0],
+  ]
+  deps = [
+    "//library:fetch_flutter_engine",
+  ]
 }
 
 # Places the downloaded Flutter engine library at the top level of the
@@ -77,7 +69,9 @@ copy("publish_flutter_engine") {
     engine_files[3],
     engine_files[4],
   ]
-  outputs = [ "$root_out_dir/{{source_file_part}}" ]
+  outputs = [
+    "$root_out_dir/{{source_file_part}}",
+  ]
   deps = [
     ":_publish_engine_headers",
     "//library:fetch_flutter_engine",

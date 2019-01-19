@@ -22,9 +22,7 @@ published_shared_library("file_chooser") {
     "common/channel_constants.h",
   ]
   if (is_linux) {
-    sources += [
-      "linux/src/file_chooser_plugin.cc",
-    ]
+    sources += [ "linux/src/file_chooser_plugin.cc" ]
     public = [
       "linux/include/file_chooser/file_chooser_plugin.h",
     ]

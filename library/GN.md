@@ -32,7 +32,7 @@ e.g.:
 Windows requires jsoncpp to be downloaded to
 `library/windows/third_party/jsoncpp`. Use
 `tools/dart_tools/bin/fetch_jsoncpp.dart` to automatically download `jsoncpp`
-with Visual Studio 2017 support as shown below:
+as shown below:
 
 ```
 > tools\run_dart_tool.bat fetch_jsoncpp library\windows\third_party\jsoncpp

@@ -24,12 +24,11 @@ static constexpr char kSetClientMethod[] = "TextInput.setClient";
 static constexpr char kShowMethod[] = "TextInput.show";
 static constexpr char kHideMethod[] = "TextInput.hide";
 
+static constexpr char kMultilineInputType[] = "TextInputType.multiline";
+
 static constexpr char kUpdateEditingStateMethod[] =
     "TextInputClient.updateEditingState";
 static constexpr char kPerformActionMethod[] = "TextInputClient.performAction";
-
-static constexpr char kNewLineAction[] = "TextInputAction.newline";
-static constexpr char kDoneAction[] = "TextInputAction.done";
 
 static constexpr char kSelectionBaseKey[] = "selectionBase";
 static constexpr char kSelectionExtentKey[] = "selectionExtent";
@@ -92,7 +91,7 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
         }
         break;
       case GLFW_KEY_ENTER:
-        EnterPressed(*active_model_);
+        EnterPressed(active_model_);
       default:
         break;
     }
@@ -134,9 +133,14 @@ void TextInputPlugin::HandleMethodCall(
       // TODO(awdavies): There's quite a wealth of arguments supplied with this
       // method, and they should be inspected/used.
       Json::Value client_id_json = args[0];
+      Json::Value client_config = args[1];
       if (client_id_json.isNull()) {
         result->Error(kBadArgumentError, "Could not set client, ID is null.");
         return;
+      }
+      if (client_config.isNull()) {
+        result->Error(kBadArgumentError,
+                      "Could not set client, missing arguments.");
       }
       int client_id = client_id_json.asInt();
       if (input_models_.find(client_id) == input_models_.end()) {
@@ -148,7 +152,8 @@ void TextInputPlugin::HandleMethodCall(
           return;
         }
         input_models_.insert(std::make_pair(
-            client_id, std::make_unique<TextInputModel>(client_id)));
+            client_id,
+            std::make_unique<TextInputModel>(client_id, client_config)));
       }
       active_model_ = input_models_[client_id].get();
     } else if (method.compare(kSetEditingStateMethod) == 0) {
@@ -189,10 +194,14 @@ void TextInputPlugin::SendStateUpdate(const TextInputModel &model) {
                          std::make_unique<Json::Value>(model.GetState()));
 }
 
-void TextInputPlugin::EnterPressed(const TextInputModel &model) {
+void TextInputPlugin::EnterPressed(TextInputModel *model) {
+  if (model->input_type() == kMultilineInputType) {
+    model->AddCharacter('\n');
+    SendStateUpdate(*model);
+  }
   auto args = std::make_unique<Json::Value>(Json::arrayValue);
-  args->append(model.client_id());
-  args->append(kDoneAction);
+  args->append(model->client_id());
+  args->append(model->input_action());
 
   channel_->InvokeMethod(kPerformActionMethod, std::move(args));
 }

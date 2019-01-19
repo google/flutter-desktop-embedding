@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-#
 # Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Runs build_flutter_assets.dart, using the output of flutter_location as
-# --flutter_root
+image: Visual Studio 2017
 
-readonly base_dir="$(dirname "$0")"
-readonly flutter_dir="$("${base_dir}/flutter_location")"
-exec "${base_dir}/run_dart_tool" build_flutter_assets \
-	--flutter_root="${flutter_dir}" "$@"
+platform: x64
+
+install:
+  - ps: build\ci\install_flutter.ps1 $env:APPVEYOR_BUILD_FOLDER\..
+
+build_script:
+  - msbuild "example\windows\Example Embedder.sln"

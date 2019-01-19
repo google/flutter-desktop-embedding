@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-#
 # Copyright 2018 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Runs build_flutter_assets.dart, using the output of flutter_location as
-# --flutter_root
+$CHANNEL = 'stable'
+$VERSION = '1.0.0'
 
-readonly base_dir="$(dirname "$0")"
-readonly flutter_dir="$("${base_dir}/flutter_location")"
-exec "${base_dir}/run_dart_tool" build_flutter_assets \
-	--flutter_root="${flutter_dir}" "$@"
+$DOWNLOAD_BASE = 'https://storage.googleapis.com/flutter_infra/releases'
+$DOWNLOAD_URI = '{0}/{1}/windows/flutter_windows_v{2}-{1}.zip' -f $DOWNLOAD_BASE, $CHANNEL, $VERSION
+$TEMP_LOCATION = '{0}\flutter.zip' -f $env:temp
+
+if (!(Test-Path $env:temp)) {
+  New-Item -ItemType Directory -Path $env:temp | Out-Null
+}
+
+Write-Output ('Downloading {0}' -f $DOWNLOAD_URI)
+(New-Object System.Net.WebClient).DownloadFile($DOWNLOAD_URI, $TEMP_LOCATION)
+Expand-Archive $TEMP_LOCATION -DestinationPath $args[0]

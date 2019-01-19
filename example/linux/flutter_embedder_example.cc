@@ -68,14 +68,11 @@ int main(int argc, char **argv) {
 
   // Arguments for the Flutter Engine.
   std::vector<std::string> arguments;
-  // First argument is argv[0] since the engine is expecting real command line
-  // args.
-  arguments.push_back(argv[0]);
 #ifdef NDEBUG
   arguments.push_back("--disable-dart-asserts");
 #endif
   // Start the engine.
-  auto window = flutter_desktop_embedding::CreateFlutterWindowInSnapshotMode(
+  auto window = flutter_desktop_embedding::CreateFlutterWindow(
       640, 480, assets_path, icu_data_path, arguments);
   if (window == nullptr) {
     flutter_desktop_embedding::FlutterTerminate();

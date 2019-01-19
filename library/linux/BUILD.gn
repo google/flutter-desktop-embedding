@@ -16,18 +16,26 @@ import("//build/packaging.gni")
 import("//library/engine.gni")
 
 copy_includes("_publish_engine_headers") {
-  sources = [ engine_files[0] ]
-  deps = [ "//library:fetch_flutter_engine" ]
+  sources = [
+    engine_files[0],
+  ]
+  deps = [
+    "//library:fetch_flutter_engine",
+  ]
 }
 
 # Places the downloaded Flutter engine library at the top level of the
 # output directory where built libraries go, so that it doesn't require
 # special link handling, and publishes its header.
 copy("publish_flutter_engine") {
-  sources = [ engine_files[1] ]
-  outputs = [ "$root_out_dir/{{source_file_part}}" ]
+  sources = [
+    engine_files[1],
+  ]
+  outputs = [
+    "$root_out_dir/{{source_file_part}}",
+  ]
   deps = [
     ":_publish_engine_headers",
-    "//library:fetch_flutter_engine"
+    "//library:fetch_flutter_engine",
   ]
 }

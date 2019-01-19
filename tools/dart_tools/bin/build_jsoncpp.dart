@@ -21,7 +21,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
-import '../lib/runCommand.dart';
+import '../lib/run_command.dart';
 
 Future<void> main(List<String> arguments) async {
   if (!Platform.isWindows) {
@@ -57,12 +57,20 @@ Future<void> buildLibrary(String buildDirectory, {bool debug}) async {
   final arguments = [
     'msbuild',
     'lib_json.vcxproj',
+    '/p:Platform=x64',
   ];
+  if (Platform.environment['APPVEYOR'] != 'True') {
+    arguments.insert(0, 'vcvars64.bat 1> nul &&');
+  }
   if (!debug) {
     arguments.add('/p:Configuration=Release');
   }
-  await runCommand('vcvars64.bat 1> nul &&', arguments,
-      workingDirectory: buildDirectory);
+
+  final command = arguments[0];
+  arguments.removeAt(0);
+
+  await runCommand(command, arguments,
+      workingDirectory: buildDirectory, runInShell: true);
 }
 
 Future<void> copyLibraryToOutputDirectory(

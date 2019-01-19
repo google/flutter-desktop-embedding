@@ -17,19 +17,30 @@ import 'dart:io';
 /// Runs a [command] on the command line with some logging and error handling
 ///
 /// Takes a [command] and [arguments] to pass to the [command] that will be run
-/// on the command line. Stdout and stderr will be printed and an exception
-/// thrown if the exit code is not 0 and [allowFail] is true. An optional
-/// [workingDirectory] can be passed for the directory of the [command] to be
-/// executed in.
+/// on the command line.
+///
+/// Stdout and stderr will be printed, unless [suppressOutput] is true.
+/// An exception thrown if the exit code is not 0 and [allowFail] is false.
+///
+/// An optional [workingDirectory] can be passed for the directory that
+/// [command] should be executed in, and [runInShell] can be passed to run the
+/// command via a shell.
 Future<int> runCommand(String command, List<String> arguments,
-    {String workingDirectory, bool allowFail = false}) async {
+    {String workingDirectory,
+    bool allowFail = false,
+    bool runInShell = false,
+    bool suppressOutput = false}) async {
   final fullCommand = '$command ${arguments.join(" ")}';
-  print('Running $fullCommand');
+  if (!suppressOutput) {
+    print('Running $fullCommand');
+  }
 
   final process = await Process.start(command, arguments,
-      workingDirectory: workingDirectory, runInShell: true);
-  await stdout.addStream(process.stdout);
-  await stderr.addStream(process.stderr);
+      workingDirectory: workingDirectory, runInShell: runInShell);
+  if (!suppressOutput) {
+    await stdout.addStream(process.stdout);
+    await stderr.addStream(process.stderr);
+  }
 
   final exitCode = await process.exitCode;
   if (!allowFail && exitCode != 0) {
