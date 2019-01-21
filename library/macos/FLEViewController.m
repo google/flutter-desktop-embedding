@@ -34,10 +34,10 @@ static NSString *const kICUBundlePath = @"icudtl.dat";
 static const int kDefaultWindowFramebuffer = 0;
 
 // Android KeyEvent constants from https://developer.android.com/reference/android/view/KeyEvent
-static const int kAndroidMetaStateShift = 1;
-static const int kAndroidMetaStateAlt = 2;
-static const int kAndroidMetaStateCtrl = 4096;
-static const int kAndroidMetaStateMeta = 65536;
+static const int kAndroidMetaStateShift = 1 << 0;
+static const int kAndroidMetaStateAlt = 1 << 1;
+static const int kAndroidMetaStateCtrl = 1 << 12;
+static const int kAndroidMetaStateMeta = 1 << 16;
 
 #pragma mark - Private interface declaration.
 
