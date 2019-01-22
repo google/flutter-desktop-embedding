@@ -297,10 +297,14 @@ static void CommonInit(FLEViewController *controller) {
   flutterArguments.command_line_argv = argv;
   flutterArguments.platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage;
 
-  BOOL result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &flutterArguments,
-                                 (__bridge void *)(self), &_engine) == kSuccess;
+  FlutterResult result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &flutterArguments,
+                                 (__bridge void *)(self), &_engine);
   free(argv);
-  return result;
+  if (result != kSuccess) {
+    NSLog(@"Failed to start Flutter engine: error %d", result);
+    return NO;
+  }
+  return YES;
 }
 
 + (FlutterRendererConfig)createRenderConfigHeadless:(BOOL)headless {

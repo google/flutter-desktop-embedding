@@ -239,6 +239,10 @@ static void *GLFWProcResolver(void *user_data, const char *name) {
   return reinterpret_cast<void *>(glfwGetProcAddress(name));
 }
 
+static void GLFWErrorCallback(int error_code, const char *description) {
+  std::cerr << "GLFW error " << error_code << ": " << description << std::endl;
+}
+
 // Spins up an instance of the Flutter Engine.
 //
 // This function launches the Flutter Engine in a background thread, supplying
@@ -276,6 +280,8 @@ static FlutterEngine RunFlutterEngine(
   auto result =
       FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &args, window, &engine);
   if (result != kSuccess || engine == nullptr) {
+    std::cerr << "Failed to start Flutter engine: error " << result
+              << std::endl;
     return nullptr;
   }
   return engine;
@@ -283,10 +289,12 @@ static FlutterEngine RunFlutterEngine(
 
 namespace flutter_desktop_embedding {
 
-// Initialize glfw
-bool FlutterInit() { return glfwInit(); }
+bool FlutterInit() {
+  // Before making any GLFW calls, set up a logging error handler.
+  glfwSetErrorCallback(GLFWErrorCallback);
+  return glfwInit();
+}
 
-// Tear down glfw
 void FlutterTerminate() { glfwTerminate(); }
 
 PluginRegistrar *GetRegistrarForPlugin(GLFWwindow *flutter_window,
