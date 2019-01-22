@@ -15,7 +15,8 @@
 # Dependency locations
 PROJECT_ROOT=$(CURDIR)/../..
 FLUTTER_EMBEDDER_LIB_DIR=$(PROJECT_ROOT)/library/linux
-FLUTTER_APP_DIR=$(PROJECT_ROOT)/example/flutter_app
+FLUTTER_APP_DIR=$(CURDIR)/..
+FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 PLUGINS_DIR=$(PROJECT_ROOT)/plugins
 TOOLS_DIR=$(PROJECT_ROOT)/tools
 FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
@@ -47,10 +48,10 @@ FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
 ICU_DATA_NAME=icudtl.dat
 ICU_DATA_SOURCE=$(FLUTTER_DIR)/bin/cache/artifacts/engine/linux-x64/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
-FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_DIR)/build/$(FLUTTER_ASSETS_NAME)
+FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
 # Output bundle structure and targets
-OUT_DIR=$(CURDIR)/out
+OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux_fde
 OUT_DATA_DIR=$(OUT_DIR)/data
 OUT_LIB_DIR=$(OUT_DIR)/lib
 
@@ -61,8 +62,6 @@ ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(OUT_LIB_DIR)/$(notdir $(lib)))
 # Overrides for the optional GN build.
 ifdef USE_GN
 GN_OUT_DIR=$(PROJECT_ROOT)/out
-# Use GN's out dir even though this isn't a GN build, to group build output.
-OUT_DIR=$(GN_OUT_DIR)/example
 
 # The GN build places all libraries at the top level of the output directory.
 FLUTTER_EMBEDDER_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME).so

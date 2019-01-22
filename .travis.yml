@@ -25,7 +25,7 @@ matrix:
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/../flutter/bin:$TRAVIS_BUILD_DIR/bin
       script:
-        - make -C example/linux
+        - make -C example/linux_fde
 
     - os: linux
       dist: xenial
@@ -39,11 +39,11 @@ matrix:
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
       script:
-        - make -C example/linux USE_GN=1
+        - make -C example/linux_fde USE_GN=1
 
     - os: osx
       language: objective-c
-      xcode_project: example/macos/ExampleEmbedder.xcodeproj
+      xcode_project: example/macos_fde/ExampleEmbedder.xcodeproj
       xcode_scheme: ExampleEmbedder
       install:
         - build/ci/install_flutter $TRAVIS_BUILD_DIR/..

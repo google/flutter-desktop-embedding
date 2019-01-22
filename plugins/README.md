@@ -57,7 +57,7 @@ plugin you want to use. For instance:
 See the example application under each platform's directory in the `example`
 directory to see an example of including optional plugins on that platform.
 
-The Flutter application under `example/flutter_app` shows examples of using
+The Flutter application under `example/` shows examples of using
 optional plugins on the Dart side.
 
 ## Writing your own plugins
