@@ -21,7 +21,7 @@ a Flutter tree in the same parent directory as the clone of this project:
 
 ```
 <parent dir>
-  ├─ flutter (from http://github.com/flutter/flutter)
+  ├─ flutter (from https://github.com/flutter/flutter)
   └─ flutter-desktop-embedding (from https://github.com/google/flutter-desktop-embedding)
 ```
 
