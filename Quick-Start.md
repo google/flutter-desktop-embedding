@@ -44,5 +44,5 @@ respectively to make the changes.
 
 With this approach, you should expect breakage when you update the
 flutter-desktop-embedding reposity; when that happens you will need to look at
-what has changed in the exmaple projects and update your copies accordingly, or
+what has changed in the example projects and update your copies accordingly, or
 start over with fresh copies and adjust the paths again.
