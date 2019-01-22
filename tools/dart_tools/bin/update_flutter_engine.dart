@@ -23,6 +23,7 @@ import 'package:path/path.dart' as path;
 import 'package:archive/archive.dart';
 
 import '../lib/flutter_utils.dart';
+import '../lib/git_utils.dart';
 
 /// The filename stored next to a downloaded engine library to indicate its
 /// version.
@@ -84,6 +85,9 @@ Future<void> main(List<String> arguments) async {
             'is present.\n'
             'Defaults to a "flutter" directory next to this repository.',
         defaultsTo: getDefaultFlutterRoot())
+    ..addFlag('skip_min_version_check',
+        help: 'If set, skips the initial check that the Flutter tree whose '
+            'engine version is being fetched is new enough for the framework.')
     ..addOption(
       'hash',
       // Note: engine_override takes precedence over this flag so that
@@ -111,6 +115,22 @@ Future<void> main(List<String> arguments) async {
   final String platform = parsedArguments['platform'];
   final String flutterRoot = parsedArguments['flutter_root'];
   final outputRoot = path.canonicalize(path.absolute(parsedArguments.rest[0]));
+
+  // TODO: Consider making a setup script that should be run after any update,
+  // which checks/fetches dependencies, and moving this check there. For now,
+  // do it here since it's a hook that's run on every build.
+  if (!parsedArguments['skip_min_version_check']) {
+    bool containsRequiredCommit = await gitHeadContainsCommit(
+        flutterRoot, lastKnownRequiredFlutterCommit);
+    if (!containsRequiredCommit) {
+      print('Flutter engine update aborted: Your Flutter tree is too '
+          'old for use with this project. Please update to a newer version of '
+          'Flutter, then try again.\n\n'
+          'Note that this may require switching to Flutter master. See:\n'
+          'https://github.com/flutter/flutter/wiki/Flutter-build-release-channels');
+      exit(1);
+    }
+  }
 
   final engineOverrideBuildType = await getEngineOverrideBuildType();
   if (engineOverrideBuildType == null) {

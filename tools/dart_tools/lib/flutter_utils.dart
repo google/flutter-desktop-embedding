@@ -19,6 +19,14 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
+/// The last Flutter hash that's known to be required; a branch that doesn't
+/// contain this commit will either fail to build, or fail to run.
+///
+/// This should be updated whenever a new dependency is introduced (e.g., a
+/// required embedder API addition or implementation fix).
+const String lastKnownRequiredFlutterCommit =
+    '390ded9340e529b8475fefd1afdbe59c5b8d4081';
+
 /// Returns the path to the root of this repository.
 ///
 /// Relies on the known location of dart_tools/bin within the repo, and the fact
