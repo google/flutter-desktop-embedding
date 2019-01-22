@@ -36,7 +36,14 @@ Run `make -C example/linux_fde/`. The example binary and its resources will be
 in `example/build/linux_fde`, and can be run from there:
 
 ```
-$ ./example/build/linux_fde/flutter_embedder_example
+$ ./example/build/linux_fde/debug/flutter_embedder_example
+```
+
+To build a version with Dart asserts disabled (and thus no DEBUG banner),
+run `make BUILD=release` instead, then launch it with:
+
+```
+$ ./example/build/linux_fde/release/flutter_embedder_example
 ```
 
 ### macOS
