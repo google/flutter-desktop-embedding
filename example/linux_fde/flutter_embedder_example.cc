@@ -54,7 +54,8 @@ std::string GetExecutableDirectory() {
 
 int main(int argc, char **argv) {
   if (!flutter_desktop_embedding::FlutterInit()) {
-    std::cerr << "Couldn't init GLFW" << std::endl;
+    std::cerr << "Unable to init GLFW; exiting." << std::endl;
+    return EXIT_FAILURE;
   }
 
   // Resources are located relative to the executable.
@@ -76,6 +77,7 @@ int main(int argc, char **argv) {
       640, 480, assets_path, icu_data_path, arguments);
   if (window == nullptr) {
     flutter_desktop_embedding::FlutterTerminate();
+    std::cerr << "Unable to create Flutter window; exiting." << std::endl;
     return EXIT_FAILURE;
   }
 
