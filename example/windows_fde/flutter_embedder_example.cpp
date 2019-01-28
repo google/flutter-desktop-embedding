@@ -20,8 +20,7 @@
 
 int main(int argc, char **argv) {
   // TODO: Make paths relative to the executable so it can be run from anywhere.
-  std::string assets_path =
-      "..\\..\\example\\flutter_app\\build\\flutter_assets";
+  std::string assets_path = "..\\build\\flutter_assets";
   std::string icu_data_path =
       "..\\..\\library\\windows\\dependencies\\engine\\icudtl.dat";
 
