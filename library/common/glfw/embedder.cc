@@ -98,7 +98,9 @@ static void GLFWFramebufferSizeCallback(GLFWwindow *window, int width_px,
 
   double dpi = state->window_pixels_per_screen_coordinate *
                state->monitor_screen_coordinates_per_inch;
-  double pixel_ratio = std::max(dpi/ kDpPerInch, 1.0);
+  // Limit the ratio to 1 to avoid rendering a smaller UI in standard resolution
+  // monitors.
+  double pixel_ratio = std::max(dpi / kDpPerInch, 1.0);
 
   FlutterWindowMetricsEvent event = {};
   event.struct_size = sizeof(event);
