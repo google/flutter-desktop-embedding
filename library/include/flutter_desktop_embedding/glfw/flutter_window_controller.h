@@ -36,9 +36,6 @@ namespace flutter_desktop_embedding {
 // If you use this class, you should not call any of the setup or teardown
 // methods in embedder.h directly, as this class will do that internally.
 //
-// This class is a singleton, as Flutter does not support multiple engines in
-// one process, or multiple views in one engine.
-//
 // Note: This is an early implementation (using GLFW internally) which
 // requires control of the application's event loop, and is thus useful
 // primarily for building a simple one-window shell hosting a Flutter
