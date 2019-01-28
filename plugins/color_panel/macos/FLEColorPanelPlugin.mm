@@ -45,7 +45,7 @@
  * panel channel.
  */
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
-  BOOL methodImplemented = YES;
+  id methodResult = nil;
   if ([call.methodName isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
     if ([call.arguments isKindOfClass:[NSDictionary class]]) {
       BOOL showAlpha =
@@ -56,19 +56,18 @@
           [NSString stringWithFormat:@"Malformed call for %@. Expected an NSDictionary but got %@",
                                      @(plugins_color_panel::kShowColorPanelMethod),
                                      NSStringFromClass([call.arguments class])];
-      result([[FLEMethodError alloc] initWithCode:@"error"
-                                          message:@"Bad arguments"
-                                          details:errorString]);
-      return;
+      methodResult = [[FLEMethodError alloc] initWithCode:@"Bad arguments"
+                                                  message:errorString
+                                                  details:nil];
     }
   } else if ([call.methodName isEqualToString:@(plugins_color_panel::kHideColorPanelMethod)]) {
     [self hideColorPanel];
   } else {
-    methodImplemented = NO;
+    methodResult = FLEMethodNotImplemented;
   }
-  // Send an immediate empty success message for handled messages, since the actual color data
-  // will be provided in follow-up messages.
-  result(methodImplemented ? nil : FLEMethodNotImplemented);
+  // If no errors are generated, send an immediate empty success message for handled messages, since
+  // the actual color data will be provided in follow-up messages.
+  result(methodResult);
 }
 
 /**
