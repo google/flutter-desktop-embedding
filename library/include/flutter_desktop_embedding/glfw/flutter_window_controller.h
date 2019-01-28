@@ -59,9 +59,7 @@ class FDE_EXPORT FlutterWindowController {
   // https://github.com/flutter/engine/blob/master/shell/common/switches.h for
   // for details. Not all arguments will apply to embedding mode.
   //
-  // There must be only one instance of this class in an application at any
-  // given time, as Flutter does not support multiple engines in one process,
-  // or multiple views in one engine.
+  // Only one Flutter window can exist at a time; see constructor comment.
   bool CreateWindow(size_t width, size_t height, const std::string &assets_path,
                     const std::vector<std::string> &arguments);
 
@@ -71,7 +69,7 @@ class FDE_EXPORT FlutterWindowController {
   // is to use the fully namespace-qualified name of the plugin class.
   PluginRegistrar *GetRegistrarForPlugin(const std::string &plugin_name);
 
-  // Loops on Flutter window events until termination.
+  // Loops on Flutter window events until the window closes.
   void RunEventLoop();
 
  private:
