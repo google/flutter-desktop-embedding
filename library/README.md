@@ -17,6 +17,12 @@ for now there is no equivalent to `flutter create`.
 There are currently no binary releases of the libraries. While a more
 Flutter-like model of using an SDK containing pre-compiled binaries is likely
 to be supported in the future, for now you must build the library from source.
+(**Note:** You may be tempted to pre-build a generic binary that can run any
+Flutter app. If you do, keep in mind that the primary reason there are no
+binary releases is that you *must* use the same version of Flutter to build
+`flutter_assets` as you use to build the library. If you later upgrade Flutter,
+or if you distribute the binary version to other people building their
+applications with different versions of Flutter, it will break.)
 
 Once you build the library for your platform, link it into your build using
 whatever build system you are using, and add the relevant headers (see
