@@ -24,15 +24,15 @@
 }
 
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
-  FLEMethodChannel* channel = [FLEMethodChannel
-                                   methodChannelWithName:@(plugins_color_panel::kChannelName)
-                                   binaryMessenger:registrar.messenger
-                               codec:[FLEJSONMethodCodec sharedInstance]];
-  FLEColorPanelPlugin* instance = [[FLEColorPanelPlugin alloc] initWithChannel:channel];
+  FLEMethodChannel *channel =
+      [FLEMethodChannel methodChannelWithName:@(plugins_color_panel::kChannelName)
+                              binaryMessenger:registrar.messenger
+                                        codec:[FLEJSONMethodCodec sharedInstance]];
+  FLEColorPanelPlugin *instance = [[FLEColorPanelPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (instancetype)initWithChannel:(FLEMethodChannel*)channel {
+- (instancetype)initWithChannel:(FLEMethodChannel *)channel {
   self = [super init];
   if (self) {
     _channel = channel;
@@ -45,26 +45,29 @@
  * panel channel.
  */
 - (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
-  BOOL handled = YES;
+  id methodResult = nil;
   if ([call.methodName isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
     if ([call.arguments isKindOfClass:[NSDictionary class]]) {
       BOOL showAlpha =
           [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlpha)] boolValue];
       [self showColorPanelWithAlpha:showAlpha];
     } else {
-      NSLog(@"Malformed call for %@. Expected an NSDictionary but got %@",
-            @(plugins_color_panel::kShowColorPanelMethod),
-            NSStringFromClass([call.arguments class]));
-      handled = NO;
+      NSString *errorString =
+          [NSString stringWithFormat:@"Malformed call for %@. Expected an NSDictionary but got %@",
+                                     @(plugins_color_panel::kShowColorPanelMethod),
+                                     NSStringFromClass([call.arguments class])];
+      methodResult = [[FLEMethodError alloc] initWithCode:@"Bad arguments"
+                                                  message:errorString
+                                                  details:nil];
     }
   } else if ([call.methodName isEqualToString:@(plugins_color_panel::kHideColorPanelMethod)]) {
     [self hideColorPanel];
   } else {
-    handled = NO;
+    methodResult = FLEMethodNotImplemented;
   }
-  // Send an immediate empty success message for handled messages, since the actual color data
-  // will be provided in follow-up messages.
-  result(handled ? nil : FLEMethodNotImplemented);
+  // If no errors are generated, send an immediate empty success message for handled messages, since
+  // the actual color data will be provided in follow-up messages.
+  result(methodResult);
 }
 
 /**
@@ -114,7 +117,7 @@
   NSColor *color = [NSColorPanel sharedColorPanel].color;
   NSDictionary *colorDictionary = [self dictionaryWithColor:color];
   [_channel invokeMethod:@(plugins_color_panel::kColorSelectedCallbackMethod)
-                  arguments:colorDictionary];
+               arguments:colorDictionary];
 }
 
 /**
@@ -138,8 +141,7 @@
 
 - (void)windowWillClose:(NSNotification *)notification {
   [self removeColorPanelConnections];
-  [_channel invokeMethod:@(plugins_color_panel::kClosedCallbackMethod)
-                  arguments:nil];
+  [_channel invokeMethod:@(plugins_color_panel::kClosedCallbackMethod) arguments:nil];
 }
 
 @end
