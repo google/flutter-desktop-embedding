@@ -22,24 +22,11 @@ matrix:
       install:
         - build/ci/linux/install_dependencies
         - build/ci/install_flutter $TRAVIS_BUILD_DIR/..
-      before_script:
-        - export PATH=$PATH:$TRAVIS_BUILD_DIR/../flutter/bin:$TRAVIS_BUILD_DIR/bin
-      script:
-        - make -C example/linux_fde
-
-    - os: linux
-      dist: xenial
-      language: cpp
-      before_install:
-        - sudo apt-get update
-      install:
-        - build/ci/linux/install_dependencies
-        - build/ci/install_flutter $TRAVIS_BUILD_DIR/..
         - build/ci/linux/install_gn bin
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
       script:
-        - make -C example/linux_fde USE_GN=1
+        - make -C example/linux_fde
 
     - os: osx
       language: objective-c

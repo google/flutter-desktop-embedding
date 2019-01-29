@@ -37,28 +37,31 @@ FLUTTER_EMBEDDER_LIB_DIR=$(FDE_ROOT)/library/linux
 PLUGINS_DIR=$(FDE_ROOT)/plugins
 TOOLS_DIR=$(FDE_ROOT)/tools
 FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
+GN_OUT_DIR=$(FDE_ROOT)/out
 
 # Libraries
 FLUTTER_EMBEDDER_LIB_NAME=flutter_embedder
-FLUTTER_EMBEDDER_LIB=$(FLUTTER_EMBEDDER_LIB_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME).so
+FLUTTER_EMBEDDER_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME).so
 
 FLUTTER_ENGINE_LIB_NAME=flutter_engine
-FLUTTER_ENGINE_LIB=$(FLUTTER_EMBEDDER_LIB_DIR)/lib$(FLUTTER_ENGINE_LIB_NAME).so
+FLUTTER_ENGINE_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_ENGINE_LIB_NAME).so
 
 PLUGIN_LIB_NAME_PREFIX=flutter_embedder_
 PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
-	,$(PLUGINS_DIR)/$(plugin)/linux/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
+	,$(GN_OUT_DIR)/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
 
 ALL_LIBS=$(FLUTTER_EMBEDDER_LIB) $(FLUTTER_ENGINE_LIB) $(PLUGIN_LIBS)
 
 # Headers
 PLUGIN_DIRS=$(patsubst %,$(PLUGINS_DIR)/%/linux,$(PLUGIN_NAMES))
-LIBRARY_DIRS=$(FLUTTER_EMBEDDER_LIB_DIR) $(PLUGIN_DIRS)
-INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS)) $(FDE_ROOT)/library/include
+# The GN build places all published headers in a top-level include/.
+INCLUDE_DIRS=$(GN_OUT_DIR)/include
 
 # Tools
 BUILD_ASSETS_BIN=$(TOOLS_DIR)/build_flutter_assets
 FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
+GN_WRAPPER=$(TOOLS_DIR)/gn_dart
+NINJA_BIN=ninja
 
 # Resources
 ICU_DATA_NAME=icudtl.dat
@@ -75,36 +78,12 @@ BIN_OUT=$(OUT_DIR)/flutter_embedder_example
 ICU_DATA_OUT=$(OUT_DATA_DIR)/$(ICU_DATA_NAME)
 ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(OUT_LIB_DIR)/$(notdir $(lib)))
 
-# Overrides for the optional GN build.
-ifdef USE_GN
-GN_OUT_DIR=$(FDE_ROOT)/out
-
-# The GN build places all libraries at the top level of the output directory.
-FLUTTER_EMBEDDER_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME).so
-FLUTTER_ENGINE_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_ENGINE_LIB_NAME).so
-PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
-	,$(GN_OUT_DIR)/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
-
-# The GN build places all published headers in a top-level include/.
-INCLUDE_DIRS=$(GN_OUT_DIR)/include
-
-# Override LIBRARY_DIRS since it's used for controlling the external build.
-LIBRARY_DIRS=$(GN_OUT_DIR)
-
-# Additional tools
-GN_WRAPPER=$(TOOLS_DIR)/gn_dart
-NINJA_BIN=ninja
-endif
-
 # Build settings
 CXX=g++ -std=c++14
 CXXFLAGS.release=-DNDEBUG
 CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp glfw3) \
 				 $(CXXFLAGS.$(BUILD))
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
-ifdef USE_GN
-CPPFLAGS+=-DUSE_FLATTENED_INCLUDES
-endif
 LDFLAGS=-L$(OUT_LIB_DIR) \
 	$(shell pkg-config --libs jsoncpp glfw3) \
 	-l$(FLUTTER_EMBEDDER_LIB_NAME) \
@@ -124,27 +103,16 @@ $(BIN_OUT): $(SOURCES) $(ALL_LIBS_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
-# Depedency directories are used as phony targets to invoke their builds.
-ifdef USE_GN
-.PHONY: $(LIBRARY_DIRS)
-$(LIBRARY_DIRS):
-	$(GN_WRAPPER) gen $(GN_OUT_DIR)
+.PHONY: gnbuild
+gnbuild: $(GN_OUT_DIR)
 	$(NINJA_BIN) -C $(GN_OUT_DIR) $(FLUTTER_EMBEDDER_LIB_NAME) $(PLUGIN_NAMES)
-else
-.PHONY: $(LIBRARY_DIRS)
-$(LIBRARY_DIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-# Enforce relative ordering. This prevents accidentally building the targets
-# in parallel in the event that someone supplies the -j flag to `make`.
-# TODO: Fix this in the plugin builds so that it's not necessary at this layer.
-$(PLUGIN_DIRS): $(FLUTTER_EMBEDDER_LIB_DIR)
-endif
+$(GN_OUT_DIR):
+	$(GN_WRAPPER) gen $(GN_OUT_DIR)
 
-# Require that all the library builds run for anything depending on the
-# libraries, but use order-only so that the phony build targets don't trigger
-# rebuilds of all dependencies every time.
-$(ALL_LIBS): | $(LIBRARY_DIRS)
+# Run the GN build for anything depending on the libraries, but use order-only
+# so that it doesn't trigger rebuilds of all dependencies every time.
+$(ALL_LIBS): | gnbuild
 
 # This is slightly inefficient in that it copies all libraries if any of them
 # changes, but is far simpler than setting up individual rules for each library.
