@@ -81,7 +81,7 @@ class FDE_EXPORT FlutterWindowController {
   bool init_succeeded_ = false;
 
   // The curent Flutter window, if any.
-  GLFWwindow *window_ = nullptr;
+  FlutterWindowRef window_ = nullptr;
 };
 
 }  // namespace flutter_desktop_embedding

@@ -19,13 +19,6 @@
 #include <string>
 #include <vector>
 
-#ifdef __linux__
-// Epoxy must be included before any graphics-related code.
-#include <epoxy/gl.h>
-#endif
-
-#include <GLFW/glfw3.h>
-
 #ifdef USE_FLATTENED_INCLUDES
 #include "fde_export.h"
 #include "plugin_registrar.h"
@@ -34,19 +27,23 @@
 #include "../plugin_registrar.h"
 #endif
 
+// Opaque reference to a Flutter window.
+typedef struct FlutterEmbedderState *FlutterWindowRef;
+
 namespace flutter_desktop_embedding {
 
-// Calls glfwInit()
+// Sets up the embedder's graphic context. Must be called before any other
+// methods.
 //
-// glfwInit() must be called in the same library as glfwCreateWindow()
+// Note: Internally, this library uses GLFW, which does not support multiple
+// copies within the same process. Internally this calls glfwInit, which will
+// fail if you have called glfwInit elsewhere in the process.
 FDE_EXPORT bool FlutterInit();
 
-// Calls glfwTerminate()
-//
-// glfwTerminate() must be called in the same library as glfwCreateWindow()
+// Tears down embedder state. Must be called before the process terminates.
 FDE_EXPORT void FlutterTerminate();
 
-// Creates a GLFW Window running a Flutter Application.
+// Creates a Window running a Flutter Application.
 //
 // FlutterInit() must be called prior to this function.
 //
@@ -58,9 +55,11 @@ FDE_EXPORT void FlutterTerminate();
 // https://github.com/flutter/engine/blob/master/shell/common/switches.h for
 // for details. Not all arguments will apply to embedding mode.
 //
-// Returns a null pointer in the event of an error. The caller owns the pointer
-// when it is non-null.
-FDE_EXPORT GLFWwindow *CreateFlutterWindow(
+// Returns a null pointer in the event of an error. Otherwise, the pointer is
+// valid until FlutterWindowLoop has been called and returned. Note that calling
+// CreateFlutterWindow without later calling FlutterWindowLoop on that pointer
+// is a memory leak.
+FDE_EXPORT FlutterWindowRef CreateFlutterWindow(
     size_t initial_width, size_t initial_height, const std::string &assets_path,
     const std::string &icu_data_path,
     const std::vector<std::string> &arguments);
@@ -71,16 +70,13 @@ FDE_EXPORT GLFWwindow *CreateFlutterWindow(
 // The name must be unique across the application, so the recommended approach
 // is to use the fully namespace-qualified name of the plugin class.
 FDE_EXPORT PluginRegistrar *GetRegistrarForPlugin(
-    GLFWwindow *flutter_window, const std::string &plugin_name);
+    FlutterWindowRef flutter_window, const std::string &plugin_name);
 
-// Loops on flutter window events until termination.
+// Loops on Flutter window events until the window is closed.
 //
-// Must be used instead of glfwWindowShouldClose as it cleans up engine state
-// after termination.
-//
-// After this function the user must eventually call FlutterTerminate() if doing
-// cleanup.
-FDE_EXPORT void FlutterWindowLoop(GLFWwindow *flutter_window);
+// Once this function returns, FlutterWindowRef is no longer valid, and must
+// not be used again.
+FDE_EXPORT void FlutterWindowLoop(FlutterWindowRef flutter_window);
 
 }  // namespace flutter_desktop_embedding
 
