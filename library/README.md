@@ -55,7 +55,8 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
 #### Using the Library
 
 Run `make` under `linux/`, then link `libflutter_embedder.so` into your
-binary. See [embedder.h](include/flutter_desktop_embedding/glfw/embedder.h)
+binary. See
+[flutter_window_controller.h](include/flutter_desktop_embedding/glfw/flutter_window_controller.h)
 for details on calling into the library.
 
 You will also need to link `libflutter_engine.so` into your binary.
@@ -96,8 +97,8 @@ You must have a copy of Visual Studio installed.
 
 Build the GLFW Library project under `windows/` in Visual Studio into a static
 or dynamic library, then link `flutter_embedder.lib` into your binary and make
-sure `embedder.h` is in your include paths. Also ensure that the
-`flutter_engine.dll`, and if using a dynamic library
+sure `flutter_window_controller.h` is in your include paths. Also ensure that
+the `flutter_engine.dll`, and if using a dynamic library
 `flutter_embedder.dll`, are in valid DLL include paths.
 
 The output files are located in `bin\x64\$(Configuration)\GLFW Library\`.
