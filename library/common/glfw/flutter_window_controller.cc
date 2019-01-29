@@ -16,6 +16,8 @@
 
 #include <iostream>
 
+#include "library/common/internal/plugin_handler.h"
+
 namespace flutter_desktop_embedding {
 
 FlutterWindowController::FlutterWindowController(std::string &icu_data_path)
@@ -56,8 +58,14 @@ PluginRegistrar *FlutterWindowController::GetRegistrarForPlugin(
   if (!window_) {
     return nullptr;
   }
-  return flutter_desktop_embedding::GetRegistrarForPlugin(window_, plugin_name);
-}
+  if (!plugin_handler_) {
+    plugin_handler_ = std::make_unique<PluginHandler>(window_);
+  }
+  // Currently, PluginHandler acts as the registrar for all plugins, so the
+  // name is ignored. It is part of the API to reduce churn in the future when
+  // aligning more closely with the Flutter registrar system.
+  return plugin_handler_.get();
+}  // namespace flutter_desktop_embedding
 
 void FlutterWindowController::RunEventLoop() {
   if (window_) {
