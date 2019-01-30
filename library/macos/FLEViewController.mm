@@ -297,7 +297,8 @@ static void CommonInit(FLEViewController *controller) {
   flutterArguments.command_line_argv = argv;
   flutterArguments.platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage;
 
-  FlutterResult result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &flutterArguments,
+  // TODO: Replace auto with FlutterEngineResult after next required Flutter update.
+  auto result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &flutterArguments,
                                  (__bridge void *)(self), &_engine);
   free(argv);
   if (result != kSuccess) {
@@ -350,7 +351,8 @@ static void CommonInit(FLEViewController *controller) {
 
   FLEBinaryReply binaryResponseHandler = ^(NSData *response) {
     if (responseHandle) {
-      FlutterEngineSendPlatformMessageResponse(self->_engine, responseHandle, response.bytes,
+      FlutterEngineSendPlatformMessageResponse(self->_engine, responseHandle,
+                                               static_cast<const uint8_t *>(response.bytes),
                                                response.length);
       responseHandle = NULL;
     } else {
@@ -376,7 +378,7 @@ static void CommonInit(FLEViewController *controller) {
       .phase = phase,
       .x = locationInBackingCoordinates.x,
       .y = -locationInBackingCoordinates.y,  // convertPointToBacking makes this negative.
-      .timestamp = event.timestamp * NSEC_PER_MSEC,
+      .timestamp = static_cast<const size_t>(event.timestamp * NSEC_PER_MSEC),
   };
   FlutterEngineSendPointerEvent(_engine, &flutterEvent, 1);
 }
@@ -386,12 +388,11 @@ static void CommonInit(FLEViewController *controller) {
     @"keymap" : @"android",
     @"type" : type,
     @"keyCode" : @(event.keyCode),
-    @"metaState" : @(
-      ((event.modifierFlags & NSEventModifierFlagShift) ? kAndroidMetaStateShift : 0) |
-      ((event.modifierFlags & NSEventModifierFlagOption) ? kAndroidMetaStateAlt : 0) |
-      ((event.modifierFlags & NSEventModifierFlagControl) ? kAndroidMetaStateCtrl : 0) |
-      ((event.modifierFlags & NSEventModifierFlagCommand) ? kAndroidMetaStateMeta : 0)
-    )
+    @"metaState" :
+        @(((event.modifierFlags & NSEventModifierFlagShift) ? kAndroidMetaStateShift : 0) |
+          ((event.modifierFlags & NSEventModifierFlagOption) ? kAndroidMetaStateAlt : 0) |
+          ((event.modifierFlags & NSEventModifierFlagControl) ? kAndroidMetaStateCtrl : 0) |
+          ((event.modifierFlags & NSEventModifierFlagCommand) ? kAndroidMetaStateMeta : 0))
   }];
 }
 
@@ -404,8 +405,8 @@ static void CommonInit(FLEViewController *controller) {
   CGRect scaledBounds = [view convertRectToBacking:view.bounds];
   const FlutterWindowMetricsEvent event = {
       .struct_size = sizeof(event),
-      .width = scaledBounds.size.width,
-      .height = scaledBounds.size.height,
+      .width = static_cast<const size_t>(scaledBounds.size.width),
+      .height = static_cast<const size_t>(scaledBounds.size.height),
       .pixel_ratio = scaledBounds.size.width / view.bounds.size.width,
   };
   FlutterEngineSendWindowMetricsEvent(_engine, &event);
@@ -417,11 +418,12 @@ static void CommonInit(FLEViewController *controller) {
   FlutterPlatformMessage platformMessage = {
       .struct_size = sizeof(FlutterPlatformMessage),
       .channel = [channel UTF8String],
-      .message = message.bytes,
+      .message = static_cast<const uint8_t *>(message.bytes),
       .message_size = message.length,
   };
 
-  FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
+  // TODO: Replace auto with FlutterEngineResult after next required Flutter update.
+  auto result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
   if (result != kSuccess) {
     NSLog(@"Failed to send message to Flutter engine on channel '%@' (%d).", channel, result);
   }
