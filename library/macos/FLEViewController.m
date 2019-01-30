@@ -297,7 +297,7 @@ static void CommonInit(FLEViewController *controller) {
   flutterArguments.command_line_argv = argv;
   flutterArguments.platform_message_callback = (FlutterPlatformMessageCallback)OnPlatformMessage;
 
-  FlutterResult result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &flutterArguments,
+  FlutterEngineResult result = FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &flutterArguments,
                                  (__bridge void *)(self), &_engine);
   free(argv);
   if (result != kSuccess) {
@@ -421,7 +421,7 @@ static void CommonInit(FLEViewController *controller) {
       .message_size = message.length,
   };
 
-  FlutterResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
+  FlutterEngineResult result = FlutterEngineSendPlatformMessage(_engine, &platformMessage);
   if (result != kSuccess) {
     NSLog(@"Failed to send message to Flutter engine on channel '%@' (%d).", channel, result);
   }
