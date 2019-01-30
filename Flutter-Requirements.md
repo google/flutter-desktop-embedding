@@ -28,6 +28,8 @@ behavior on different desktop platforms, you can conditionalize on `Platform`.
 For example, the line in `main()` above could be replaced with a call to:
 
 ```dart
+import 'dart:io';
+
 /// If the current platform is desktop, override the default platform to
 /// a supported platform (iOS for macOS, Android for Linux and Windows).
 /// Otherwise, do nothing.
