@@ -32,6 +32,7 @@
 #include "library/common/glfw/key_event_handler.h"
 #include "library/common/glfw/keyboard_hook_handler.h"
 #include "library/common/glfw/text_input_plugin.h"
+#include "library/common/internal/incoming_message_dispatcher.h"
 #include "library/common/internal/plugin_handler.h"
 
 #ifdef __linux__
@@ -61,7 +62,11 @@ struct FlutterEmbedderState {
   // The handle to the Flutter engine instance.
   FlutterEngine engine;
 
-  // The helper class managing plugin registration and messaging.
+  // Message dispatch manager for messages from the Flutter engine.
+  std::unique_ptr<flutter_desktop_embedding::IncomingMessageDispatcher>
+      message_dispatcher;
+
+  // The helper class managing plugin registration.
   std::unique_ptr<flutter_desktop_embedding::PluginHandler> plugin_handler;
 
   // Handlers for keyboard events from GLFW.
@@ -81,6 +86,18 @@ static constexpr char kDefaultWindowTitle[] = "Flutter";
 static FlutterEmbedderState *GetSavedEmbedderState(GLFWwindow *window) {
   return reinterpret_cast<FlutterEmbedderState *>(
       glfwGetWindowUserPointer(window));
+}
+
+// Converts a FlutterPlatformMessage to an equivalent FlutterEmbedderMessage.
+static flutter_desktop_embedding::FlutterEmbedderMessage
+ConvertToEmbedderMessage(const FlutterPlatformMessage &engine_message) {
+  flutter_desktop_embedding::FlutterEmbedderMessage embedder_message = {};
+  embedder_message.struct_size = sizeof(embedder_message);
+  embedder_message.channel = engine_message.channel;
+  embedder_message.message = engine_message.message;
+  embedder_message.message_size = engine_message.message_size;
+  embedder_message.response_handle = engine_message.response_handle;
+  return embedder_message;
 }
 
 // Returns the number of screen coordinates per inch for the main monitor.
@@ -207,8 +224,10 @@ static void GLFWOnFlutterPlatformMessage(const FlutterPlatformMessage *message,
 
   GLFWwindow *window = reinterpret_cast<GLFWwindow *>(user_data);
   auto state = GetSavedEmbedderState(window);
-  state->plugin_handler->HandleMethodCallMessage(
-      message, [window] { GLFWClearEventCallbacks(window); },
+
+  auto embedder_message = ConvertToEmbedderMessage(*message);
+  state->message_dispatcher->HandleMessage(
+      embedder_message, [window] { GLFWClearEventCallbacks(window); },
       [window] { GLFWAssignEventCallbacks(window); });
 }
 
@@ -313,14 +332,6 @@ bool FlutterInit() {
 
 void FlutterTerminate() { glfwTerminate(); }
 
-PluginRegistrar *GetRegistrarForPlugin(FlutterWindowRef flutter_window,
-                                       const std::string &plugin_name) {
-  // Currently, PluginHandler acts as the registrar for all plugins, so the
-  // name is ignored. It is part of the API to reduce churn in the future when
-  // aligning more closely with the Flutter registrar system.
-  return flutter_window->plugin_handler.get();
-}
-
 FlutterWindowRef CreateFlutterWindow(
     size_t initial_width, size_t initial_height, const std::string &assets_path,
     const std::string &icu_data_path,
@@ -348,7 +359,9 @@ FlutterWindowRef CreateFlutterWindow(
   state->window = window;
   glfwSetWindowUserPointer(window, state);
   state->engine = engine;
-  state->plugin_handler = std::make_unique<PluginHandler>(engine);
+  state->message_dispatcher =
+      std::make_unique<IncomingMessageDispatcher>(state);
+  state->plugin_handler = std::make_unique<PluginHandler>(state);
 
   // Set up the keyboard handlers.
   state->keyboard_hook_handlers.push_back(
@@ -390,6 +403,40 @@ void FlutterWindowLoop(FlutterWindowRef flutter_window) {
   FlutterEngineShutdown(flutter_window->engine);
   delete flutter_window;
   glfwDestroyWindow(window);
+}
+
+void FlutterEmbedderSendMessage(FlutterWindowRef flutter_window,
+                                const char *channel, const uint8_t *message,
+                                const size_t message_size) {
+  FlutterPlatformMessage platform_message = {
+      sizeof(FlutterPlatformMessage),
+      channel,
+      message,
+      message_size,
+  };
+
+  FlutterEngineSendPlatformMessage(flutter_window->engine, &platform_message);
+}
+
+void FlutterEmbedderSendMessageResponse(
+    FlutterWindowRef flutter_window,
+    const FlutterEmbedderMessageResponseHandle *handle, const uint8_t *data,
+    size_t data_length) {
+  FlutterEngineSendPlatformMessageResponse(flutter_window->engine, handle, data,
+                                           data_length);
+}
+
+void FlutterEmbedderSetMessageCallback(FlutterWindowRef flutter_window,
+                                       const char *channel,
+                                       FlutterEmbedderMessageCallback callback,
+                                       void *user_data) {
+  flutter_window->message_dispatcher->SetMessageCallback(channel, callback,
+                                                         user_data);
+}
+
+void FlutterEmbedderEnableInputBlocking(FlutterWindowRef flutter_window,
+                                        const char *channel) {
+  flutter_window->message_dispatcher->EnableInputBlockingForChannel(channel);
 }
 
 }  // namespace flutter_desktop_embedding

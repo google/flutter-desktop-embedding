@@ -42,6 +42,9 @@
     <ClCompile Include="..\common\glfw\flutter_window_controller.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\internal\incoming_message_dispatcher.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\flutter_desktop_embedding\windows\embedder.h">

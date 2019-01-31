@@ -19,39 +19,24 @@
 #include <set>
 #include <string>
 
-#include <flutter_embedder.h>
-
 #include "library/include/flutter_desktop_embedding/binary_messenger.h"
+#include "library/include/flutter_desktop_embedding/glfw/embedder.h"
 #include "library/include/flutter_desktop_embedding/plugin_registrar.h"
 
 namespace flutter_desktop_embedding {
 
-// A class for managing a set of plugins.
-//
-// The plugins all map from a unique channel name to an actual plugin.
+// Manages plugin registration, as well as messaging to and from the Flutter
+// engine.
 class PluginHandler : public BinaryMessenger, public PluginRegistrar {
  public:
-  // Creates a new PluginHandler. |engine| must remain valid as long as this
-  // object exists.
-  explicit PluginHandler(FlutterEngine engine);
+  // Creates a new PluginHandler. |window| and |message_dispatcher| must remain
+  // valid as long as this object exists.
+  explicit PluginHandler(FlutterWindowRef window);
   virtual ~PluginHandler();
 
   // Prevent copying.
   PluginHandler(PluginHandler const &) = delete;
   PluginHandler &operator=(PluginHandler const &) = delete;
-
-  // Decodes the method call in |message| and routes it to to the registered
-  // handler for |message|'s channel, if any.
-  //
-  // If input blocking has been enabled on that channel, wraps the call to the
-  // handler with calls to the given callbacks to block and then unblock input.
-  //
-  // If no handler is registered for the message's channel, sends a
-  // NotImplemented response to the engine.
-  void HandleMethodCallMessage(
-      const FlutterPlatformMessage *message,
-      std::function<void(void)> input_block_cb = [] {},
-      std::function<void(void)> input_unblock_cb = [] {});
 
   // BinaryMessenger implementation:
   void Send(const std::string &channel, const uint8_t *message,
@@ -65,7 +50,9 @@ class PluginHandler : public BinaryMessenger, public PluginRegistrar {
   void EnableInputBlockingForChannel(const std::string &channel) override;
 
  private:
-  FlutterEngine engine_;
+  // Handle for interacting with the embedding API.
+  // TODO: Provide an interface for the specific functionality needed.
+  FlutterWindowRef window_;
 
   // Plugins registered for ownership via PluginRegistrar.
   std::set<std::unique_ptr<Plugin>> plugins_;
@@ -73,10 +60,6 @@ class PluginHandler : public BinaryMessenger, public PluginRegistrar {
   // A map from channel names to the BinaryMessageHandler that should be called
   // for incoming messages on that channel.
   std::map<std::string, BinaryMessageHandler> handlers_;
-
-  // Channel names for which input blocking should be enabled during the call to
-  // that channel's handler.
-  std::set<std::string> input_blocking_channels_;
 };
 
 }  // namespace flutter_desktop_embedding

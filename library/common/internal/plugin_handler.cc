@@ -20,18 +20,17 @@
 
 namespace flutter_desktop_embedding {
 
-PluginHandler::PluginHandler(FlutterEngine engine) : engine_(engine) {}
-
-PluginHandler::~PluginHandler() {}
-
-void PluginHandler::HandleMethodCallMessage(
-    const FlutterPlatformMessage *message,
-    std::function<void(void)> input_block_cb,
-    std::function<void(void)> input_unblock_cb) {
-  std::string channel(message->channel);
+namespace {
+// Passes |message| to |user_data|, which must be a BinaryMessageHandler, along
+// with a BinaryReply that will send a response on |message|'s response handle.
+//
+// This serves as an adaptor between the function-pointer-based message callback
+// interface provided by embedder.h and the std::function-based message handler
+// interface of BinaryMessenger.
+void ForwardToHandler(FlutterWindowRef flutter_window,
+                      const FlutterEmbedderMessage *message, void *user_data) {
   auto *response_handle = message->response_handle;
-  auto *response_engine = engine_;
-  BinaryReply reply_handler = [response_engine, response_handle](
+  BinaryReply reply_handler = [flutter_window, response_handle](
                                   const uint8_t *reply,
                                   const size_t reply_size) mutable {
     if (!response_handle) {
@@ -40,48 +39,46 @@ void PluginHandler::HandleMethodCallMessage(
                 << std::endl;
       return;
     }
-    FlutterEngineSendPlatformMessageResponse(response_engine, response_handle,
-                                             reply, reply_size);
+    FlutterEmbedderSendMessageResponse(flutter_window, response_handle, reply,
+                                       reply_size);
     // The engine frees the response handle once
-    // FlutterEngineSendPlatformMessageResponse is called.
+    // FlutterEmbedderSendMessageResponse is called.
     response_handle = nullptr;
   };
 
-  // Find the handler for the channel; if there isn't one, report the failure.
-  if (handlers_.find(channel) == handlers_.end()) {
-    reply_handler(nullptr, 0);
-    return;
-  }
-  const BinaryMessageHandler &message_handler = handlers_[channel];
+  const BinaryMessageHandler &message_handler =
+      *static_cast<BinaryMessageHandler *>(user_data);
 
-  // Process the call, handling input blocking if requested.
-  bool block_input = input_blocking_channels_.count(channel) > 0;
-  if (block_input) {
-    input_block_cb();
-  }
   message_handler(message->message, message->message_size,
                   std::move(reply_handler));
-  if (block_input) {
-    input_unblock_cb();
-  }
 }
+}  // namespace
+
+PluginHandler::PluginHandler(FlutterWindowRef window) : window_(window) {}
+
+PluginHandler::~PluginHandler() {}
 
 // BinaryMessenger:
 
 void PluginHandler::Send(const std::string &channel, const uint8_t *message,
                          const size_t message_size) const {
-  FlutterPlatformMessage platform_message = {
-      sizeof(FlutterPlatformMessage),
-      channel.c_str(),
-      message,
-      message_size,
-  };
-  FlutterEngineSendPlatformMessage(engine_, &platform_message);
+  FlutterEmbedderSendMessage(window_, channel.c_str(), message, message_size);
 }
 
 void PluginHandler::SetMessageHandler(const std::string &channel,
                                       BinaryMessageHandler handler) {
+  if (!handler) {
+    handlers_.erase(channel);
+    FlutterEmbedderSetMessageCallback(window_, channel.c_str(), nullptr,
+                                      nullptr);
+    return;
+  }
+  // Save the handler, to keep it alive.
   handlers_[channel] = std::move(handler);
+  BinaryMessageHandler *message_handler = &handlers_[channel];
+  // Set an adaptor callback that will invoke the handler.
+  FlutterEmbedderSetMessageCallback(window_, channel.c_str(), ForwardToHandler,
+                                    message_handler);
 }
 
 // PluginRegistrar:
@@ -91,7 +88,7 @@ void PluginHandler::AddPlugin(std::unique_ptr<Plugin> plugin) {
 }
 
 void PluginHandler::EnableInputBlockingForChannel(const std::string &channel) {
-  input_blocking_channels_.insert(channel);
+  FlutterEmbedderEnableInputBlocking(window_, channel.c_str());
 }
 
 }  // namespace flutter_desktop_embedding

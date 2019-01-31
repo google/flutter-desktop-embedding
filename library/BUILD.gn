@@ -38,6 +38,8 @@ published_shared_library("flutter_embedder") {
   if (is_linux || is_win) {
     sources += [
       "common/engine_method_result.cc",
+      "common/internal/incoming_message_dispatcher.cc",
+      "common/internal/incoming_message_dispatcher.h",
       "common/internal/plugin_handler.cc",
       "common/internal/plugin_handler.h",
       "common/internal/text_input_model.cc",
