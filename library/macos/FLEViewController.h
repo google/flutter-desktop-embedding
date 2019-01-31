@@ -20,6 +20,7 @@
 #import "FLEPlugin.h"
 #import "FLEPluginRegistrar.h"
 #import "FLEReshapeListener.h"
+#import "FLETexture.h"
 
 /**
  * Controls embedder plugins and communication with the underlying Flutter engine, managing a view
@@ -29,7 +30,7 @@
  * Flutter engine in non-interactive mode, or with a drawable Flutter canvas.
  */
 @interface FLEViewController
-    : NSViewController <FLEBinaryMessenger, FLEPluginRegistrar, FLEReshapeListener>
+    : NSViewController <FLEBinaryMessenger, FLEPluginRegistrar, FLEReshapeListener, FLETextureRegistrar>
 
 /**
  * The view this controller manages when launched in interactive mode (headless set to false). Must

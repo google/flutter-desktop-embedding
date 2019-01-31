@@ -22,6 +22,7 @@
 #import "FLEReshapeListener.h"
 #import "FLETextInputPlugin.h"
 #import "FLEView.h"
+#import "FLEExternalTexture.h"
 
 static NSString *const kXcodeExtraArgumentOne = @"-NSDocumentRevisionsDebugMode";
 static NSString *const kXcodeExtraArgumentTwo = @"YES";
@@ -95,6 +96,10 @@ static const int kAndroidMetaStateMeta = 1 << 16;
  */
 - (void)dispatchKeyEvent:(NSEvent *)event ofType:(NSString *)type;
 
+-(BOOL) populateTextureWithIdentifier:(int64_t)texture_identifier
+                                width:(size_t)width
+                               height:(size_t)height
+                              texture:(FlutterOpenGLTexture *)texture;
 @end
 
 #pragma mark - Static methods provided to engine configuration
@@ -144,6 +149,14 @@ static bool OnMakeResourceCurrent(FLEViewController *controller) {
   return true;
 }
 
+static bool OnAcquireExternalTexture(FLEViewController *controller,
+                                     int64_t texture_identifier,
+                                     size_t width,
+                                     size_t height,
+                                     FlutterOpenGLTexture *texture) {
+    return [controller populateTextureWithIdentifier:texture_identifier width:width height:height texture:texture];
+}
+
 #pragma mark Static methods provided for headless engine configuration
 
 static bool HeadlessOnMakeCurrent(FLEViewController *controller) { return false; }
@@ -173,6 +186,9 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
   // A message channel for passing key events to the Flutter engine. This should be replaced with
   // an embedding API; see Issue #47.
   FLEBasicMessageChannel *_keyEventChannel;
+
+  // A mapping of external textures.
+  NSMutableDictionary<NSNumber *, FLEExternalTexture *> *_textures;
 }
 
 @dynamic view;
@@ -183,6 +199,7 @@ static bool HeadlessOnMakeResourceCurrent(FLEViewController *controller) { retur
 static void CommonInit(FLEViewController *controller) {
   controller->_messageHandlers = [[NSMutableDictionary alloc] init];
   controller->_additionalKeyResponders = [[NSMutableOrderedSet alloc] init];
+  controller->_textures = [[NSMutableDictionary alloc] init];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -340,6 +357,27 @@ static void CommonInit(FLEViewController *controller) {
 
 - (void)makeResourceContextCurrent {
   [_resourceContext makeCurrentContext];
+}
+
+-(BOOL) populateTextureWithIdentifier:(int64_t) textureId width:(size_t) width height:(size_t) height texture:(FlutterOpenGLTexture *) texture {
+    return [_textures[@(textureId)] populateTextureWidth:width height:height texture:texture];
+}
+
+- (int64_t)registerTexture:(NSObject<FLETexture>*)texture {
+    FLEExternalTexture *fleTexture = [[FLEExternalTexture alloc] initExternalTexture:texture];
+    int64_t textureId = [fleTexture textureId];
+    FlutterEngineRegisterExternalTexture(_engine, textureId);
+    _textures[@(textureId)] = fleTexture;
+    return textureId;
+}
+
+- (void)textureFrameAvailable:(int64_t)textureId {
+    FlutterEngineMarkExternalTextureFrameAvailable(_engine, textureId);
+}
+
+- (void)unregisterTexture:(int64_t)textureId {
+    FlutterEngineUnregisterExternalTexture(_engine, textureId);
+    [_textures removeObjectForKey:@(textureId)];
 }
 
 - (void)handlePlatformMessage:(const FlutterPlatformMessage *)message {
