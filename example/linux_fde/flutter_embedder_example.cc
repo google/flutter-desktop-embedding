@@ -21,13 +21,8 @@
 
 #include <color_panel/color_panel_plugin.h>
 #include <file_chooser/file_chooser_plugin.h>
-#include <menubar/menubar_plugin.h>
-
-#ifdef USE_FLATTENED_INCLUDES
 #include <flutter_desktop_embedding/flutter_window_controller.h>
-#else
-#include <flutter_desktop_embedding/glfw/flutter_window_controller.h>
-#endif
+#include <menubar/menubar_plugin.h>
 
 namespace {
 

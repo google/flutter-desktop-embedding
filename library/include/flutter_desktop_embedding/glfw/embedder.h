@@ -19,6 +19,15 @@
 #include <string>
 #include <vector>
 
+// On Linux, the header output is always flattened; on Windows the GN build
+// is still optional. Once GN is required on Windows, eliminate this and just
+// use FLUTTER_DESKTOP_EMBEDDING_IMPL to control include paths.
+#ifndef USE_FLATTENED_INCLUDES
+#if !defined(FLUTTER_DESKTOP_EMBEDDING_IMPL) && defined(__linux__)
+#define USE_FLATTENED_INCLUDES 1
+#endif
+#endif
+
 #ifdef USE_FLATTENED_INCLUDES
 #include "fde_export.h"
 #else

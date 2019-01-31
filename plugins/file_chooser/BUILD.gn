@@ -30,7 +30,6 @@ published_shared_library("file_chooser") {
 
   defines = [
     "FILE_CHOOSER_PLUGIN_IMPL",
-    "USE_FLATTENED_INCLUDES",
   ]
 
   deps = [

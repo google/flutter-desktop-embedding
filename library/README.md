@@ -37,7 +37,7 @@ the ICU data from the Flutter engine.
 
 #### Dependencies
 
-First you will need to install the relevant dependencies:
+First you will need to install the relevant library dependencies:
 *   GLFW3
 *   GTK 3
 *   jsoncpp
@@ -52,16 +52,32 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
       libx11-dev pkg-config
 ```
 
+You will need to install the build tools if you don't already have them:
+* [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
+* [gn](https://gn.googlesource.com/gn/)
+
+Ensure that both binaries are in your path.
+
 #### Using the Library
 
-Run `make` under `linux/`, then link `libflutter_embedder.so` into your
-binary. See
+To build the library, run the following at the root of this repository:
+
+```
+$ tools/gn_dart gen out
+$ ninja -C out flutter_embedder
+```
+Subsequent builds only require the `ninja` step, as the build will automatically
+re-run GN generation if necessary.
+
+The build results will be in the top-level `out/` directory. You will need to
+link `libflutter_embedder.so` and `libflutter_engine.so` into your binary.
+Public headers will be in `out/include/`; you should point dependent
+builds at that location rather than the `include/` directories in the
+source tree.
+
+See
 [flutter_window_controller.h](include/flutter_desktop_embedding/glfw/flutter_window_controller.h)
 for details on calling into the library.
-
-You will also need to link `libflutter_engine.so` into your binary.
-
-_Note: There is also a [GN build](GN.md) available as an alternative to Make._
 
 ### macOS
 
@@ -102,6 +118,8 @@ the `flutter_engine.dll`, and if using a dynamic library
 `flutter_embedder.dll`, are in valid DLL include paths.
 
 The output files are located in `bin\x64\$(Configuration)\GLFW Library\`.
+
+_Note: There is also a [GN build](GN.md) available as an alternative._
 
 ## Caveats
 

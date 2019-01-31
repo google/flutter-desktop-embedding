@@ -30,7 +30,6 @@ published_shared_library("color_panel") {
 
   defines = [
     "COLOR_PANEL_PLUGIN_IMPL",
-    "USE_FLATTENED_INCLUDES",
   ]
 
   deps = [
