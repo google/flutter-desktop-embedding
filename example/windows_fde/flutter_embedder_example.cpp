@@ -13,30 +13,31 @@
 // limitations under the License.
 
 #include <iostream>
+#include <string>
 #include <vector>
 
-#include "flutter_desktop_embedding/glfw/embedder.h"
+#include "flutter_desktop_embedding/glfw/flutter_window_controller.h"
 
 int main(int argc, char **argv) {
-  if (!flutter_desktop_embedding::FlutterInit()) {
-    std::cout << "Couldn't init GLFW" << std::endl;
-  }
+  // TODO: Make paths relative to the executable so it can be run from anywhere.
+  std::string assets_path = "..\\build\\flutter_assets";
+  std::string icu_data_path =
+      "..\\..\\library\\windows\\dependencies\\engine\\icudtl.dat";
+
   // Arguments for the Flutter Engine.
   std::vector<std::string> arguments;
 #ifndef _DEBUG
   arguments.push_back("--disable-dart-asserts");
 #endif
+  flutter_desktop_embedding::FlutterWindowController flutter_controller(
+      icu_data_path);
+
   // Start the engine.
-  // TODO: Make paths relative to the executable so it can be run from anywhere.
-  auto window = flutter_desktop_embedding::CreateFlutterWindow(
-      640, 480, "..\\..\\example\\flutter_app\\build\\flutter_assets",
-      "..\\..\\library\\windows\\dependencies\\engine\\icudtl.dat", arguments);
-  if (window == nullptr) {
-    flutter_desktop_embedding::FlutterTerminate();
+  if (!flutter_controller.CreateWindow(640, 480, assets_path, arguments)) {
     return EXIT_FAILURE;
   }
 
-  flutter_desktop_embedding::FlutterWindowLoop(window);
-  flutter_desktop_embedding::FlutterTerminate();
+  // Run until the window is closed.
+  flutter_controller.RunEventLoop();
   return EXIT_SUCCESS;
 }

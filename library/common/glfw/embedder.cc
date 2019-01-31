@@ -20,6 +20,13 @@
 #include <cstdlib>
 #include <iostream>
 
+#ifdef __linux__
+// Epoxy must be included before any graphics-related code.
+#include <epoxy/gl.h>
+#endif
+
+#include <GLFW/glfw3.h>
+
 #include <flutter_embedder.h>
 
 #include "library/common/glfw/key_event_handler.h"
@@ -48,7 +55,13 @@ static constexpr double kDpPerInch = 160.0;
 
 // Struct for storing state within an instance of the GLFW Window.
 struct FlutterEmbedderState {
+  // The GLFW window that owns this state object.
+  GLFWwindow *window;
+
+  // The handle to the Flutter engine instance.
   FlutterEngine engine;
+
+  // The helper class managing plugin registration and messaging.
   std::unique_ptr<flutter_desktop_embedding::PluginHandler> plugin_handler;
 
   // Handlers for keyboard events from GLFW.
@@ -98,12 +111,15 @@ static void GLFWFramebufferSizeCallback(GLFWwindow *window, int width_px,
 
   double dpi = state->window_pixels_per_screen_coordinate *
                state->monitor_screen_coordinates_per_inch;
+  // Limit the ratio to 1 to avoid rendering a smaller UI in standard resolution
+  // monitors.
+  double pixel_ratio = std::max(dpi / kDpPerInch, 1.0);
 
   FlutterWindowMetricsEvent event = {};
   event.struct_size = sizeof(event);
   event.width = width_px;
   event.height = height_px;
-  event.pixel_ratio = dpi / kDpPerInch;
+  event.pixel_ratio = pixel_ratio;
   FlutterEngineSendWindowMetricsEvent(state->engine, &event);
 }
 
@@ -239,6 +255,10 @@ static void *GLFWProcResolver(void *user_data, const char *name) {
   return reinterpret_cast<void *>(glfwGetProcAddress(name));
 }
 
+static void GLFWErrorCallback(int error_code, const char *description) {
+  std::cerr << "GLFW error " << error_code << ": " << description << std::endl;
+}
+
 // Spins up an instance of the Flutter Engine.
 //
 // This function launches the Flutter Engine in a background thread, supplying
@@ -276,6 +296,8 @@ static FlutterEngine RunFlutterEngine(
   auto result =
       FlutterEngineRun(FLUTTER_ENGINE_VERSION, &config, &args, window, &engine);
   if (result != kSuccess || engine == nullptr) {
+    std::cerr << "Failed to start Flutter engine: error " << result
+              << std::endl;
     return nullptr;
   }
   return engine;
@@ -283,43 +305,50 @@ static FlutterEngine RunFlutterEngine(
 
 namespace flutter_desktop_embedding {
 
-// Initialize glfw
-bool FlutterInit() { return glfwInit(); }
+bool FlutterInit() {
+  // Before making any GLFW calls, set up a logging error handler.
+  glfwSetErrorCallback(GLFWErrorCallback);
+  return glfwInit();
+}
 
-// Tear down glfw
 void FlutterTerminate() { glfwTerminate(); }
 
-PluginRegistrar *GetRegistrarForPlugin(GLFWwindow *flutter_window,
+PluginRegistrar *GetRegistrarForPlugin(FlutterWindowRef flutter_window,
                                        const std::string &plugin_name) {
-  auto *state = GetSavedEmbedderState(flutter_window);
   // Currently, PluginHandler acts as the registrar for all plugins, so the
   // name is ignored. It is part of the API to reduce churn in the future when
   // aligning more closely with the Flutter registrar system.
-  return state->plugin_handler.get();
+  return flutter_window->plugin_handler.get();
 }
 
-GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
-                                const std::string &assets_path,
-                                const std::string &icu_data_path,
-                                const std::vector<std::string> &arguments) {
+FlutterWindowRef CreateFlutterWindow(
+    size_t initial_width, size_t initial_height, const std::string &assets_path,
+    const std::string &icu_data_path,
+    const std::vector<std::string> &arguments) {
 #ifdef __linux__
   gtk_init(0, nullptr);
 #endif
+  // Create the window.
   auto window = glfwCreateWindow(initial_width, initial_height,
                                  kDefaultWindowTitle, NULL, NULL);
   if (window == nullptr) {
     return nullptr;
   }
   GLFWClearCanvas(window);
+
+  // Start the engine.
   auto engine = RunFlutterEngine(window, assets_path, icu_data_path, arguments);
   if (engine == nullptr) {
     glfwDestroyWindow(window);
     return nullptr;
   }
 
+  // Create an embedder state object attached to the window.
   FlutterEmbedderState *state = new FlutterEmbedderState();
-  state->plugin_handler = std::make_unique<PluginHandler>(engine);
+  state->window = window;
+  glfwSetWindowUserPointer(window, state);
   state->engine = engine;
+  state->plugin_handler = std::make_unique<PluginHandler>(engine);
 
   // Set up the keyboard handlers.
   state->keyboard_hook_handlers.push_back(
@@ -327,24 +356,26 @@ GLFWwindow *CreateFlutterWindow(size_t initial_width, size_t initial_height,
   state->keyboard_hook_handlers.push_back(
       std::make_unique<TextInputPlugin>(state->plugin_handler.get()));
 
-  glfwSetWindowUserPointer(window, state);
-
+  // Trigger an initial size callback to send size information to Flutter.
   state->monitor_screen_coordinates_per_inch = GetScreenCoordinatesPerInch();
   int width_px, height_px;
   glfwGetFramebufferSize(window, &width_px, &height_px);
-  glfwSetFramebufferSizeCallback(window, GLFWFramebufferSizeCallback);
   GLFWFramebufferSizeCallback(window, width_px, height_px);
 
+  // Set up GLFW callbacks for the window.
+  glfwSetFramebufferSizeCallback(window, GLFWFramebufferSizeCallback);
   GLFWAssignEventCallbacks(window);
-  return window;
+
+  return state;
 }
 
-void FlutterWindowLoop(GLFWwindow *flutter_window) {
+void FlutterWindowLoop(FlutterWindowRef flutter_window) {
+  GLFWwindow *window = flutter_window->window;
 #ifdef __linux__
   // Necessary for GTK thread safety.
   XInitThreads();
 #endif
-  while (!glfwWindowShouldClose(flutter_window)) {
+  while (!glfwWindowShouldClose(window)) {
 #ifdef __linux__
     glfwPollEvents();
     if (gtk_events_pending()) {
@@ -356,10 +387,9 @@ void FlutterWindowLoop(GLFWwindow *flutter_window) {
     // TODO(awdavies): This will be deprecated soon.
     __FlutterEngineFlushPendingTasksNow();
   }
-  auto state = GetSavedEmbedderState(flutter_window);
-  FlutterEngineShutdown(state->engine);
-  delete state;
-  glfwDestroyWindow(flutter_window);
+  FlutterEngineShutdown(flutter_window->engine);
+  delete flutter_window;
+  glfwDestroyWindow(window);
 }
 
 }  // namespace flutter_desktop_embedding

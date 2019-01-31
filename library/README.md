@@ -17,6 +17,12 @@ for now there is no equivalent to `flutter create`.
 There are currently no binary releases of the libraries. While a more
 Flutter-like model of using an SDK containing pre-compiled binaries is likely
 to be supported in the future, for now you must build the library from source.
+(**Note:** You may be tempted to pre-build a generic binary that can run any
+Flutter app. If you do, keep in mind that the primary reason there are no
+binary releases is that you *must* use the same version of Flutter to build
+`flutter_assets` as you use to build the library. If you later upgrade Flutter,
+or if you distribute the binary version to other people building their
+applications with different versions of Flutter, it will break.)
 
 Once you build the library for your platform, link it into your build using
 whatever build system you are using, and add the relevant headers (see
@@ -49,7 +55,8 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
 #### Using the Library
 
 Run `make` under `linux/`, then link `libflutter_embedder.so` into your
-binary. See [embedder.h](include/flutter_desktop_embedding/glfw/embedder.h)
+binary. See
+[flutter_window_controller.h](include/flutter_desktop_embedding/glfw/flutter_window_controller.h)
 for details on calling into the library.
 
 You will also need to link `libflutter_engine.so` into your binary.
@@ -90,8 +97,8 @@ You must have a copy of Visual Studio installed.
 
 Build the GLFW Library project under `windows/` in Visual Studio into a static
 or dynamic library, then link `flutter_embedder.lib` into your binary and make
-sure `embedder.h` is in your include paths. Also ensure that the
-`flutter_engine.dll`, and if using a dynamic library
+sure `flutter_window_controller.h` is in your include paths. Also ensure that
+the `flutter_engine.dll`, and if using a dynamic library
 `flutter_embedder.dll`, are in valid DLL include paths.
 
 The output files are located in `bin\x64\$(Configuration)\GLFW Library\`.

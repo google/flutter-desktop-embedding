@@ -12,4 +12,4 @@
 :: See the License for the specific language governing permissions and
 :: limitations under the License.
 @echo off
-%~dp0..\..\..\tools\build_flutter_assets %~dp0..\..\..\example\flutter_app
+%~dp0..\..\..\tools\build_flutter_assets %~dp0..\..

@@ -12,12 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Example-specific variables.
+# To modify this Makefile for a different application, these are the values
+# that are mostly likely to need to be changed.
+
+# The location of the flutter-desktop-embedding repository.
+FDE_ROOT=$(CURDIR)/../..
+# The C++ code for the embedder application.
+SOURCES=flutter_embedder_example.cc
+# Plugins to include (from the flutter-desktop-embedding plugins/ directory).
+PLUGIN_NAMES=color_panel file_chooser menubar
+
+
+# Default build type. For a release build, set BUILD=release.
+# Currently this only sets NDEBUG, which is used to control the flags passed
+# to the Flutter engine in the example shell, and not the complation settings
+# (e.g., optimization level) of the C++ code.
+BUILD:=debug
+
 # Dependency locations
-PROJECT_ROOT=$(CURDIR)/../..
-FLUTTER_EMBEDDER_LIB_DIR=$(PROJECT_ROOT)/library/linux
-FLUTTER_APP_DIR=$(PROJECT_ROOT)/example/flutter_app
-PLUGINS_DIR=$(PROJECT_ROOT)/plugins
-TOOLS_DIR=$(PROJECT_ROOT)/tools
+FLUTTER_APP_DIR=$(CURDIR)/..
+FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
+FLUTTER_EMBEDDER_LIB_DIR=$(FDE_ROOT)/library/linux
+PLUGINS_DIR=$(FDE_ROOT)/plugins
+TOOLS_DIR=$(FDE_ROOT)/tools
 FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
 
 # Libraries
@@ -27,7 +45,6 @@ FLUTTER_EMBEDDER_LIB=$(FLUTTER_EMBEDDER_LIB_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME)
 FLUTTER_ENGINE_LIB_NAME=flutter_engine
 FLUTTER_ENGINE_LIB=$(FLUTTER_EMBEDDER_LIB_DIR)/lib$(FLUTTER_ENGINE_LIB_NAME).so
 
-PLUGIN_NAMES=color_panel file_chooser menubar
 PLUGIN_LIB_NAME_PREFIX=flutter_embedder_
 PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
 	,$(PLUGINS_DIR)/$(plugin)/linux/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
@@ -37,7 +54,7 @@ ALL_LIBS=$(FLUTTER_EMBEDDER_LIB) $(FLUTTER_ENGINE_LIB) $(PLUGIN_LIBS)
 # Headers
 PLUGIN_DIRS=$(patsubst %,$(PLUGINS_DIR)/%/linux,$(PLUGIN_NAMES))
 LIBRARY_DIRS=$(FLUTTER_EMBEDDER_LIB_DIR) $(PLUGIN_DIRS)
-INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS)) $(PROJECT_ROOT)/library/include
+INCLUDE_DIRS=$(patsubst %,%/include,$(LIBRARY_DIRS)) $(FDE_ROOT)/library/include
 
 # Tools
 BUILD_ASSETS_BIN=$(TOOLS_DIR)/build_flutter_assets
@@ -47,10 +64,10 @@ FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
 ICU_DATA_NAME=icudtl.dat
 ICU_DATA_SOURCE=$(FLUTTER_DIR)/bin/cache/artifacts/engine/linux-x64/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
-FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_DIR)/build/$(FLUTTER_ASSETS_NAME)
+FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
 # Output bundle structure and targets
-OUT_DIR=$(CURDIR)/out
+OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux_fde/$(BUILD)
 OUT_DATA_DIR=$(OUT_DIR)/data
 OUT_LIB_DIR=$(OUT_DIR)/lib
 
@@ -60,9 +77,7 @@ ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(OUT_LIB_DIR)/$(notdir $(lib)))
 
 # Overrides for the optional GN build.
 ifdef USE_GN
-GN_OUT_DIR=$(PROJECT_ROOT)/out
-# Use GN's out dir even though this isn't a GN build, to group build output.
-OUT_DIR=$(GN_OUT_DIR)/example
+GN_OUT_DIR=$(FDE_ROOT)/out
 
 # The GN build places all libraries at the top level of the output directory.
 FLUTTER_EMBEDDER_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME).so
@@ -83,7 +98,9 @@ endif
 
 # Build settings
 CXX=g++ -std=c++14
-CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp glfw3)
+CXXFLAGS.release=-DNDEBUG
+CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp glfw3) \
+				 $(CXXFLAGS.$(BUILD))
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
 ifdef USE_GN
 CPPFLAGS+=-DUSE_FLATTENED_INCLUDES
@@ -94,8 +111,6 @@ LDFLAGS=-L$(OUT_LIB_DIR) \
 	-l$(FLUTTER_ENGINE_LIB_NAME) \
 	$(patsubst %,-l$(PLUGIN_LIB_NAME_PREFIX)%,$(PLUGIN_NAMES)) \
 	-Wl,-rpath=\$$ORIGIN/lib
-
-SOURCES=flutter_embedder_example.cc
 
 # Targets
 

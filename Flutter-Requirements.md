@@ -62,3 +62,13 @@ on all platforms.
 
 Symptoms of missing fonts can include text failing to display, console logging
 about failure to load fonts, or in some cases crashes.
+
+## Plugins
+
+If your project uses any plugins with platform components, they won't
+work, as the native side will be missing. Depending on how the Dart side of the
+plugin is written, they may fail gracefully, or may throw errors.
+
+You may need to make the calls to those plugins conditional based on the host
+platform. Alternately, if you have the expertise, you could implement the native
+side of the plugin in your desktop project(s).

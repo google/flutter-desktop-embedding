@@ -16,8 +16,8 @@
 
 set -e
 
-readonly CHANNEL="stable"
-readonly VERSION="1.0.0"
+readonly CHANNEL="dev"
+readonly VERSION="1.1.8"
 
 if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
   readonly FLUTTER_OS="linux"

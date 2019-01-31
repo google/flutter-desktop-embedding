@@ -11,6 +11,9 @@ optional plugins to access other native platform functionality.
 
 ## How to Use This Code
 
+_If you have an existing Flutter app and just want to get it running, see
+the [quick start](Quick-Start.md) page before continuing._
+
 ### Setting Up
 
 The tooling and build infrastructure for this project requires that you have
@@ -18,7 +21,7 @@ a Flutter tree in the same parent directory as the clone of this project:
 
 ```
 <parent dir>
-  ├─ flutter (from http://github.com/flutter/flutter)
+  ├─ flutter (from https://github.com/flutter/flutter)
   └─ flutter-desktop-embedding (from https://github.com/google/flutter-desktop-embedding)
 ```
 

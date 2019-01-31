@@ -21,9 +21,11 @@ published_shared_library("flutter_embedder") {
   if (is_linux || is_win) {
     public = [
       "include/flutter_desktop_embedding/glfw/embedder.h",
+      "include/flutter_desktop_embedding/glfw/flutter_window_controller.h",
     ]
     sources = [
       "common/glfw/embedder.cc",
+      "common/glfw/flutter_window_controller.cc",
       "common/glfw/key_event_handler.cc",
       "common/glfw/key_event_handler.h",
       "common/glfw/keyboard_hook_handler.h",

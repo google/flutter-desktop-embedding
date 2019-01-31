@@ -1,5 +1,5 @@
 name: example_flutter
-description: A new Flutter project.
+description: An example project for flutter-desktop-embedding.
 
 dependencies:
   flutter:
@@ -8,12 +8,15 @@ dependencies:
   cupertino_icons: ^0.1.0
 
   # Desktop embedder plugins.
+  # Note: In an actual project, these paths would include the
+  # path from your application to the flutter_desktop_embedding
+  # checkout.
   color_panel:
-    path: ../../plugins/color_panel
+    path: ../plugins/color_panel
   file_chooser:
-    path: ../../plugins/file_chooser
+    path: ../plugins/file_chooser
   menubar:
-    path: ../../plugins/menubar
+    path: ../plugins/menubar
 
 dev_dependencies:
   flutter_test:

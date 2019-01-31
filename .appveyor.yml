@@ -17,7 +17,10 @@ image: Visual Studio 2017
 platform: x64
 
 install:
-  - ps: build\ci\install_flutter.ps1 $env:APPVEYOR_BUILD_FOLDER\..
+  # None of the packaged channels are new enough for the current state
+  # of FDE, so for now clone master instead.
+  #- ps: build\ci\install_flutter.ps1 $env:APPVEYOR_BUILD_FOLDER\..
+  - git clone -b master https://github.com/flutter/flutter.git %APPVEYOR_BUILD_FOLDER%\..\flutter
 
 build_script:
-  - msbuild "example\windows\Example Embedder.sln"
+  - msbuild "example\windows_fde\Example Embedder.sln"
