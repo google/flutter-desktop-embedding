@@ -21,6 +21,10 @@ install:
   # of FDE, so for now clone master instead.
   #- ps: build\ci\install_flutter.ps1 $env:APPVEYOR_BUILD_FOLDER\..
   - git clone -b master https://github.com/flutter/flutter.git %APPVEYOR_BUILD_FOLDER%\..\flutter
+  - ps: build\ci\windows\install_gn.ps1 "$env:APPVEYOR_BUILD_FOLDER\bin"
+  - tools\run_dart_tool.bat fetch_jsoncpp %APPVEYOR_BUILD_FOLDER%\third_party\jsoncpp\src
 
 build_script:
+  - set "PATH=%APPVEYOR_BUILD_FOLDER%\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
+  # With the GN build done, build the example.
   - msbuild "example\windows_fde\Example Embedder.sln"
