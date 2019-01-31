@@ -26,5 +26,6 @@
 #import "FLEPlugin.h"
 #import "FLEPluginRegistrar.h"
 #import "FLEReshapeListener.h"
+#import "FLETexture.h"
 #import "FLEView.h"
 #import "FLEViewController.h"
