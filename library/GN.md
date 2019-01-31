@@ -30,17 +30,13 @@ e.g.:
 ### jsoncpp
 
 jsoncpp must be manually downloaded to
-`library/windows/third_party/jsoncpp`. Use
+`third_party/jsoncpp\src`. Use
 `tools/dart_tools/bin/fetch_jsoncpp.dart` to automatically download `jsoncpp`
 as shown below:
 
 ```
-> tools\run_dart_tool.bat fetch_jsoncpp library\windows\third_party\jsoncpp
+> tools\run_dart_tool.bat fetch_jsoncpp third_party\jsoncpp\src
 ```
-
-Currently the GN build rule for `jsoncpp` is a placeholder that will eventually
-be replaced with full GN build capabilities. Currently if you modify the source
-of `jsoncpp`, `out/gen/JSON` will need to be deleted for GN to rebuild it.
 
 ## Building
 

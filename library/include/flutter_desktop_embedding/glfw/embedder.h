@@ -30,14 +30,16 @@
 
 #ifdef USE_FLATTENED_INCLUDES
 #include "fde_export.h"
-#include "plugin_registrar.h"
 #else
 #include "../fde_export.h"
-#include "../plugin_registrar.h"
 #endif
 
 // Opaque reference to a Flutter window.
 typedef struct FlutterEmbedderState *FlutterWindowRef;
+
+// Opaque handle for tracking responses to messages.
+typedef struct _FlutterPlatformMessageResponseHandle
+    FlutterEmbedderMessageResponseHandle;
 
 namespace flutter_desktop_embedding {
 
@@ -73,19 +75,71 @@ FDE_EXPORT FlutterWindowRef CreateFlutterWindow(
     const std::string &icu_data_path,
     const std::vector<std::string> &arguments);
 
-// Returns the PluginRegistrar to register a plugin with the given name with
-// the flutter_window.
-//
-// The name must be unique across the application, so the recommended approach
-// is to use the fully namespace-qualified name of the plugin class.
-FDE_EXPORT PluginRegistrar *GetRegistrarForPlugin(
-    FlutterWindowRef flutter_window, const std::string &plugin_name);
-
 // Loops on Flutter window events until the window is closed.
 //
 // Once this function returns, FlutterWindowRef is no longer valid, and must
 // not be used again.
 FDE_EXPORT void FlutterWindowLoop(FlutterWindowRef flutter_window);
+
+// A received from Flutter.
+typedef struct {
+  // Size of this struct as created by Flutter.
+  size_t struct_size;
+  // The name of the channel used for this message.
+  const char *channel;
+  // The raw message data.
+  const uint8_t *message;
+  // The length of |message|.
+  size_t message_size;
+  // The response handle. If non-null, the receiver of this message must call
+  // FlutterEmbedderSendMessageResponse exactly once with this handle.
+  const FlutterEmbedderMessageResponseHandle *response_handle;
+} FlutterEmbedderMessage;
+
+// Function pointer type for message handler callback registration.
+//
+// The user data will whatever was passed to FlutterEmbedderSetMessageHandler
+// for the channel the message is received on.
+typedef void (*FlutterEmbedderMessageCallback)(
+    FlutterWindowRef flutter_window /*window*/,
+    const FlutterEmbedderMessage * /* message*/, void * /* user data */);
+
+// Sends a binary message to the Flutter side on the specified channel.
+FDE_EXPORT void FlutterEmbedderSendMessage(FlutterWindowRef flutter_window,
+                                           const char *channel,
+                                           const uint8_t *message,
+                                           const size_t message_size);
+
+// Sends a reply to a FlutterEmbedderMessage for the given response handle.
+//
+// Once this has been called, |handle| is invalid and must not be used again.
+FDE_EXPORT void FlutterEmbedderSendMessageResponse(
+    FlutterWindowRef flutter_window,
+    const FlutterEmbedderMessageResponseHandle *handle, const uint8_t *data,
+    size_t data_length);
+
+// Registers a callback function for incoming binary messages from the Flutter
+// side on the specified channel.
+//
+// Replaces any existing callback. Provide a null handler to unregister the
+// existing callback.
+//
+// If |user_data| is provided, it will be passed in |callback| calls.
+FDE_EXPORT void FlutterEmbedderSetMessageCallback(
+    FlutterWindowRef flutter_window, const char *channel,
+    FlutterEmbedderMessageCallback callback, void *user_data);
+
+// Enables input blocking on the given channel.
+//
+// If set, then the Flutter window will disable input callbacks
+// while waiting for the handler for messages on that channel to run. This is
+// useful if handling the message involves showing a modal window, for instance.
+//
+// This must be called after FlutterEmbedderSetMessageHandler, as setting a
+// handler on a channel will reset the input blocking state back to the default
+// of disabled.
+FDE_EXPORT void FlutterEmbedderEnableInputBlocking(
+    FlutterWindowRef flutter_window, const char *channel);
 
 }  // namespace flutter_desktop_embedding
 

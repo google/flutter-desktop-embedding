@@ -15,7 +15,6 @@
 import("//build/packaging.gni")
 import("//library/engine.gni")
 import("//library/windows/glfw.gni")
-import("//library/windows/jsoncpp.gni")
 
 action("fetch_glfw") {
   script = "//tools/dart_tools/bin/fetch_glfw.dart"
@@ -27,27 +26,6 @@ action("fetch_glfw") {
 config("relative_glfw_dependencies") {
   include_dirs = [ glfw_include_dir ]
   lib_dirs = [ glfw_download_dir ]
-}
-
-# TODO: Replace this with actual GN build rules for jsoncpp.
-# This target is a placeholder, and will not actually rebuild jsoncpp if any of its
-# source changes.
-action("build_jsoncpp") {
-  script = "//tools/dart_tools/bin/build_jsoncpp.dart"
-  outputs = [
-    jsoncpp_files[1],
-  ]
-  args = [
-    rebase_path(jsoncpp_download_dir, root_build_dir),
-    rebase_path(jsoncpp_lib_dir, root_build_dir),
-    "--debug",
-  ]
-  public_configs = [ "//build/win/config:jsoncpp" ]
-}
-
-config("relative_jsoncpp_dependencies") {
-  include_dirs = [ jsoncpp_include_dir ]
-  lib_dirs = [ jsoncpp_lib_dir ]
 }
 
 copy_includes("_publish_engine_headers") {

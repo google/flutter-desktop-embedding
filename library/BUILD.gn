@@ -38,6 +38,8 @@ published_shared_library("flutter_embedder") {
   if (is_linux || is_win) {
     sources += [
       "common/engine_method_result.cc",
+      "common/internal/incoming_message_dispatcher.cc",
+      "common/internal/incoming_message_dispatcher.h",
       "common/internal/plugin_handler.cc",
       "common/internal/plugin_handler.h",
       "common/internal/text_input_model.cc",
@@ -87,16 +89,15 @@ published_shared_library("flutter_embedder") {
 
   if (is_win) {
     deps += [
-      "//library/windows:build_jsoncpp",
       "//library/windows:fetch_glfw",
       "//library/windows:publish_flutter_engine",
+      "//third_party/jsoncpp:jsoncpp",
     ]
 
     libs = [ engine_files[2] ]
 
     public_configs += [
       "//library/windows:relative_glfw_dependencies",
-      "//library/windows:relative_jsoncpp_dependencies",
     ]
   }
 }

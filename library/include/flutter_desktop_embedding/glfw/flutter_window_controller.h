@@ -30,6 +30,8 @@
 
 namespace flutter_desktop_embedding {
 
+class PluginHandler;
+
 // A controller for a window displaying Flutter content.
 //
 // This is the primary wrapper class for the desktop embedding C API.
@@ -82,6 +84,9 @@ class FDE_EXPORT FlutterWindowController {
 
   // The curent Flutter window, if any.
   FlutterWindowRef window_ = nullptr;
+
+  // Plugin manager, to support GetRegistraryForPlugin.
+  std::unique_ptr<PluginHandler> plugin_handler_;
 };
 
 }  // namespace flutter_desktop_embedding

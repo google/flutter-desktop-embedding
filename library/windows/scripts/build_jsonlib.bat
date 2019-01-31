@@ -14,7 +14,7 @@
 @echo off
 
 set RUN_DART_TOOL=%~dp0..\..\..\tools\run_dart_tool.bat
-set CHECKOUT_DIR=%~dp0..\third_party\jsoncpp
+set CHECKOUT_DIR=%~dp0..\..\..\third_party\jsoncpp\src
 set ARTIFACT_DIR=%~dp0..\dependencies\JSON
 
 call %RUN_DART_TOOL% fetch_jsoncpp %CHECKOUT_DIR%
