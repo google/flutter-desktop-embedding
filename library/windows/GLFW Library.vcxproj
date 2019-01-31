@@ -48,7 +48,7 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)third_party\jsoncpp\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)..\..\third_party\jsoncpp\src\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\JSON\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
@@ -57,7 +57,7 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)third_party\jsoncpp\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)..\..\third_party\jsoncpp\src\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\JSON\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>

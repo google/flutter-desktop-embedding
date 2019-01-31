@@ -23,4 +23,9 @@ group("gn_all") {
       "//plugins/menubar:menubar",
     ]
   }
+  if (is_win) {
+    deps += [
+      "//third_party/jsoncpp:jsoncpp_test",
+    ]
+  }
 }
