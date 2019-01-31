@@ -151,6 +151,7 @@
     <ClCompile Include="..\common\glfw\flutter_window_controller.cc" />
     <ClCompile Include="..\common\glfw\key_event_handler.cc" />
     <ClCompile Include="..\common\glfw\text_input_plugin.cc" />
+    <ClCompile Include="..\common\internal\incoming_message_dispatcher.cc" />
     <ClCompile Include="..\common\internal\plugin_handler.cc" />
     <ClCompile Include="..\common\internal\text_input_model.cc" />
     <ClCompile Include="..\common\json_message_codec.cc" />
