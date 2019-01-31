@@ -344,7 +344,8 @@ static void CommonInit(FLEViewController *controller) {
         .open_gl.clear_current = (BoolCallback)OnClearCurrent,
         .open_gl.present = (BoolCallback)OnPresent,
         .open_gl.fbo_callback = (UIntCallback)OnFBO,
-        .open_gl.make_resource_current = (BoolCallback)OnMakeResourceCurrent};
+        .open_gl.make_resource_current = (BoolCallback)OnMakeResourceCurrent,
+        .open_gl.gl_external_texture_frame_callback = (TextureFrameCallback)OnAcquireExternalTexture};
     return config;
   }
 }
