@@ -48,12 +48,16 @@ static void OnGLTextureRelease(CVPixelBufferRef pixelBuffer) {
            height:(size_t)height
           texture:(FlutterOpenGLTexture *)texture {
 
-  if(_pixelBuffer == NULL || external_texture == NULL){
+  if(external_texture == NULL) {
     return NO;
   }
 
   // Copy image buffer from external texture.
   _pixelBuffer = [external_texture copyPixelBuffer];
+
+  if(_pixelBuffer == NULL) {
+    return NO;
+  }
 
   // Create the texture cache if necessary.
   if (_textureCache == NULL) {

@@ -482,6 +482,10 @@ static void CommonInit(FLEViewController *controller) {
   return self;
 }
 
+- (id<FLETextureRegistrar>)textures {
+    return self;
+}
+
 - (void)addMethodCallDelegate:(nonnull id<FLEPlugin>)delegate
                       channel:(nonnull FLEMethodChannel *)channel {
   [channel setMethodCallHandler:^(FLEMethodCall *call, FLEMethodResult result) {

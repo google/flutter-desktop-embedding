@@ -16,6 +16,7 @@
 
 #import "FLEBinaryMessenger.h"
 #import "FLEMethodChannel.h"
+#import "FLETexture.h"
 
 /**
  * The protocol for an object managing registration for a plugin. It provides access to application
@@ -30,6 +31,11 @@
  * The binary messenger used for creating channels to communicate with the Flutter engine.
  */
 @property(nonnull, readonly) id<FLEBinaryMessenger> messenger;
+
+/**
+ * Returns a `FLETextureRegistry` for registering textures provided by the plugin.
+ */
+@property(nonnull, readonly) id<FLETextureRegistrar> textures;
 
 /**
  * The view displaying Flutter content.
