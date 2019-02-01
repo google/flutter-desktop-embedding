@@ -15,18 +15,38 @@
 #import <Foundation/Foundation.h>
 #import <CoreVideo/CVPixelBuffer.h>
 
+/**
+ * Implement a texture object for the FLE plugin side.
+ */
 @protocol FLETexture<NSObject>
 
+/**
+ * When the texture on the platform side is ready,
+ * the flutter engine will copy the texture buffer
+ * using copyPixelBuffer.
+ */
 - (nullable CVPixelBufferRef)copyPixelBuffer;
 
 @end
 
+/**
+ * The protocol for an object managing registration for texture.
+ */
 @protocol FLETextureRegistrar<NSObject>
 
+/**
+ * Register a |texture| object and return a textureId.
+ */
 - (int64_t)registerTexture:(nonnull id<FLETexture>)texture;
 
+/**
+ * Mark a texture buffer is ready.
+ */
 - (void)textureFrameAvailable:(int64_t)textureId;
 
+/**
+ * Unregister an existing Texture object.
+ */
 - (void)unregisterTexture:(int64_t)textureId;
 
 @end

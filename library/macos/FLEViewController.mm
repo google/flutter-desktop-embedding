@@ -154,7 +154,7 @@ static bool OnAcquireExternalTexture(FLEViewController *controller,
                                      size_t width,
                                      size_t height,
                                      FlutterOpenGLTexture *texture) {
-    return [controller populateTextureWithIdentifier:texture_identifier width:width height:height texture:texture];
+  return [controller populateTextureWithIdentifier:texture_identifier width:width height:height texture:texture];
 }
 
 #pragma mark Static methods provided for headless engine configuration
@@ -360,25 +360,28 @@ static void CommonInit(FLEViewController *controller) {
   [_resourceContext makeCurrentContext];
 }
 
--(BOOL) populateTextureWithIdentifier:(int64_t) textureId width:(size_t) width height:(size_t) height texture:(FlutterOpenGLTexture *) texture {
-    return [_textures[@(textureId)] populateTextureWidth:width height:height texture:texture];
+- (BOOL)populateTextureWithIdentifier:(int64_t)textureId
+                                width:(size_t)width
+                               height:(size_t) height
+                              texture:(FlutterOpenGLTexture *)texture {
+  return [_textures[@(textureId)] populateTextureWidth:width height:height texture:texture];
 }
 
-- (int64_t)registerTexture:(NSObject<FLETexture>*)texture {
-    FLEExternalTexture *fleTexture = [[FLEExternalTexture alloc] initExternalTexture:texture];
-    int64_t textureId = [fleTexture textureId];
-    FlutterEngineRegisterExternalTexture(_engine, textureId);
-    _textures[@(textureId)] = fleTexture;
-    return textureId;
+- (int64_t)registerTexture:(id<FLETexture>)texture {
+  FLEExternalTexture *fleTexture = [[FLEExternalTexture alloc] initWithExternalTexture:texture];
+  int64_t textureId = [fleTexture textureId];
+  FlutterEngineRegisterExternalTexture(_engine, textureId);
+  _textures[@(textureId)] = fleTexture;
+  return textureId;
 }
 
 - (void)textureFrameAvailable:(int64_t)textureId {
-    FlutterEngineMarkExternalTextureFrameAvailable(_engine, textureId);
+  FlutterEngineMarkExternalTextureFrameAvailable(_engine, textureId);
 }
 
 - (void)unregisterTexture:(int64_t)textureId {
-    FlutterEngineUnregisterExternalTexture(_engine, textureId);
-    [_textures removeObjectForKey:@(textureId)];
+  FlutterEngineUnregisterExternalTexture(_engine, textureId);
+  [_textures removeObjectForKey:@(textureId)];
 }
 
 - (void)handlePlatformMessage:(const FlutterPlatformMessage *)message {

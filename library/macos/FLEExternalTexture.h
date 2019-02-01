@@ -17,20 +17,30 @@
 
 #import "FLETexture.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
+/**
+ * Used to bridge external FLETexture objects,
+ * so the implementer only needs to return the CVPixelBufferRef object,
+ * which will make the interface consistent with the FlutterTexture.
+ */
 @interface FLEExternalTexture : NSObject
 
--(nonnull instancetype)initExternalTexture:(id<FLETexture>)external_texture;
+/**
+ *
+ */
+- (nonnull instancetype)initWithExternalTexture:(id<FLETexture>)external_texture;
 
--(BOOL)populateTextureWidth:(size_t)width
+/**
+ * Accept texture rendering notifications from the flutter engine.
+ */
+- (BOOL)populateTextureWidth:(size_t)width
                       height:(size_t)height
                      texture:(FlutterOpenGLTexture *)texture;
 
--(int64_t)textureId;
+/**
+ *
+ */
+- (int64_t)textureId;
 
 @property(nullable, weak) id<FLETexture> external_texture;
 
 @end
-
-NS_ASSUME_NONNULL_END
