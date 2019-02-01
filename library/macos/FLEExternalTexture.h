@@ -27,7 +27,7 @@
 /**
  *
  */
-- (nonnull instancetype)initWithExternalTexture:(id<FLETexture>)external_texture;
+- (nonnull instancetype)initWithExternalTexture:(nonnull id<FLETexture>)external_texture;
 
 /**
  * Accept texture rendering notifications from the flutter engine.
