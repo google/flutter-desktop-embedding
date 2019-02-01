@@ -16,13 +16,12 @@
 #include <string>
 #include <vector>
 
-#include "flutter_desktop_embedding/glfw/flutter_window_controller.h"
+#include "flutter_desktop_embedding/flutter_window_controller.h"
 
 int main(int argc, char **argv) {
   // TODO: Make paths relative to the executable so it can be run from anywhere.
   std::string assets_path = "..\\build\\flutter_assets";
-  std::string icu_data_path =
-      "..\\..\\library\\windows\\dependencies\\engine\\icudtl.dat";
+  std::string icu_data_path = "..\\build\\windows_fde\\icudtl.dat";
 
   // Arguments for the Flutter Engine.
   std::vector<std::string> arguments;
