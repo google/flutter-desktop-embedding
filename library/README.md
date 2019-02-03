@@ -107,7 +107,18 @@ so you do not need to include that framework in your project directly.
 
 #### Dependencies
 
-You must have a copy of Visual Studio installed.
+You must have a copy of Visual Studio installed, and the command line build
+tools, such as `vcvars64.bat`, must be in your path. They are found under:
+
+```
+<Visual Studio Install Path>\2017\<Version>\VC\Auxiliary\Build
+```
+
+e.g.:
+
+```
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
+```
 
 #### Using the Library
 
