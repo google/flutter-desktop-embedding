@@ -12,21 +12,6 @@ In addition to the normal dependencies, you will need to install:
 
 Ensure that both binaries are in your path.
 
-### Path setup
-
-Windows also requires the 64 bit compiler, linker and setup scripts to be in
-your path. They are found under:
-
-```
-> Visual Studio Install Path\2017\Version\VC\Auxiliary\Build
-```
-
-e.g.:
-
-```
-> C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
-```
-
 ### jsoncpp
 
 jsoncpp must be manually downloaded to
