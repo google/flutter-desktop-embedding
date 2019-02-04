@@ -14,6 +14,7 @@
 
 #include "library/include/flutter_desktop_embedding/glfw/flutter_window_controller.h"
 
+#include <algorithm>
 #include <iostream>
 
 #include "library/common/internal/plugin_handler.h"
@@ -22,12 +23,12 @@ namespace flutter_desktop_embedding {
 
 FlutterWindowController::FlutterWindowController(std::string &icu_data_path)
     : icu_data_path_(icu_data_path) {
-  init_succeeded_ = FlutterInit();
+  init_succeeded_ = FlutterEmbedderInit();
 }
 
 FlutterWindowController::~FlutterWindowController() {
   if (init_succeeded_) {
-    FlutterTerminate();
+    FlutterEmbedderTerminate();
   }
 }
 
@@ -35,7 +36,8 @@ bool FlutterWindowController::CreateWindow(
     size_t width, size_t height, const std::string &assets_path,
     const std::vector<std::string> &arguments) {
   if (!init_succeeded_) {
-    std::cerr << "Could not create window; FlutterInit failed." << std::endl;
+    std::cerr << "Could not create window; FlutterEmbedderInit failed."
+              << std::endl;
     return false;
   }
 
@@ -44,8 +46,14 @@ bool FlutterWindowController::CreateWindow(
     return false;
   }
 
-  window_ = CreateFlutterWindow(width, height, assets_path, icu_data_path_,
-                                arguments);
+  std::vector<const char *> engine_arguments;
+  std::transform(
+      arguments.begin(), arguments.end(), std::back_inserter(engine_arguments),
+      [](const std::string &arg) -> const char * { return arg.c_str(); });
+
+  window_ = FlutterEmbedderCreateWindow(
+      width, height, assets_path.c_str(), icu_data_path_.c_str(),
+      &engine_arguments[0], engine_arguments.size());
   if (!window_) {
     std::cerr << "Failed to create window." << std::endl;
     return false;
@@ -69,7 +77,7 @@ PluginRegistrar *FlutterWindowController::GetRegistrarForPlugin(
 
 void FlutterWindowController::RunEventLoop() {
   if (window_) {
-    FlutterWindowLoop(window_);
+    FlutterEmbedderRunWindowLoop(window_);
   }
 }
 

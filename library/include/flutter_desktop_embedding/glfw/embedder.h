@@ -15,9 +15,8 @@
 #ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
 #define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
 
-#include <memory>
-#include <string>
-#include <vector>
+#include <stddef.h>
+#include <stdint.h>
 
 // On Linux, the header output is always flattened; on Windows the GN build
 // is still optional. Once GN is required on Windows, eliminate this and just
@@ -34,6 +33,10 @@
 #include "../fde_export.h"
 #endif
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 // Opaque reference to a Flutter window.
 typedef struct FlutterEmbedderState *FlutterWindowRef;
 
@@ -41,22 +44,20 @@ typedef struct FlutterEmbedderState *FlutterWindowRef;
 typedef struct _FlutterPlatformMessageResponseHandle
     FlutterEmbedderMessageResponseHandle;
 
-namespace flutter_desktop_embedding {
-
 // Sets up the embedder's graphic context. Must be called before any other
 // methods.
 //
 // Note: Internally, this library uses GLFW, which does not support multiple
 // copies within the same process. Internally this calls glfwInit, which will
 // fail if you have called glfwInit elsewhere in the process.
-FDE_EXPORT bool FlutterInit();
+FDE_EXPORT bool FlutterEmbedderInit();
 
 // Tears down embedder state. Must be called before the process terminates.
-FDE_EXPORT void FlutterTerminate();
+FDE_EXPORT void FlutterEmbedderTerminate();
 
 // Creates a Window running a Flutter Application.
 //
-// FlutterInit() must be called prior to this function.
+// FlutterEmbedderInit() must be called prior to this function.
 //
 // The |assets_path| is the path to the flutter_assets folder for the Flutter
 // application to be run. |icu_data_path| is the path to the icudtl.dat file
@@ -67,19 +68,18 @@ FDE_EXPORT void FlutterTerminate();
 // for details. Not all arguments will apply to embedding mode.
 //
 // Returns a null pointer in the event of an error. Otherwise, the pointer is
-// valid until FlutterWindowLoop has been called and returned. Note that calling
-// CreateFlutterWindow without later calling FlutterWindowLoop on that pointer
-// is a memory leak.
-FDE_EXPORT FlutterWindowRef CreateFlutterWindow(
-    size_t initial_width, size_t initial_height, const std::string &assets_path,
-    const std::string &icu_data_path,
-    const std::vector<std::string> &arguments);
+// valid until FlutterEmbedderRunWindowLoop has been called and returned.
+// Note that calling FlutterEmbedderCreateWindow without later calling
+// FlutterEmbedderRunWindowLoop on the returned reference is a memory leak.
+FDE_EXPORT FlutterWindowRef FlutterEmbedderCreateWindow(
+    size_t initial_width, size_t initial_height, const char *assets_path,
+    const char *icu_data_path, const char **arguments, size_t argument_count);
 
 // Loops on Flutter window events until the window is closed.
 //
 // Once this function returns, FlutterWindowRef is no longer valid, and must
 // not be used again.
-FDE_EXPORT void FlutterWindowLoop(FlutterWindowRef flutter_window);
+FDE_EXPORT void FlutterEmbedderRunWindowLoop(FlutterWindowRef flutter_window);
 
 // A received from Flutter.
 typedef struct {
@@ -141,6 +141,8 @@ FDE_EXPORT void FlutterEmbedderSetMessageCallback(
 FDE_EXPORT void FlutterEmbedderEnableInputBlocking(
     FlutterWindowRef flutter_window, const char *channel);
 
-}  // namespace flutter_desktop_embedding
+#if defined(__cplusplus)
+}  // extern "C"
+#endif
 
 #endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
