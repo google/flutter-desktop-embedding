@@ -16,9 +16,16 @@ import("//build/flutter.gni")
 import("//build/packaging.gni")
 import("//library/engine.gni")
 
+declare_args() {
+  # Whether to use the GLFW embedding implementation. Currently overriding this
+  # would not work since each platform only has one working implementation,
+  # but in the future GLFW may be one of multiple supported implementations.
+  use_glfw = is_linux || is_win
+}
+
 published_shared_library("flutter_embedder") {
   # GLFW embedding implementation.
-  if (is_linux || is_win) {
+  if (use_glfw) {
     public = [
       "include/flutter_desktop_embedding/glfw/embedder.h",
       "include/flutter_desktop_embedding/glfw/flutter_window_controller.h",
@@ -64,7 +71,7 @@ published_shared_library("flutter_embedder") {
   }
 
   deps = [
-    ":fetch_flutter_engine",
+    ":flutter_engine",
   ]
 
   defines = [ "FLUTTER_DESKTOP_EMBEDDING_IMPL" ]
@@ -74,31 +81,30 @@ published_shared_library("flutter_embedder") {
   public_configs = [ ":relative_public_headers" ]
 
   if (is_linux) {
-    libs = [ "GL" ]
-
-    deps += [ "//library/linux:publish_flutter_engine" ]
-
-    configs += [
-      "//build/linux/config:epoxy",
-      "//build/linux/config:glfw3",
-      "//build/linux/config:gtk3",
-      "//build/linux/config:jsoncpp",
-      "//build/linux/config:x11",
-    ]
+    configs += [ "//build/linux/config:jsoncpp" ]
   }
 
   if (is_win) {
-    deps += [
-      "//library/windows:fetch_glfw",
-      "//library/windows:publish_flutter_engine",
-      "//third_party/jsoncpp:jsoncpp",
-    ]
+    deps += [ "//third_party/jsoncpp:jsoncpp" ]
 
     libs = [ engine_files[2] ]
+  }
 
-    public_configs += [
-      "//library/windows:relative_glfw_dependencies",
-    ]
+  if (use_glfw) {
+    if (is_linux) {
+      libs += [ "GL" ]
+
+      configs += [
+        "//build/linux/config:epoxy",
+        "//build/linux/config:glfw3",
+        "//build/linux/config:gtk3",
+        "//build/linux/config:x11",
+      ]
+    }
+
+    if (is_win) {
+      deps += [ "//library/windows:fetch_glfw" ]
+    }
   }
 }
 
@@ -114,6 +120,13 @@ config("relative_engine_headers") {
   include_dirs = [ "$engine_download_dir" ]
 }
 
+group("flutter_engine") {
+  public_deps = [
+    ":fetch_flutter_engine",
+    ":publish_flutter_engine",
+  ]
+}
+
 action("fetch_flutter_engine") {
   script = "//tools/dart_tools/bin/update_flutter_engine.dart"
   inputs = [
@@ -125,4 +138,21 @@ action("fetch_flutter_engine") {
     rebase_path(engine_download_dir, root_build_dir),
   ]
   public_configs = [ ":relative_engine_headers" ]
+}
+
+# Places the downloaded Flutter engine library at the top level of the
+# output directory where built libraries go, so that it doesn't require
+# special link handling, and publishes its header.
+copy("publish_flutter_engine") {
+  sources = engine_files
+
+  # Remove the header, since "SDK" clients don't need access to that.
+  sources -= [ engine_files[0] ]
+
+  outputs = [
+    "$root_out_dir/{{source_file_part}}",
+  ]
+  deps = [
+    ":fetch_flutter_engine",
+  ]
 }
