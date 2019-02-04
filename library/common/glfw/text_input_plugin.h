@@ -14,6 +14,7 @@
 #ifndef LIBRARY_COMMON_GLFW_TEXT_INPUT_PLUGIN_H_
 #define LIBRARY_COMMON_GLFW_TEXT_INPUT_PLUGIN_H_
 
+#include <json/json.h>
 #include <map>
 #include <memory>
 
@@ -56,6 +57,9 @@ class TextInputPlugin : public KeyboardHookHandler {
 
   // The active model. nullptr if not set.
   TextInputModel *active_model_;
+
+  // The active client id.
+  int active_client_id = 0;
 };
 
 }  // namespace flutter_desktop_embedding

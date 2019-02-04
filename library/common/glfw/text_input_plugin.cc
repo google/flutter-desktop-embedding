@@ -24,16 +24,14 @@ static constexpr char kSetClientMethod[] = "TextInput.setClient";
 static constexpr char kShowMethod[] = "TextInput.show";
 static constexpr char kHideMethod[] = "TextInput.hide";
 
-static constexpr char kMultilineInputType[] = "TextInputType.multiline";
+// Client config  keys.
+static constexpr char kTextInputAction[] = "inputAction";
+static constexpr char kTextInputType[] = "inputType";
+static constexpr char kTextInputTypeName[] = "name";
 
 static constexpr char kUpdateEditingStateMethod[] =
     "TextInputClient.updateEditingState";
 static constexpr char kPerformActionMethod[] = "TextInputClient.performAction";
-
-static constexpr char kSelectionBaseKey[] = "selectionBase";
-static constexpr char kSelectionExtentKey[] = "selectionExtent";
-
-static constexpr char kTextKey[] = "text";
 
 static constexpr char kChannelName[] = "flutter/textinput";
 
@@ -41,9 +39,24 @@ static constexpr char kBadArgumentError[] = "Bad Arguments";
 static constexpr char kInternalConsistencyError[] =
     "Internal Consistency Error";
 
+// Text affinity options keys.
+static constexpr char kTextAffinityDownstream[] = "TextAffinity.downstream";
+static constexpr char kTextAffinityUpstream[] = "TextAffinity.upstream";
+
+// State keys.
+static constexpr char kComposingBaseKey[] = "composingBase";
+static constexpr char kComposingExtentKey[] = "composingExtent";
+static constexpr char kSelectionBaseKey[] = "selectionBase";
+static constexpr char kSelectionExtentKey[] = "selectionExtent";
+static constexpr char kSelectionAffinityKey[] = "selectionAffinity";
+static constexpr char kSelectionIsDirectionalKey[] = "selectionIsDirectional";
+static constexpr char kTextKey[] = "text";
+
 static constexpr uint32_t kInputModelLimit = 256;
 
 namespace flutter_desktop_embedding {
+
+// Plugin methods
 
 void TextInputPlugin::CharHook(GLFWwindow *window, unsigned int code_point) {
   if (active_model_ == nullptr) {
@@ -62,6 +75,16 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
   }
   if (action == GLFW_PRESS || action == GLFW_REPEAT) {
     switch (key) {
+      case GLFW_KEY_DOWN:
+        if (active_model_->MoveCursorDown()) {
+          SendStateUpdate(*active_model_);
+        }
+        break;
+      case GLFW_KEY_UP:
+        if (active_model_->MoveCursorUp()) {
+          SendStateUpdate(*active_model_);
+        }
+        break;
       case GLFW_KEY_LEFT:
         if (active_model_->MoveCursorBack()) {
           SendStateUpdate(*active_model_);
@@ -73,12 +96,14 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
         }
         break;
       case GLFW_KEY_END:
-        active_model_->MoveCursorToEnd();
-        SendStateUpdate(*active_model_);
+        if (active_model_->MoveCursorToEnd()) {
+          SendStateUpdate(*active_model_);
+        }
         break;
       case GLFW_KEY_HOME:
-        active_model_->MoveCursorToBeginning();
-        SendStateUpdate(*active_model_);
+        if (active_model_->MoveCursorToBeginning()) {
+          SendStateUpdate(*active_model_);
+        }
         break;
       case GLFW_KEY_BACKSPACE:
         if (active_model_->Backspace()) {
@@ -97,6 +122,57 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
     }
   }
 }
+
+// Utility functions to convert to/from Json/State
+
+Json::Value StateToJson(const State &state) {
+  Json::Value editing_state;
+  editing_state[kComposingBaseKey] = static_cast<int>(state.composing.begin);
+  editing_state[kComposingExtentKey] = static_cast<int>(state.composing.end);
+  editing_state[kSelectionAffinityKey] =
+      state.text_affinity.compare(kTextAffinityUpstream) == 0
+          ? kTextAffinityUpstream
+          : kTextAffinityDownstream;
+  editing_state[kSelectionBaseKey] = static_cast<int>(state.selection.begin);
+  editing_state[kSelectionExtentKey] = static_cast<int>(state.selection.end);
+  editing_state[kSelectionIsDirectionalKey] = state.isDirectional;
+  editing_state[kTextKey] = state.text;
+  return editing_state;
+}
+
+State StateFromJson(Json::Value state) {
+  State new_state;
+  Json::Value text = state[kTextKey];
+  if (text.isNull()) {
+    throw std::invalid_argument(
+        "Set editing state has been invoked, but without text.");
+  }
+  new_state.text = text.asString();
+
+  Json::Value selection_base = state[kSelectionBaseKey];
+  Json::Value selection_extent = state[kSelectionExtentKey];
+  if (selection_base.isNull() || selection_extent.isNull()) {
+    throw std::invalid_argument("Selection base/extent values invalid.");
+  }
+  new_state.selection.begin = static_cast<size_t>(selection_base.asInt());
+  new_state.selection.end = static_cast<size_t>(selection_extent.asInt());
+
+  Json::Value composing_base = state[kComposingBaseKey];
+  Json::Value composing_extent = state[kComposingExtentKey];
+  new_state.composing.begin = composing_base.isNull()
+                                  ? new_state.selection.begin
+                                  : static_cast<size_t>(composing_base.asInt());
+  new_state.composing.end = composing_extent.isNull()
+                                ? new_state.selection.end
+                                : static_cast<size_t>(composing_extent.asInt());
+
+  Json::Value text_affinity = state[kSelectionAffinityKey];
+  new_state.text_affinity = text_affinity.isNull() ? kTextAffinityDownstream
+                                                   : text_affinity.asString();
+  return new_state;
+}
+
+// TextInputPlugin methods
 
 TextInputPlugin::TextInputPlugin(PluginRegistrar *registrar)
     : channel_(std::make_unique<MethodChannel<Json::Value>>(
@@ -142,8 +218,8 @@ void TextInputPlugin::HandleMethodCall(
         result->Error(kBadArgumentError,
                       "Could not set client, missing arguments.");
       }
-      int client_id = client_id_json.asInt();
-      if (input_models_.find(client_id) == input_models_.end()) {
+      active_client_id = client_id_json.asInt();
+      if (input_models_.find(active_client_id) == input_models_.end()) {
         // Skips out on adding a new input model once over the limit.
         if (input_models_.size() > kInputModelLimit) {
           result->Error(
@@ -151,11 +227,19 @@ void TextInputPlugin::HandleMethodCall(
               "Input models over limit. Aborting creation of new text model.");
           return;
         }
+        std::string input_action = client_config[kTextInputAction].asString();
+        Json::Value input_type_info = client_config[kTextInputType];
+        std::string input_type = input_type_info[kTextInputTypeName].asString();
+        if (input_action.empty() || input_type.empty()) {
+          result->Error(kBadArgumentError,
+                        "Missing arguments input_action or input_type.");
+          return;
+        }
         input_models_.insert(std::make_pair(
-            client_id,
-            std::make_unique<TextInputModel>(client_id, client_config)));
+            active_client_id,
+            std::make_unique<TextInputModel>(input_type, input_action)));
       }
-      active_model_ = input_models_[client_id].get();
+      active_model_ = input_models_[active_client_id].get();
     } else if (method.compare(kSetEditingStateMethod) == 0) {
       if (active_model_ == nullptr) {
         result->Error(
@@ -163,21 +247,15 @@ void TextInputPlugin::HandleMethodCall(
             "Set editing state has been invoked, but no client is set.");
         return;
       }
-      Json::Value text = args[kTextKey];
-      if (text.isNull()) {
-        result->Error(kBadArgumentError,
-                      "Set editing state has been invoked, but without text.");
+      try {
+        State state = StateFromJson(args);
+        active_model_->UpdateState(state);
+      } catch (const std::exception &e) {
+        result->Error(
+            "Failed to set state. Arguments might be missing or misconfigured",
+            e.what());
         return;
       }
-      Json::Value selection_base = args[kSelectionBaseKey];
-      Json::Value selection_extent = args[kSelectionExtentKey];
-      if (selection_base.isNull() || selection_extent.isNull()) {
-        result->Error(kInternalConsistencyError,
-                      "Selection base/extent values invalid.");
-        return;
-      }
-      active_model_->SetEditingState(selection_base.asInt(),
-                                     selection_extent.asInt(), text.asString());
     } else {
       // Unhandled method.
       result->NotImplemented();
@@ -190,17 +268,18 @@ void TextInputPlugin::HandleMethodCall(
 }
 
 void TextInputPlugin::SendStateUpdate(const TextInputModel &model) {
-  channel_->InvokeMethod(kUpdateEditingStateMethod,
-                         std::make_unique<Json::Value>(model.GetState()));
+  auto state = std::make_unique<Json::Value>();
+  state.get()->append(active_client_id);
+  state.get()->append(StateToJson(model.GetState()));
+  channel_->InvokeMethod(kUpdateEditingStateMethod, std::move(state));
 }
 
 void TextInputPlugin::EnterPressed(TextInputModel *model) {
-  if (model->input_type() == kMultilineInputType) {
-    model->AddCharacter('\n');
+  if (model->InsertNewLine()) {
     SendStateUpdate(*model);
   }
   auto args = std::make_unique<Json::Value>(Json::arrayValue);
-  args->append(model->client_id());
+  args->append(active_client_id);
   args->append(model->input_action());
 
   channel_->InvokeMethod(kPerformActionMethod, std::move(args));

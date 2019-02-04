@@ -16,30 +16,69 @@
 
 #include <string>
 
-#include <json/json.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 namespace flutter_desktop_embedding {
+
+struct Range {
+  size_t begin = std::string::npos;
+  size_t end = std::string::npos;
+};
+
+struct State {
+  std::string text = "";
+  std::string text_affinity = "";
+  bool isDirectional = false;
+  Range selection;
+  Range composing;
+};
+
 // Handles underlying text input state, using a simple ASCII model.
 //
 // Ignores special states like "insert mode" for now.
 class TextInputModel {
  public:
-  TextInputModel(int client_id, const Json::Value &config);
+  // Constructor for TextInputModel. Keeps track of the client's input type and
+  // action. There are more values that the client can provide. Add more as
+  // needed.
+  explicit TextInputModel(const std::string input_type,
+                          const std::string input_action);
   virtual ~TextInputModel();
 
-  // Attempts to set the text state.
-  //
-  // Returns false if the state is not valid (base or extent are out of
-  // bounds, or base is less than extent).
-  bool SetEditingState(size_t selection_base, size_t selection_extent,
-                       const std::string &text);
+  // Returns the current state.
+  State GetState() const;
 
+  // Replace the current state with a new one.
+  void UpdateState(State state);
+
+  // Replaces a section of the stored string with a given |string|. |location|
+  // is the starting point where the new string will be added. |length| is the
+  // number of characters to be substituted from the stored string, starting
+  // from |location|. Deletes any previously selected text.
+  void ReplaceString(std::string string, Range range);
   // Adds a character.
   //
   // Either appends after the cursor (when selection base and extent are the
   // same), or deletes the selected characters, replacing the text with the
   // character specified.
   void AddCharacter(char c);
+
+  // Adds a string.
+  //
+  // Either appends after the cursor (when selection base and extent are the
+  // same), or deletes the selected characters, replacing the text with the
+  // character specified.
+  void AddString(std::string string);
+
+  // Erases the currently selected text. Return true if any deletion ocurred.
+
+  // Deletes either the selection, or one character behind the cursor.
+  //
+  // Deleting one character behind the cursor occurs when the selection base
+  // and extent are the same.
+  bool Backspace();
 
   // Deletes either the selection, or one character ahead of the cursor.
   //
@@ -49,61 +88,63 @@ class TextInputModel {
   // Returns true if any deletion actually occurred.
   bool Delete();
 
-  // Deletes either the selection, or one character behind the cursor.
+  // Attempts to move the cursor to the beginning.
   //
-  // Deleting one character behind the cursor occurs when the selection base
-  // and extent are the same.
-  //
-  // Returns true if any deletion actually occurred.
-  bool Backspace();
+  // Returns true if the cursor could be moved.
+  bool MoveCursorToBeginning();
 
-  // Attempts to move the cursor backward.
+  // Attempts to move the cursor to the end.
   //
-  // Returns true if the cursor could be moved. Changes base and extent to be
-  // equal to either the extent (if extent is at the end of the string), or
-  // for extent to be equal to
-  bool MoveCursorBack();
+  // Returns true if the cursor could be moved.
+  bool MoveCursorToEnd();
 
   // Attempts to move the cursor forward.
   //
   // Returns true if the cursor could be moved.
   bool MoveCursorForward();
 
-  // Attempts to move the cursor to the beginning.
+  // Attempts to move the cursor backward.
+  //
+  // Returns true if the cursor could be moved. Changes base and extent to be
+  // equal to either the extent (if extent is at the end of the string), or
+  // for extent to be equal to the base.
+  bool MoveCursorBack();
+
+  // Attempts to move the cursor to a line above, if any.
   //
   // Returns true if the cursor could be moved.
-  void MoveCursorToBeginning();
+  bool MoveCursorUp();
 
-  // Attempts to move the cursor to the back.
+  // Attempts to move the cursor to a line below, if any.
   //
   // Returns true if the cursor could be moved.
-  void MoveCursorToEnd();
+  bool MoveCursorDown();
 
-  // Returns the state in the form of a platform message.
-  Json::Value GetState() const;
-
-  // Id of the text input client.
-  int client_id() const { return client_id_; }
-
-  // Keyboard type of the client. See available options:
-  // https://docs.flutter.io/flutter/services/TextInputType-class.html
-  std::string input_type() const { return input_type_; }
+  // Inserts a new line to the text if the |input_type| is multiline.
+  bool InsertNewLine();
+  void MarkText(Range range);
+  void SelectText(Range range);
 
   // An action requested by the user on the input client. See available options:
   // https://docs.flutter.io/flutter/services/TextInputAction-class.html
-  std::string input_action() const { return input_action_; }
+  std::string input_action() const;
 
  private:
-  void DeleteSelected();
+  bool MoveCursorToLocation(size_t location);
+  bool EraseSelected();
+  bool LocationIsAtEnd(size_t location);
+  bool LocationIsAtBeginning(size_t location);
 
-  std::string text_;
-  int client_id_;
+  State state_;
+
   std::string input_type_;
   std::string input_action_;
-  std::string::iterator selection_base_;
-  std::string::iterator selection_extent_;
 };
 
 }  // namespace flutter_desktop_embedding
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // LIBRARY_COMMON_INTERNAL_TEXT_INPUT_MODEL_H_

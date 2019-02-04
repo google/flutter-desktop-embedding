@@ -21,10 +21,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		1A0A8C7D220E42C0008D78FC /* text_input_model.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1A0A8C7C220E42C0008D78FC /* text_input_model.cc */; };
 		1E2492391FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E24922F1FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1E24923B1FCF50BE00DD3BBB /* FLEPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492311FCF50BE00DD3BBB /* FLEPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1E24923C1FCF50BE00DD3BBB /* FLEReshapeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492321FCF50BE00DD3BBB /* FLEReshapeListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1E24923E1FCF50BE00DD3BBB /* FLETextInputPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.m */; };
+		1E24923E1FCF50BE00DD3BBB /* FLETextInputPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.mm */; };
 		1E24923F1FCF50BE00DD3BBB /* FLEViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492351FCF50BE00DD3BBB /* FLEViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1E2492401FCF50BE00DD3BBB /* FLEViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1E2492361FCF50BE00DD3BBB /* FLEViewController.mm */; };
 		1E2492411FCF50BE00DD3BBB /* FlutterEmbedderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492371FCF50BE00DD3BBB /* FlutterEmbedderMac.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -80,12 +81,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1A0A8C7C220E42C0008D78FC /* text_input_model.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = text_input_model.cc; path = ../common/internal/text_input_model.cc; sourceTree = "<group>"; };
 		1E2492241FCF504200DD3BBB /* FlutterEmbedderMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FlutterEmbedderMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E24922F1FCF50BE00DD3BBB /* FLEOpenGLContextHandling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEOpenGLContextHandling.h; sourceTree = "<group>"; };
 		1E2492311FCF50BE00DD3BBB /* FLEPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEPlugin.h; sourceTree = "<group>"; };
 		1E2492321FCF50BE00DD3BBB /* FLEReshapeListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEReshapeListener.h; sourceTree = "<group>"; };
 		1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLETextInputPlugin.h; sourceTree = "<group>"; };
-		1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLETextInputPlugin.m; sourceTree = "<group>"; };
+		1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FLETextInputPlugin.mm; sourceTree = "<group>"; };
 		1E2492351FCF50BE00DD3BBB /* FLEViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEViewController.h; sourceTree = "<group>"; };
 		1E2492361FCF50BE00DD3BBB /* FLEViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FLEViewController.mm; sourceTree = "<group>"; };
 		1E2492371FCF50BE00DD3BBB /* FlutterEmbedderMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlutterEmbedderMac.h; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 		1E24921A1FCF504200DD3BBB = {
 			isa = PBXGroup;
 			children = (
+				1A0A8C7C220E42C0008D78FC /* text_input_model.cc */,
 				C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */,
 				1E2492371FCF50BE00DD3BBB /* FlutterEmbedderMac.h */,
 				1E2492451FCF536200DD3BBB /* Public */,
@@ -145,7 +148,7 @@
 				AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */,
 				AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */,
 				1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */,
-				1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.m */,
+				1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.mm */,
 				1EEF8E061FD1F0C300DD563C /* FLEView.m */,
 				6442F82C20EA6C5F00A393AE /* FLEViewController+Internal.h */,
 				1E2492361FCF50BE00DD3BBB /* FLEViewController.mm */,
@@ -315,13 +318,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A0A8C7D220E42C0008D78FC /* text_input_model.cc in Sources */,
 				33D7B59A20A4F54400296EFC /* FLEMethodChannel.m in Sources */,
 				1E2492401FCF50BE00DD3BBB /* FLEViewController.mm in Sources */,
 				3389A68D215949CB00A27898 /* FLEMethodError.m in Sources */,
 				33C0FA2721B84AA4008F8959 /* FLEMethodCall.m in Sources */,
 				33C0FA2021B84810008F8959 /* FLEJSONMessageCodec.m in Sources */,
 				33C0FA1A21B845F0008F8959 /* FLEBasicMessageChannel.m in Sources */,
-				1E24923E1FCF50BE00DD3BBB /* FLETextInputPlugin.m in Sources */,
+				1E24923E1FCF50BE00DD3BBB /* FLETextInputPlugin.mm in Sources */,
 				1EEF8E081FD1F0C300DD563C /* FLEView.m in Sources */,
 				33A87EB720F6BCDB0086D21D /* FLEJSONMethodCodec.m in Sources */,
 				2CCADF9A21C74690001B4026 /* FLEEventChannel.m in Sources */,
@@ -466,6 +470,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../../flutter_engine_framework/macos",
 				);
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../common";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -487,6 +493,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../../flutter_engine_framework/macos",
 				);
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../common";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

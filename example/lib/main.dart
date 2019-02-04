@@ -243,7 +243,7 @@ class TextInputTestWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: const <Widget>[
         SampleTextField(),
-        SampleTextField(),
+        SampleTextField(maxLines: 5,),
       ],
     );
   }
@@ -252,7 +252,10 @@ class TextInputTestWidget extends StatelessWidget {
 /// A text field with styling suitable for including in a TextInputTestWidget.
 class SampleTextField extends StatelessWidget {
   /// Creates a new sample text field.
-  const SampleTextField();
+  const SampleTextField({this.maxLines = 1});
+
+  /// Number of maxLines for the TextField.
+  final int maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -261,6 +264,7 @@ class SampleTextField extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       child: TextField(
         decoration: InputDecoration(border: OutlineInputBorder()),
+        maxLines: maxLines,
       ),
     );
   }
