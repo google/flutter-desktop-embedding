@@ -79,7 +79,7 @@ class FDE_EXPORT FlutterWindowController {
   // for any window created.
   std::string icu_data_path_;
 
-  // Whether or not FlutterInit succeeded at creation time.
+  // Whether or not FlutterEmbedderInit succeeded at creation time.
   bool init_succeeded_ = false;
 
   // The curent Flutter window, if any.
