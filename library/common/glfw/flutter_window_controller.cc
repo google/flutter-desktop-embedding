@@ -50,10 +50,11 @@ bool FlutterWindowController::CreateWindow(
   std::transform(
       arguments.begin(), arguments.end(), std::back_inserter(engine_arguments),
       [](const std::string &arg) -> const char * { return arg.c_str(); });
+  size_t arg_count = engine_arguments.size();
 
   window_ = FlutterEmbedderCreateWindow(
       width, height, assets_path.c_str(), icu_data_path_.c_str(),
-      &engine_arguments[0], engine_arguments.size());
+      arg_count > 0 ? &engine_arguments[0] : nullptr, arg_count);
   if (!window_) {
     std::cerr << "Failed to create window." << std::endl;
     return false;
