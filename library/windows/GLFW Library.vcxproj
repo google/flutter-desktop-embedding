@@ -48,7 +48,7 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)..\..\third_party\jsoncpp\src\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)..\..\third_party\jsoncpp\src\include\;$(ProjectDir)..\..\;$(ProjectDir)..\..\library\common\client_wrapper\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\JSON\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
@@ -57,7 +57,7 @@
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>flutter_embedder</TargetName>
     <TargetExt>.dll</TargetExt>
-    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)..\..\third_party\jsoncpp\src\include\;$(ProjectDir)..\..\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\include\;$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\;$(ProjectDir)..\..\third_party\jsoncpp\src\include\;$(ProjectDir)..\..\;$(ProjectDir)..\..\library\common\client_wrapper\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)dependencies\engine\;$(ProjectDir)dependencies\JSON\;$(ProjectDir)dependencies\GLFW\;$(LibraryPath)</LibraryPath>
     <SourcePath>$(ProjectDir)..\..\library\common\internal;$(SourcePath)</SourcePath>
   </PropertyGroup>
@@ -68,7 +68,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>_WINDLL;FLUTTER_DESKTOP_EMBEDDING_IMPL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDLL;FLUTTER_DESKTOP_EMBEDDING_IMPL;USE_FDE_TREE_PATHS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>flutter_engine.dll.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies);json_vc71_libmtd.lib</AdditionalDependencies>
@@ -111,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>_WINDLL;FLUTTER_DESKTOP_EMBEDDING_IMPL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDLL;FLUTTER_DESKTOP_EMBEDDING_IMPL;USE_FDE_TREE_PATHS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -146,16 +146,15 @@
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\engine_method_result.cc" />
+    <ClCompile Include="..\common\client_wrapper\src\engine_method_result.cc" />
+    <ClCompile Include="..\common\client_wrapper\src\json_message_codec.cc" />
+    <ClCompile Include="..\common\client_wrapper\src\json_method_codec.cc" />
+    <ClCompile Include="..\common\client_wrapper\src\plugin_handler.cc" />
     <ClCompile Include="..\common\glfw\embedder.cc" />
-    <ClCompile Include="..\common\glfw\flutter_window_controller.cc" />
     <ClCompile Include="..\common\glfw\key_event_handler.cc" />
     <ClCompile Include="..\common\glfw\text_input_plugin.cc" />
     <ClCompile Include="..\common\internal\incoming_message_dispatcher.cc" />
-    <ClCompile Include="..\common\internal\plugin_handler.cc" />
     <ClCompile Include="..\common\internal\text_input_model.cc" />
-    <ClCompile Include="..\common\json_message_codec.cc" />
-    <ClCompile Include="..\common\json_method_codec.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\flutter_desktop_embedding\windows\embedder.h" />

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Client Wrapper">
+      <UniqueIdentifier>{6cc11b49-f23d-438f-b98a-aaaf956b5495}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\glfw\embedder.cc">
@@ -21,29 +24,26 @@
     <ClCompile Include="..\common\glfw\text_input_plugin.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\engine_method_result.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\json_message_codec.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\internal\text_input_model.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\json_method_codec.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\glfw\key_event_handler.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\internal\plugin_handler.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\glfw\flutter_window_controller.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\internal\incoming_message_dispatcher.cc">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\client_wrapper\src\engine_method_result.cc">
+      <Filter>Source Files\Client Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\client_wrapper\src\json_message_codec.cc">
+      <Filter>Source Files\Client Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\client_wrapper\src\json_method_codec.cc">
+      <Filter>Source Files\Client Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\client_wrapper\src\plugin_handler.cc">
+      <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

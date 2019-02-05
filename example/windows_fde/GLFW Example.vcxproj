@@ -45,13 +45,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\library\windows\dependencies\;$(ProjectDir)..\..\;$(IncludePath);$(ProjectDir)..\..\library\windows\;$(ProjectDir)..\..\library\include\</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\library\windows\dependencies\;$(ProjectDir)..\..\;$(IncludePath);$(ProjectDir)..\..\library\windows\;$(ProjectDir)..\..\library\include\;$(ProjectDir)..\..\library\common\client_wrapper\include\</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\library\windows\dependencies\GLFW\;$(SolutionDir)bin\$(Platform)\$(Configuration)\GLFW Library\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Dynamic Library|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-	<IncludePath>$(ProjectDir)..\..\library\windows\dependencies\;$(ProjectDir)..\..\library\include\;$(IncludePath)</IncludePath> 
+    <IncludePath>$(ProjectDir)..\..\library\windows\dependencies\;$(ProjectDir)..\..\;$(IncludePath);$(ProjectDir)..\..\library\windows\;$(ProjectDir)..\..\library\include\;$(ProjectDir)..\..\library\common\client_wrapper\include\</IncludePath>
     <LibraryPath>$(ProjectDir)..\..\library\windows\dependencies\GLFW\;$(SolutionDir)bin\$(Platform)\$(Configuration)\GLFW Library\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic Library|x64'">
@@ -62,6 +62,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);USE_FDE_TREE_PATHS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>flutter_embedder.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -91,6 +92,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);USE_FDE_TREE_PATHS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -113,6 +115,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\library\common\client_wrapper\src\engine_method_result.cc" />
+    <ClCompile Include="..\..\library\common\client_wrapper\src\glfw\flutter_window_controller.cc" />
+    <ClCompile Include="..\..\library\common\client_wrapper\src\plugin_handler.cc" />
     <ClCompile Include="flutter_embedder_example.cpp" />
   </ItemGroup>
   <ItemGroup>
