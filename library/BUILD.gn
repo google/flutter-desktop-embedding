@@ -44,11 +44,12 @@ published_shared_library("flutter_embedder") {
       "common/internal/text_input_model.cc",
       "common/internal/text_input_model.h",
     ]
-    public += [
-      "include/flutter_desktop_embedding_core/fde_export.h",
-    ]
+    public += [ "include/flutter_desktop_embedding_core/fde_export.h" ]
 
-    deps += ["//library/common/client_wrapper:client_wrapper", "//library/common/client_wrapper:publish_wrapper"]
+    deps += [
+      "//library/common/client_wrapper:client_wrapper_internal",
+      "//library/common/client_wrapper:publish_wrapper",
+    ]
   }
 
   defines = [

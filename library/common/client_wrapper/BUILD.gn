@@ -41,9 +41,28 @@ if (use_glfw) {
 
 _wrapper_publish_dir = "$root_out_dir/fde_cpp_wrapper"
 
+# Template for building the wrapper code in two different modes.
+# This is needed because the implementation of the embedding library
+# uses this code internally, in addition to it being published for
+# client use, but the internal version needs to set the flag that
+# controls the export macro.
+template("client_wrapper") {
+  template_target_name = target_name
+
+  source_set(template_target_name) {
+    forward_variables_from(invoker, "*")
+  }
+
+  source_set("${template_target_name}_internal") {
+    forward_variables_from(invoker, "*")
+
+    defines += [ "FLUTTER_DESKTOP_EMBEDDING_IMPL" ]
+  }
+}
+
 # A static library version of the client wrapper, for use both within the
 # framework implementation itself, as well as with the plugin builds.
-source_set("client_wrapper") {
+client_wrapper("client_wrapper") {
   sources = _wrapper_sources
   public = _wrapper_includes
 
@@ -70,7 +89,10 @@ source_set("client_wrapper") {
 
   # Explicitly disable flattened headers, since this is being built in-tree.
   # TODO: Simplify down to one define once Windows is using GN.
-  defines = [ "USE_FLATTENED_INCLUDES=0", "USE_FDE_TREE_PATHS" ]
+  defines = [
+    "USE_FLATTENED_INCLUDES=0",
+    "USE_FDE_TREE_PATHS",
+  ]
 }
 
 # Since this code is intended to be used by clients in a source bundle, the
