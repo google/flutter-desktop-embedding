@@ -92,7 +92,7 @@ published_shared_library("flutter_embedder") {
 
   if (use_glfw) {
     if (is_linux) {
-      libs += [ "GL" ]
+      libs = [ "GL" ]
 
       configs += [
         "//build/linux/config:epoxy",
