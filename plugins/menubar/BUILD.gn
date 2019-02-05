@@ -34,6 +34,7 @@ published_shared_library("menubar") {
 
   deps = [
     "//library:flutter_embedder",
+    "//library/common/client_wrapper:client_wrapper",
   ]
 
   if (is_linux) {

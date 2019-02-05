@@ -18,9 +18,9 @@
 
 #include <json/json.h>
 
+#include "library/common/client_wrapper/include/flutter_desktop_embedding/basic_message_channel.h"
+#include "library/common/client_wrapper/include/flutter_desktop_embedding/binary_messenger.h"
 #include "library/common/glfw/keyboard_hook_handler.h"
-#include "library/include/flutter_desktop_embedding/basic_message_channel.h"
-#include "library/include/flutter_desktop_embedding/binary_messenger.h"
 
 namespace flutter_desktop_embedding {
 

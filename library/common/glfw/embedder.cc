@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "library/include/flutter_desktop_embedding/glfw/embedder.h"
+#include "library/include/flutter_desktop_embedding_core/glfw/embedder.h"
 
 #include <assert.h>
 #include <algorithm>
@@ -29,11 +29,11 @@
 
 #include <flutter_embedder.h>
 
+#include "library/common/client_wrapper/src/plugin_handler.h"
 #include "library/common/glfw/key_event_handler.h"
 #include "library/common/glfw/keyboard_hook_handler.h"
 #include "library/common/glfw/text_input_plugin.h"
 #include "library/common/internal/incoming_message_dispatcher.h"
-#include "library/common/internal/plugin_handler.h"
 
 #ifdef __linux__
 // For plugin-compatible event handling (e.g., modal windows).

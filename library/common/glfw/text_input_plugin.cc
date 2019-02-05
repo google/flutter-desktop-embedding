@@ -16,7 +16,7 @@
 #include <cstdint>
 #include <iostream>
 
-#include "library/include/flutter_desktop_embedding/json_method_codec.h"
+#include "library/common/client_wrapper/include/flutter_desktop_embedding/json_method_codec.h"
 
 static constexpr char kSetEditingStateMethod[] = "TextInput.setEditingState";
 static constexpr char kClearClientMethod[] = "TextInput.clearClient";

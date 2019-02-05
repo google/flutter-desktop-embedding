@@ -11,13 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_REGISTRAR_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_REGISTRAR_H_
+#ifndef LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_REGISTRAR_H_
+#define LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_REGISTRAR_H_
 
 #include <memory>
 
 #include "binary_messenger.h"
-#include "fde_export.h"
 
 namespace flutter_desktop_embedding {
 
@@ -28,7 +27,7 @@ class Plugin;
 // Currently this class has very limited functionality, but is expected to
 // expand over time to more closely match the functionality of
 // the Flutter mobile plugin APIs' plugin registrars.
-class FDE_EXPORT PluginRegistrar {
+class PluginRegistrar {
  public:
   virtual ~PluginRegistrar() {}
 
@@ -54,11 +53,11 @@ class FDE_EXPORT PluginRegistrar {
 };
 
 // A plugin that can be registered for ownership by a PluginRegistrar.
-class FDE_EXPORT Plugin {
+class Plugin {
  public:
   virtual ~Plugin() {}
 };
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_REGISTRAR_H_
+#endif  // LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_REGISTRAR_H_

@@ -40,3 +40,10 @@ if (host_os == "linux") {
   is_mac = false
   is_win = true
 }
+
+declare_args() {
+  # Whether to use the GLFW embedding implementation. Currently overriding this
+  # would not work since each platform only has one working implementation,
+  # but in the future GLFW may be one of multiple supported implementations.
+  use_glfw = is_linux || is_win
+}

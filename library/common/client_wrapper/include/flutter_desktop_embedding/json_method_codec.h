@@ -11,19 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
+#ifndef LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
+#define LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
 
 #include <json/json.h>
 
-#include "fde_export.h"
 #include "method_call.h"
 #include "method_codec.h"
 
 namespace flutter_desktop_embedding {
 
 // An implementation of MethodCodec that uses JSON strings as the serialization.
-class FDE_EXPORT JsonMethodCodec : public MethodCodec<Json::Value> {
+class JsonMethodCodec : public MethodCodec<Json::Value> {
  public:
   // Returns the shared instance of the codec.
   static const JsonMethodCodec &GetInstance();
@@ -52,4 +51,4 @@ class FDE_EXPORT JsonMethodCodec : public MethodCodec<Json::Value> {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_
+#endif  // LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_JSON_METHOD_CODEC_H_

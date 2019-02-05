@@ -78,6 +78,13 @@ BIN_OUT=$(OUT_DIR)/flutter_embedder_example
 ICU_DATA_OUT=$(OUT_DATA_DIR)/$(ICU_DATA_NAME)
 ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(OUT_LIB_DIR)/$(notdir $(lib)))
 
+# Add the code for the wrapper library, which is intended to be statically
+# built into the client.
+WRAPPER_ROOT = $(GN_OUT_DIR)/fde_cpp_wrapper
+SOURCES += $(shell find $(WRAPPER_ROOT) -type f -name '*.cc')
+INCLUDE_DIRS += $(WRAPPER_ROOT)/include
+
+
 # Build settings
 CXX=g++ -std=c++14
 CXXFLAGS.release=-DNDEBUG

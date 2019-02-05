@@ -11,14 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BASIC_MESSAGE_CHANNEL_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BASIC_MESSAGE_CHANNEL_H_
+#ifndef LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BASIC_MESSAGE_CHANNEL_H_
+#define LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BASIC_MESSAGE_CHANNEL_H_
 
 #include <iostream>
 #include <string>
 
 #include "binary_messenger.h"
-#include "fde_export.h"
 #include "message_codec.h"
 
 namespace flutter_desktop_embedding {
@@ -40,7 +39,7 @@ using MessageHandler =
 // A channel for communicating with the Flutter engine by sending asynchronous
 // messages.
 template <typename T>
-class FDE_EXPORT BasicMessageChannel {
+class BasicMessageChannel {
  public:
   // Creates an instance that sends and receives method calls on the channel
   // named |name|, encoded with |codec| and dispatched via |messenger|.
@@ -103,4 +102,4 @@ class FDE_EXPORT BasicMessageChannel {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BASIC_MESSAGE_CHANNEL_H_
+#endif  // LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BASIC_MESSAGE_CHANNEL_H_

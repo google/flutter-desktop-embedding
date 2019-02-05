@@ -11,15 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CHANNEL_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CHANNEL_H_
+#ifndef LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CHANNEL_H_
+#define LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CHANNEL_H_
 
 #include <iostream>
 #include <string>
 
 #include "binary_messenger.h"
 #include "engine_method_result.h"
-#include "fde_export.h"
 #include "method_call.h"
 #include "method_codec.h"
 #include "method_result.h"
@@ -37,7 +36,7 @@ using MethodCallHandler = std::function<void(
 // A channel for communicating with the Flutter engine using invocation of
 // asynchronous methods.
 template <typename T>
-class FDE_EXPORT MethodChannel {
+class MethodChannel {
  public:
   // Creates an instance that sends and receives method calls on the channel
   // named |name|, encoded with |codec| and dispatched via |messenger|.
@@ -96,4 +95,4 @@ class FDE_EXPORT MethodChannel {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CHANNEL_H_
+#endif  // LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_METHOD_CHANNEL_H_

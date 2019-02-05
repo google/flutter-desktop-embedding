@@ -11,13 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BINARY_MESSENGER_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BINARY_MESSENGER_H_
+#ifndef LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BINARY_MESSENGER_H_
+#define LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BINARY_MESSENGER_H_
 
 #include <functional>
 #include <string>
-
-#include "fde_export.h"
 
 // TODO: Consider adding absl as a dependency and using absl::Span for all of
 // the message/message_size pairs.
@@ -38,7 +36,7 @@ typedef std::function<void(const uint8_t *message, const size_t message_size,
 
 // A protocol for a class that handles communication of binary data on named
 // channels to and from the Flutter engine.
-class FDE_EXPORT BinaryMessenger {
+class BinaryMessenger {
  public:
   // Sends a binary message to the Flutter side on the specified channel,
   // expecting no reply.
@@ -61,4 +59,4 @@ class FDE_EXPORT BinaryMessenger {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BINARY_MESSENGER_H_
+#endif  // LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_BINARY_MESSENGER_H_

@@ -16,7 +16,7 @@
 #include <json/json.h>
 #include <iostream>
 
-#include "library/include/flutter_desktop_embedding/json_message_codec.h"
+#include "library/common/client_wrapper/include/flutter_desktop_embedding/json_message_codec.h"
 
 static constexpr char kChannelName[] = "flutter/keyevent";
 

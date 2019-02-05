@@ -12,12 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "library/include/flutter_desktop_embedding/glfw/flutter_window_controller.h"
+#ifdef USE_FDE_TREE_PATHS
+#include "flutter_desktop_embedding/glfw/flutter_window_controller.h"
+#else
+#include "flutter_desktop_embedding/flutter_window_controller.h"
+#endif
 
 #include <algorithm>
 #include <iostream>
 
-#include "library/common/internal/plugin_handler.h"
+#ifdef USE_FDE_TREE_PATHS
+#include "../plugin_handler.h"
+#else
+#include "plugin_handler.h"
+#endif
 
 namespace flutter_desktop_embedding {
 
