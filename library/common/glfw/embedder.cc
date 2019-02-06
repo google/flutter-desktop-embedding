@@ -261,7 +261,7 @@ static uint32_t GLFWGetActiveFbo(void *user_data) { return 0; }
 static void GLFWClearCanvas(GLFWwindow *window) {
   glfwMakeContextCurrent(window);
   // This color is Material Blue Grey.
-  glClearColor(236.0 / 255.0, 239.0 / 255.0, 241.0 / 255.0, 0);
+  glClearColor(236.0f / 255.0f, 239.0f / 255.0f, 241.0f / 255.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
   glfwSwapBuffers(window);
@@ -309,7 +309,7 @@ static FlutterEngine RunFlutterEngine(GLFWwindow *window,
   args.struct_size = sizeof(FlutterProjectArgs);
   args.assets_path = assets_path;
   args.icu_data_path = icu_data_path;
-  args.command_line_argc = argv.size();
+  args.command_line_argc = static_cast<int>(argv.size());
   args.command_line_argv = &argv[0];
   args.platform_message_callback = GLFWOnFlutterPlatformMessage;
   FlutterEngine engine = nullptr;
@@ -332,7 +332,7 @@ bool FlutterEmbedderInit() {
 void FlutterEmbedderTerminate() { glfwTerminate(); }
 
 FlutterWindowRef FlutterEmbedderCreateWindow(
-    size_t initial_width, size_t initial_height, const char *assets_path,
+    int initial_width, int initial_height, const char *assets_path,
     const char *icu_data_path, const char **arguments, size_t argument_count) {
 #ifdef __linux__
   gtk_init(0, nullptr);

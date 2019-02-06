@@ -64,7 +64,7 @@ class FlutterWindowController {
   // for details. Not all arguments will apply to embedding mode.
   //
   // Only one Flutter window can exist at a time; see constructor comment.
-  bool CreateWindow(size_t width, size_t height, const std::string &assets_path,
+  bool CreateWindow(int width, int height, const std::string &assets_path,
                     const std::vector<std::string> &arguments);
 
   // Returns the PluginRegistrar to register a plugin with the given name.

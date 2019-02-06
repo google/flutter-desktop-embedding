@@ -41,7 +41,7 @@ FlutterWindowController::~FlutterWindowController() {
 }
 
 bool FlutterWindowController::CreateWindow(
-    size_t width, size_t height, const std::string &assets_path,
+    int width, int height, const std::string &assets_path,
     const std::vector<std::string> &arguments) {
   if (!init_succeeded_) {
     std::cerr << "Could not create window; FlutterEmbedderInit failed."

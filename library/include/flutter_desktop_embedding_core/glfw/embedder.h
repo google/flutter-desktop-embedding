@@ -72,7 +72,7 @@ FDE_EXPORT void FlutterEmbedderTerminate();
 // Note that calling FlutterEmbedderCreateWindow without later calling
 // FlutterEmbedderRunWindowLoop on the returned reference is a memory leak.
 FDE_EXPORT FlutterWindowRef FlutterEmbedderCreateWindow(
-    size_t initial_width, size_t initial_height, const char *assets_path,
+    int initial_width, int initial_height, const char *assets_path,
     const char *icu_data_path, const char **arguments, size_t argument_count);
 
 // Loops on Flutter window events until the window is closed.
