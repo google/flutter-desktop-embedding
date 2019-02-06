@@ -25,6 +25,9 @@ _wrapper_includes = [
   "include/flutter_desktop_embedding/method_result.h",
   "include/flutter_desktop_embedding/plugin_registrar.h",
 ]
+
+# TODO: Re-evaluate this once more codecs are supported, since most libraries
+# won't need all the codecs.
 _wrapper_sources = [
   "src/engine_method_result.cc",
   "src/json_message_codec.cc",
@@ -32,12 +35,6 @@ _wrapper_sources = [
   "src/plugin_handler.cc",
   "src/plugin_handler.h",
 ]
-
-if (use_glfw) {
-  _wrapper_includes +=
-      [ "include/flutter_desktop_embedding/glfw/flutter_window_controller.h" ]
-  _wrapper_sources += [ "src/glfw/flutter_window_controller.cc" ]
-}
 
 _wrapper_publish_dir = "$root_out_dir/fde_cpp_wrapper"
 
@@ -103,6 +100,10 @@ config("_relative_headers") {
 
 copy("_publish_includes") {
   sources = _wrapper_includes
+  if (use_glfw) {
+    sources +=
+        [ "include/flutter_desktop_embedding/glfw/flutter_window_controller.h" ]
+  }
   output_dir = "$_wrapper_publish_dir/include/flutter_desktop_embedding"
   outputs = [
     "$output_dir/{{source_file_part}}",
@@ -111,6 +112,10 @@ copy("_publish_includes") {
 
 copy("_publish_sources") {
   sources = _wrapper_sources + [ "README" ]
+
+  if (use_glfw) {
+    sources += [ "src/glfw/flutter_window_controller.cc" ]
+  }
   output_dir = "$_wrapper_publish_dir"
   outputs = [
     "$output_dir/{{source_file_part}}",
