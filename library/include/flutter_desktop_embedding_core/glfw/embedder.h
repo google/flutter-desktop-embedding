@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
+#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_CORE_GLFW_EMBEDDER_H_
+#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_CORE_GLFW_EMBEDDER_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -27,7 +27,7 @@
 #endif
 #endif
 
-#ifdef USE_FLATTENED_INCLUDES
+#if defined(USE_FLATTENED_INCLUDES) && USE_FLATTENED_INCLUDES
 #include "fde_export.h"
 #else
 #include "../fde_export.h"
@@ -145,4 +145,4 @@ FDE_EXPORT void FlutterEmbedderEnableInputBlocking(
 }  // extern "C"
 #endif
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_EMBEDDER_H_
+#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_CORE_GLFW_EMBEDDER_H_

@@ -12,17 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+default_static_configs = [ "//build:defaults" ]
+
+default_dynamic_configs = [
+  "//build:defaults",
+  "//build:shared_library_defaults",
+]
+
 set_defaults("executable") {
-  configs = [ "//build:defaults" ]
+  configs = default_static_configs
 }
 set_defaults("static_library") {
-  configs = [ "//build:defaults" ]
+  configs = default_static_configs
+}
+set_defaults("source_set") {
+  configs = default_static_configs
 }
 set_defaults("shared_library") {
-  configs = [ "//build:defaults", "//build:shared_library_defaults" ]
+  configs = default_dynamic_configs
 }
 set_defaults("published_shared_library") {
-  configs = [ "//build:defaults", "//build:shared_library_defaults" ]
+  configs = default_dynamic_configs
 }
 
 if (host_os == "linux") {
@@ -39,4 +49,11 @@ if (host_os == "linux") {
   is_linux = false
   is_mac = false
   is_win = true
+}
+
+declare_args() {
+  # Whether to use the GLFW embedding implementation. Currently overriding this
+  # would not work since each platform only has one working implementation,
+  # but in the future GLFW may be one of multiple supported implementations.
+  use_glfw = is_linux || is_win
 }

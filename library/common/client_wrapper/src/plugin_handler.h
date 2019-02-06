@@ -19,9 +19,16 @@
 #include <set>
 #include <string>
 
-#include "library/include/flutter_desktop_embedding/binary_messenger.h"
-#include "library/include/flutter_desktop_embedding/glfw/embedder.h"
-#include "library/include/flutter_desktop_embedding/plugin_registrar.h"
+// TODO: Change USE_FDE_TREE_PATHS branches to use project-relative paths
+// once Windows clients aren't relying on it.
+#ifdef USE_FDE_TREE_PATHS
+#include <flutter_desktop_embedding_core/glfw/embedder.h>
+#else
+#include <flutter_desktop_embedding_core/embedder.h>
+#endif
+
+#include "flutter_desktop_embedding/binary_messenger.h"
+#include "flutter_desktop_embedding/plugin_registrar.h"
 
 namespace flutter_desktop_embedding {
 

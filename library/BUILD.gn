@@ -16,23 +16,14 @@ import("//build/flutter.gni")
 import("//build/packaging.gni")
 import("//library/engine.gni")
 
-declare_args() {
-  # Whether to use the GLFW embedding implementation. Currently overriding this
-  # would not work since each platform only has one working implementation,
-  # but in the future GLFW may be one of multiple supported implementations.
-  use_glfw = is_linux || is_win
-}
-
 published_shared_library("flutter_embedder") {
   # GLFW embedding implementation.
   if (use_glfw) {
     public = [
-      "include/flutter_desktop_embedding/glfw/embedder.h",
-      "include/flutter_desktop_embedding/glfw/flutter_window_controller.h",
+      "include/flutter_desktop_embedding_core/glfw/embedder.h",
     ]
     sources = [
       "common/glfw/embedder.cc",
-      "common/glfw/flutter_window_controller.cc",
       "common/glfw/key_event_handler.cc",
       "common/glfw/key_event_handler.h",
       "common/glfw/keyboard_hook_handler.h",
@@ -41,42 +32,32 @@ published_shared_library("flutter_embedder") {
     ]
   }
 
-  # Embedding-agnostic shared C++.
-  if (is_linux || is_win) {
-    sources += [
-      "common/engine_method_result.cc",
-      "common/internal/incoming_message_dispatcher.cc",
-      "common/internal/incoming_message_dispatcher.h",
-      "common/internal/plugin_handler.cc",
-      "common/internal/plugin_handler.h",
-      "common/internal/text_input_model.cc",
-      "common/internal/text_input_model.h",
-      "common/json_message_codec.cc",
-      "common/json_method_codec.cc",
-    ]
-    public += [
-      "include/flutter_desktop_embedding/basic_message_channel.h",
-      "include/flutter_desktop_embedding/binary_messenger.h",
-      "include/flutter_desktop_embedding/engine_method_result.h",
-      "include/flutter_desktop_embedding/fde_export.h",
-      "include/flutter_desktop_embedding/json_message_codec.h",
-      "include/flutter_desktop_embedding/json_method_codec.h",
-      "include/flutter_desktop_embedding/message_codec.h",
-      "include/flutter_desktop_embedding/method_call.h",
-      "include/flutter_desktop_embedding/method_channel.h",
-      "include/flutter_desktop_embedding/method_codec.h",
-      "include/flutter_desktop_embedding/method_result.h",
-      "include/flutter_desktop_embedding/plugin_registrar.h",
-    ]
-  }
-
   deps = [
     ":flutter_engine",
   ]
 
-  defines = [ "FLUTTER_DESKTOP_EMBEDDING_IMPL" ]
+  # Embedding-agnostic shared C++.
+  if (is_linux || is_win) {
+    sources += [
+      "common/internal/incoming_message_dispatcher.cc",
+      "common/internal/incoming_message_dispatcher.h",
+      "common/internal/text_input_model.cc",
+      "common/internal/text_input_model.h",
+    ]
+    public += [ "include/flutter_desktop_embedding_core/fde_export.h" ]
 
-  public_header_subdir = "flutter_desktop_embedding"
+    deps += [
+      "//library/common/client_wrapper:client_wrapper_internal",
+      "//library/common/client_wrapper:publish_wrapper",
+    ]
+  }
+
+  defines = [
+    "FLUTTER_DESKTOP_EMBEDDING_IMPL",
+    "USE_FDE_TREE_PATHS",
+  ]
+
+  public_header_subdir = "flutter_desktop_embedding_core"
 
   public_configs = [ ":relative_public_headers" ]
 

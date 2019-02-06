@@ -12,20 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_FLUTTER_WINDOW_CONTROLLER_H_
-#define LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_FLUTTER_WINDOW_CONTROLLER_H_
+#ifndef LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_FLUTTER_WINDOW_CONTROLLER_H_
+#define LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_FLUTTER_WINDOW_CONTROLLER_H_
 
 #include <string>
 #include <vector>
 
-#include "embedder.h"
-
-#ifdef USE_FLATTENED_INCLUDES
-#include "fde_export.h"
-#include "plugin_registrar.h"
+#ifdef USE_FDE_TREE_PATHS
+#include <flutter_desktop_embedding_core/glfw/embedder.h>
 #else
-#include "../fde_export.h"
+#include <flutter_desktop_embedding_core/embedder.h>
+#endif
+
+#ifdef USE_FDE_TREE_PATHS
 #include "../plugin_registrar.h"
+#else
+#include "plugin_registrar.h"
 #endif
 
 namespace flutter_desktop_embedding {
@@ -42,7 +44,7 @@ class PluginHandler;
 // requires control of the application's event loop, and is thus useful
 // primarily for building a simple one-window shell hosting a Flutter
 // application. The final implementation and API will be very different.
-class FDE_EXPORT FlutterWindowController {
+class FlutterWindowController {
  public:
   // There must be only one instance of this class in an application at any
   // given time, as Flutter does not support multiple engines in one process,
@@ -91,4 +93,4 @@ class FDE_EXPORT FlutterWindowController {
 
 }  // namespace flutter_desktop_embedding
 
-#endif  // LIBRARY_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_FLUTTER_WINDOW_CONTROLLER_H_
+#endif  // LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_GLFW_FLUTTER_WINDOW_CONTROLLER_H_

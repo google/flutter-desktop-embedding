@@ -20,7 +20,7 @@
 #include <string>
 #include <utility>
 
-#include "library/include/flutter_desktop_embedding/glfw/embedder.h"
+#include "library/include/flutter_desktop_embedding_core/glfw/embedder.h"
 
 namespace flutter_desktop_embedding {
 

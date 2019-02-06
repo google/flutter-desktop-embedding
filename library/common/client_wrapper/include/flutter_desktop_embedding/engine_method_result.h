@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "binary_messenger.h"
-#include "fde_export.h"
 #include "method_codec.h"
 #include "method_result.h"
 
@@ -29,7 +28,7 @@ namespace internal {
 // Manages the one-time sending of response data. This is an internal helper
 // class for EngineMethodResult, separated out since the implementation doesn't
 // vary based on the template type.
-class FDE_EXPORT ReplyManager {
+class ReplyManager {
  public:
   ReplyManager(BinaryReply reply_handler_);
   ~ReplyManager();
@@ -51,7 +50,7 @@ class FDE_EXPORT ReplyManager {
 // Implemention of MethodResult that sends a response to the Flutter engine
 // exactly once, encoded using a given codec.
 template <typename T>
-class FDE_EXPORT EngineMethodResult : public MethodResult<T> {
+class EngineMethodResult : public MethodResult<T> {
  public:
   // Creates a result object that will send results to |reply_handler|, encoded
   // using |codec|. The |codec| pointer must remain valid for as long as this
