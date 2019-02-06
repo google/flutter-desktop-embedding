@@ -66,21 +66,14 @@ to a XIB in your own project:
 
 ### Windows
 
-Open the `Example Embedder` Visual Studio solution file under `windows_fde\` and
-build the GLFW Example project.
+Open the `Example Embedder` Visual Studio solution file under `windows_fde\` to
+build and run the GLFW Example project.
 
-The resulting binary will be in `bin\x64\$(Configuration)\GLFW Example\`. It
-currently uses relative paths so must be run from the `windows_fde\` directory:
-
-```
-> ".\bin\x64\$(Configuration)\GLFW Example\GLFW Example.exe"
-```
-
-e.g.:
+The resulting binary will be in
+`example\build\windows_fde\x64\$(Configuration)\GLFW Example\`. It currently
+uses relative paths so if you run it manually it must be run from the
+`example\windows_fde\` directory. E.g.:
 
 ```
-> ".\bin\x64\Debug Dynamic Library\GLFW Example\GLFW Example.exe"
+> "..\build\windows_fde\x64\Debug\GLFW Example\GLFW Example.exe"
 ```
-
-Or you can use Visual Studio's inbuilt debugger to build and run the
-example application automatically.
