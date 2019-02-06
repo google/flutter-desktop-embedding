@@ -37,7 +37,7 @@ the ICU data from the Flutter engine.
 
 #### Dependencies
 
-**Libraries**
+##### Libraries
 
 First you will need to install the relevant library dependencies:
 *   GLFW3
@@ -54,7 +54,7 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
       libx11-dev pkg-config
 ```
 
-**GN**
+##### GN
 
 You will need to install the build tools if you don't already have them:
 * [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
@@ -113,7 +113,7 @@ so you do not need to include that framework in your project directly.
 
 #### Dependencies
 
-**Visual Studio**
+##### Visual Studio
 
 You must have a copy of Visual Studio installed, and the command line build
 tools, such as `vcvars64.bat`, must be in your path. They are found under:
@@ -128,7 +128,7 @@ e.g.:
 C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
 ```
 
-**jsoncpp**
+##### jsoncpp
 
 jsoncpp must be downloaded to `third_party/jsoncpp\src`. You can use
 `tools/dart_tools/bin/fetch_jsoncpp.dart` to simplify this:
@@ -137,7 +137,7 @@ jsoncpp must be downloaded to `third_party/jsoncpp\src`. You can use
 > tools\run_dart_tool.bat fetch_jsoncpp third_party\jsoncpp\src
 ```
 
-**GN**
+##### GN
 
 You will need to install the build tools if you don't already have them:
 * [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
