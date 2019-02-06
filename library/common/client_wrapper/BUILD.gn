@@ -63,14 +63,12 @@ client_wrapper("client_wrapper") {
   sources = _wrapper_sources
   public = _wrapper_includes
 
-  if (is_linux) {
-    configs = [
-      "//build/linux/config:jsoncpp",
+  # Use shared library settings since this target will be folded into shared
+  # libraries.
+  configs = default_dynamic_configs
 
-      # Use shared library settings since this target will be folded into
-      # shared libraries.
-      "//build:shared_library_defaults",
-    ]
+  if (is_linux) {
+    configs += [ "//build/linux/config:jsoncpp" ]
   }
   if (is_win) {
     deps = [
