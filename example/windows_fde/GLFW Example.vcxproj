@@ -78,11 +78,22 @@
       </Message>
     </PreLinkEvent>
     <PostBuildEvent>
-      <Command>$(ProjectDir)scripts\build_example_app "$(OutputPath)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Construct a runnable example from the various outputs</Message>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>$(ProjectDir)scripts\build_example_app "$(OutputPath)"</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>Bundling dependencies</Message>
+      <Outputs>Dummy_Run_Always</Outputs>
+      <Inputs>
+      </Inputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -112,11 +123,22 @@
       </Message>
     </PreLinkEvent>
     <PostBuildEvent>
-      <Command>$(ProjectDir)scripts\build_example_app "$(OutputPath)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Construct a runnable example from the various outputs</Message>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>$(ProjectDir)scripts\build_example_app "$(OutputPath)"</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>Bundling dependencies</Message>
+      <Outputs>Dummy_Run_Always</Outputs>
+      <Inputs>
+      </Inputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\out\fde_cpp_wrapper\engine_method_result.cc" />

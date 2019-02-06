@@ -70,10 +70,9 @@ Open the `Example Embedder` Visual Studio solution file under `windows_fde\` to
 build and run the GLFW Example project.
 
 The resulting binary will be in
-`example\build\windows_fde\x64\$(Configuration)\GLFW Example\`. It currently
-uses relative paths so if you run it manually it must be run from the
-`example\windows_fde\` directory. E.g.:
+`example\build\windows_fde\x64\$(Configuration)\GLFW Example\`. It can be run
+manually from there. E.g.:
 
 ```
-> "..\build\windows_fde\x64\Debug\GLFW Example\GLFW Example.exe"
+> .\"example\build\windows_fde\x64\Debug\GLFW Example\GLFW Example.exe"
 ```
