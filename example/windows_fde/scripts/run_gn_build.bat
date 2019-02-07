@@ -13,9 +13,9 @@
 :: limitations under the License.
 @echo off
 
-set RUN_DART_TOOL=%~dp0..\..\..\tools\run_dart_tool.bat
-set CHECKOUT_DIR=%~dp0..\..\..\third_party\jsoncpp\src
-set ARTIFACT_DIR=%~dp0..\dependencies\JSON
+set FDE_ROOT=%~dp0..\..\..
+set GN_OUT_DIR=%FDE_ROOT%\out
 
-call %RUN_DART_TOOL% fetch_jsoncpp %CHECKOUT_DIR%
-call %RUN_DART_TOOL% build_jsoncpp %CHECKOUT_DIR% %ARTIFACT_DIR% %*
+call %FDE_ROOT%\tools\gn_dart gen %GN_OUT_DIR%
+if %errorlevel% neq 0 exit /b %errorlevel%
+ninja -C %GN_OUT_DIR%

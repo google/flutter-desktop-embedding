@@ -21,19 +21,13 @@
     <ClCompile Include="flutter_embedder_example.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\library\common\client_wrapper\src\engine_method_result.cc">
+    <ClCompile Include="..\..\out\fde_cpp_wrapper\engine_method_result.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\library\common\client_wrapper\src\glfw\flutter_window_controller.cc">
+    <ClCompile Include="..\..\out\fde_cpp_wrapper\flutter_window_controller.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\library\common\client_wrapper\src\json_message_codec.cc">
-      <Filter>Source Files\Client Wrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\library\common\client_wrapper\src\json_method_codec.cc">
-      <Filter>Source Files\Client Wrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\library\common\client_wrapper\src\plugin_handler.cc">
+    <ClCompile Include="..\..\out\fde_cpp_wrapper\plugin_handler.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
   </ItemGroup>

@@ -82,10 +82,7 @@ client_wrapper("client_wrapper") {
   # consume the embedder as a framework.
   include_dirs = [ "//library/include/" ]
 
-  # Explicitly disable flattened headers, since this is being built in-tree.
-  # TODO: Simplify down to one define once Windows is using GN.
   defines = [
-    "USE_FLATTENED_INCLUDES=0",
     "USE_FDE_TREE_PATHS",
   ]
 }
