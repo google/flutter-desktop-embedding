@@ -45,6 +45,29 @@ String getDefaultFlutterRoot() {
   return path.join(path.dirname(getRepositoryRoot()), 'flutter');
 }
 
+/// Returns the engine hash from [file] as a String, or null.
+///
+/// If the file is missing, or cannot be read, returns null.
+Future<String> readHashFileIfPossible(File file) async {
+  if (!file.existsSync()) {
+    return null;
+  }
+  try {
+    return (await file.readAsString()).trim();
+  } on FileSystemException {
+    // If the file can't be read for any reason, just treat it as missing.
+    return null;
+  }
+}
+
+/// Returns the engine version hash for the Flutter tree at [flutterRoot],
+/// or null if it can't be found.
+Future<String> engineHashForFlutterTree(String flutterRoot) async {
+  final versionFile =
+      new File(path.join(flutterRoot, 'bin', 'internal', 'engine.version'));
+  return await readHashFileIfPossible(versionFile);
+}
+
 /// If there is an engine override file, returns the engine build type given in
 /// the file, otherwise returns null.
 Future<String> getEngineOverrideBuildType() async {
