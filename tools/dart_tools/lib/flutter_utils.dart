@@ -25,7 +25,7 @@ import 'package:path/path.dart' as path;
 /// This should be updated whenever a new dependency is introduced (e.g., a
 /// required embedder API addition or implementation fix).
 const String lastKnownRequiredFlutterCommit =
-    '390ded9340e529b8475fefd1afdbe59c5b8d4081';
+    '8101862bdbb8168b37ad270ad7ed4ab473287dff';
 
 /// Returns the path to the root of this repository.
 ///

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This script downloads a specific version of the prebuilt Flutter engine
-// library for a desktop platform.
+// This script downloads a specific version of the prebuilt Flutter library
+// for a desktop platform.
 
 import 'dart:async';
 import 'dart:io';
@@ -28,7 +28,7 @@ import '../lib/git_utils.dart';
 Future<void> main(List<String> arguments) async {
   final parser = new ArgParser()
     ..addOption('platform',
-        help: 'The platform to download the engine for.\n'
+        help: 'The platform to download the Flutter library for.\n'
             'Defaults to the current platform.',
         allowed: FlutterArtifactFetcher.supportedPlatforms,
         defaultsTo: Platform.operatingSystem)
@@ -76,7 +76,7 @@ Future<void> main(List<String> arguments) async {
     final containsRequiredCommit = await gitHeadContainsCommit(
         flutterRoot, lastKnownRequiredFlutterCommit);
     if (!containsRequiredCommit) {
-      print('Flutter engine update aborted: Your Flutter tree is too '
+      print('Flutter library update aborted: Your Flutter tree is too '
           'old for use with this project. Please update to a newer version of '
           'Flutter, then try again.\n\n'
           'Note that this may require switching to Flutter master. See:\n'
@@ -86,7 +86,7 @@ Future<void> main(List<String> arguments) async {
   }
 
   final fetcher = FlutterArtifactFetcher(platform, flutterRoot);
-  const artifact = FlutterArtifactType.engine;
+  const artifact = FlutterArtifactType.flutter;
 
   final engineOverrideBuildType = await getEngineOverrideBuildType();
   if (engineOverrideBuildType == null) {
@@ -111,6 +111,6 @@ Future<void> main(List<String> arguments) async {
 
 /// Prints usage info for this utility.
 void printUsage(ArgParser argParser) {
-  print('Usage: update_flutter_engine [options] <output directory>\n');
+  print('Usage: sync_flutter_library [options] <output directory>\n');
   print(argParser.usage);
 }
