@@ -34,7 +34,7 @@ flutter-desktop-embedding.
 
 #### Tools
 
-You will developer tools for your platform:
+You will need developer tools for your platform:
 * Linux: A recent version of GCC
 * macOS: The current version of Xcode
 * Windows: Visual Studio 2017
