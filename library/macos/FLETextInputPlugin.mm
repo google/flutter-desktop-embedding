@@ -141,7 +141,7 @@ static constexpr char kTextAffinityUpstream[] = "TextAffinity.upstream";
   NSString *text_affinity = dict[kSelectionAffinityKey];
   new_state.text_affinity = text_affinity ? [text_affinity UTF8String] : kTextAffinityDownstream;
 
-  new_state.isDirectional = dict[kSelectionIsDirectionalKey] boolValue];
+  new_state.isDirectional = [dict[kSelectionIsDirectionalKey] boolValue];
 
   return new_state;
 }

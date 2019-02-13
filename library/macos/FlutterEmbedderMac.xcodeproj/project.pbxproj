@@ -51,8 +51,6 @@
 		33D7B59A20A4F54400296EFC /* FLEMethodChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 33D7B59820A4F54400296EFC /* FLEMethodChannel.m */; };
 		33E202A5212BC0A800337F48 /* FLETextInputPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */; };
 		33E202A7212BC0F100337F48 /* FLEViewController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6442F82C20EA6C5F00A393AE /* FLEViewController+Internal.h */; };
-		AA8AE8B81FD948AC00B6FB31 /* FLETextInputModel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */; };
-		AA8AE8BA1FD948BA00B6FB31 /* FLETextInputModel.m in Sources */ = {isa = PBXBuildFile; fileRef = AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */; };
 		C4C1FE441FD74F6400691968 /* FlutterEmbedder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */; };
 		C4C1FE451FD74F8300691968 /* FlutterEmbedder.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -114,8 +112,6 @@
 		33D7B59720A4F54400296EFC /* FLEMethodChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEMethodChannel.h; sourceTree = "<group>"; };
 		33D7B59820A4F54400296EFC /* FLEMethodChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEMethodChannel.m; sourceTree = "<group>"; };
 		6442F82C20EA6C5F00A393AE /* FLEViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FLEViewController+Internal.h"; sourceTree = "<group>"; };
-		AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLETextInputModel.h; sourceTree = "<group>"; };
-		AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLETextInputModel.m; sourceTree = "<group>"; };
 		C4C1FE431FD74F6400691968 /* FlutterEmbedder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterEmbedder.framework; path = ../../../flutter_engine_framework/macos/FlutterEmbedder.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -145,8 +141,6 @@
 				33C0FA2521B84AA4008F8959 /* FLEMethodCall.m */,
 				33D7B59820A4F54400296EFC /* FLEMethodChannel.m */,
 				3389A68C215949CB00A27898 /* FLEMethodError.m */,
-				AA8AE8B71FD948AC00B6FB31 /* FLETextInputModel.h */,
-				AA8AE8B91FD948BA00B6FB31 /* FLETextInputModel.m */,
 				1E2492331FCF50BE00DD3BBB /* FLETextInputPlugin.h */,
 				1E2492341FCF50BE00DD3BBB /* FLETextInputPlugin.mm */,
 				1EEF8E061FD1F0C300DD563C /* FLEView.m */,
@@ -218,7 +212,6 @@
 				1E24923C1FCF50BE00DD3BBB /* FLEReshapeListener.h in Headers */,
 				33C0FA2121B84810008F8959 /* FLEJSONMethodCodec.h in Headers */,
 				33E202A7212BC0F100337F48 /* FLEViewController+Internal.h in Headers */,
-				AA8AE8B81FD948AC00B6FB31 /* FLETextInputModel.h in Headers */,
 				1EEF8E071FD1F0C300DD563C /* FLEView.h in Headers */,
 				33C0FA2221B84810008F8959 /* FLEJSONMessageCodec.h in Headers */,
 				33A87EB620F6BCDB0086D21D /* FLEMethodCodec.h in Headers */,
@@ -329,7 +322,6 @@
 				1EEF8E081FD1F0C300DD563C /* FLEView.m in Sources */,
 				33A87EB720F6BCDB0086D21D /* FLEJSONMethodCodec.m in Sources */,
 				2CCADF9A21C74690001B4026 /* FLEEventChannel.m in Sources */,
-				AA8AE8BA1FD948BA00B6FB31 /* FLETextInputModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,7 +342,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -410,7 +402,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
