@@ -20,10 +20,10 @@
 
 @implementation FLEFileChooserPlugin {
   // The view displaying Flutter content.
-  NSView* _flutterView;
+  NSView *_flutterView;
 }
 
-- (instancetype)initWithView:(NSView*)view {
+- (instancetype)initWithView:(NSView *)view {
   self = [super init];
   if (self != nil) {
     _flutterView = view;
@@ -79,11 +79,11 @@
 #pragma FLEPlugin implementation
 
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-                               methodChannelWithName:@(plugins_file_chooser::kChannelName)
-                               binaryMessenger:registrar.messenger
-codec:[FlutterJSONMethodCodec sharedInstance]];
-  FLEFileChooserPlugin* instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
+  FlutterMethodChannel *channel =
+      [FlutterMethodChannel methodChannelWithName:@(plugins_file_chooser::kChannelName)
+                                  binaryMessenger:registrar.messenger
+                                            codec:[FlutterJSONMethodCodec sharedInstance]];
+  FLEFileChooserPlugin *instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 

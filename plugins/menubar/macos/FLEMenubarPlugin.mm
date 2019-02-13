@@ -17,11 +17,11 @@
 #include "plugins/menubar/common/channel_constants.h"
 
 @implementation FLEMenubarPlugin {
-// The channel used to communicate with Flutter.
-FlutterMethodChannel *_channel;
+  // The channel used to communicate with Flutter.
+  FlutterMethodChannel *_channel;
 }
 
-- (instancetype)initWithChannel:(FlutterMethodChannel*)channel {
+- (instancetype)initWithChannel:(FlutterMethodChannel *)channel {
   self = [super init];
   if (self) {
     _channel = channel;
@@ -111,18 +111,17 @@ FlutterMethodChannel *_channel;
  */
 - (void)flutterMenuItemSelected:(id)sender {
   NSMenuItem *item = sender;
-  [_channel invokeMethod:@(plugins_menubar::kMenuItemSelectedCallbackMethod)
-                  arguments:@(item.tag)];
+  [_channel invokeMethod:@(plugins_menubar::kMenuItemSelectedCallbackMethod) arguments:@(item.tag)];
 }
 
 #pragma FLEPlugin implementation
 
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-                               methodChannelWithName:@(plugins_menubar::kChannelName)
-                               binaryMessenger:registrar.messenger
-                               codec:[FlutterJSONMethodCodec sharedInstance]];
-  FLEMenubarPlugin* instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
+  FlutterMethodChannel *channel =
+      [FlutterMethodChannel methodChannelWithName:@(plugins_menubar::kChannelName)
+                                  binaryMessenger:registrar.messenger
+                                            codec:[FlutterJSONMethodCodec sharedInstance]];
+  FLEMenubarPlugin *instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 

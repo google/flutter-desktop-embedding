@@ -26,8 +26,8 @@
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_color_panel::kChannelName)
-                              binaryMessenger:registrar.messenger
-                                        codec:[FlutterJSONMethodCodec sharedInstance]];
+                                  binaryMessenger:registrar.messenger
+                                            codec:[FlutterJSONMethodCodec sharedInstance]];
   FLEColorPanelPlugin *instance = [[FLEColorPanelPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
@@ -56,9 +56,7 @@
           [NSString stringWithFormat:@"Malformed call for %@. Expected an NSDictionary but got %@",
                                      @(plugins_color_panel::kShowColorPanelMethod),
                                      NSStringFromClass([call.arguments class])];
-      methodResult = [FlutterError errorWithCode:@"Bad arguments"
-                                                  message:errorString
-                                                  details:nil];
+      methodResult = [FlutterError errorWithCode:@"Bad arguments" message:errorString details:nil];
     }
   } else if ([call.method isEqualToString:@(plugins_color_panel::kHideColorPanelMethod)]) {
     [self hideColorPanel];
