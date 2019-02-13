@@ -14,7 +14,7 @@
 
 #import <AppKit/AppKit.h>
 
-#import <FlutterEmbedderMac/FlutterEmbedderMac.h>
+#import <FlutterMacOS/FlutterMacOS.h>
 
 /**
  * A Flutter plugin to control the native menu bar.

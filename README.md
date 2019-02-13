@@ -16,6 +16,8 @@ the [quick start](Quick-Start.md) page before continuing._
 
 ### Setting Up
 
+#### Source
+
 The tooling and build infrastructure for this project requires that you have
 a Flutter tree in the same parent directory as the clone of this project:
 
@@ -29,6 +31,19 @@ Alternately, you can place a `.flutter_location_config` file in the directory
 containing flutter-desktop-embedding, containing a path to the Flutter tree to
 use, if you prefer not to have the Flutter tree next to
 flutter-desktop-embedding.
+
+#### Tools
+
+You will need developer tools for your platform:
+* Linux: A recent version of GCC
+* macOS: The current version of Xcode
+* Windows: Visual Studio 2017
+
+On Linux and Windows you will also need GN and ninja:
+* [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
+* [gn](https://gn.googlesource.com/gn/)
+
+Ensure that both binaries are in your path.
 
 ### Repository Structure
 
@@ -78,9 +93,11 @@ speed up the debugging process.
 ## Caveats
 
 * This is not an officially supported Google product.
-* This is an exploratory effort, and is not part of the Flutter project. See the
+* This is an exploratory effort. See the
   [Flutter FAQ](https://flutter.io/faq/#can-i-use-flutter-to-build-desktop-apps)
-  for Flutter's official stance on desktop development.
+  for Flutter's official stance on desktop development. The code and examples
+  here, and the desktop Flutter libraries they use, are not intended for
+  production use.
 * Many features that would be useful for desktop development do not exist yet.
   Check the `plugins` directory for support for native features beyond drawing
   and event processing. If the feature you need isn't there, file a feature

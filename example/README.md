@@ -26,8 +26,8 @@ There is currently no tool that abstracts the platform-specific builds the
 way `flutter build` or `flutter run` does for iOS and Android, so you will need
 to follow the platform-specific build instructions for your platform below.
 
-The examples build the library from source, so you will need to ensure you
-have all the dependencies for
+The examples on Windows and Linux build the library from source, so you will
+need to ensure you have all the dependencies for
 [building the library on your platform](../library/README.md) before continuing.
 
 ### Linux

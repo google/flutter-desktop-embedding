@@ -17,11 +17,11 @@
 #include "plugins/menubar/common/channel_constants.h"
 
 @implementation FLEMenubarPlugin {
-// The channel used to communicate with Flutter.
-FLEMethodChannel *_channel;
+  // The channel used to communicate with Flutter.
+  FlutterMethodChannel *_channel;
 }
 
-- (instancetype)initWithChannel:(FLEMethodChannel*)channel {
+- (instancetype)initWithChannel:(FlutterMethodChannel *)channel {
   self = [super init];
   if (self) {
     _channel = channel;
@@ -111,28 +111,27 @@ FLEMethodChannel *_channel;
  */
 - (void)flutterMenuItemSelected:(id)sender {
   NSMenuItem *item = sender;
-  [_channel invokeMethod:@(plugins_menubar::kMenuItemSelectedCallbackMethod)
-                  arguments:@(item.tag)];
+  [_channel invokeMethod:@(plugins_menubar::kMenuItemSelectedCallbackMethod) arguments:@(item.tag)];
 }
 
 #pragma FLEPlugin implementation
 
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
-  FLEMethodChannel* channel = [FLEMethodChannel
-                               methodChannelWithName:@(plugins_menubar::kChannelName)
-                               binaryMessenger:registrar.messenger
-                               codec:[FLEJSONMethodCodec sharedInstance]];
-  FLEMenubarPlugin* instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
+  FlutterMethodChannel *channel =
+      [FlutterMethodChannel methodChannelWithName:@(plugins_menubar::kChannelName)
+                                  binaryMessenger:registrar.messenger
+                                            codec:[FlutterJSONMethodCodec sharedInstance]];
+  FLEMenubarPlugin *instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
-  if ([call.methodName isEqualToString:@(plugins_menubar::kMenuSetMethod)]) {
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+  if ([call.method isEqualToString:@(plugins_menubar::kMenuSetMethod)]) {
     NSArray *menus = call.arguments;
     [self rebuildFlutterMenusFromRepresentation:menus];
     result(nil);
   } else {
-    result(FLEMethodNotImplemented);
+    result(FlutterMethodNotImplemented);
   }
 }
 

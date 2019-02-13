@@ -6,6 +6,11 @@ desktop application.
 This README assumes you have already read [the top level README](../README.md),
 which contains important information and setup common to all platforms.
 
+_Note: The library code in this repository is in the process of being migrated
+to the `flutter/engine` repository, where it will be available as prebuilt
+libraries for each platform. Most of the instructions below will be obsolete
+soon._
+
 ## How to Use This Code
 
 Currently the development workflow assumes you are starting with an existing
@@ -54,14 +59,6 @@ $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
       libx11-dev pkg-config
 ```
 
-##### GN
-
-You will need to install the build tools if you don't already have them:
-* [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
-* [gn](https://gn.googlesource.com/gn/)
-
-Ensure that both binaries are in your path.
-
 #### Using the Library
 
 To build the library, run the following at the root of this repository:
@@ -87,36 +84,18 @@ and the other headers under that directory for details.
 
 ### macOS
 
-#### Dependencies
-
-You must have a current version of [Xcode](https://developer.apple.com/xcode/)
-installed.
-
-#### Using the Framework
-
-Build the Xcode project under `macos/`, then link the resulting framework
-into your application. See [FLEView.h](macos/FLEView.h) and
-[FLEViewController.h](macos/FLEViewController.h)
-for details on how to use them.
-
-The framework includes the macOS Flutter engine (FlutterEmbedder.framework),
-so you do not need to include that framework in your project directly.
-
-*Note*: The framework names are somewhat confusing:
-* FlutterEmbedder.framework is the Flutter engine packaged as a framework for
-  consumption via the embedding API. This comes from the
-  [Flutter project](https://github.com/flutter/flutter).
-* FlutterEmbedderMac.framework is the output of this project. It wraps
-  FlutterEmbedder and implements the embedding API.
+The macOS library code is now part of Flutter itself, and is available as
+a prebuilt `FlutterMacOS.framework`. See the example for an example of
+downloading and linking to the framework.
 
 ### Windows
 
 #### Dependencies
 
-##### Visual Studio
+##### Visual Studio Command Line
 
-You must have a copy of Visual Studio installed, and the command line build
-tools, such as `vcvars64.bat`, must be in your path. They are found under:
+The Visual Studio command line build tools, such as `vcvars64.bat`, must be in
+your path. They are found under:
 
 ```
 <Visual Studio Install Path>\2017\<Version>\VC\Auxiliary\Build
@@ -136,14 +115,6 @@ jsoncpp must be downloaded to `third_party/jsoncpp\src`. You can use
 ```
 > tools\run_dart_tool.bat fetch_jsoncpp third_party\jsoncpp\src
 ```
-
-##### GN
-
-You will need to install the build tools if you don't already have them:
-* [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
-* [GN](https://gn.googlesource.com/gn/)
-
-Ensure that both binaries are in your path.
 
 #### Using the Library
 

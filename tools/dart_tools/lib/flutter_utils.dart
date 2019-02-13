@@ -25,7 +25,7 @@ import 'package:path/path.dart' as path;
 /// This should be updated whenever a new dependency is introduced (e.g., a
 /// required embedder API addition or implementation fix).
 const String lastKnownRequiredFlutterCommit =
-    '390ded9340e529b8475fefd1afdbe59c5b8d4081';
+    '8101862bdbb8168b37ad270ad7ed4ab473287dff';
 
 /// Returns the path to the root of this repository.
 ///
@@ -43,6 +43,29 @@ String getRepositoryRoot() {
 /// (currently, as a sibling of this repository).
 String getDefaultFlutterRoot() {
   return path.join(path.dirname(getRepositoryRoot()), 'flutter');
+}
+
+/// Returns the engine hash from [file] as a String, or null.
+///
+/// If the file is missing, or cannot be read, returns null.
+Future<String> readHashFileIfPossible(File file) async {
+  if (!file.existsSync()) {
+    return null;
+  }
+  try {
+    return (await file.readAsString()).trim();
+  } on FileSystemException {
+    // If the file can't be read for any reason, just treat it as missing.
+    return null;
+  }
+}
+
+/// Returns the engine version hash for the Flutter tree at [flutterRoot],
+/// or null if it can't be found.
+Future<String> engineHashForFlutterTree(String flutterRoot) async {
+  final versionFile =
+      new File(path.join(flutterRoot, 'bin', 'internal', 'engine.version'));
+  return await readHashFileIfPossible(versionFile);
 }
 
 /// If there is an engine override file, returns the engine build type given in

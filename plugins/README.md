@@ -76,5 +76,5 @@ plugins where that wouldn't be necessary.
 
 ### Caveats
 
-Currently only JSONMethodCodec is supported for desktop plugins. See
+Currently only JSONMethodCodec is supported for Windows/Linux plugins. See
 https://github.com/google/flutter-desktop-embedding/issues/67

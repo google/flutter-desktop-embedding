@@ -20,10 +20,10 @@
 
 @implementation FLEFileChooserPlugin {
   // The view displaying Flutter content.
-  NSView* _flutterView;
+  NSView *_flutterView;
 }
 
-- (instancetype)initWithView:(NSView*)view {
+- (instancetype)initWithView:(NSView *)view {
   self = [super init];
   if (self != nil) {
     _flutterView = view;
@@ -79,18 +79,18 @@
 #pragma FLEPlugin implementation
 
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
-  FLEMethodChannel* channel = [FLEMethodChannel
-                               methodChannelWithName:@(plugins_file_chooser::kChannelName)
-                               binaryMessenger:registrar.messenger
-codec:[FLEJSONMethodCodec sharedInstance]];
-  FLEFileChooserPlugin* instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
+  FlutterMethodChannel *channel =
+      [FlutterMethodChannel methodChannelWithName:@(plugins_file_chooser::kChannelName)
+                                  binaryMessenger:registrar.messenger
+                                            codec:[FlutterJSONMethodCodec sharedInstance]];
+  FLEFileChooserPlugin *instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
   NSDictionary *arguments = call.arguments;
 
-  if ([call.methodName isEqualToString:@(plugins_file_chooser::kShowSavePanelMethod)]) {
+  if ([call.method isEqualToString:@(plugins_file_chooser::kShowSavePanelMethod)]) {
     NSSavePanel *savePanel = [NSSavePanel savePanel];
     savePanel.canCreateDirectories = YES;
     [self configureSavePanel:savePanel withArguments:arguments];
@@ -101,7 +101,7 @@ codec:[FLEJSONMethodCodec sharedInstance]];
                         result([URLs valueForKey:@"path"]);
                       }];
 
-  } else if ([call.methodName isEqualToString:@(plugins_file_chooser::kShowOpenPanelMethod)]) {
+  } else if ([call.method isEqualToString:@(plugins_file_chooser::kShowOpenPanelMethod)]) {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [self configureSavePanel:openPanel withArguments:arguments];
     [self configureOpenPanel:openPanel withArguments:arguments];
@@ -112,7 +112,7 @@ codec:[FLEJSONMethodCodec sharedInstance]];
                         result([URLs valueForKey:@"path"]);
                       }];
   } else {
-    result(FLEMethodNotImplemented);
+    result(FlutterMethodNotImplemented);
   }
 }
 
