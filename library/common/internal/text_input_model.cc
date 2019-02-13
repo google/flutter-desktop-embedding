@@ -13,6 +13,7 @@
 // limitations under the License.
 #include "../common/internal/text_input_model.h"
 
+#include <algorithm>
 #include <iostream>
 
 // InputType keys.
