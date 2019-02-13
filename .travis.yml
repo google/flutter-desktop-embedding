@@ -36,7 +36,10 @@ matrix:
       xcode_project: example/macos_fde/ExampleEmbedder.xcodeproj
       xcode_scheme: ExampleEmbedder
       install:
-        - build/ci/install_flutter $TRAVIS_BUILD_DIR/..
+        # None of the packaged channels are new enough for the current state
+        # of FDE, so for now clone master instead.
+        #- build/ci/install_flutter $TRAVIS_BUILD_DIR/..
+        - git clone -b master https://github.com/flutter/flutter.git $TRAVIS_BUILD_DIR/../flutter
       # Override the build command to remove 'test'. The example embedder
       # doesn't have any unit tests, and while a UI test to ensure that it
       # launches would be useful, that's currently broken by:
