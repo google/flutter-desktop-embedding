@@ -12,24 +12,17 @@
 		3329007620D84D3E002E5F16 /* FLEMenubarPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3329007420D84D3E002E5F16 /* FLEMenubarPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3329007A20D84D4B002E5F16 /* channel_constants.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3329007820D84D4B002E5F16 /* channel_constants.cc */; };
 		3329007B20D84D4B002E5F16 /* channel_constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 3329007920D84D4B002E5F16 /* channel_constants.h */; };
-		3329008620D84DE8002E5F16 /* FlutterEmbedderMac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329008220D84DD4002E5F16 /* FlutterEmbedderMac.framework */; };
 		3329009B20D86B6C002E5F16 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329009A20D86B6C002E5F16 /* AppKit.framework */; };
+		33D1A101221487F5006C7A3E /* FlutterMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D1A100221487F5006C7A3E /* FlutterMacOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3329008120D84DD4002E5F16 /* PBXContainerItemProxy */ = {
+		33D1A0F9221487C5006C7A3E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3329007C20D84DD4002E5F16 /* FlutterEmbedderMac.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1E2492241FCF504200DD3BBB;
-			remoteInfo = FlutterEmbedderMac;
-		};
-		3329008320D84DE4002E5F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3329007C20D84DD4002E5F16 /* FlutterEmbedderMac.xcodeproj */;
+			containerPortal = 3329007C20D84DD4002E5F16 /* SharedFlutterFramework.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 1E2492231FCF504200DD3BBB;
-			remoteInfo = FlutterEmbedderMac;
+			remoteGlobalIDString = 1E2492471FCF585600DD3BBB;
+			remoteInfo = "Fetch Shared Flutter Framework";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -41,8 +34,9 @@
 		3329007420D84D3E002E5F16 /* FLEMenubarPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEMenubarPlugin.h; sourceTree = "<group>"; };
 		3329007820D84D4B002E5F16 /* channel_constants.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = channel_constants.cc; sourceTree = "<group>"; };
 		3329007920D84D4B002E5F16 /* channel_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = channel_constants.h; sourceTree = "<group>"; };
-		3329007C20D84DD4002E5F16 /* FlutterEmbedderMac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMac.xcodeproj; path = ../../../library/macos/FlutterEmbedderMac.xcodeproj; sourceTree = "<group>"; };
+		3329007C20D84DD4002E5F16 /* SharedFlutterFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SharedFlutterFramework.xcodeproj; path = ../../common/macos/SharedFlutterFramework.xcodeproj; sourceTree = "<group>"; };
 		3329009A20D86B6C002E5F16 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		33D1A100221487F5006C7A3E /* FlutterMacOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterMacOS.framework; path = ../../../../flutter_framework/FlutterMacOS.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +45,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3329009B20D86B6C002E5F16 /* AppKit.framework in Frameworks */,
-				3329008620D84DE8002E5F16 /* FlutterEmbedderMac.framework in Frameworks */,
+				33D1A101221487F5006C7A3E /* FlutterMacOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,7 +61,7 @@
 				3329007720D84D4B002E5F16 /* common */,
 				3329006C20D84C56002E5F16 /* Info.plist */,
 				3329006920D84C56002E5F16 /* Products */,
-				3329007C20D84DD4002E5F16 /* FlutterEmbedderMac.xcodeproj */,
+				3329007C20D84DD4002E5F16 /* SharedFlutterFramework.xcodeproj */,
 				3329009820D86B6C002E5F16 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -93,7 +87,6 @@
 		3329007D20D84DD4002E5F16 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3329008220D84DD4002E5F16 /* FlutterEmbedderMac.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,6 +94,7 @@
 		3329009820D86B6C002E5F16 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				33D1A100221487F5006C7A3E /* FlutterMacOS.framework */,
 				3329009A20D86B6C002E5F16 /* AppKit.framework */,
 			);
 			name = Frameworks;
@@ -134,7 +128,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				3329008420D84DE4002E5F16 /* PBXTargetDependency */,
+				33D1A0FA221487C5006C7A3E /* PBXTargetDependency */,
 			);
 			name = FlutterEmbedderMenubar;
 			productName = FlutterEmbedderMenubar;
@@ -168,7 +162,7 @@
 			projectReferences = (
 				{
 					ProductGroup = 3329007D20D84DD4002E5F16 /* Products */;
-					ProjectRef = 3329007C20D84DD4002E5F16 /* FlutterEmbedderMac.xcodeproj */;
+					ProjectRef = 3329007C20D84DD4002E5F16 /* SharedFlutterFramework.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -177,16 +171,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		3329008220D84DD4002E5F16 /* FlutterEmbedderMac.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = FlutterEmbedderMac.framework;
-			remoteRef = 3329008120D84DD4002E5F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3329006620D84C56002E5F16 /* Resources */ = {
@@ -211,10 +195,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3329008420D84DE4002E5F16 /* PBXTargetDependency */ = {
+		33D1A0FA221487C5006C7A3E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = FlutterEmbedderMac;
-			targetProxy = 3329008320D84DE4002E5F16 /* PBXContainerItemProxy */;
+			name = "Fetch Shared Flutter Framework";
+			targetProxy = 33D1A0F9221487C5006C7A3E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -257,6 +241,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FDE_ROOT = $PROJECT_DIR/../../..;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -318,6 +303,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FDE_ROOT = $PROJECT_DIR/../../..;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -344,6 +330,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = $FDE_ROOT/../flutter_framework;
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = ../../..;
 				INFOPLIST_FILE = Info.plist;
@@ -369,6 +356,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = $FDE_ROOT/../flutter_framework;
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = ../../..;
 				INFOPLIST_FILE = Info.plist;

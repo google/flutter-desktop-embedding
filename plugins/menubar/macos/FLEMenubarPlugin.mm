@@ -18,10 +18,10 @@
 
 @implementation FLEMenubarPlugin {
 // The channel used to communicate with Flutter.
-FLEMethodChannel *_channel;
+FlutterMethodChannel *_channel;
 }
 
-- (instancetype)initWithChannel:(FLEMethodChannel*)channel {
+- (instancetype)initWithChannel:(FlutterMethodChannel*)channel {
   self = [super init];
   if (self) {
     _channel = channel;
@@ -118,21 +118,21 @@ FLEMethodChannel *_channel;
 #pragma FLEPlugin implementation
 
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
-  FLEMethodChannel* channel = [FLEMethodChannel
+  FlutterMethodChannel* channel = [FlutterMethodChannel
                                methodChannelWithName:@(plugins_menubar::kChannelName)
                                binaryMessenger:registrar.messenger
-                               codec:[FLEJSONMethodCodec sharedInstance]];
+                               codec:[FlutterJSONMethodCodec sharedInstance]];
   FLEMenubarPlugin* instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (void)handleMethodCall:(FLEMethodCall *)call result:(FLEMethodResult)result {
-  if ([call.methodName isEqualToString:@(plugins_menubar::kMenuSetMethod)]) {
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+  if ([call.method isEqualToString:@(plugins_menubar::kMenuSetMethod)]) {
     NSArray *menus = call.arguments;
     [self rebuildFlutterMenusFromRepresentation:menus];
     result(nil);
   } else {
-    result(FLEMethodNotImplemented);
+    result(FlutterMethodNotImplemented);
   }
 }
 

@@ -14,7 +14,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <FlutterEmbedderMac/FlutterEmbedderMac.h>
+#import <FlutterMacOS/FlutterMacOS.h>
 
 /**
  * A FlutterPlugin to handle file choosing affordances. Owned by the FlutterViewController.
