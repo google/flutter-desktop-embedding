@@ -17,8 +17,15 @@ for /f "delims=" %%i in ('%~dp0flutter_location') do set FLUTTER_DIR=%%i
 set FLUTTER_BIN_DIR=%FLUTTER_DIR%\bin
 set DART_BIN_DIR=%FLUTTER_BIN_DIR%\cache\dart-sdk\bin
 
+if not exist %FLUTTER_DIR%\ (
+  echo No Flutter directory at %FLUTTER_DIR%.
+  echo Please see the setup instructions in the README.
+  exit /b
+)
+
 :: Ensure that the Dart SDK has been downloaded.
 if not exist %DART_BIN_DIR%\ call %FLUTTER_BIN_DIR%\flutter precache
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set DART_TOOL=%1
 for /f "tokens=1,*" %%a in ("%*") do set TOOL_PARAMS=%%b
