@@ -44,7 +44,7 @@ Future<void> main() async {
   }
   if (Platform.isWindows) {
     dependencies
-        .add(_Dependency('Visual Studio command line tools', 'vcvars.bat'));
+        .add(_Dependency('Visual Studio command line tools', 'vcvars64.bat'));
   }
 
   final failures = <String>[];
