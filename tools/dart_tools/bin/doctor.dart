@@ -41,6 +41,15 @@ Future<void> main() async {
   }
   if (Platform.isLinux) {
     dependencies.add(_Dependency('GCC', 'g++', ['--version']));
+    dependencies.add(_Dependency('libraries', 'pkg-config', [
+      '--exists',
+      '--print-errors',
+      'epoxy',
+      'glfw3',
+      'gtk+-3.0',
+      'jsoncpp',
+      'x11'
+    ]));
   }
   if (Platform.isWindows) {
     dependencies
