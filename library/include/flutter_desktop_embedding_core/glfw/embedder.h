@@ -66,6 +66,25 @@ FDE_EXPORT FlutterWindowRef FlutterEmbedderCreateWindow(
     int initial_width, int initial_height, const char *assets_path,
     const char *icu_data_path, const char **arguments, size_t argument_count);
 
+// Runs an instance of a headless Flutter engine.
+//
+// FlutterEmbedderInit() must be called prior to this function.
+//
+// The |assets_path| is the path to the flutter_assets folder for the Flutter
+// application to be run. |icu_data_path| is the path to the icudtl.dat file
+// for the version of Flutter you are using.
+//
+// The |arguments| are passed to the Flutter engine. See:
+// https://github.com/flutter/engine/blob/master/shell/common/switches.h for
+// for details. Not all arguments will apply to embedding mode.
+//
+// Returns a null pointer in the event of an error. Otherwise, the pointer is
+// valid until FlutterEmbedderRunWindowLoop has been called and returned.
+FDE_EXPORT bool FlutterEmbedderRunEngine(const char *assets_path,
+                                         const char *icu_data_path,
+                                         const char **arguments,
+                                         size_t argument_count);
+
 // Loops on Flutter window events until the window is closed.
 //
 // Once this function returns, FlutterWindowRef is no longer valid, and must
