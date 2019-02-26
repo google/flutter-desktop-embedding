@@ -31,6 +31,9 @@ extern "C" {
 // Opaque reference to a Flutter window.
 typedef struct FlutterEmbedderState *FlutterWindowRef;
 
+// Opaque reference to a Flutter engine instance.
+typedef struct FlutterEngineState *FlutterEngineRef;
+
 // Opaque handle for tracking responses to messages.
 typedef struct _FlutterPlatformMessageResponseHandle
     FlutterEmbedderMessageResponseHandle;
@@ -65,6 +68,26 @@ FDE_EXPORT void FlutterEmbedderTerminate();
 FDE_EXPORT FlutterWindowRef FlutterEmbedderCreateWindow(
     int initial_width, int initial_height, const char *assets_path,
     const char *icu_data_path, const char **arguments, size_t argument_count);
+
+// Runs an instance of a headless Flutter engine.
+//
+// The |assets_path| is the path to the flutter_assets folder for the Flutter
+// application to be run. |icu_data_path| is the path to the icudtl.dat file
+// for the version of Flutter you are using.
+//
+// The |arguments| are passed to the Flutter engine. See:
+// https://github.com/flutter/engine/blob/master/shell/common/switches.h for
+// for details. Not all arguments will apply to embedding mode.
+//
+// Returns a null pointer in the event of an error.
+FDE_EXPORT FlutterEngineRef FlutterEmbedderRunEngine(const char *assets_path,
+                                                     const char *icu_data_path,
+                                                     const char **arguments,
+                                                     size_t argument_count);
+
+// Shuts down the given engine instance. Returns true if the shutdown was
+// successful. |engine_ref| is no longer valid after this call.
+FDE_EXPORT bool FlutterEmbedderShutDownEngine(FlutterEngineRef engine_ref);
 
 // Loops on Flutter window events until the window is closed.
 //
@@ -124,11 +147,12 @@ FDE_EXPORT void FlutterEmbedderSetMessageCallback(
 //
 // If set, then the Flutter window will disable input callbacks
 // while waiting for the handler for messages on that channel to run. This is
-// useful if handling the message involves showing a modal window, for instance.
+// useful if handling the message involves showing a modal window, for
+// instance.
 //
 // This must be called after FlutterEmbedderSetMessageHandler, as setting a
-// handler on a channel will reset the input blocking state back to the default
-// of disabled.
+// handler on a channel will reset the input blocking state back to the
+// default of disabled.
 FDE_EXPORT void FlutterEmbedderEnableInputBlocking(
     FlutterWindowRef flutter_window, const char *channel);
 

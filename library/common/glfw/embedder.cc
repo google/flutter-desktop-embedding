@@ -80,6 +80,12 @@ struct FlutterEmbedderState {
   double window_pixels_per_screen_coordinate = 1.0;
 };
 
+// Struct for storing state of a Flutter engine instance.
+struct FlutterEngineState {
+  // The handle to the Flutter engine instance.
+  FlutterEngine engine;
+};
+
 static constexpr char kDefaultWindowTitle[] = "Flutter";
 
 // Retrieves state bag for the window in question from the GLFWWindow.
@@ -281,7 +287,8 @@ static void GLFWErrorCallback(int error_code, const char *description) {
 // Spins up an instance of the Flutter Engine.
 //
 // This function launches the Flutter Engine in a background thread, supplying
-// the necessary callbacks for rendering within a GLFWwindow.
+// the necessary callbacks for rendering within a GLFWwindow (if one is
+// provided).
 //
 // Returns a caller-owned pointer to the engine.
 static FlutterEngine RunFlutterEngine(GLFWwindow *window,
@@ -298,13 +305,23 @@ static FlutterEngine RunFlutterEngine(GLFWwindow *window,
   }
 
   FlutterRendererConfig config = {};
-  config.type = kOpenGL;
-  config.open_gl.struct_size = sizeof(config.open_gl);
-  config.open_gl.make_current = GLFWMakeContextCurrent;
-  config.open_gl.clear_current = GLFWClearContext;
-  config.open_gl.present = GLFWPresent;
-  config.open_gl.fbo_callback = GLFWGetActiveFbo;
-  config.open_gl.gl_proc_resolver = GLFWProcResolver;
+  if (window == nullptr) {
+    config.type = kOpenGL;
+    config.open_gl.struct_size = sizeof(config.open_gl);
+    config.open_gl.make_current = [](void *data) -> bool { return false; };
+    config.open_gl.clear_current = [](void *data) -> bool { return false; };
+    config.open_gl.present = [](void *data) -> bool { return false; };
+    config.open_gl.fbo_callback = [](void *data) -> uint32_t { return 0; };
+  } else {
+    // Provide the necessary callbacks for rendering within a GLFWwindow.
+    config.type = kOpenGL;
+    config.open_gl.struct_size = sizeof(config.open_gl);
+    config.open_gl.make_current = GLFWMakeContextCurrent;
+    config.open_gl.clear_current = GLFWClearContext;
+    config.open_gl.present = GLFWPresent;
+    config.open_gl.fbo_callback = GLFWGetActiveFbo;
+    config.open_gl.gl_proc_resolver = GLFWProcResolver;
+  }
   FlutterProjectArgs args = {};
   args.struct_size = sizeof(FlutterProjectArgs);
   args.assets_path = assets_path;
@@ -383,6 +400,27 @@ FlutterWindowRef FlutterEmbedderCreateWindow(
   GLFWAssignEventCallbacks(window);
 
   return state;
+}
+
+bool FlutterEmbedderShutDownEngine(FlutterEngineRef engine_ref) {
+  std::cout << "Shutting down flutter engine process." << std::endl;
+  auto result = FlutterEngineShutdown(engine_ref->engine);
+  delete engine_ref;
+  return (result == kSuccess);
+}
+
+FlutterEngineRef FlutterEmbedderRunEngine(const char *assets_path,
+                                          const char *icu_data_path,
+                                          const char **arguments,
+                                          size_t argument_count) {
+  auto engine = RunFlutterEngine(nullptr, assets_path, icu_data_path, arguments,
+                                 argument_count);
+  if (engine == nullptr) {
+    return nullptr;
+  }
+  auto engine_state = new FlutterEngineState();
+  engine_state->engine = engine;
+  return engine_state;
 }
 
 void FlutterEmbedderRunWindowLoop(FlutterWindowRef flutter_window) {
