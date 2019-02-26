@@ -20,8 +20,6 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <sys/prctl.h>
-
 #ifdef __linux__
 // Epoxy must be included before any graphics-related code.
 #include <epoxy/gl.h>
@@ -80,6 +78,12 @@ struct FlutterEmbedderState {
   double monitor_screen_coordinates_per_inch = kDpPerInch;
   // The ratio of pixels per screen coordinate for the window.
   double window_pixels_per_screen_coordinate = 1.0;
+};
+
+// Struct for storing state of a Flutter engine instance.
+struct FlutterEngineState {
+  // The handle to the Flutter engine instance.
+  FlutterEngine engine;
 };
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
@@ -398,35 +402,24 @@ FlutterWindowRef FlutterEmbedderCreateWindow(
   return state;
 }
 
-FlutterEngine g_background_engine = nullptr;
-
-static void SigHupHandler(int dummy) {
+bool FlutterEmbedderEngineShutdown(FlutterEngineRef engine_ref) {
   std::cout << "Shutting down flutter engine process." << std::endl;
-  if (g_background_engine) {
-    FlutterEngineShutdown(g_background_engine);
-  }
-  exit(0);
+  auto result = FlutterEngineShutdown(engine_ref->engine);
+  return (result == kSuccess);
 }
 
-bool FlutterEmbedderRunEngine(const char *assets_path,
-                              const char *icu_data_path, const char **arguments,
-                              size_t argument_count) {
-  auto g_background_engine = RunFlutterEngine(
-      nullptr, assets_path, icu_data_path, arguments, argument_count);
-  if (g_background_engine == nullptr) {
-    // Shut down the engine cleanly when signalled.
-    signal(SIGHUP, SigHupHandler);
-    prctl(PR_SET_PDEATHSIG, SIGHUP);
+FlutterEngineRef FlutterEmbedderRunEngine(const char *assets_path,
+                                          const char *icu_data_path,
+                                          const char **arguments,
+                                          size_t argument_count) {
+  auto engine = RunFlutterEngine(nullptr, assets_path, icu_data_path, arguments,
+                                 argument_count);
+  if (engine == nullptr) {
+    return nullptr;
   }
-
-  // Spin forever.
-  if (g_background_engine != nullptr) {
-    while (true) {
-      ;
-    }
-  }
-  std::cerr << "Failed to launch headless engine." << std::endl;
-  return 1;
+  auto engine_state = new FlutterEngineState();
+  engine_state->engine = engine;
+  return engine_state;
 }
 
 void FlutterEmbedderRunWindowLoop(FlutterWindowRef flutter_window) {
