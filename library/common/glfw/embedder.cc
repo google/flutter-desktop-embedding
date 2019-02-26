@@ -402,9 +402,10 @@ FlutterWindowRef FlutterEmbedderCreateWindow(
   return state;
 }
 
-bool FlutterEmbedderEngineShutdown(FlutterEngineRef engine_ref) {
+bool FlutterEmbedderShutDownEngine(FlutterEngineRef engine_ref) {
   std::cout << "Shutting down flutter engine process." << std::endl;
   auto result = FlutterEngineShutdown(engine_ref->engine);
+  delete engine_ref;
   return (result == kSuccess);
 }
 

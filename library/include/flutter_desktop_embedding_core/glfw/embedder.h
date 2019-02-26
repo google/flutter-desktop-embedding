@@ -86,8 +86,8 @@ FDE_EXPORT FlutterEngineRef FlutterEmbedderRunEngine(const char *assets_path,
                                                      size_t argument_count);
 
 // Shuts down the given engine instance. Returns true if the shutdown was
-// successful.
-FDE_EXPORT bool FlutterEmbedderEngineShutdown(FlutterEngineRef engine_ref);
+// successful. |engine_ref| is no longer valid after this call.
+FDE_EXPORT bool FlutterEmbedderShutDownEngine(FlutterEngineRef engine_ref);
 
 // Loops on Flutter window events until the window is closed.
 //
