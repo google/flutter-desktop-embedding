@@ -14,10 +14,14 @@
 #include "plugins/file_chooser/linux/include/file_chooser/file_chooser_plugin.h"
 
 #include <gtk/gtk.h>
+#include <json/json.h>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 #include <flutter_desktop_embedding/json_method_codec.h>
+#include <flutter_desktop_embedding/method_channel.h>
+#include <flutter_desktop_embedding/plugin_registrar.h>
 
 #include "plugins/file_chooser/common/channel_constants.h"
 
@@ -26,6 +30,30 @@ static constexpr int kCancelResultValue = 0;
 static constexpr int kOkResultValue = 1;
 
 namespace plugins_file_chooser {
+
+class FileChooserPlugin : public flutter_desktop_embedding::Plugin {
+ public:
+  static void RegisterWithRegistrar(
+      flutter_desktop_embedding::PluginRegistrar *registrar);
+
+  virtual ~FileChooserPlugin();
+
+ private:
+  // Creates a plugin that communicates on the given channel.
+  FileChooserPlugin(
+      std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+          channel);
+
+  // Called when a method is called on |channel_|;
+  void HandleMethodCall(
+      const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
+      std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
+          result);
+
+  // The MethodChannel used for communication with the Flutter engine.
+  std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+      channel_;
+};
 
 // Applies filters to the file chooser.
 //
@@ -210,3 +238,13 @@ void FileChooserPlugin::HandleMethodCall(
 }
 
 }  // namespace plugins_file_chooser
+
+void FileChooserRegisterWithRegistrar(
+    FlutterEmbedderPluginRegistrarRef registrar) {
+  // The plugin registrar owns the plugin, registered callbacks, etc., so must
+  // remain valid for the life of the application.
+  static auto *plugin_registrar =
+      new flutter_desktop_embedding::PluginRegistrar(registrar);
+  plugins_file_chooser::FileChooserPlugin::RegisterWithRegistrar(
+      plugin_registrar);
+}

@@ -98,10 +98,9 @@ void TextInputPlugin::KeyboardHook(GLFWwindow *window, int key, int scancode,
   }
 }
 
-TextInputPlugin::TextInputPlugin(PluginRegistrar *registrar)
+TextInputPlugin::TextInputPlugin(BinaryMessenger *messenger)
     : channel_(std::make_unique<MethodChannel<Json::Value>>(
-          registrar->messenger(), kChannelName,
-          &JsonMethodCodec::GetInstance())),
+          messenger, kChannelName, &JsonMethodCodec::GetInstance())),
       active_model_(nullptr) {
   channel_->SetMethodCallHandler(
       [this](const MethodCall<Json::Value> &call,

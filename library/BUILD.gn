@@ -21,6 +21,8 @@ published_shared_library("flutter_embedder") {
   if (use_glfw) {
     public = [
       "include/flutter_desktop_embedding_core/glfw/embedder.h",
+      "include/flutter_desktop_embedding_core/embedder_messenger.h",
+      "include/flutter_desktop_embedding_core/embedder_plugin_registrar.h",
     ]
     sources = [
       "common/glfw/embedder.cc",

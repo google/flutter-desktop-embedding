@@ -72,15 +72,12 @@ int main(int argc, char **argv) {
   }
 
   // Register any native plugins.
-  plugins_menubar::MenubarPlugin::RegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin(
-          "plugins_menubar::MenubarPlugin"));
-  plugins_color_panel::ColorPanelPlugin::RegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin(
-          "plugins_color_panel::ColorPanelPlugin"));
-  plugins_file_chooser::FileChooserPlugin::RegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin(
-          "plugins_file_chooser::FileChooserPlugin"));
+  MenubarRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("Menubar"));
+  ColorPanelRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("ColorPanel"));
+  FileChooserRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("FileChooser"));
 
   // Run until the window is closed.
   flutter_controller.RunEventLoop();

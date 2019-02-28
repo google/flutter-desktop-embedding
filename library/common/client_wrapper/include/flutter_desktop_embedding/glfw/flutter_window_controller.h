@@ -32,8 +32,6 @@
 
 namespace flutter_desktop_embedding {
 
-class PluginHandler;
-
 // A controller for a window displaying Flutter content.
 //
 // This is the primary wrapper class for the desktop embedding C API.
@@ -67,11 +65,12 @@ class FlutterWindowController {
   bool CreateWindow(int width, int height, const std::string &assets_path,
                     const std::vector<std::string> &arguments);
 
-  // Returns the PluginRegistrar to register a plugin with the given name.
+  // Returns the FlutterEmbedderPluginRegistrarRef to register a plugin with the
+  // given name.
   //
-  // The name must be unique across the application, so the recommended approach
-  // is to use the fully namespace-qualified name of the plugin class.
-  PluginRegistrar *GetRegistrarForPlugin(const std::string &plugin_name);
+  // The name must be unique across the application.
+  FlutterEmbedderPluginRegistrarRef GetRegistrarForPlugin(
+      const std::string &plugin_name);
 
   // Loops on Flutter window events until the window closes.
   void RunEventLoop();
@@ -86,9 +85,6 @@ class FlutterWindowController {
 
   // The curent Flutter window, if any.
   FlutterWindowRef window_ = nullptr;
-
-  // Plugin manager, to support GetRegistraryForPlugin.
-  std::unique_ptr<PluginHandler> plugin_handler_;
 };
 
 }  // namespace flutter_desktop_embedding

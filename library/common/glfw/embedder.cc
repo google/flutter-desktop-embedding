@@ -29,7 +29,7 @@
 
 #include <flutter_embedder.h>
 
-#include "library/common/client_wrapper/src/plugin_handler.h"
+#include "library/common/client_wrapper/include/flutter_desktop_embedding/plugin_registrar.h"
 #include "library/common/glfw/key_event_handler.h"
 #include "library/common/glfw/keyboard_hook_handler.h"
 #include "library/common/glfw/text_input_plugin.h"
@@ -62,12 +62,16 @@ struct FlutterEmbedderState {
   // The handle to the Flutter engine instance.
   FlutterEngine engine;
 
+  // The plugin registrar handle given to API clients.
+  std::unique_ptr<FlutterEmbedderPluginRegistrar> plugin_registrar;
+
   // Message dispatch manager for messages from the Flutter engine.
   std::unique_ptr<flutter_desktop_embedding::IncomingMessageDispatcher>
       message_dispatcher;
 
-  // The helper class managing plugin registration.
-  std::unique_ptr<flutter_desktop_embedding::PluginHandler> plugin_handler;
+  // The plugin registrar managing internal plugins.
+  std::unique_ptr<flutter_desktop_embedding::PluginRegistrar>
+      internal_plugin_registrar;
 
   // Handlers for keyboard events from GLFW.
   std::vector<std::unique_ptr<flutter_desktop_embedding::KeyboardHookHandler>>
@@ -84,6 +88,21 @@ struct FlutterEmbedderState {
 struct FlutterEngineState {
   // The handle to the Flutter engine instance.
   FlutterEngine engine;
+};
+
+// State associated with the plugin registrar.
+struct FlutterEmbedderPluginRegistrar {
+  // The plugin messenger handle given to API clients.
+  std::unique_ptr<FlutterEmbedderMessenger> messenger;
+};
+
+// State associated with the messenger used to communicate with the engine.
+struct FlutterEmbedderMessenger {
+  // The Flutter engine this messenger sends outgoing messages to.
+  FlutterEngine engine;
+
+  // The message dispatcher for handling incoming messages.
+  flutter_desktop_embedding::IncomingMessageDispatcher *dispatcher;
 };
 
 static constexpr char kDefaultWindowTitle[] = "Flutter";
@@ -375,19 +394,32 @@ FlutterWindowRef FlutterEmbedderCreateWindow(
   state->window = window;
   glfwSetWindowUserPointer(window, state);
   state->engine = engine;
+
+  // TODO: Restructure the embedder internals to follow the structure of the
+  // C++ API, so that this isn't a tangle of references.
+  auto messenger = std::make_unique<FlutterEmbedderMessenger>();
   state->message_dispatcher =
       std::make_unique<flutter_desktop_embedding::IncomingMessageDispatcher>(
-          state);
-  state->plugin_handler =
-      std::make_unique<flutter_desktop_embedding::PluginHandler>(state);
+          messenger.get());
+  messenger->engine = engine;
+  messenger->dispatcher = state->message_dispatcher.get();
+
+  state->plugin_registrar = std::make_unique<FlutterEmbedderPluginRegistrar>();
+  state->plugin_registrar->messenger = std::move(messenger);
+
+  state->internal_plugin_registrar =
+      std::make_unique<flutter_desktop_embedding::PluginRegistrar>(
+          state->plugin_registrar.get());
 
   // Set up the keyboard handlers.
+  auto internal_plugin_messenger =
+      state->internal_plugin_registrar->messenger();
   state->keyboard_hook_handlers.push_back(
       std::make_unique<flutter_desktop_embedding::KeyEventHandler>(
-          state->plugin_handler.get()));
+          internal_plugin_messenger));
   state->keyboard_hook_handlers.push_back(
       std::make_unique<flutter_desktop_embedding::TextInputPlugin>(
-          state->plugin_handler.get()));
+          internal_plugin_messenger));
 
   // Trigger an initial size callback to send size information to Flutter.
   state->monitor_screen_coordinates_per_inch = GetScreenCoordinatesPerInch();
@@ -446,9 +478,27 @@ void FlutterEmbedderRunWindowLoop(FlutterWindowRef flutter_window) {
   glfwDestroyWindow(window);
 }
 
-void FlutterEmbedderSendMessage(FlutterWindowRef flutter_window,
-                                const char *channel, const uint8_t *message,
-                                const size_t message_size) {
+FlutterEmbedderPluginRegistrarRef FlutterEmbedderGetPluginRegistrar(
+    FlutterWindowRef flutter_window, const char *plugin_name) {
+  // Currently, one registrar acts as the registrar for all plugins, so the
+  // name is ignored. It is part of the API to reduce churn in the future when
+  // aligning more closely with the Flutter registrar system.
+  return flutter_window->plugin_registrar.get();
+}
+
+void FlutterEmbedderRegistrarEnableInputBlocking(
+    FlutterEmbedderPluginRegistrarRef registrar, const char *channel) {
+  registrar->messenger->dispatcher->EnableInputBlockingForChannel(channel);
+}
+
+FlutterEmbedderMessengerRef FlutterEmbedderRegistrarGetMessenger(
+    FlutterEmbedderPluginRegistrarRef registrar) {
+  return registrar->messenger.get();
+}
+
+void FlutterEmbedderMessengerSend(FlutterEmbedderMessengerRef messenger,
+                                  const char *channel, const uint8_t *message,
+                                  const size_t message_size) {
   FlutterPlatformMessage platform_message = {
       sizeof(FlutterPlatformMessage),
       channel,
@@ -456,26 +506,19 @@ void FlutterEmbedderSendMessage(FlutterWindowRef flutter_window,
       message_size,
   };
 
-  FlutterEngineSendPlatformMessage(flutter_window->engine, &platform_message);
+  FlutterEngineSendPlatformMessage(messenger->engine, &platform_message);
 }
 
-void FlutterEmbedderSendMessageResponse(
-    FlutterWindowRef flutter_window,
+void FlutterEmbedderMessengerSendResponse(
+    FlutterEmbedderMessengerRef messenger,
     const FlutterEmbedderMessageResponseHandle *handle, const uint8_t *data,
     size_t data_length) {
-  FlutterEngineSendPlatformMessageResponse(flutter_window->engine, handle, data,
+  FlutterEngineSendPlatformMessageResponse(messenger->engine, handle, data,
                                            data_length);
 }
 
-void FlutterEmbedderSetMessageCallback(FlutterWindowRef flutter_window,
-                                       const char *channel,
-                                       FlutterEmbedderMessageCallback callback,
-                                       void *user_data) {
-  flutter_window->message_dispatcher->SetMessageCallback(channel, callback,
-                                                         user_data);
-}
-
-void FlutterEmbedderEnableInputBlocking(FlutterWindowRef flutter_window,
-                                        const char *channel) {
-  flutter_window->message_dispatcher->EnableInputBlockingForChannel(channel);
+void FlutterEmbedderMessengerSetCallback(
+    FlutterEmbedderMessengerRef messenger, const char *channel,
+    FlutterEmbedderMessageCallback callback, void *user_data) {
+  messenger->dispatcher->SetMessageCallback(channel, callback, user_data);
 }

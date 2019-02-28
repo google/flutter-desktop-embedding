@@ -143,7 +143,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\out\fde_cpp_wrapper\engine_method_result.cc" />
     <ClCompile Include="..\..\out\fde_cpp_wrapper\flutter_window_controller.cc" />
-    <ClCompile Include="..\..\out\fde_cpp_wrapper\plugin_handler.cc" />
+    <ClCompile Include="..\..\out\fde_cpp_wrapper\plugin_registrar.cc" />
     <ClCompile Include="flutter_embedder_example.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

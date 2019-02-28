@@ -15,6 +15,10 @@
 #define LIBRARY_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_DESKTOP_EMBEDDING_PLUGIN_REGISTRAR_H_
 
 #include <memory>
+#include <set>
+#include <string>
+
+#include <flutter_desktop_embedding_core/embedder_plugin_registrar.h>
 
 #include "binary_messenger.h"
 
@@ -29,27 +33,42 @@ class Plugin;
 // the Flutter mobile plugin APIs' plugin registrars.
 class PluginRegistrar {
  public:
-  virtual ~PluginRegistrar() {}
+  // Creates a new PluginRegistrar. |core_registrar| and the messenger it
+  // provides must remain valid as long as this object exists.
+  explicit PluginRegistrar(FlutterEmbedderPluginRegistrarRef core_registrar);
+  ~PluginRegistrar();
+
+  // Prevent copying.
+  PluginRegistrar(PluginRegistrar const &) = delete;
+  PluginRegistrar &operator=(PluginRegistrar const &) = delete;
 
   // Returns the messenger to use for creating channels to communicate with the
   // Flutter engine.
   //
-  // This pointer must remain valid for the life of the plugin that this
-  // registrar is used for.
-  virtual BinaryMessenger *messenger() = 0;
+  // This pointer will remain valid for the lifetime of this instance.
+  BinaryMessenger *messenger() { return messenger_.get(); }
 
   // Takes ownership of |plugin|.
   //
   // Plugins are not required to call this method if they have other lifetime
   // management, but this is a convient place for plugins to be owned to ensure
   // that they stay valid for any registered callbacks.
-  virtual void AddPlugin(std::unique_ptr<Plugin> plugin) = 0;
+  void AddPlugin(std::unique_ptr<Plugin> plugin);
 
   // Enables input blocking on the given channel name.
   //
   // If set, then the parent window should disable input callbacks
   // while waiting for the handler for messages on that channel to run.
-  virtual void EnableInputBlockingForChannel(const std::string &channel) = 0;
+  void EnableInputBlockingForChannel(const std::string &channel);
+
+ private:
+  // Handle for interacting with the embedding API's registrar.
+  FlutterEmbedderPluginRegistrarRef registrar_;
+
+  std::unique_ptr<BinaryMessenger> messenger_;
+
+  // Plugins registered for ownership.
+  std::set<std::unique_ptr<Plugin>> plugins_;
 };
 
 // A plugin that can be registered for ownership by a PluginRegistrar.

@@ -17,8 +17,8 @@
 #include <map>
 #include <memory>
 
+#include "library/common/client_wrapper/include/flutter_desktop_embedding/binary_messenger.h"
 #include "library/common/client_wrapper/include/flutter_desktop_embedding/method_channel.h"
-#include "library/common/client_wrapper/include/flutter_desktop_embedding/plugin_registrar.h"
 #include "library/common/glfw/keyboard_hook_handler.h"
 #include "library/common/internal/text_input_model.h"
 
@@ -29,7 +29,7 @@ namespace flutter_desktop_embedding {
 // Specifically handles window events within GLFW.
 class TextInputPlugin : public KeyboardHookHandler {
  public:
-  TextInputPlugin(PluginRegistrar *registrar);
+  explicit TextInputPlugin(BinaryMessenger *messenger);
   virtual ~TextInputPlugin();
 
   // KeyboardHookHandler:
