@@ -51,12 +51,13 @@ First you will need to install the relevant library dependencies:
 *   epoxy
 *   X11 development libs
 *   pkg-config
+*   g++
 
 Installation example for debian-based systems:
 
 ```
 $ sudo apt-get install libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
-      libx11-dev pkg-config
+      libx11-dev pkg-config g++
 ```
 
 #### Using the Library
