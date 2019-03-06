@@ -73,6 +73,13 @@ struct FlutterEmbedderState {
   std::vector<std::unique_ptr<flutter_desktop_embedding::KeyboardHookHandler>>
       keyboard_hook_handlers;
 
+  // Whether or not to track mouse movements to send kHover events.
+  bool hover_tracking_enabled = false;
+
+  // Whether or not the pointer has been added (or if tracking is enabled, has
+  // been added since it was last removed).
+  bool pointer_currently_added = false;
+
   // The screen coordinates per inch on the primary monitor. Defaults to a sane
   // value based on pixel_ratio 1.0.
   double monitor_screen_coordinates_per_inch = kDpPerInch;
@@ -146,12 +153,22 @@ static void GLFWFramebufferSizeCallback(GLFWwindow *window, int width_px,
   FlutterEngineSendWindowMetricsEvent(state->engine, &event);
 }
 
-// When GLFW calls back to the window with a cursor position move, forwards to
-// FlutterEngine as a pointer event with appropriate phase.
-static void GLFWCursorPositionCallbackAtPhase(GLFWwindow *window,
-                                              FlutterPointerPhase phase,
-                                              double x, double y) {
+// Sends a pointer event to the Flutter engine with the given phase.
+static void SendPointerEventWithPhase(GLFWwindow *window,
+                                      FlutterPointerPhase phase, double x,
+                                      double y) {
   auto state = GetSavedEmbedderState(window);
+  // If sending anything other than an add, and the pointer isn't already added,
+  // synthesize an add to satisfy Flutter's expectations about events.
+  if (!state->pointer_currently_added && phase != FlutterPointerPhase::kAdd) {
+    SendPointerEventWithPhase(window, FlutterPointerPhase::kAdd, x, y);
+  }
+  // Don't double-add (e.g., if events are delivered out of order, so an add has
+  // already been synthesized).
+  if (state->pointer_currently_added && phase == FlutterPointerPhase::kAdd) {
+    return;
+  }
+
   FlutterPointerEvent event = {};
   event.struct_size = sizeof(event);
   event.phase = phase;
@@ -162,26 +179,61 @@ static void GLFWCursorPositionCallbackAtPhase(GLFWwindow *window,
           std::chrono::high_resolution_clock::now().time_since_epoch())
           .count();
   FlutterEngineSendPointerEvent(state->engine, &event, 1);
+
+  if (phase == FlutterPointerPhase::kAdd) {
+    state->pointer_currently_added = true;
+  } else if (phase == FlutterPointerPhase::kRemove) {
+    state->pointer_currently_added = false;
+  }
 }
 
-// Reports cursor move to the Flutter engine.
+// Reports the mouse entering or leaving the Flutter view.
+static void GLFWCursorEnterCallback(GLFWwindow *window, int entered) {
+  double x, y;
+  glfwGetCursorPos(window, &x, &y);
+  FlutterPointerPhase phase =
+      entered ? FlutterPointerPhase::kAdd : FlutterPointerPhase::kRemove;
+  SendPointerEventWithPhase(window, phase, x, y);
+}
+
+// Reports mouse movement to the Flutter engine.
 static void GLFWCursorPositionCallback(GLFWwindow *window, double x, double y) {
-  GLFWCursorPositionCallbackAtPhase(window, FlutterPointerPhase::kMove, x, y);
+  bool button_down =
+      glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+  FlutterPointerPhase phase =
+      button_down ? FlutterPointerPhase::kMove : FlutterPointerPhase::kHover;
+  SendPointerEventWithPhase(window, phase, x, y);
 }
 
 // Reports mouse button press to the Flutter engine.
 static void GLFWMouseButtonCallback(GLFWwindow *window, int key, int action,
                                     int mods) {
-  double x, y;
-  if (key == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-    glfwGetCursorPos(window, &x, &y);
-    GLFWCursorPositionCallbackAtPhase(window, FlutterPointerPhase::kDown, x, y);
-    glfwSetCursorPosCallback(window, GLFWCursorPositionCallback);
+  // Flutter currently doesn't understand other buttons, so ignore anything
+  // other than left.
+  if (key != GLFW_MOUSE_BUTTON_LEFT) {
+    return;
   }
-  if (key == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
-    glfwGetCursorPos(window, &x, &y);
-    GLFWCursorPositionCallbackAtPhase(window, FlutterPointerPhase::kUp, x, y);
-    glfwSetCursorPosCallback(window, nullptr);
+
+  double x, y;
+  glfwGetCursorPos(window, &x, &y);
+  FlutterPointerPhase phase = (action == GLFW_PRESS)
+                                  ? FlutterPointerPhase::kDown
+                                  : FlutterPointerPhase::kUp;
+  SendPointerEventWithPhase(window, phase, x, y);
+
+  // If mouse tracking isn't already enabled, turn it on for the duration of
+  // the drag to generate kMove events.
+  bool hover_enabled = GetSavedEmbedderState(window)->hover_tracking_enabled;
+  if (!hover_enabled) {
+    glfwSetCursorPosCallback(
+        window, (action == GLFW_PRESS) ? GLFWCursorPositionCallback : nullptr);
+  }
+  // Disable enter/exit events while the mouse button is down; GLFW will send
+  // an exit event when the mouse button is released, and the pointer should
+  // stay valid until then.
+  if (hover_enabled) {
+    glfwSetCursorEnterCallback(
+        window, (action == GLFW_PRESS) ? nullptr : GLFWCursorEnterCallback);
   }
 }
 
@@ -202,12 +254,23 @@ static void GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
   }
 }
 
+// Enables/disables the callbacks related to mouse tracking.
+static void SetHoverCallbacksEnabled(GLFWwindow *window, bool enabled) {
+  glfwSetCursorEnterCallback(window,
+                             enabled ? GLFWCursorEnterCallback : nullptr);
+  glfwSetCursorPosCallback(window,
+                           enabled ? GLFWCursorPositionCallback : nullptr);
+}
+
 // Flushes event queue and then assigns default window callbacks.
 static void GLFWAssignEventCallbacks(GLFWwindow *window) {
   glfwPollEvents();
   glfwSetKeyCallback(window, GLFWKeyCallback);
   glfwSetCharCallback(window, GLFWCharCallback);
   glfwSetMouseButtonCallback(window, GLFWMouseButtonCallback);
+  if (GetSavedEmbedderState(window)->hover_tracking_enabled) {
+    SetHoverCallbacksEnabled(window, true);
+  }
 }
 
 // Clears default window events.
@@ -215,6 +278,7 @@ static void GLFWClearEventCallbacks(GLFWwindow *window) {
   glfwSetKeyCallback(window, nullptr);
   glfwSetCharCallback(window, nullptr);
   glfwSetMouseButtonCallback(window, nullptr);
+  SetHoverCallbacksEnabled(window, false);
 }
 
 // The Flutter Engine calls out to this function when new platform messages are
@@ -421,6 +485,12 @@ FlutterEngineRef FlutterEmbedderRunEngine(const char *assets_path,
   auto engine_state = new FlutterEngineState();
   engine_state->engine = engine;
   return engine_state;
+}
+
+void FlutterEmbedderSetHoverEnabled(FlutterWindowRef flutter_window,
+                                    bool enabled) {
+  flutter_window->hover_tracking_enabled = enabled;
+  SetHoverCallbacksEnabled(flutter_window->window, enabled);
 }
 
 void FlutterEmbedderRunWindowLoop(FlutterWindowRef flutter_window) {

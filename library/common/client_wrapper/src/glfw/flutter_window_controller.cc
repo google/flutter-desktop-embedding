@@ -82,7 +82,11 @@ PluginRegistrar *FlutterWindowController::GetRegistrarForPlugin(
   // name is ignored. It is part of the API to reduce churn in the future when
   // aligning more closely with the Flutter registrar system.
   return plugin_handler_.get();
-}  // namespace flutter_desktop_embedding
+}
+
+void FlutterWindowController::SetHoverEnabled(bool enabled) {
+  FlutterEmbedderSetHoverEnabled(window_, enabled);
+}
 
 void FlutterWindowController::RunEventLoop() {
   if (window_) {

@@ -73,6 +73,13 @@ class FlutterWindowController {
   // is to use the fully namespace-qualified name of the plugin class.
   PluginRegistrar *GetRegistrarForPlugin(const std::string &plugin_name);
 
+  // Enables or disables hover tracking.
+  //
+  // If hover is enabled, mouse movement will send hover events to the Flutter
+  // engine, rather than only tracking the mouse while the button is pressed.
+  // Defaults to off.
+  void SetHoverEnabled(bool enabled);
+
   // Loops on Flutter window events until the window closes.
   void RunEventLoop();
 
