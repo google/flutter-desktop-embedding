@@ -89,6 +89,14 @@ FDE_EXPORT FlutterEngineRef FlutterEmbedderRunEngine(const char *assets_path,
 // successful. |engine_ref| is no longer valid after this call.
 FDE_EXPORT bool FlutterEmbedderShutDownEngine(FlutterEngineRef engine_ref);
 
+// Enables or disables hover tracking.
+//
+// If hover is enabled, mouse movement will send hover events to the Flutter
+// engine, rather than only tracking the mouse while the button is pressed.
+// Defaults to off.
+FDE_EXPORT void FlutterEmbedderSetHoverEnabled(FlutterWindowRef flutter_window,
+                                               bool enabled);
+
 // Loops on Flutter window events until the window is closed.
 //
 // Once this function returns, FlutterWindowRef is no longer valid, and must
