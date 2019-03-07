@@ -75,6 +75,10 @@ FlutterWindowController::GetRegistrarForPlugin(const std::string &plugin_name) {
   return FlutterEmbedderGetPluginRegistrar(window_, plugin_name.c_str());
 }
 
+void FlutterWindowController::SetHoverEnabled(bool enabled) {
+  FlutterEmbedderSetHoverEnabled(window_, enabled);
+}
+
 void FlutterWindowController::RunEventLoop() {
   if (window_) {
     FlutterEmbedderRunWindowLoop(window_);
