@@ -32,8 +32,7 @@ _wrapper_sources = [
   "src/engine_method_result.cc",
   "src/json_message_codec.cc",
   "src/json_method_codec.cc",
-  "src/plugin_handler.cc",
-  "src/plugin_handler.h",
+  "src/plugin_registrar.cc",
 ]
 
 _wrapper_publish_dir = "$root_out_dir/fde_cpp_wrapper"

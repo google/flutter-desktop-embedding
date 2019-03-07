@@ -14,12 +14,9 @@
 #ifndef PLUGINS_FILE_CHOOSER_LINUX_INCLUDE_FILE_CHOOSER_FILE_CHOOSER_PLUGIN_H_
 #define PLUGINS_FILE_CHOOSER_LINUX_INCLUDE_FILE_CHOOSER_FILE_CHOOSER_PLUGIN_H_
 
-#include <memory>
+// A plugin to show native save/open file choosers.
 
-#include <json/json.h>
-
-#include <flutter_desktop_embedding/method_channel.h>
-#include <flutter_desktop_embedding/plugin_registrar.h>
+#include <flutter_desktop_embedding_core/embedder_plugin_registrar.h>
 
 #ifdef FILE_CHOOSER_PLUGIN_IMPL
 #define FILE_CHOOSER_PLUGIN_EXPORT __attribute__((visibility("default")))
@@ -27,34 +24,15 @@
 #define FILE_CHOOSER_PLUGIN_EXPORT
 #endif
 
-namespace plugins_file_chooser {
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
-// Implements a file chooser plugin.
-class FILE_CHOOSER_PLUGIN_EXPORT FileChooserPlugin
-    : public flutter_desktop_embedding::Plugin {
- public:
-  static void RegisterWithRegistrar(
-      flutter_desktop_embedding::PluginRegistrar *registrar);
+FILE_CHOOSER_PLUGIN_EXPORT void FileChooserRegisterWithRegistrar(
+    FlutterEmbedderPluginRegistrarRef registrar);
 
-  virtual ~FileChooserPlugin();
-
- private:
-  // Creates a plugin that communicates on the given channel.
-  FileChooserPlugin(
-      std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
-          channel);
-
-  // Called when a method is called on |channel_|;
-  void HandleMethodCall(
-      const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
-      std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
-          result);
-
-  // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
-      channel_;
-};
-
-}  // namespace plugins_file_chooser
+#if defined(__cplusplus)
+}  // extern "C"
+#endif
 
 #endif  // PLUGINS_FILE_CHOOSER_LINUX_INCLUDE_FILE_CHOOSER_FILE_CHOOSER_PLUGIN_H_

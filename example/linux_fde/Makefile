@@ -83,7 +83,7 @@ ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(OUT_LIB_DIR)/$(notdir $(lib)))
 WRAPPER_ROOT = $(GN_OUT_DIR)/fde_cpp_wrapper
 WRAPPER_SOURCES = \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
-	$(WRAPPER_ROOT)/plugin_handler.cc \
+	$(WRAPPER_ROOT)/plugin_registrar.cc \
 	$(WRAPPER_ROOT)/engine_method_result.cc
 SOURCES += $(WRAPPER_SOURCES)
 INCLUDE_DIRS += $(WRAPPER_ROOT)/include

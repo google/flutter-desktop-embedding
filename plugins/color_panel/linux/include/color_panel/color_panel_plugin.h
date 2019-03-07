@@ -14,12 +14,9 @@
 #ifndef PLUGINS_COLOR_PANEL_LINUX_INCLUDE_COLOR_PANEL_COLOR_PANEL_PLUGIN_H_
 #define PLUGINS_COLOR_PANEL_LINUX_INCLUDE_COLOR_PANEL_COLOR_PANEL_PLUGIN_H_
 
-#include <memory>
+// A plugin for communicating with a native color picker panel.
 
-#include <json/json.h>
-
-#include <flutter_desktop_embedding/method_channel.h>
-#include <flutter_desktop_embedding/plugin_registrar.h>
+#include <flutter_desktop_embedding_core/embedder_plugin_registrar.h>
 
 #ifdef COLOR_PANEL_PLUGIN_IMPL
 #define COLOR_PANEL_PLUGIN_EXPORT __attribute__((visibility("default")))
@@ -27,46 +24,15 @@
 #define COLOR_PANEL_PLUGIN_EXPORT
 #endif
 
-namespace plugins_color_panel {
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
-// A plugin for communicating with a native color picker panel.
-class COLOR_PANEL_PLUGIN_EXPORT ColorPanelPlugin
-    : public flutter_desktop_embedding::Plugin {
- public:
-  static void RegisterWithRegistrar(
-      flutter_desktop_embedding::PluginRegistrar *registrar);
+COLOR_PANEL_PLUGIN_EXPORT void ColorPanelRegisterWithRegistrar(
+    FlutterEmbedderPluginRegistrarRef registrar);
 
-  virtual ~ColorPanelPlugin();
-
- protected:
-  // The source of a request to hide the panel, either a user action or
-  // a programmatic request via the platform channel.
-  enum class CloseRequestSource { kUserAction, kPlatformChannel };
-
-  // Hides the color picker panel if it is showing.
-  void HidePanel(CloseRequestSource source);
-
- private:
-  // Creates a plugin that communicates on the given channel.
-  ColorPanelPlugin(
-      std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
-          channel);
-
-  // Called when a method is called on |channel_|;
-  void HandleMethodCall(
-      const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
-      std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
-          result);
-
-  // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
-      channel_;
-
-  // Private implementation.
-  class ColorPanel;
-  std::unique_ptr<ColorPanel> color_panel_;
-};
-
-}  // namespace plugins_color_panel
+#if defined(__cplusplus)
+}  // extern "C"
+#endif
 
 #endif  // PLUGINS_COLOR_PANEL_LINUX_INCLUDE_COLOR_PANEL_COLOR_PANEL_PLUGIN_H_

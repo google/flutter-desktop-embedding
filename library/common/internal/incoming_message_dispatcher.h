@@ -28,9 +28,9 @@ namespace flutter_desktop_embedding {
 // Flutter engine, and dispatching incoming messages to those handlers.
 class IncomingMessageDispatcher {
  public:
-  // Creates a new IncomingMessageDispatcher. |window| must remain valid as long
-  // as this object exists.
-  explicit IncomingMessageDispatcher(FlutterWindowRef window);
+  // Creates a new IncomingMessageDispatcher. |messenger| must remain valid as
+  // long as this object exists.
+  explicit IncomingMessageDispatcher(FlutterEmbedderMessengerRef messenger);
   virtual ~IncomingMessageDispatcher();
 
   // Prevent copying.
@@ -66,9 +66,8 @@ class IncomingMessageDispatcher {
   void EnableInputBlockingForChannel(const std::string &channel);
 
  private:
-  // Handle for interacting with the embedding API.
-  // TODO: Provide an interface for the specific functionality needed.
-  FlutterWindowRef window_;
+  // Handle for interacting with the embedding messaging API.
+  FlutterEmbedderMessengerRef messenger_;
 
   // A map from channel names to the FlutterEmbedderMessageCallback that should
   // be called for incoming messages on that channel, along with the void* user

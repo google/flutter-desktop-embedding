@@ -47,12 +47,11 @@ link the libraries for the plugins you want into your application. As with the
 library build, `out/` and `out/include/` will contain all the files you need.
 
 After creating your Flutter window controller, call your plugin's registrar
-method. For instance:
+function. For instance:
 
 ```cpp
-  plugins_color_panel::ColorPanelPlugin::RegisterWithRegistrar(
-      my_flutter_controller.GetRegistrarForPlugin(
-          "plugins_color_panel::ColorPanelPlugin"));
+  ColorPanelRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("ColorPanel"));
 ```
 
 ### Example Application

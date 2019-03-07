@@ -27,7 +27,7 @@
     <ClCompile Include="..\..\out\fde_cpp_wrapper\flutter_window_controller.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\out\fde_cpp_wrapper\plugin_handler.cc">
+    <ClCompile Include="..\..\out\fde_cpp_wrapper\plugin_registrar.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
   </ItemGroup>

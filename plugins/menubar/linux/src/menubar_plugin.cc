@@ -15,15 +15,46 @@
 #include "plugins/menubar/linux/include/menubar/menubar_plugin.h"
 
 #include <gtk/gtk.h>
-#include <stdio.h>
+#include <json/json.h>
+#include <memory>
 
 #include <flutter_desktop_embedding/json_method_codec.h>
+#include <flutter_desktop_embedding/method_channel.h>
+#include <flutter_desktop_embedding/plugin_registrar.h>
 
 #include "plugins/menubar/common/channel_constants.h"
 
 static constexpr char kWindowTitle[] = "Flutter Menubar";
 
 namespace plugins_menubar {
+
+class MENUBAR_PLUGIN_EXPORT MenubarPlugin
+    : public flutter_desktop_embedding::Plugin {
+ public:
+  static void RegisterWithRegistrar(
+      flutter_desktop_embedding::PluginRegistrar *registrar);
+
+  virtual ~MenubarPlugin();
+
+ private:
+  // Creates a plugin that communicates on the given channel.
+  MenubarPlugin(
+      std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+          channel);
+
+  // Called when a method is called on |channel_|;
+  void HandleMethodCall(
+      const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
+      std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
+          result);
+
+  // The MethodChannel used for communication with the Flutter engine.
+  std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
+      channel_;
+
+  class Menubar;
+  std::unique_ptr<Menubar> menubar_;
+};
 
 // static
 void MenubarPlugin::RegisterWithRegistrar(
@@ -188,3 +219,11 @@ void MenubarPlugin::HandleMethodCall(
 }
 
 }  // namespace plugins_menubar
+
+void MenubarRegisterWithRegistrar(FlutterEmbedderPluginRegistrarRef registrar) {
+  // The plugin registrar owns the plugin, registered callbacks, etc., so must
+  // remain valid for the life of the application.
+  static auto *plugin_registrar =
+      new flutter_desktop_embedding::PluginRegistrar(registrar);
+  plugins_menubar::MenubarPlugin::RegisterWithRegistrar(plugin_registrar);
+}

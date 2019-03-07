@@ -15,8 +15,9 @@
 
 namespace flutter_desktop_embedding {
 
-IncomingMessageDispatcher::IncomingMessageDispatcher(FlutterWindowRef window)
-    : window_(window) {}
+IncomingMessageDispatcher::IncomingMessageDispatcher(
+    FlutterEmbedderMessengerRef messenger)
+    : messenger_(messenger) {}
 
 IncomingMessageDispatcher::~IncomingMessageDispatcher() {}
 
@@ -28,8 +29,8 @@ void IncomingMessageDispatcher::HandleMessage(
 
   // Find the handler for the channel; if there isn't one, report the failure.
   if (callbacks_.find(channel) == callbacks_.end()) {
-    FlutterEmbedderSendMessageResponse(window_, message.response_handle,
-                                       nullptr, 0);
+    FlutterEmbedderMessengerSendResponse(messenger_, message.response_handle,
+                                         nullptr, 0);
     return;
   }
   auto &callback_info = callbacks_[channel];
@@ -40,7 +41,7 @@ void IncomingMessageDispatcher::HandleMessage(
   if (block_input) {
     input_block_cb();
   }
-  message_callback(window_, &message, callback_info.second);
+  message_callback(messenger_, &message, callback_info.second);
   if (block_input) {
     input_unblock_cb();
   }

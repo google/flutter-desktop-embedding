@@ -21,12 +21,6 @@
 #include <algorithm>
 #include <iostream>
 
-#ifdef USE_FDE_TREE_PATHS
-#include "../plugin_handler.h"
-#else
-#include "plugin_handler.h"
-#endif
-
 namespace flutter_desktop_embedding {
 
 FlutterWindowController::FlutterWindowController(std::string &icu_data_path)
@@ -70,18 +64,15 @@ bool FlutterWindowController::CreateWindow(
   return true;
 }
 
-PluginRegistrar *FlutterWindowController::GetRegistrarForPlugin(
-    const std::string &plugin_name) {
+FlutterEmbedderPluginRegistrarRef
+FlutterWindowController::GetRegistrarForPlugin(const std::string &plugin_name) {
   if (!window_) {
+    std::cerr << "Cannot get plugin registrar without a window; call "
+                 "CreateWindow first."
+              << std::endl;
     return nullptr;
   }
-  if (!plugin_handler_) {
-    plugin_handler_ = std::make_unique<PluginHandler>(window_);
-  }
-  // Currently, PluginHandler acts as the registrar for all plugins, so the
-  // name is ignored. It is part of the API to reduce churn in the future when
-  // aligning more closely with the Flutter registrar system.
-  return plugin_handler_.get();
+  return FlutterEmbedderGetPluginRegistrar(window_, plugin_name.c_str());
 }
 
 void FlutterWindowController::SetHoverEnabled(bool enabled) {

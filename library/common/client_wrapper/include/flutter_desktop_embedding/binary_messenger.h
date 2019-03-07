@@ -38,6 +38,8 @@ typedef std::function<void(const uint8_t *message, const size_t message_size,
 // channels to and from the Flutter engine.
 class BinaryMessenger {
  public:
+  virtual ~BinaryMessenger() {}
+
   // Sends a binary message to the Flutter side on the specified channel,
   // expecting no reply.
   //
