@@ -48,7 +48,7 @@ typedef struct {
 
 // Function pointer type for message handler callback registration.
 //
-// The user data will whatever was passed to FlutterEmbedderSetMessageHandler
+// The user data will be whatever was passed to FlutterEmbedderSetMessageHandler
 // for the channel the message is received on.
 typedef void (*FlutterEmbedderMessageCallback)(
     FlutterEmbedderMessengerRef /* messenger */,
