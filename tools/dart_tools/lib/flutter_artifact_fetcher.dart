@@ -78,6 +78,14 @@ final Map<String, Map<FlutterArtifactType, _ArtifactDetails>> _artifactDetails =
     FlutterArtifactType.engine: _ArtifactDetails('linux-x64-embedder', [
       'libflutter_engine.so',
       'flutter_embedder.h',
+    ]),
+    FlutterArtifactType.flutter: _ArtifactDetails('linux-x64-embedder', [
+      'libflutter_linux.so',
+      'flutter_export.h',
+      'flutter_messenger.h',
+      'flutter_plugin_registrar.h',
+      'flutter_glfw.h',
+      'cpp_client_wrapper/',
     ])
   },
   'macos': {
@@ -195,8 +203,13 @@ class FlutterArtifactFetcher {
             targetDirectory);
       } else {
         for (final filename in artifactDetails.libraryFiles) {
-          final sourceFile = File(path.join(buildOutputDirectory, filename));
-          await sourceFile.copy(path.join(targetDirectory, filename));
+          final sourcePath = path.join(buildOutputDirectory, filename);
+          final targetPath = path.join(targetDirectory, filename);
+          if (filename.endsWith('/')) {
+            await _copyDirectory(sourcePath, targetPath);
+          } else {
+            await File(sourcePath).copy(path.join(targetDirectory, filename));
+          }
         }
       }
 
@@ -293,14 +306,18 @@ class FlutterArtifactFetcher {
       await _unzipMacOSFramework(innermostZipData, outputDirectory,
           _artifactDetails[platform][artifact].libraryFiles[0]);
     } else {
-      // Windows and Linux have flat archives, so can be easily extracted via
+      // Windows and Linux have simple archives, so can be easily extracted via
       // Archive.
       for (final file in archive) {
         if (file.name.endsWith('.zip')) {
           await _extractArchive(artifact, file.content, outputDirectory);
         } else {
-          final extractedFile = new File(path.join(outputDirectory, file.name));
-          await extractedFile.writeAsBytes(file.content);
+          final outputPath = path.join(outputDirectory, file.name);
+          if (file.isFile) {
+            await File(outputPath).writeAsBytes(file.content);
+          } else {
+            await Directory(outputPath).create(recursive: true);
+          }
         }
       }
     }
@@ -365,6 +382,28 @@ class FlutterArtifactFetcher {
     final directory = new Directory(frameworkPath);
     if (directory.existsSync()) {
       await directory.delete(recursive: true);
+    }
+  }
+
+  /// Copies the directory at [sourcePath] into [targetPath], recursively.
+  Future<void> _copyDirectory(String sourcePath, String targetPath) async {
+    final source = Directory(sourcePath);
+    if (!source.existsSync()) {
+      throw new FlutterArtifactFetchException(
+          'No such directory to copy: $sourcePath');
+    }
+    final destination = Directory(targetPath)..createSync();
+    await for (final file in source.list(followLinks: false)) {
+      final filename = path.basename(file.path);
+      final fileDestination = path.join(targetPath, filename);
+      if (file is File) {
+        await file.copy(fileDestination);
+      } else if (file is Directory) {
+        await _copyDirectory(file.path, fileDestination);
+      } else {
+        throw new FlutterArtifactFetchException(
+            'Unhandled file type while copying: ${file.path}');
+      }
     }
   }
 }
