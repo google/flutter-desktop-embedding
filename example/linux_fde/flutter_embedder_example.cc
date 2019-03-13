@@ -21,7 +21,7 @@
 
 #include <color_panel/color_panel_plugin.h>
 #include <file_chooser/file_chooser_plugin.h>
-#include <flutter_desktop_embedding/flutter_window_controller.h>
+#include <flutter/flutter_window_controller.h>
 #include <menubar/menubar_plugin.h>
 
 namespace {
@@ -63,8 +63,7 @@ int main(int argc, char **argv) {
   arguments.push_back("--disable-dart-asserts");
 #endif
 
-  flutter_desktop_embedding::FlutterWindowController flutter_controller(
-      icu_data_path);
+  flutter::FlutterWindowController flutter_controller(icu_data_path);
 
   // Start the engine.
   if (!flutter_controller.CreateWindow(640, 480, assets_path, arguments)) {

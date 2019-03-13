@@ -16,7 +16,7 @@
 
 // A plugin to control a native menubar.
 
-#include <flutter_desktop_embedding_core/embedder_plugin_registrar.h>
+#include <flutter_plugin_registrar.h>
 
 #ifdef MENUBAR_PLUGIN_IMPL
 #define MENUBAR_PLUGIN_EXPORT __attribute__((visibility("default")))
@@ -29,7 +29,7 @@ extern "C" {
 #endif
 
 MENUBAR_PLUGIN_EXPORT void MenubarRegisterWithRegistrar(
-    FlutterEmbedderPluginRegistrarRef registrar);
+    FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)
 }  // extern "C"
