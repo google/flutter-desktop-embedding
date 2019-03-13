@@ -40,17 +40,14 @@ FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
 GN_OUT_DIR=$(FDE_ROOT)/out
 
 # Libraries
-FLUTTER_EMBEDDER_LIB_NAME=flutter_embedder
-FLUTTER_EMBEDDER_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_EMBEDDER_LIB_NAME).so
-
-FLUTTER_ENGINE_LIB_NAME=flutter_engine
-FLUTTER_ENGINE_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_ENGINE_LIB_NAME).so
+FLUTTER_LIB_NAME=flutter_linux
+FLUTTER_LIB=$(GN_OUT_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 PLUGIN_LIB_NAME_PREFIX=flutter_embedder_
 PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
 	,$(GN_OUT_DIR)/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
 
-ALL_LIBS=$(FLUTTER_EMBEDDER_LIB) $(FLUTTER_ENGINE_LIB) $(PLUGIN_LIBS)
+ALL_LIBS=$(FLUTTER_LIB) $(PLUGIN_LIBS)
 
 # Headers
 PLUGIN_DIRS=$(patsubst %,$(PLUGINS_DIR)/%/linux,$(PLUGIN_NAMES))
@@ -80,7 +77,7 @@ ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(OUT_LIB_DIR)/$(notdir $(lib)))
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the client.
-WRAPPER_ROOT = $(GN_OUT_DIR)/fde_cpp_wrapper
+WRAPPER_ROOT = $(GN_OUT_DIR)/flutter_cpp_wrapper
 WRAPPER_SOURCES = \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
 	$(WRAPPER_ROOT)/plugin_registrar.cc \
@@ -97,8 +94,7 @@ CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp glfw3) \
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
 LDFLAGS=-L$(OUT_LIB_DIR) \
 	$(shell pkg-config --libs jsoncpp glfw3) \
-	-l$(FLUTTER_EMBEDDER_LIB_NAME) \
-	-l$(FLUTTER_ENGINE_LIB_NAME) \
+	-l$(FLUTTER_LIB_NAME) \
 	$(patsubst %,-l$(PLUGIN_LIB_NAME_PREFIX)%,$(PLUGIN_NAMES)) \
 	-Wl,-rpath=\$$ORIGIN/lib
 
@@ -116,7 +112,8 @@ $(BIN_OUT): $(SOURCES) $(ALL_LIBS_OUT)
 
 .PHONY: gnbuild
 gnbuild $(WRAPPER_SOURCES): $(GN_OUT_DIR)
-	$(NINJA_BIN) -C $(GN_OUT_DIR) $(FLUTTER_EMBEDDER_LIB_NAME) $(PLUGIN_NAMES)
+	$(NINJA_BIN) -C $(GN_OUT_DIR) \
+	  $(FLUTTER_LIB_NAME) $(PLUGIN_NAMES) publish_flutter_wrapper
 
 $(GN_OUT_DIR):
 	$(GN_WRAPPER) gen $(GN_OUT_DIR)

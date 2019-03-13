@@ -15,6 +15,7 @@
 import("//build/flutter.gni")
 import("//build/packaging.gni")
 import("//library/engine.gni")
+import("//library/flutter_library.gni")
 
 published_shared_library("flutter_embedder") {
   # GLFW embedding implementation.
@@ -103,6 +104,12 @@ config("relative_engine_headers") {
   include_dirs = [ "$engine_download_dir" ]
 }
 
+# Allows targets depending on the flutter library to use library-style
+# inculdes for its header rather than project-relative.
+config("relative_flutter_library_headers") {
+  include_dirs = [ "$flutter_library_download_dir" ]
+}
+
 group("flutter_engine") {
   public_deps = [
     ":fetch_flutter_engine",
@@ -137,5 +144,113 @@ copy("publish_flutter_engine") {
   ]
   deps = [
     ":fetch_flutter_engine",
+  ]
+}
+
+action("fetch_flutter_library") {
+  script = "//tools/dart_tools/bin/sync_flutter_library.dart"
+  inputs = [
+    "$flutter_tree_path/bin/internal/engine.version",
+  ]
+  outputs = flutter_library_files + flutter_library_headers +
+      flutter_client_wrapper_source + flutter_client_wrapper_headers
+  args = [
+    "--flutter_root=$flutter_tree_path",
+    rebase_path(flutter_library_download_dir, root_build_dir),
+  ]
+  public_configs = [ ":relative_flutter_library_headers" ]
+}
+
+# Provide an alias matching the library name, for simplicity in build calls.
+group("flutter_linux") {
+  deps = [
+    ":publish_flutter_library",
+  ]
+}
+
+copy("_publish_flutter_library_headers") {
+  sources = flutter_library_headers
+
+  outputs = [
+    "$root_out_dir/include/{{source_file_part}}",
+  ]
+  deps = [
+    ":fetch_flutter_library",
+  ]
+}
+
+# Places the downloaded Flutter engine library at the top level of the
+# output directory where built libraries go, so that it doesn't require
+# special link handling, and publishes its headers.
+copy("publish_flutter_library") {
+  sources = flutter_library_files
+
+  outputs = [
+    "$root_out_dir/{{source_file_part}}",
+  ]
+  deps = [
+    ":fetch_flutter_library",
+    ":publish_flutter_wrapper",
+    ":_publish_flutter_library_headers",
+  ]
+}
+
+# Allows targets depending on the flutter client wrappers to use library-style
+# inculdes for its headers rather than project-relative.
+config("_relative_flutter_wrapper_headers") {
+  include_dirs = [ "$flutter_library_download_dir/cpp_client_wrapper/include" ]
+}
+
+# A static library build from the Flutter client wrapper.
+# TODO: This is only used for plugins, but plugins don't need the view
+# controller; revisit approach.
+source_set("flutter_wrapper") {
+  sources = flutter_client_wrapper_source
+  public = flutter_client_wrapper_headers
+
+  # Use shared library settings since this target will be folded into shared
+  # libraries.
+  configs -= default_static_configs
+  configs += default_dynamic_configs
+
+  deps = [ ":fetch_flutter_library" ]
+
+  if (is_linux) {
+    configs += [ "//build/linux/config:jsoncpp" ]
+  }
+  if (is_win) {
+    deps += [
+      "//third_party/jsoncpp:jsoncpp",
+    ]
+  }
+
+  public_configs = [ ":_relative_flutter_wrapper_headers" ]
+}
+
+flutter_wrapper_publish_dir = "$root_out_dir/flutter_cpp_wrapper"
+
+copy("_publish_flutter_wrapper_headers") {
+  sources = flutter_client_wrapper_headers
+
+  outputs = [
+    "$flutter_wrapper_publish_dir/$flutter_client_wrapper_include_dir/{{source_file_part}}",
+  ]
+  deps = [
+    ":fetch_flutter_library",
+  ]
+}
+
+# Places the downloaded Flutter engine library at the top level of the
+# output directory where built libraries go, so that it doesn't require
+# special link handling, and publishes its headers.
+copy("publish_flutter_wrapper") {
+  sources = flutter_client_wrapper_source
+
+  outputs = [
+    "$flutter_wrapper_publish_dir/{{source_file_part}}",
+  ]
+  deps = [
+    ":fetch_flutter_library",
+    ":_publish_flutter_wrapper_headers",
   ]
 }
