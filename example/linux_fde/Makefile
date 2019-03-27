@@ -89,11 +89,9 @@ INCLUDE_DIRS += $(WRAPPER_ROOT)/include
 # Build settings
 CXX=g++ -std=c++14
 CXXFLAGS.release=-DNDEBUG
-CXXFLAGS=-Wall -Werror $(shell pkg-config --cflags jsoncpp glfw3) \
-				 $(CXXFLAGS.$(BUILD))
+CXXFLAGS=-Wall -Werror $(CXXFLAGS.$(BUILD))
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
 LDFLAGS=-L$(OUT_LIB_DIR) \
-	$(shell pkg-config --libs jsoncpp glfw3) \
 	-l$(FLUTTER_LIB_NAME) \
 	$(patsubst %,-l$(PLUGIN_LIB_NAME_PREFIX)%,$(PLUGIN_NAMES)) \
 	-Wl,-rpath=\$$ORIGIN/lib
