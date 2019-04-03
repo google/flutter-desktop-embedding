@@ -22,7 +22,6 @@ group("gn_all") {
   }
   if (is_win) {
     deps = [
-      "//library:flutter_embedder",
       "//third_party/jsoncpp:jsoncpp_test",
     ]
   }
