@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-#include "flutter_desktop_embedding/flutter_window_controller.h"
+#include "flutter/flutter_window_controller.h"
 
 // Include windows.h last, to minimize potential conflicts. The CreateWindow
 // macro needs to be undefined because it prevents calling
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 #ifndef _DEBUG
   arguments.push_back("--disable-dart-asserts");
 #endif
-  flutter_desktop_embedding::FlutterWindowController flutter_controller(
+  flutter::FlutterWindowController flutter_controller(
       icu_data_path);
 
   // Start the engine.
