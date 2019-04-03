@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import("//build/flutter.gni")
-import("//library/flutter_library.gni")
+import("flutter_library.gni")
 
 # Allows targets depending on the flutter library to use library-style
 # inculdes for its header rather than project-relative.
