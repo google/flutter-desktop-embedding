@@ -49,6 +49,9 @@ enum FlutterArtifactType {
 
   /// The full Flutter library, including both the engine and the shell.
   flutter,
+
+  /// The C++ wrapper code.
+  wrapper,
 }
 
 /// Returns the name that should be shown to users for [type].
@@ -79,12 +82,15 @@ final Map<String, Map<FlutterArtifactType, _ArtifactDetails>> _artifactDetails =
       'libflutter_engine.so',
       'flutter_embedder.h',
     ]),
-    FlutterArtifactType.flutter: _ArtifactDetails('linux-x64-embedder', [
+    FlutterArtifactType.flutter: _ArtifactDetails('linux-x64-flutter.zip', [
       'libflutter_linux.so',
       'flutter_export.h',
       'flutter_messenger.h',
       'flutter_plugin_registrar.h',
       'flutter_glfw.h',
+    ]),
+    FlutterArtifactType.wrapper:
+        _ArtifactDetails('flutter-cpp-client-wrapper.zip', [
       'cpp_client_wrapper/',
     ])
   },
@@ -105,6 +111,20 @@ final Map<String, Map<FlutterArtifactType, _ArtifactDetails>> _artifactDetails =
       'flutter_engine.dll.lib',
       'flutter_engine.dll.pdb',
       'flutter_embedder.h',
+    ]),
+    FlutterArtifactType.engine: _ArtifactDetails('windows-x64-flutter.zip', [
+      'flutter_windows.dll',
+      'flutter_windows.dll.exp',
+      'flutter_windows.dll.lib',
+      'flutter_windows.dll.pdb',
+      'flutter_export.h',
+      'flutter_messenger.h',
+      'flutter_plugin_registrar.h',
+      'flutter_glfw.h',
+    ]),
+    FlutterArtifactType.wrapper:
+        _ArtifactDetails('flutter-cpp-client-wrapper.zip', [
+      'cpp_client_wrapper/',
     ])
   },
 };
@@ -147,15 +167,15 @@ class FlutterArtifactFetcher {
         engineHash ?? await engineHashForFlutterTree(flutterRoot);
 
     try {
-      final libraryFile = _artifactDetails[platform][artifact].libraryFiles[0];
+      final primaryFile = _artifactDetails[platform][artifact].libraryFiles[0];
 
       final currentHash = await _lastDownloadedHash(artifact, targetDirectory);
       if (currentHash == null || targetHash != currentHash) {
         await _downloadArtifact(artifact, targetHash, targetDirectory);
         await _setLastDownloadedHash(artifact, targetDirectory, targetHash);
-        print('Downloaded $libraryFile version $targetHash.');
+        print('Downloaded $primaryFile version $targetHash.');
       } else {
-        print('$libraryFile version $targetHash already present.');
+        print('$primaryFile version $targetHash already present.');
       }
     } on FlutterArtifactFetchException catch (e) {
       print(e.message);
