@@ -13,138 +13,12 @@
 # limitations under the License.
 
 import("//build/flutter.gni")
-import("//build/packaging.gni")
-import("//library/engine.gni")
 import("//library/flutter_library.gni")
-
-published_shared_library("flutter_embedder") {
-  # GLFW embedding implementation.
-  if (use_glfw) {
-    public = [
-      "include/flutter_desktop_embedding_core/glfw/embedder.h",
-      "include/flutter_desktop_embedding_core/embedder_messenger.h",
-      "include/flutter_desktop_embedding_core/embedder_plugin_registrar.h",
-    ]
-    sources = [
-      "common/glfw/embedder.cc",
-      "common/glfw/key_event_handler.cc",
-      "common/glfw/key_event_handler.h",
-      "common/glfw/keyboard_hook_handler.h",
-      "common/glfw/text_input_plugin.cc",
-      "common/glfw/text_input_plugin.h",
-    ]
-  }
-
-  deps = [
-    ":flutter_engine",
-  ]
-
-  # Embedding-agnostic shared C++.
-  if (is_linux || is_win) {
-    sources += [
-      "common/internal/incoming_message_dispatcher.cc",
-      "common/internal/incoming_message_dispatcher.h",
-      "common/internal/text_input_model.cc",
-      "common/internal/text_input_model.h",
-    ]
-    public += [ "include/flutter_desktop_embedding_core/fde_export.h" ]
-
-    deps += [
-      "//library/common/client_wrapper:client_wrapper_internal",
-      "//library/common/client_wrapper:publish_wrapper",
-    ]
-  }
-
-  defines = [
-    "FLUTTER_DESKTOP_EMBEDDING_IMPL",
-    "USE_FDE_TREE_PATHS",
-  ]
-
-  public_header_subdir = "flutter_desktop_embedding_core"
-
-  public_configs = [ ":relative_public_headers" ]
-
-  if (is_linux) {
-    configs += [ "//build/linux/config:jsoncpp" ]
-  }
-
-  if (is_win) {
-    deps += [ "//third_party/jsoncpp:jsoncpp" ]
-
-    libs = [ engine_files[2] ]
-  }
-
-  if (use_glfw) {
-    if (is_linux) {
-      libs = [ "GL" ]
-
-      configs += [
-        "//build/linux/config:epoxy",
-        "//build/linux/config:glfw3",
-        "//build/linux/config:gtk3",
-        "//build/linux/config:x11",
-      ]
-    }
-
-    if (is_win) {
-      deps += [ "//library/windows:fetch_glfw" ]
-    }
-  }
-}
-
-# Allows targets depending on this library to use library-style
-# inculdes for its header rather than project-relative.
-config("relative_public_headers") {
-  include_dirs = [ "include" ]
-}
-
-# Allows targets depending on the engine library to use library-style
-# inculdes for its header rather than project-relative.
-config("relative_engine_headers") {
-  include_dirs = [ "$engine_download_dir" ]
-}
 
 # Allows targets depending on the flutter library to use library-style
 # inculdes for its header rather than project-relative.
 config("relative_flutter_library_headers") {
   include_dirs = [ "$flutter_library_download_dir" ]
-}
-
-group("flutter_engine") {
-  public_deps = [
-    ":fetch_flutter_engine",
-    ":publish_flutter_engine",
-  ]
-}
-
-action("fetch_flutter_engine") {
-  script = "//tools/dart_tools/bin/update_flutter_engine.dart"
-  inputs = [
-    "$flutter_tree_path/bin/internal/engine.version",
-  ]
-  outputs = engine_files
-  args = [
-    "--flutter_root=$flutter_tree_path",
-    rebase_path(engine_download_dir, root_build_dir),
-  ]
-  public_configs = [ ":relative_engine_headers" ]
-}
-
-# Places the downloaded Flutter engine library at the top level of the
-# output directory where built libraries go, so that it doesn't require
-# special link handling, and publishes its header.
-copy("publish_flutter_engine") {
-  sources = engine_files
-
-  # Remove the header, since "SDK" clients don't need access to that.
-  sources -= [ engine_files[0] ]
-
-  outputs = [
-    "$root_out_dir/{{source_file_part}}",
-  ]
-  deps = [
-    ":fetch_flutter_engine",
-  ]
 }
 
 action("fetch_flutter_library") {
@@ -161,43 +35,9 @@ action("fetch_flutter_library") {
   public_configs = [ ":relative_flutter_library_headers" ]
 }
 
-# Provide an alias matching the library name, for simplicity in build calls.
-group("flutter_linux") {
-  deps = [
-    ":publish_flutter_library",
-  ]
-}
-
-copy("_publish_flutter_library_headers") {
-  sources = flutter_library_headers
-
-  outputs = [
-    "$root_out_dir/include/{{source_file_part}}",
-  ]
-  deps = [
-    ":fetch_flutter_library",
-  ]
-}
-
-# Places the downloaded Flutter engine library at the top level of the
-# output directory where built libraries go, so that it doesn't require
-# special link handling, and publishes its headers.
-copy("publish_flutter_library") {
-  sources = flutter_library_files
-
-  outputs = [
-    "$root_out_dir/{{source_file_part}}",
-  ]
-  deps = [
-    ":fetch_flutter_library",
-    ":publish_flutter_wrapper",
-    ":_publish_flutter_library_headers",
-  ]
-}
-
 # Allows targets depending on the flutter client wrappers to use library-style
 # inculdes for its headers rather than project-relative.
-config("_relative_flutter_wrapper_headers") {
+config("relative_flutter_wrapper_headers") {
   include_dirs = [ "$flutter_library_download_dir/cpp_client_wrapper/include" ]
 }
 
@@ -224,33 +64,5 @@ source_set("flutter_wrapper") {
     ]
   }
 
-  public_configs = [ ":_relative_flutter_wrapper_headers" ]
-}
-
-flutter_wrapper_publish_dir = "$root_out_dir/flutter_cpp_wrapper"
-
-copy("_publish_flutter_wrapper_headers") {
-  sources = flutter_client_wrapper_headers
-
-  outputs = [
-    "$flutter_wrapper_publish_dir/$flutter_client_wrapper_include_dir/{{source_file_part}}",
-  ]
-  deps = [
-    ":fetch_flutter_library",
-  ]
-}
-
-# Places the downloaded Flutter engine library at the top level of the
-# output directory where built libraries go, so that it doesn't require
-# special link handling, and publishes its headers.
-copy("publish_flutter_wrapper") {
-  sources = flutter_client_wrapper_source
-
-  outputs = [
-    "$flutter_wrapper_publish_dir/{{source_file_part}}",
-  ]
-  deps = [
-    ":fetch_flutter_library",
-    ":_publish_flutter_wrapper_headers",
-  ]
+  public_configs = [ ":relative_flutter_wrapper_headers" ]
 }

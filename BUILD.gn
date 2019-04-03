@@ -15,7 +15,6 @@
 group("gn_all") {
   if (is_linux) {
     deps = [
-      "//library:publish_flutter_library",
       "//plugins/color_panel:color_panel",
       "//plugins/file_chooser:file_chooser",
       "//plugins/menubar:menubar",
