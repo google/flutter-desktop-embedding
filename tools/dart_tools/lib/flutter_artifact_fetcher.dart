@@ -112,7 +112,7 @@ final Map<String, Map<FlutterArtifactType, _ArtifactDetails>> _artifactDetails =
       'flutter_engine.dll.pdb',
       'flutter_embedder.h',
     ]),
-    FlutterArtifactType.engine: _ArtifactDetails('windows-x64-flutter.zip', [
+    FlutterArtifactType.flutter: _ArtifactDetails('windows-x64-flutter.zip', [
       'flutter_windows.dll',
       'flutter_windows.dll.exp',
       'flutter_windows.dll.lib',
@@ -334,6 +334,9 @@ class FlutterArtifactFetcher {
         } else {
           final outputPath = path.join(outputDirectory, file.name);
           if (file.isFile) {
+            // The archive does not contain directory entries on Windows, so
+            // always ensure the directory for the target exists first.
+            await Directory(path.dirname(outputPath)).create(recursive: true);
             await File(outputPath).writeAsBytes(file.content);
           } else {
             await Directory(outputPath).create(recursive: true);
