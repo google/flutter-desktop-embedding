@@ -33,8 +33,8 @@ published_shared_library("file_chooser") {
   ]
 
   deps = [
-    "//library:flutter_embedder",
-    "//library/common/client_wrapper:client_wrapper",
+    "//plugins/common:fetch_flutter_library",
+    "//plugins/common:flutter_wrapper",
   ]
 
   if (is_linux) {

@@ -42,11 +42,19 @@ instance:
       [myFlutterViewController registrarForPlugin:"FLEFileChooserPlugin"]];
 ```
 
-### Linux
+### Linux/Windows
 
 #### Dependencies
 
-First you will need to install the relevant library dependencies:
+You will need GN and ninja to build the plugins:
+* [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
+* [gn](https://gn.googlesource.com/gn/)
+
+Ensure that both binaries are in your path.
+
+##### Linux
+
+The Linux plugins in this project require the following libraries:
 
 * GTK 3
 * jsoncpp
@@ -57,6 +65,28 @@ Installation example for debian-based systems:
 ```
 $ sudo apt-get install libgtk-3-dev libjsoncpp-dev pkg-config
 ```
+
+##### Windows
+
+jsoncpp must be downloaded to `third_party/jsoncpp\src`. You can use
+`tools/dart_tools/bin/fetch_jsoncpp.dart` to simplify this:
+
+```
+> tools\run_dart_tool.bat fetch_jsoncpp third_party\jsoncpp\src
+```
+
+You will also nee the Visual Studio command line build tools, such as
+`vcvars64.bat`, in your path for the GN build to work. They are found under:
+
+```
+<Visual Studio Install Path>\2017\<Version>\VC\Auxiliary\Build
+```
+
+e.g.:
+
+```
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
+```
  
 #### Building
 
@@ -64,8 +94,9 @@ Run the following at the root of this repository to build all plugins:
 
 ```
 $ tools/gn_dart gen out
-$ ninja -C out flutter_embedder
+$ ninja -C out
 ```
+
 Subsequent builds only require the ninja step, as the build will automatically re-run GN generation if necessary.
 
 #### Linking

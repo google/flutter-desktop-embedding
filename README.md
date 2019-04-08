@@ -1,13 +1,14 @@
 # Desktop Embedding for Flutter
 
-The purpose of this project is to support building
-applications that use [Flutter](https://github.com/flutter/flutter)
-on Windows, macOS, and Linux.
+This project was originally created to develop Windows, macOS, and Linux
+implementations of [Flutter](https://github.com/flutter/flutter). That work has
+since become part of the
+[Flutter engine repository](https://github.com/flutter/engine), and this
+project is now just an example of, and test environment for, building
+applications using those libraries.
 
-It consists of libraries that implement [Flutter's embedding
-API](https://github.com/flutter/flutter/wiki/Custom-Flutter-Engine-Embedders),
-handling drawing and mouse/keyboard input, as well as
-optional plugins to access other native platform functionality.
+For information about the shells themselves, see the [Flutter page about
+desktop support](https://github.com/flutter/flutter/wiki/Desktop-shells).
 
 ## How to Use This Code
 
@@ -39,20 +40,10 @@ You will need developer tools for your platform:
 * macOS: The current version of Xcode
 * Windows: Visual Studio 2017
 
-On Linux and Windows you will also need GN and ninja:
-* [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
-* [gn](https://gn.googlesource.com/gn/)
-
-Ensure that both binaries are in your path.
-
 ### Repository Structure
 
-The `library` directory contains the core embedding library code. See the
-[README](library/README.md) there for information on building and using it.
-
 The `example` directory contains an example application built using the library
-for each platform. If you just want to see something running, or want to see
-an example of how to use the library, start there.
+for each platform. See [its README](example/README.md) to get started.
 
 In addition, there is:
 * `plugins`: Plugins which provide access to additional platform functionality.
@@ -60,20 +51,9 @@ In addition, there is:
   plugins](https://flutter.io/developing-packages/). See the
   [README](plugins/README.md) for details.
 * `third_party`: Dependencies used by this repository, beyond Flutter itself.
-* `tools`: Tools used in the development process. Currently these are used
-  by the build systems, but in the future developer utilities providing
-  some functionality similar to the `flutter` tool may be added.
+* `tools`: Tools used in the development process.
 
-## Flutter Application
-
-### Requirements
-
-Since desktop is not a supported platform for Flutter, be sure to read the
-[Flutter application requirements document](Flutter-Requirements.md) for
-important information about how to set up your Flutter application for use
-with this library.
-
-### Debugging
+## Debugging
 
 Debugging of the Flutter side of a desktop application is possible, but requires
 [a modified workflow](Debugging.md).
@@ -102,14 +82,11 @@ dependencies set up correctly.
 ## Caveats
 
 * This is not an officially supported Google product.
-* This is an exploratory effort. See the
-  [Flutter FAQ](https://flutter.io/faq/#can-i-use-flutter-to-build-desktop-apps)
-  for Flutter's official stance on desktop development. The code and examples
-  here, and the desktop Flutter libraries they use, are not intended for
-  production use.
-* Many features that would be useful for desktop development do not exist yet.
-  Check the `plugins` directory for support for native features beyond drawing
-  and event processing. If the feature you need isn't there, file a feature
-  request, or [write a plugin](plugins/README.md#writing-your-own-plugins)!
-* The Linux and Windows implementations currently use GLFW. This is not going
-  to be the final implementation for either platform.
+* The code and examples here, and the desktop Flutter libraries they use, are
+  in early stages, and not intended for production use.
+* There is currently no versioning system for coordinating the version
+  of this project with the required version of Flutter. For now the expectation
+  is that anyone experimenting with this project will be tracking Flutter's
+  master branch. If you encounter build issues, try using a newer version of
+  Flutter. If your issues are specific to the latest Flutter master, please
+  file a bug!

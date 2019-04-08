@@ -16,7 +16,7 @@
 
 // A plugin for communicating with a native color picker panel.
 
-#include <flutter_desktop_embedding_core/embedder_plugin_registrar.h>
+#include <flutter_plugin_registrar.h>
 
 #ifdef COLOR_PANEL_PLUGIN_IMPL
 #define COLOR_PANEL_PLUGIN_EXPORT __attribute__((visibility("default")))
@@ -29,7 +29,7 @@ extern "C" {
 #endif
 
 COLOR_PANEL_PLUGIN_EXPORT void ColorPanelRegisterWithRegistrar(
-    FlutterEmbedderPluginRegistrarRef registrar);
+    FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)
 }  // extern "C"

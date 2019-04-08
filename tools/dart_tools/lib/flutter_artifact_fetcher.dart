@@ -49,6 +49,9 @@ enum FlutterArtifactType {
 
   /// The full Flutter library, including both the engine and the shell.
   flutter,
+
+  /// The C++ wrapper code.
+  wrapper,
 }
 
 /// Returns the name that should be shown to users for [type].
@@ -78,6 +81,17 @@ final Map<String, Map<FlutterArtifactType, _ArtifactDetails>> _artifactDetails =
     FlutterArtifactType.engine: _ArtifactDetails('linux-x64-embedder', [
       'libflutter_engine.so',
       'flutter_embedder.h',
+    ]),
+    FlutterArtifactType.flutter: _ArtifactDetails('linux-x64-flutter.zip', [
+      'libflutter_linux.so',
+      'flutter_export.h',
+      'flutter_messenger.h',
+      'flutter_plugin_registrar.h',
+      'flutter_glfw.h',
+    ]),
+    FlutterArtifactType.wrapper:
+        _ArtifactDetails('flutter-cpp-client-wrapper.zip', [
+      'cpp_client_wrapper/',
     ])
   },
   'macos': {
@@ -97,6 +111,20 @@ final Map<String, Map<FlutterArtifactType, _ArtifactDetails>> _artifactDetails =
       'flutter_engine.dll.lib',
       'flutter_engine.dll.pdb',
       'flutter_embedder.h',
+    ]),
+    FlutterArtifactType.flutter: _ArtifactDetails('windows-x64-flutter.zip', [
+      'flutter_windows.dll',
+      'flutter_windows.dll.exp',
+      'flutter_windows.dll.lib',
+      'flutter_windows.dll.pdb',
+      'flutter_export.h',
+      'flutter_messenger.h',
+      'flutter_plugin_registrar.h',
+      'flutter_glfw.h',
+    ]),
+    FlutterArtifactType.wrapper:
+        _ArtifactDetails('flutter-cpp-client-wrapper.zip', [
+      'cpp_client_wrapper/',
     ])
   },
 };
@@ -139,15 +167,15 @@ class FlutterArtifactFetcher {
         engineHash ?? await engineHashForFlutterTree(flutterRoot);
 
     try {
-      final libraryFile = _artifactDetails[platform][artifact].libraryFiles[0];
+      final primaryFile = _artifactDetails[platform][artifact].libraryFiles[0];
 
       final currentHash = await _lastDownloadedHash(artifact, targetDirectory);
       if (currentHash == null || targetHash != currentHash) {
         await _downloadArtifact(artifact, targetHash, targetDirectory);
         await _setLastDownloadedHash(artifact, targetDirectory, targetHash);
-        print('Downloaded $libraryFile version $targetHash.');
+        print('Downloaded $primaryFile version $targetHash.');
       } else {
-        print('$libraryFile version $targetHash already present.');
+        print('$primaryFile version $targetHash already present.');
       }
     } on FlutterArtifactFetchException catch (e) {
       print(e.message);
@@ -195,8 +223,13 @@ class FlutterArtifactFetcher {
             targetDirectory);
       } else {
         for (final filename in artifactDetails.libraryFiles) {
-          final sourceFile = File(path.join(buildOutputDirectory, filename));
-          await sourceFile.copy(path.join(targetDirectory, filename));
+          final sourcePath = path.join(buildOutputDirectory, filename);
+          final targetPath = path.join(targetDirectory, filename);
+          if (filename.endsWith('/')) {
+            await _copyDirectory(sourcePath, targetPath);
+          } else {
+            await File(sourcePath).copy(path.join(targetDirectory, filename));
+          }
         }
       }
 
@@ -293,14 +326,21 @@ class FlutterArtifactFetcher {
       await _unzipMacOSFramework(innermostZipData, outputDirectory,
           _artifactDetails[platform][artifact].libraryFiles[0]);
     } else {
-      // Windows and Linux have flat archives, so can be easily extracted via
+      // Windows and Linux have simple archives, so can be easily extracted via
       // Archive.
       for (final file in archive) {
         if (file.name.endsWith('.zip')) {
           await _extractArchive(artifact, file.content, outputDirectory);
         } else {
-          final extractedFile = new File(path.join(outputDirectory, file.name));
-          await extractedFile.writeAsBytes(file.content);
+          final outputPath = path.join(outputDirectory, file.name);
+          if (file.isFile) {
+            // The archive does not contain directory entries on Windows, so
+            // always ensure the directory for the target exists first.
+            await Directory(path.dirname(outputPath)).create(recursive: true);
+            await File(outputPath).writeAsBytes(file.content);
+          } else {
+            await Directory(outputPath).create(recursive: true);
+          }
         }
       }
     }
@@ -365,6 +405,28 @@ class FlutterArtifactFetcher {
     final directory = new Directory(frameworkPath);
     if (directory.existsSync()) {
       await directory.delete(recursive: true);
+    }
+  }
+
+  /// Copies the directory at [sourcePath] into [targetPath], recursively.
+  Future<void> _copyDirectory(String sourcePath, String targetPath) async {
+    final source = Directory(sourcePath);
+    if (!source.existsSync()) {
+      throw new FlutterArtifactFetchException(
+          'No such directory to copy: $sourcePath');
+    }
+    final destination = Directory(targetPath)..createSync();
+    await for (final file in source.list(followLinks: false)) {
+      final filename = path.basename(file.path);
+      final fileDestination = path.join(targetPath, filename);
+      if (file is File) {
+        await file.copy(fileDestination);
+      } else if (file is Directory) {
+        await _copyDirectory(file.path, fileDestination);
+      } else {
+        throw new FlutterArtifactFetchException(
+            'Unhandled file type while copying: ${file.path}');
+      }
     }
   }
 }

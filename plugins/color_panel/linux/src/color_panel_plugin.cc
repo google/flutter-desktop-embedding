@@ -18,9 +18,9 @@
 #include <iostream>
 #include <memory>
 
-#include <flutter_desktop_embedding/json_method_codec.h>
-#include <flutter_desktop_embedding/method_channel.h>
-#include <flutter_desktop_embedding/plugin_registrar.h>
+#include <flutter/json_method_codec.h>
+#include <flutter/method_channel.h>
+#include <flutter/plugin_registrar.h>
 
 #include "plugins/color_panel/common/channel_constants.h"
 
@@ -28,10 +28,9 @@ static constexpr char kWindowTitle[] = "Flutter Color Picker";
 
 namespace plugins_color_panel {
 
-class ColorPanelPlugin : public flutter_desktop_embedding::Plugin {
+class ColorPanelPlugin : public flutter::Plugin {
  public:
-  static void RegisterWithRegistrar(
-      flutter_desktop_embedding::PluginRegistrar *registrar);
+  static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
 
   virtual ~ColorPanelPlugin();
 
@@ -46,18 +45,15 @@ class ColorPanelPlugin : public flutter_desktop_embedding::Plugin {
  private:
   // Creates a plugin that communicates on the given channel.
   ColorPanelPlugin(
-      std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
-          channel);
+      std::unique_ptr<flutter::MethodChannel<Json::Value>> channel);
 
   // Called when a method is called on |channel_|;
   void HandleMethodCall(
-      const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
-      std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
-          result);
+      const flutter::MethodCall<Json::Value> &method_call,
+      std::unique_ptr<flutter::MethodResult<Json::Value>> result);
 
   // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
-      channel_;
+  std::unique_ptr<flutter::MethodChannel<Json::Value>> channel_;
 
   // Private implementation.
   class ColorPanel;
@@ -132,11 +128,10 @@ class ColorPanelPlugin::ColorPanel {
 
 // static
 void ColorPanelPlugin::RegisterWithRegistrar(
-    flutter_desktop_embedding::PluginRegistrar *registrar) {
-  auto channel =
-      std::make_unique<flutter_desktop_embedding::MethodChannel<Json::Value>>(
-          registrar->messenger(), kChannelName,
-          &flutter_desktop_embedding::JsonMethodCodec::GetInstance());
+    flutter::PluginRegistrar *registrar) {
+  auto channel = std::make_unique<flutter::MethodChannel<Json::Value>>(
+      registrar->messenger(), kChannelName,
+      &flutter::JsonMethodCodec::GetInstance());
   auto *channel_pointer = channel.get();
 
   // Uses new instead of make_unique due to private constructor.
@@ -152,16 +147,14 @@ void ColorPanelPlugin::RegisterWithRegistrar(
 }
 
 ColorPanelPlugin::ColorPanelPlugin(
-    std::unique_ptr<flutter_desktop_embedding::MethodChannel<Json::Value>>
-        channel)
+    std::unique_ptr<flutter::MethodChannel<Json::Value>> channel)
     : channel_(std::move(channel)), color_panel_(nullptr) {}
 
 ColorPanelPlugin::~ColorPanelPlugin() {}
 
 void ColorPanelPlugin::HandleMethodCall(
-    const flutter_desktop_embedding::MethodCall<Json::Value> &method_call,
-    std::unique_ptr<flutter_desktop_embedding::MethodResult<Json::Value>>
-        result) {
+    const flutter::MethodCall<Json::Value> &method_call,
+    std::unique_ptr<flutter::MethodResult<Json::Value>> result) {
   if (method_call.method_name().compare(kShowColorPanelMethod) == 0) {
     result->Success();
     // There is only one color panel that can be displayed at once.
@@ -192,11 +185,10 @@ void ColorPanelPlugin::HidePanel(CloseRequestSource source) {
 }  // namespace plugins_color_panel
 
 void ColorPanelRegisterWithRegistrar(
-    FlutterEmbedderPluginRegistrarRef registrar) {
+    FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.
-  static auto *plugin_registrar =
-      new flutter_desktop_embedding::PluginRegistrar(registrar);
+  static auto *plugin_registrar = new flutter::PluginRegistrar(registrar);
   plugins_color_panel::ColorPanelPlugin::RegisterWithRegistrar(
       plugin_registrar);
 }

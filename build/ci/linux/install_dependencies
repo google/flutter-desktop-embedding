@@ -16,5 +16,4 @@
 
 set -e
 
-sudo apt-get install -y libglfw3-dev libepoxy-dev libjsoncpp-dev libgtk-3-dev \
-  libx11-dev pkg-config
+sudo apt-get install -y libjsoncpp-dev libgtk-3-dev pkg-config

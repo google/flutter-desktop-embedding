@@ -44,11 +44,8 @@ Future<void> main() async {
     dependencies.add(_Dependency('libraries', 'pkg-config', [
       '--exists',
       '--print-errors',
-      'epoxy',
-      'glfw3',
       'gtk+-3.0',
       'jsoncpp',
-      'x11'
     ]));
   }
   if (Platform.isWindows) {

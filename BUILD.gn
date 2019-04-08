@@ -13,18 +13,15 @@
 # limitations under the License.
 
 group("gn_all") {
-  deps = [
-    "//library:flutter_embedder",
-  ]
   if (is_linux) {
-    deps += [
+    deps = [
       "//plugins/color_panel:color_panel",
       "//plugins/file_chooser:file_chooser",
       "//plugins/menubar:menubar",
     ]
   }
   if (is_win) {
-    deps += [
+    deps = [
       "//third_party/jsoncpp:jsoncpp_test",
     ]
   }
