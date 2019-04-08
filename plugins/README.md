@@ -99,6 +99,12 @@ $ ninja -C out
 
 Subsequent builds only require the ninja step, as the build will automatically re-run GN generation if necessary.
 
+**Note:** If you are using a `.flutter_location_config` file, you will need to run `gn_dart args -C out` to add:
+```
+flutter_tree_path = "path/to/flutter/tree"
+```
+with the same path before running `ninja`, as the GN build does not read from the `.flutter_location_config` file.
+
 #### Linking
 
 Link the library files for the plugins you want to include into your binary. `out/` and `out/include/` will contain
