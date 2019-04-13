@@ -19,10 +19,7 @@
 #include <memory>
 #include <vector>
 
-#include <color_panel/color_panel_plugin.h>
-#include <file_chooser/file_chooser_plugin.h>
 #include <flutter/flutter_window_controller.h>
-#include <menubar/menubar_plugin.h>
 
 namespace {
 
@@ -70,14 +67,6 @@ int main(int argc, char **argv) {
                                        assets_path, arguments)) {
     return EXIT_FAILURE;
   }
-
-  // Register any native plugins.
-  MenubarRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("Menubar"));
-  ColorPanelRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("ColorPanel"));
-  FileChooserRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("FileChooser"));
 
   // Run until the window is closed.
   flutter_controller.RunEventLoop();
