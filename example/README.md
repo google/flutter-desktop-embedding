@@ -1,8 +1,8 @@
 # Desktop Flutter Example
 
-This application shows an example of how to use the [desktop
-libraries](https://github.com/flutter/flutter/wiki/Desktop-shells) on each
-platform, including resource bundling and using plugins.
+This application shows a minimal example of how to use the [desktop
+libraries](https://github.com/flutter/flutter/wiki/Desktop-shells) to build
+a runner on each platform, including resource bundling.
 
 In this example, the platform-specific code lives in `<platform>`. For
 instance, the macOS project is in macos. This follows the pattern of
@@ -18,10 +18,6 @@ package resources differently, etc. If you are are adding Flutter to an
 existing desktop application, you might instead put the Flutter application code
 inside your existing project structure.
 
-The example also serves as a simple test environment for the plugins that are
-part of this project, so is a collection of unrelated functionality rather than
-a usable application.
-
 (**Note:** You may be tempted to pre-build a generic binary based on this
 example that can run any Flutter app. If you do, keep in mind that you *must*
 use the same version of Flutter to build `flutter_assets` as you use to build
@@ -34,10 +30,6 @@ Flutter, it *will* break.)
 There is currently no tool that abstracts the platform-specific builds the
 way `flutter build` or `flutter run` does for iOS and Android, so you will need
 to follow the platform-specific build instructions for your platform below.
-
-The examples build the plugins from source, so you will need to ensure you
-have all the dependencies for
-[building the plugins on your platform](../plugins/README.md) before continuing.
 
 ### Linux
 

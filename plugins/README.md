@@ -118,9 +118,9 @@ function. For instance:
       flutter_controller.GetRegistrarForPlugin("ColorPanel"));
 ```
 
-### Example Application
+### Example Use
 
-See the example application under each platform's directory in the `example`
+See the runner under each platform's directory in the `testbed`
 directory to see an example of including optional plugins on that platform.
 (The Windows example does not yet include any plugins, but the registration
 process would be the same as for Linux.)
@@ -128,7 +128,7 @@ process would be the same as for Linux.)
 ## Writing your own plugins
 
 You can create local packages following the model of plugins here to
-use in your own projects. In particular, the color_panel plugin has examples
+use in your own projects. In particular, the color\_panel plugin has examples
 of typical platform builds for plugins.
 
 ### Caveats
