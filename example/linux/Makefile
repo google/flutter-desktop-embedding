@@ -39,7 +39,7 @@ TOOLS_DIR=$(FDE_ROOT)/tools
 FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
 GN_OUT_DIR=$(FDE_ROOT)/out
 
-OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux_fde
+OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
 FLUTTER_LIBRARY_DIR=$(CACHE_DIR)/flutter_library
 

@@ -30,7 +30,7 @@ This will be the easiest approach to keep working as the project changes, but
 requires that you essentially wrap your whole application in a
 flutter-desktop-embedding checkout.
 
-## Copy the '\*\_fde' Directories
+## Copy the 'linux', 'macos', and/or 'windows' Directories
 
 Starting from the example projects means you don't have to create projects from
 scratch, and since they are self-contained they can be added to an existing

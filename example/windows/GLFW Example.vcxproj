@@ -43,14 +43,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)..\build\windows_fde\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
-    <IntDir>$(ProjectDir)..\build\windows_fde\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>$(ProjectDir)..\..\;$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(ProjectDir)..\..\out\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(IntDir)flutter_library;$(ProjectDir)..\..\out;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)..\build\windows_fde\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
-    <IntDir>$(ProjectDir)..\build\windows_fde\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
+    <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>$(ProjectDir)..\..\;$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(ProjectDir)..\..\out\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(IntDir)flutter_library;$(ProjectDir)..\..\out;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
