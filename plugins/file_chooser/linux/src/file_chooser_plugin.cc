@@ -14,14 +14,13 @@
 #include "plugins/file_chooser/linux/include/file_chooser/file_chooser_plugin.h"
 
 #include <gtk/gtk.h>
-#include <json/json.h>
 #include <iostream>
 #include <memory>
 #include <vector>
 
-#include <flutter/json_method_codec.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
+#include <flutter/standard_method_codec.h>
 
 #include "plugins/file_chooser/common/channel_constants.h"
 
@@ -30,6 +29,25 @@ static constexpr int kCancelResultValue = 0;
 static constexpr int kOkResultValue = 1;
 
 namespace plugins_file_chooser {
+
+namespace {
+
+using flutter::EncodableList;
+using flutter::EncodableMap;
+using flutter::EncodableValue;
+
+// Looks for |key| in |map|, returning the associated value if it is present, or
+// a Null EncodableValue if not.
+const EncodableValue &ValueOrNull(const EncodableMap &map, const char *key) {
+  static EncodableValue null_value;
+  auto it = map.find(EncodableValue(key));
+  if (it == map.end()) {
+    return null_value;
+  }
+  return it->second;
+}
+
+}  // namespace
 
 class FileChooserPlugin : public flutter::Plugin {
  public:
@@ -40,31 +58,32 @@ class FileChooserPlugin : public flutter::Plugin {
  private:
   // Creates a plugin that communicates on the given channel.
   FileChooserPlugin(
-      std::unique_ptr<flutter::MethodChannel<Json::Value>> channel);
+      std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel);
 
   // Called when a method is called on |channel_|;
   void HandleMethodCall(
-      const flutter::MethodCall<Json::Value> &method_call,
-      std::unique_ptr<flutter::MethodResult<Json::Value>> result);
+      const flutter::MethodCall<EncodableValue> &method_call,
+      std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
 
   // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter::MethodChannel<Json::Value>> channel_;
+  std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel_;
 };
 
 // Applies filters to the file chooser.
 //
-// Takes the JSON method args and attempts to apply filters to the file chooser
+// Takes the method args and attempts to apply filters to the file chooser
 // (in the event that they exist).
-static void ProcessFilters(const Json::Value &method_args,
+static void ProcessFilters(const EncodableMap &method_args,
                            GtkFileChooser *chooser) {
-  Json::Value allowed_file_types = method_args[kAllowedFileTypesKey];
-  if (!allowed_file_types.empty() && allowed_file_types.isArray()) {
+  const EncodableValue &allowed_file_types =
+      ValueOrNull(method_args, kAllowedFileTypesKey);
+  if (allowed_file_types.IsList() && !allowed_file_types.ListValue().empty()) {
     GtkFileFilter *filter = gtk_file_filter_new();
     const std::string comma_delimiter = ", ";
     const std::string file_wildcard = "*.";
     std::string filter_name = "";
-    for (const Json::Value &element : allowed_file_types) {
-      std::string pattern = file_wildcard + element.asString();
+    for (const EncodableValue &element : allowed_file_types.ListValue()) {
+      std::string pattern = file_wildcard + element.StringValue();
       filter_name.append(pattern + comma_delimiter);
       gtk_file_filter_add_pattern(filter, pattern.c_str());
     }
@@ -78,28 +97,32 @@ static void ProcessFilters(const Json::Value &method_args,
 
 // Applies attributes from method args to the file chooser.
 //
-// Take the JSON method args and attempts to apply the possible attributes that
+// Take the method args and attempts to apply the possible attributes that
 // would modify the file chooser: whether multiple files can be selected,
 // whether a directory is a valid target, etc.
-static void ProcessAttributes(const Json::Value &method_args,
+static void ProcessAttributes(const EncodableMap &method_args,
                               GtkFileChooser *chooser) {
-  if (!method_args[kAllowsMultipleSelectionKey].isNull()) {
-    gtk_file_chooser_set_select_multiple(
-        chooser, method_args[kAllowsMultipleSelectionKey].asBool());
+  EncodableValue allow_multiple_selection =
+      ValueOrNull(method_args, kAllowsMultipleSelectionKey);
+  if (!allow_multiple_selection.IsNull()) {
+    gtk_file_chooser_set_select_multiple(chooser,
+                                         allow_multiple_selection.BoolValue());
   }
-  Json::Value choose_dirs = method_args[kCanChooseDirectoriesKey];
-  if (!choose_dirs.isNull() && choose_dirs.asBool()) {
+  EncodableValue choose_dirs =
+      ValueOrNull(method_args, kCanChooseDirectoriesKey);
+  if (!choose_dirs.IsNull() && choose_dirs.BoolValue()) {
     gtk_file_chooser_set_action(chooser, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
   }
-  Json::Value start_dir = method_args[kInitialDirectoryKey];
-  if (!start_dir.isNull()) {
-    std::string start_dir_str(start_dir.asString());
-    gtk_file_chooser_set_current_folder(chooser, start_dir_str.c_str());
+  EncodableValue start_dir = ValueOrNull(method_args, kInitialDirectoryKey);
+  if (!start_dir.IsNull()) {
+    gtk_file_chooser_set_current_folder(chooser,
+                                        start_dir.StringValue().c_str());
   }
-  Json::Value initial_file_name = method_args[kInitialFileNameKey];
-  if (!initial_file_name.isNull()) {
-    std::string initial_file_name_str(initial_file_name.asString());
-    gtk_file_chooser_set_current_name(chooser, initial_file_name_str.c_str());
+  EncodableValue initial_file_name =
+      ValueOrNull(method_args, kInitialFileNameKey);
+  if (!initial_file_name.IsNull()) {
+    gtk_file_chooser_set_current_name(chooser,
+                                      initial_file_name.StringValue().c_str());
   }
 }
 
@@ -131,14 +154,14 @@ static GtkWidget *CreateFileChooserFromMethod(const std::string &method,
 
 // Creates a native file chooser based on the method specified.
 //
-// The JSON args determine the modifications to the file chooser, like filters,
+// The args determine the modifications to the file chooser, like filters,
 // being able to choose multiple files, etc.
 static GtkWidget *CreateFileChooser(const std::string &method,
-                                    const Json::Value &args) {
-  Json::Value ok_button_value = args[kConfirmButtonTextKey];
+                                    const EncodableMap &args) {
+  EncodableValue ok_button_value = ValueOrNull(args, kConfirmButtonTextKey);
   std::string ok_button_str;
-  if (!ok_button_value.isNull()) {
-    ok_button_str = ok_button_value.asString();
+  if (!ok_button_value.IsNull()) {
+    ok_button_str = ok_button_value.StringValue();
   }
   GtkWidget *chooser = CreateFileChooserFromMethod(method, ok_button_str);
   if (chooser == nullptr) {
@@ -151,27 +174,27 @@ static GtkWidget *CreateFileChooser(const std::string &method,
   return chooser;
 }
 
-// Creates a valid response JSON object given the list of filenames.
+// Creates a valid channel response object given the list of filenames.
 //
 // An empty array is treated as a cancelled operation.
-static Json::Value CreateResponseObject(
+static EncodableValue CreateResponseObject(
     const std::vector<std::string> &filenames) {
   if (filenames.empty()) {
-    return Json::Value();
+    return EncodableValue();
   }
-  Json::Value response(Json::arrayValue);
+  EncodableList response;
   for (const std::string &filename : filenames) {
-    response.append(filename);
+    response.push_back(EncodableValue(filename));
   }
-  return response;
+  return EncodableValue(std::move(response));
 }
 
 // static
 void FileChooserPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrar *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<Json::Value>>(
+  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
       registrar->messenger(), kChannelName,
-      &flutter::JsonMethodCodec::GetInstance());
+      &flutter::StandardMethodCodec::GetInstance());
   auto *channel_pointer = channel.get();
 
   // Uses new instead of make_unique due to private constructor.
@@ -188,21 +211,21 @@ void FileChooserPlugin::RegisterWithRegistrar(
 }
 
 FileChooserPlugin::FileChooserPlugin(
-    std::unique_ptr<flutter::MethodChannel<Json::Value>> channel)
+    std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel)
     : channel_(std::move(channel)) {}
 
 FileChooserPlugin::~FileChooserPlugin() {}
 
 void FileChooserPlugin::HandleMethodCall(
-    const flutter::MethodCall<Json::Value> &method_call,
-    std::unique_ptr<flutter::MethodResult<Json::Value>> result) {
-  if (!method_call.arguments() || method_call.arguments()->isNull()) {
-    result->Error("Bad Arguments", "Null file chooser method args received");
+    const flutter::MethodCall<EncodableValue> &method_call,
+    std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
+  if (!method_call.arguments() || !method_call.arguments()->IsMap()) {
+    result->Error("Bad Arguments", "Argument map missing or malformed");
     return;
   }
 
-  auto chooser =
-      CreateFileChooser(method_call.method_name(), *method_call.arguments());
+  auto chooser = CreateFileChooser(method_call.method_name(),
+                                   method_call.arguments()->MapValue());
   if (chooser == nullptr) {
     result->NotImplemented();
     return;
@@ -226,7 +249,7 @@ void FileChooserPlugin::HandleMethodCall(
   }
   gtk_widget_destroy(chooser);
 
-  Json::Value response_object(CreateResponseObject(filenames));
+  EncodableValue response_object(CreateResponseObject(filenames));
   result->Success(&response_object);
 }
 

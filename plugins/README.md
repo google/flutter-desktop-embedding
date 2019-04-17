@@ -57,23 +57,15 @@ Ensure that both binaries are in your path.
 The Linux plugins in this project require the following libraries:
 
 * GTK 3
-* jsoncpp
 * pkg-config
 
 Installation example for debian-based systems:
 
 ```
-$ sudo apt-get install libgtk-3-dev libjsoncpp-dev pkg-config
+$ sudo apt-get install libgtk-3-dev pkg-config
 ```
 
 ##### Windows
-
-jsoncpp must be downloaded to `third_party/jsoncpp\src`. You can use
-`tools/dart_tools/bin/fetch_jsoncpp.dart` to simplify this:
-
-```
-> tools\run_dart_tool.bat fetch_jsoncpp third_party\jsoncpp\src
-```
 
 You will also nee the Visual Studio command line build tools, such as
 `vcvars64.bat`, in your path for the GN build to work. They are found under:
@@ -97,18 +89,21 @@ $ tools/gn_dart gen out
 $ ninja -C out
 ```
 
-Subsequent builds only require the ninja step, as the build will automatically re-run GN generation if necessary.
+Subsequent builds only require the ninja step, as the build will automatically
+re-run GN generation if necessary.
 
-**Note:** If you are using a `.flutter_location_config` file, you will need to run `gn_dart args -C out` to add:
+**Note:** If you are using a `.flutter_location_config` file, you will need to
+run `gn_dart args -C out` to add:
 ```
 flutter_tree_path = "path/to/flutter/tree"
 ```
-with the same path before running `ninja`, as the GN build does not read from the `.flutter_location_config` file.
+with the same path before running `ninja`, as the GN build does not read from
+the `.flutter_location_config` file.
 
 #### Linking
 
-Link the library files for the plugins you want to include into your binary. `out/` and `out/include/` will contain
-all the files you need.
+Link the library files for the plugins you want to include into your binary.
+`out/` and `out/include/` will contain all the files you need.
 
 After creating your Flutter window controller, call your plugin's registrar
 function. For instance:
@@ -130,8 +125,3 @@ process would be the same as for Linux.)
 You can create local packages following the model of plugins here to
 use in your own projects. In particular, the color_panel plugin has examples
 of typical platform builds for plugins.
-
-### Caveats
-
-Currently only JSONMethodCodec is supported for Windows/Linux plugins. See
-https://github.com/google/flutter-desktop-embedding/issues/67

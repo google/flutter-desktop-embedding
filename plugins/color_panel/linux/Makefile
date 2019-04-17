@@ -33,7 +33,7 @@ SOURCES=$(shell find src/ $(COMMON_DIR)/ -type f -name '*.cc')
 # paths, so only includes the project root.
 PLUGIN_INCLUDE_DIR=$(FDE_ROOT)
 # System-level shared libraries used by your plugin.
-LIBRARY_DEPENDENCIES=gtk+-3.0 jsoncpp
+LIBRARY_DEPENDENCIES=gtk+-3.0
 
 
 # For dependency on the embedder shared library.

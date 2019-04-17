@@ -28,10 +28,13 @@ _flutter_library_glfw_headers = [
 ]
 
 _flutter_client_wrapper_core_source = [
-    "$flutter_library_download_dir/cpp_client_wrapper/json_method_codec.cc",
+    "$flutter_library_download_dir/cpp_client_wrapper/byte_stream_wrappers.h",
     "$flutter_library_download_dir/cpp_client_wrapper/engine_method_result.cc",
     "$flutter_library_download_dir/cpp_client_wrapper/json_message_codec.cc",
+    "$flutter_library_download_dir/cpp_client_wrapper/json_method_codec.cc",
     "$flutter_library_download_dir/cpp_client_wrapper/plugin_registrar.cc",
+    "$flutter_library_download_dir/cpp_client_wrapper/standard_codec.cc",
+    "$flutter_library_download_dir/cpp_client_wrapper/standard_codec_serializer.h",
 ]
 _flutter_client_wrapper_glfw_source = [
 
@@ -41,6 +44,7 @@ _flutter_client_wrapper_core_headers = [
 
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/basic_message_channel.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/binary_messenger.h",
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/encodable_value.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/engine_method_result.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/json_message_codec.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/json_method_codec.h",
@@ -51,6 +55,8 @@ _flutter_client_wrapper_core_headers = [
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/method_codec.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/method_result.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/plugin_registrar.h",
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/standard_message_codec.h",
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/standard_method_codec.h",
 ]
 _flutter_client_wrapper_glfw_headers = [
 
