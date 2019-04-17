@@ -56,7 +56,7 @@ $ ./example/build/linux_fde/release/flutter_embedder_example
 
 ### macOS
 
-Open the ExampleEmbedder Xcode project under `macos_fde/`, and build and run the
+Open the Runner Xcode project under `macos_fde/`, and build and run the
 example application target.
 
 ### Windows

@@ -17,7 +17,7 @@
                BlueprintIdentifier = "33CC10EC2044A3C60003C045"
                BuildableName = "Example Embedder.app"
                BlueprintName = "Example Embedder"
-               ReferencedContainer = "container:ExampleEmbedder.xcodeproj">
+               ReferencedContainer = "container:Runner.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00380F9121DF178D00097171"
-               BuildableName = "ExampleEmbedderUITests.xctest"
-               BlueprintName = "ExampleEmbedderUITests"
-               ReferencedContainer = "container:ExampleEmbedder.xcodeproj">
+               BuildableName = "RunnerUITests.xctest"
+               BlueprintName = "RunnerUITests"
+               ReferencedContainer = "container:Runner.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -45,7 +45,7 @@
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
             BuildableName = "Example Embedder.app"
             BlueprintName = "Example Embedder"
-            ReferencedContainer = "container:ExampleEmbedder.xcodeproj">
+            ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -68,7 +68,7 @@
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
             BuildableName = "Example Embedder.app"
             BlueprintName = "Example Embedder"
-            ReferencedContainer = "container:ExampleEmbedder.xcodeproj">
+            ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -87,7 +87,7 @@
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
             BuildableName = "Example Embedder.app"
             BlueprintName = "Example Embedder"
-            ReferencedContainer = "container:ExampleEmbedder.xcodeproj">
+            ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

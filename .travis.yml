@@ -33,8 +33,8 @@ matrix:
 
     - os: osx
       language: objective-c
-      xcode_project: example/macos_fde/ExampleEmbedder.xcodeproj
-      xcode_scheme: ExampleEmbedder
+      xcode_project: example/macos_fde/Runner.xcodeproj
+      xcode_scheme: Runner
       install:
         # None of the packaged channels are new enough for the current state
         # of FDE, so for now clone master instead.
