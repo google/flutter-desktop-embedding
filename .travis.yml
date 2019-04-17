@@ -29,11 +29,11 @@ matrix:
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
       script:
-        - make -C example/linux_fde
+        - make -C example/linux
 
     - os: osx
       language: objective-c
-      xcode_project: example/macos_fde/Runner.xcodeproj
+      xcode_project: example/macos/Runner.xcodeproj
       xcode_scheme: Runner
       install:
         # None of the packaged channels are new enough for the current state
