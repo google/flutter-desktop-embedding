@@ -62,13 +62,13 @@ example application target.
 
 ### Windows
 
-Open the `Example Embedder` Visual Studio solution file under `windows\` to
-build and run the GLFW Example project.
+Open the `Runner` Visual Studio solution file under `windows\` to build and run
+the Runner project.
 
 The resulting binary will be in
-`example\build\windows\x64\$(Configuration)\GLFW Example\`. It can be run
+`example\build\windows\x64\$(Configuration)\Runner\`. It can be run
 manually from there. E.g.:
 
 ```
-> .\"example\build\windows\x64\Debug\GLFW Example\GLFW Example.exe"
+> .\"example\build\windows\x64\Debug\Runner\Flutter Desktop Example.exe"
 ```

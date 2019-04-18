@@ -26,5 +26,4 @@ install:
 
 build_script:
   - set "PATH=%APPVEYOR_BUILD_FOLDER%\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
-  # With the GN build done, build the example.
-  - msbuild "example\windows\Example Embedder.sln"
+  - msbuild "example\windows\Runner.sln"
