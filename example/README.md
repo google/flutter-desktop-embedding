@@ -45,14 +45,14 @@ Run `make -C example/linux/`. The example binary and its resources will be
 in `example/build/linux`, and can be run from there:
 
 ```
-$ ./example/build/linux/debug/flutter_embedder_example
+$ ./example/build/linux/debug/flutter_desktop_example
 ```
 
 To build a version with Dart asserts disabled (and thus no DEBUG banner),
 run `make BUILD=release` instead, then launch it with:
 
 ```
-$ ./example/build/linux/release/flutter_embedder_example
+$ ./example/build/linux/release/flutter_desktop_example
 ```
 
 ### macOS
@@ -62,13 +62,13 @@ example application target.
 
 ### Windows
 
-Open the `Example Embedder` Visual Studio solution file under `windows\` to
-build and run the GLFW Example project.
+Open the `Runner` Visual Studio solution file under `windows\` to build and run
+the Runner project.
 
 The resulting binary will be in
-`example\build\windows\x64\$(Configuration)\GLFW Example\`. It can be run
+`example\build\windows\x64\$(Configuration)\Runner\`. It can be run
 manually from there. E.g.:
 
 ```
-> .\"example\build\windows\x64\Debug\GLFW Example\GLFW Example.exe"
+> .\"example\build\windows\x64\Debug\Runner\Flutter Desktop Example.exe"
 ```

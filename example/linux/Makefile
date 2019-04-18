@@ -16,6 +16,8 @@
 # To modify this Makefile for a different application, these are the values
 # that are mostly likely to need to be changed.
 
+# Executable name.
+BINARY_NAME=flutter_desktop_example
 # The location of the flutter-desktop-embedding repository.
 FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
@@ -71,7 +73,7 @@ BUNDLE_OUT_DIR=$(OUT_DIR)/$(BUILD)
 BUNDLE_DATA_DIR=$(BUNDLE_OUT_DIR)/data
 BUNDLE_LIB_DIR=$(BUNDLE_OUT_DIR)/lib
 
-BIN_OUT=$(BUNDLE_OUT_DIR)/flutter_embedder_example
+BIN_OUT=$(BUNDLE_OUT_DIR)/$(BINARY_NAME)
 ICU_DATA_OUT=$(BUNDLE_DATA_DIR)/$(ICU_DATA_NAME)
 ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(BUNDLE_LIB_DIR)/$(notdir $(lib)))
 
