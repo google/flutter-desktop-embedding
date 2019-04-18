@@ -27,7 +27,7 @@ set EXE_NAME=Flutter Desktop Example
 
 set BASE_DIR=%~dp0
 set FLUTTER_APP_DIR=%BASE_DIR%..\
-set PRODUCTS_DIR=%FLUTTER_APP_DIR%build\windows\x86\
+set PRODUCTS_DIR=%FLUTTER_APP_DIR%build\windows\x64\
 
 if "%FLUTTER_CONFIG%"=="release" (
   set BUILD_CONFIG=Release
