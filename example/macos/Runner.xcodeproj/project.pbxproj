@@ -366,7 +366,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$FDE_ROOT\"/tools/build_flutter_assets \"$PROJECT_DIR\"/..\n";
+			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_build_flutter_assets.sh";
 		};
 		33D1A0E822148444006C7A3E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
