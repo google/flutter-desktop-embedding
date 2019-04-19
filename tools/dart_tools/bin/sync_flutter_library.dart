@@ -76,18 +76,11 @@ Future<void> main(List<String> arguments) async {
   }
 
   final fetcher = FlutterArtifactFetcher(platform, flutterRoot);
-  final artifacts = [FlutterArtifactType.flutter];
-  // Automatically sync the C++ wrapper when syncing the C libraries.
-  if (platform == 'windows' || platform == 'linux') {
-    artifacts.add(FlutterArtifactType.wrapper);
-  }
 
   final engineOverrideBuildType = await getEngineOverrideBuildType();
   if (engineOverrideBuildType == null) {
-    for (final artifact in artifacts) {
-      if (!await fetcher.copyCachedArtifacts(artifact, outputRoot)) {
-        exit(1);
-      }
+    if (!await fetcher.copyCachedArtifacts(outputRoot)) {
+      exit(1);
     }
   } else {
     // Currently the only configuration that is supported is a directory
@@ -95,11 +88,9 @@ Future<void> main(List<String> arguments) async {
     // https://github.com/flutter/flutter/wiki/The-flutter-tool#using-a-locally-built-engine-with-the-flutter-tool
     // for context).
     final engineRoot = path.join(path.dirname(flutterRoot), 'engine');
-    for (final artifact in artifacts) {
-      if (!await fetcher.copyLocalBuildArtifacts(
-          artifact, engineRoot, outputRoot, engineOverrideBuildType)) {
-        exit(1);
-      }
+    if (!await fetcher.copyLocalBuildArtifacts(
+        engineRoot, outputRoot, engineOverrideBuildType)) {
+      exit(1);
     }
   }
 }
