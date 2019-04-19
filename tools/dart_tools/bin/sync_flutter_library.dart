@@ -41,16 +41,6 @@ Future<void> main(List<String> arguments) async {
     ..addFlag('skip_min_version_check',
         help: 'If set, skips the initial check that the Flutter tree whose '
             'engine version is being fetched is new enough for the framework.')
-    ..addOption(
-      'hash',
-      // Note: engine_override takes precedence over this flag so that
-      // individual developers can easily use engine_override for development
-      // even if the project is configured to use --hash.
-      help: 'The hash of the engine version to use.\n'
-          'This is only required if you want to override the version;\n'
-          'normally you should use flutter_root instead.\n'
-          'Ignored if an engine_override is present\n',
-    )
     ..addFlag('help', help: 'Prints this usage message.', negatable: false);
   ArgResults parsedArguments;
   try {
@@ -94,11 +84,8 @@ Future<void> main(List<String> arguments) async {
 
   final engineOverrideBuildType = await getEngineOverrideBuildType();
   if (engineOverrideBuildType == null) {
-    final String targetHash =
-        parsedArguments['hash'] ?? await engineHashForFlutterTree(flutterRoot);
     for (final artifact in artifacts) {
-      if (!await fetcher.fetchArtifact(artifact, outputRoot,
-          engineHash: targetHash)) {
+      if (!await fetcher.copyCachedArtifacts(artifact, outputRoot)) {
         exit(1);
       }
     }
@@ -109,7 +96,7 @@ Future<void> main(List<String> arguments) async {
     // for context).
     final engineRoot = path.join(path.dirname(flutterRoot), 'engine');
     for (final artifact in artifacts) {
-      if (!await fetcher.copyLocalArtifact(
+      if (!await fetcher.copyLocalBuildArtifacts(
           artifact, engineRoot, outputRoot, engineOverrideBuildType)) {
         exit(1);
       }
