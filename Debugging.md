@@ -1,19 +1,17 @@
-# Debugging Desktop Flutter Applications
+# Debugging Desktop Flutter Applications in IDEs
 
 While the current workflow for debugging on desktop is not ideal, it is
 possible to do most things, including source-level debugging and hot reload.
 
 Because this relies on workarounds for desktop not being a supported device,
-Flutter changes may break the workflows described below. We hope to extend
-the `flutter` tool to improve support, but in the meantime please file
+Flutter changes may break the workflows described below. Please file
 bugs in this project if you encounter issues with these instructions.
 
 ## Getting the Observatory Port
 
-For all of these approaches, you will need the Observatory port of the
-desktop application. Usually, `flutter run` would handle this, but there's
-currently no way to `flutter run` a desktop application, so you will need to
-provide it manually.
+You will need the Observatory port of the desktop application. Usually, `flutter run`
+would handle this, but there's currently no way to `flutter run` a desktop application
+from an IDE, so you will need to provide it manually.
 
 There are two options:
 
@@ -35,20 +33,6 @@ There are two options:
    however.)
 
 ## Debugging
-
-### Command Line
-
-The `flutter attach` command can connect to a desktop Flutter application
-and provide the same interactive command line that `flutter run` would provide.
-In the directory of the Flutter portion of your application (e.g.,
-`/example/` for this project's example application) run:
-
-```
-$ flutter attach --device-id=flutter-tester --debug-port=49494
-```
-
-Use the port you obtained above in place of `49494`. The `device-id` is
-necessary to bypass checks for an attached iOS or Android device.
 
 ### VS Code
 
