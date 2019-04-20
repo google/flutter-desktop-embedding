@@ -52,6 +52,11 @@ You will need GN and ninja to build the plugins:
 
 Ensure that both binaries are in your path.
 
+**Note**: If you have `depot_tools` installed, ensure that the copy of `gn`
+you install is before it in your path. If you see build failures that
+contain `gn.py: Could not find checkout in any parent of the current path`
+then the `gn` script from `depot_tools` is being used instead.
+
 ##### Linux
 
 The Linux plugins in this project require the following libraries:
