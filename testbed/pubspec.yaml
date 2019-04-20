@@ -7,6 +7,17 @@ dependencies:
 
   cupertino_icons: ^0.1.0
 
+  # Desktop embedder plugins.
+  # Note: In an actual project, these paths would include the
+  # path from your application to the flutter_desktop_embedding
+  # checkout.
+  color_panel:
+    path: ../plugins/color_panel
+  file_chooser:
+    path: ../plugins/file_chooser
+  menubar:
+    path: ../plugins/menubar
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -14,7 +25,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # See https://github.com/flutter/flutter/wiki/Desktop-shells#fonts
   fonts:
     - family: Roboto
       fonts:

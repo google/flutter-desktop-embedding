@@ -12,16 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This serves the same purpose as GeneratedPluginRegistrant in an iOS
-// Flutter project. However, since there is no tooling support for plugins
-// yet, adding a new plugin requires manually adding plugin registration.
+#import <FlutterMacOS/FlutterMacOS.h>
 
-#import "PluginRegistrant.h"
-
-@implementation PluginRegistrant
-
-+ (void)registerWithRegistry:(NSObject<FLEPluginRegistry>*)registry {
-  // Add your plugin regitration here.
-}
-
+@interface PluginRegistrant : NSObject
++ (void)registerWithRegistry:(NSObject<FLEPluginRegistry>*)registry;
 @end

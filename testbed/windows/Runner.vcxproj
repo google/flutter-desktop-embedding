@@ -45,16 +45,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(IntDir)flutter_library;$(LibraryPath)</LibraryPath>
-    <TargetName>Flutter Desktop Example</TargetName>
+    <IncludePath>$(ProjectDir)..\..\;$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(ProjectDir)..\..\out\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(IntDir)flutter_library;$(ProjectDir)..\..\out;$(LibraryPath)</LibraryPath>
+    <TargetName>Testbed</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(IntDir)flutter_library;$(LibraryPath)</LibraryPath>
-    <TargetName>Flutter Desktop Example</TargetName>
+    <IncludePath>$(ProjectDir)..\..\;$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(ProjectDir)..\..\out\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(IntDir)flutter_library;$(ProjectDir)..\..\out;$(LibraryPath)</LibraryPath>
+    <TargetName>Testbed</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -146,7 +146,7 @@
     <ClCompile Include="$(IntDir)flutter_library\cpp_client_wrapper\engine_method_result.cc" />
     <ClCompile Include="$(IntDir)flutter_library\cpp_client_wrapper\flutter_window_controller.cc" />
     <ClCompile Include="$(IntDir)flutter_library\cpp_client_wrapper\plugin_registrar.cc" />
-    <ClCompile Include="flutter_embedder_example.cpp" />
+    <ClCompile Include="testbed.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

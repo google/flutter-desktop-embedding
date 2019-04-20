@@ -30,6 +30,7 @@ matrix:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
       script:
         - make -C example/linux
+        - make -C testbed/linux
 
     - os: osx
       language: objective-c
@@ -46,4 +47,5 @@ matrix:
       # https://travis-ci.community/t/issue-cant-run-macos-ui-tests-with-xcode10-1-image/1445
       script:
         - set -o pipefail && xcodebuild -project $TRAVIS_XCODE_PROJECT -scheme $TRAVIS_XCODE_SCHEME build | xcpretty
+        - set -o pipefail && xcodebuild -project testbed/macos/Runner.xcodeproj -scheme $TRAVIS_XCODE_SCHEME build | xcpretty
 

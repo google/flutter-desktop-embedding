@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This serves the same purpose as GeneratedPluginRegistrant in an iOS
-// Flutter project. However, since there is no tooling support for plugins
-// yet, adding a new plugin requires manually adding plugin registration.
+import Cocoa
 
-#import "PluginRegistrant.h"
+@NSApplicationMain
+class AppDelegate: NSObject, NSApplicationDelegate {
+  @IBOutlet weak var window: NSWindow!
 
-@implementation PluginRegistrant
-
-+ (void)registerWithRegistry:(NSObject<FLEPluginRegistry>*)registry {
-  // Add your plugin regitration here.
+  func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+    return true
+  }
 }
 
-@end
