@@ -41,7 +41,7 @@ for /f "delims=" %%i in ('%DART_BIN_DIR%\dart %BASE_DIR%.\find_vcvars.dart') do 
 if "%VCVARS_PATH%" == "" (
   echo #######################################################################
   echo # Warning: Unable to find vcvars64.bat. Proceeding anyway; if it fails,
-  echo # run vcvars64.bat manually in this consolse then try again.
+  echo # run vcvars64.bat manually in this console then try again.
   echo #######################################################################
 ) else (
   call "%VCVARS_PATH%"

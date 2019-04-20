@@ -22,8 +22,6 @@ BINARY_NAME=flutter_desktop_example
 FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
 SOURCES=flutter_embedder_example.cc
-# Plugins to include (from the flutter-desktop-embedding plugins/ directory).
-PLUGIN_NAMES=color_panel file_chooser menubar
 
 
 # Default build type. For a release build, set BUILD=release.
@@ -36,31 +34,20 @@ BUILD:=debug
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 FLUTTER_EMBEDDER_LIB_DIR=$(FDE_ROOT)/library/linux
-PLUGINS_DIR=$(FDE_ROOT)/plugins
 TOOLS_DIR=$(FDE_ROOT)/tools
 FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
-GN_OUT_DIR=$(FDE_ROOT)/out
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
 FLUTTER_LIBRARY_DIR=$(CACHE_DIR)/flutter_library
 
-# Libraries
 FLUTTER_LIB_NAME=flutter_linux
 FLUTTER_LIB=$(FLUTTER_LIBRARY_DIR)/lib$(FLUTTER_LIB_NAME).so
-
-PLUGIN_LIB_NAME_PREFIX=flutter_embedder_
-PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
-	,$(GN_OUT_DIR)/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
-
-ALL_LIBS=$(FLUTTER_LIB) $(PLUGIN_LIBS)
 
 # Tools
 BUILD_ASSETS_BIN=$(TOOLS_DIR)/build_flutter_assets
 SYNC_FLUTTER_LIBRARY_BIN=$(TOOLS_DIR)/sync_flutter_library
 FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
-GN_WRAPPER=$(TOOLS_DIR)/gn_dart
-NINJA_BIN=ninja
 
 # Resources
 ICU_DATA_NAME=icudtl.dat
@@ -75,7 +62,7 @@ BUNDLE_LIB_DIR=$(BUNDLE_OUT_DIR)/lib
 
 BIN_OUT=$(BUNDLE_OUT_DIR)/$(BINARY_NAME)
 ICU_DATA_OUT=$(BUNDLE_DATA_DIR)/$(ICU_DATA_NAME)
-ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(BUNDLE_LIB_DIR)/$(notdir $(lib)))
+FLUTTER_LIB_OUT=$(BUNDLE_LIB_DIR)/$(notdir $(FLUTTER_LIB))
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the client.
@@ -88,10 +75,7 @@ SOURCES+=$(WRAPPER_SOURCES)
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
-# The GN build places all published headers in a top-level include/.
-PLUGIN_INCLUDE_DIRS+=$(GN_OUT_DIR)/include
-INCLUDE_DIRS=$(FLUTTER_LIBRARY_DIR) $(PLUGIN_INCLUDE_DIRS) \
-	$(WRAPPER_INCLUDE_DIR)
+INCLUDE_DIRS=$(FLUTTER_LIBRARY_DIR) $(WRAPPER_INCLUDE_DIR)
 
 # The stamp file created by sync_flutter_library.
 FLUTTER_LIBRARY_STAMP_FILE=$(FLUTTER_LIBRARY_DIR)/.last_flutter_version
@@ -103,7 +87,6 @@ CXXFLAGS=-Wall -Werror $(CXXFLAGS.$(BUILD))
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
 LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 	-l$(FLUTTER_LIB_NAME) \
-	$(patsubst %,-l$(PLUGIN_LIB_NAME_PREFIX)%,$(PLUGIN_NAMES)) \
 	-Wl,-rpath=\$$ORIGIN/lib
 
 # Targets
@@ -112,9 +95,9 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 all: $(BIN_OUT) bundle
 
 .PHONY: bundle
-bundle: $(ICU_DATA_OUT) $(ALL_LIBS_OUT) bundleflutterassets
+bundle: $(ICU_DATA_OUT) $(FLUTTER_LIB_OUT) bundleflutterassets
 
-$(BIN_OUT): $(SOURCES) $(ALL_LIBS_OUT)
+$(BIN_OUT): $(SOURCES) $(FLUTTER_LIB_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
@@ -131,22 +114,9 @@ $(FLUTTER_LIBRARY_STAMP_FILE): | sync_flutter_library
 sync_flutter_library:
 	$(TOOLS_DIR)/sync_flutter_library $(FLUTTER_LIBRARY_DIR)
 
-# Run the GN build for anything depending on the plugins, but use order-only
-# so that it doesn't trigger rebuilds of all dependencies every time.
-$(PLUGIN_LIBS): | gnbuild
-
-.PHONY: gnbuild
-gnbuild $(WRAPPER_SOURCES): $(GN_OUT_DIR)
-	$(NINJA_BIN) -C $(GN_OUT_DIR) $(PLUGIN_NAMES)
-
-$(GN_OUT_DIR):
-	$(GN_WRAPPER) gen $(GN_OUT_DIR)
-
-# This is slightly inefficient in that it copies all libraries if any of them
-# changes, but is far simpler than setting up individual rules for each library.
-$(ALL_LIBS_OUT): $(ALL_LIBS)
+$(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 	mkdir -p $(BUNDLE_LIB_DIR)
-	cp $(ALL_LIBS) $(BUNDLE_LIB_DIR)
+	cp $(FLUTTER_LIB) $(BUNDLE_LIB_DIR)
 
 $(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
 	mkdir -p $(dir $(ICU_DATA_OUT))

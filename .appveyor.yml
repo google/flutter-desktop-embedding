@@ -27,3 +27,4 @@ install:
 build_script:
   - set "PATH=%APPVEYOR_BUILD_FOLDER%\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
   - msbuild "example\windows\Runner.sln"
+  - msbuild "testbed\windows\Runner.sln"
