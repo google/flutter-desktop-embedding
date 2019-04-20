@@ -31,44 +31,46 @@ Flutter, it *will* break.)
 
 ## Building and Running the Example
 
-There is currently no tool that abstracts the platform-specific builds the
-way `flutter build` or `flutter run` does for iOS and Android, so you will need
-to follow the platform-specific build instructions for your platform below.
-
 The examples build the plugins from source, so you will need to ensure you
 have all the dependencies for
 [building the plugins on your platform](../plugins/README.md) before continuing.
 
-### Linux
+Also, ensure that you are on a recent version of the [Flutter master
+channel](https://github.com/flutter/flutter/wiki/Flutter-build-release-channels).
 
-Run `make -C example/linux/`. The example binary and its resources will be
-in `example/build/linux`, and can be run from there:
+### Enable Desktop Support
 
-```
-$ ./example/build/linux/debug/flutter_desktop_example
-```
+The desktop support in the `flutter` tool is still highly experimental, and
+must be enabled with an environment variable. Run the command below in the
+terminal/console you will be using to build and run the example.
 
-To build a version with Dart asserts disabled (and thus no DEBUG banner),
-run `make BUILD=release` instead, then launch it with:
-
-```
-$ ./example/build/linux/release/flutter_desktop_example
-```
-
-### macOS
-
-Open the Runner Xcode project under `macos/`, and build and run the
-example application target.
-
-### Windows
-
-Open the `Runner` Visual Studio solution file under `windows\` to build and run
-the Runner project.
-
-The resulting binary will be in
-`example\build\windows\x64\$(Configuration)\Runner\`. It can be run
-manually from there. E.g.:
+On macOS or Linux:
 
 ```
-> .\"example\build\windows\x64\Debug\Runner\Flutter Desktop Example.exe"
+export ENABLE_FLUTTER_DESKTOP=true
 ```
+
+On Windows:
+
+```
+$env:ENABLE_FLUTTER_DESKTOP="true"
+```
+
+### Build and Run
+
+You can now run using the `flutter` tool as you would for mobile. In the
+'example' directory, run:
+
+```
+flutter run
+```
+
+or
+
+```
+flutter run --release
+```
+
+**Note:** There is still no `flutter create` support for for desktop;
+this works only in a project that has already been configured manually for
+desktop builds. See [the quick-start guide](../Quick-Start.md) for details.
