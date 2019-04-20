@@ -18,7 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="flutter_embedder_example.cpp">
+    <ClCompile Include="testbed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="$(IntDir)flutter_library\cpp_client_wrapper\engine_method_result.cc">

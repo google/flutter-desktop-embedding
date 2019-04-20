@@ -17,11 +17,11 @@
 # that are mostly likely to need to be changed.
 
 # Executable name.
-BINARY_NAME=flutter_desktop_example
+BINARY_NAME=testbed
 # The location of the flutter-desktop-embedding repository.
 FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
-SOURCES=flutter_embedder_example.cc
+SOURCES=testbed.cc
 # Plugins to include (from the flutter-desktop-embedding plugins/ directory).
 PLUGIN_NAMES=color_panel file_chooser menubar
 

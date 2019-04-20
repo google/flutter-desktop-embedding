@@ -30,7 +30,7 @@ readonly flutter_app_dir="${base_dir}/.."
 readonly products_dir="${flutter_app_dir}/build/macos/Build/Products"
 
 # Xcode configuration
-readonly app_name="Flutter Desktop Example"
+readonly app_name="Testbed"
 if [[ "${flutter_config}" == "release" ]]; then
   readonly build_config="Release"
 else

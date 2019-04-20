@@ -23,7 +23,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 set FLUTTER_CONFIG=%1
 
 set PROJECT_NAME=Runner
-set EXE_NAME=Flutter Desktop Example
+set EXE_NAME=Testbed
 
 set BASE_DIR=%~dp0
 set FLUTTER_APP_DIR=%BASE_DIR%..\

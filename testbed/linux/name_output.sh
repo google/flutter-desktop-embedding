@@ -29,4 +29,4 @@ readonly flutter_app_dir="${base_dir}/.."
 # This must match the paths in the Makefile.
 readonly products_dir="${flutter_app_dir}/build/linux"
 
-echo "${products_dir}/${flutter_config}/flutter_desktop_example"
+echo "${products_dir}/${flutter_config}/testbed"
