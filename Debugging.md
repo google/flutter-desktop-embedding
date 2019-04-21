@@ -1,64 +1,52 @@
 # Debugging Desktop Flutter Applications in IDEs
 
-While the current workflow for debugging on desktop is not ideal, it is
-possible to do most things, including source-level debugging and hot reload.
+## VS Code
 
-Because this relies on workarounds for desktop not being a supported device,
-Flutter changes may break the workflows described below. Please file
-bugs in this project if you encounter issues with these instructions.
-
-## Getting the Observatory Port
-
-You will need the Observatory port of the desktop application. Usually, `flutter run`
-would handle this, but there's currently no way to `flutter run` a desktop application
-from an IDE, so you will need to provide it manually.
-
-There are two options:
-
-1. **Find the port in the console.** After launching your application, check
-   the console output (your terminal in Linux,
-   [Console](https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/debugging_with_xcode/chapters/debugging_tools.html)
-   in Xcode, etc.) for a line like:
-   ```
-   Observatory listening on http://127.0.0.1:49494/
-   ```
-   The port in this case is `49494`. This will change on every run of the
-   application, so you'll need to repeat this every time you relaunch.
-
-1. **Hard-code the port**. In your embedder code, add `--observatory-port=49494`
-   (substituting a port of your choice) to the list of arguments passed to the
-   engine. If you are using `example/`, or code based on it, look for the
-   line that adds `--disable-dart-asserts` for an example of adding arguments.
-   (Be sure not to add the `observatory-port` argument inside the `#if`,
-   however.)
-
-## Debugging
-
-### VS Code
-
-Open the Flutter portion of your application (e.g., `/example/`).
-Add a [launch
-configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
-like the following, substituting your Observatory port:
-
+To enable desktop support in Dart Code, add the flag to
+[dart.env](https://dartcode.org/docs/settings/#dartenv) in the VS Code
+`settings.json`:
 ```
-  {
-    "name": "Flutter Desktop Attach",
-    "request": "attach",
-    "deviceId": "flutter-tester",
-    "observatoryUri": "http://127.0.0.1:49494/",
-    "type": "dart"
-  }
+"dart.env": {
+    "FLUTTER_DESKTOP_EMBEDDING": true,
+}
 ```
 
-You will likely want to hard-code your observatory port, otherwise you will
-need to change `launch.json` every time you relaunch the app.
+You may need to restart VS Code for this change to take effect.
 
-In addition to the Flutter debug commands, source-level debugging with pause,
-continue, variable inspection, etc. should all work.
+### Running
 
+Once desktop support is enabled, you can run and debug using the normal
+Dart Code workflow.
 
-### IntelliJ
+However, in order to use hot reload you must disable 
+"Track Widget Creation", or the application will crash on hot reload.
+This cannot be done from the settings UI, so you must add:
+```
+    "dart.flutterTrackWidgetCreation": true
+```
+to settings.json (The default setting is unchecked, but this
+is not the same as disabled; as described in the UI, this causes it
+to be dynamically set based on the run mode.)
 
-**TBD**. If you test IntelliJ and are able to attach successfully, please
-contribute instructions!
+This requirement is due to
+[a bug](https://github.com/flutter/flutter/issues/31274) in the
+desktop `flutter build` support, and will be removed in the future.
+
+### Attaching
+
+**Attaching from Dart Code is currently broken with Flutter master
+due to changes in the Flutter observatory.** Watch [this Dart Code
+bug](https://github.com/Dart-Code/Dart-Code/issues/1632) for updates.
+
+## IntelliJ
+
+### Running
+
+It is not currently possible to set the `ENABLE_FLUTTER_DESKTOP` environment
+variable in IntelliJ.
+
+### Attaching
+
+**TBD**. It may be possible to create an attach configuration for IntelliJ
+using the observatory URI printed to the console. If you test IntelliJ and
+are able to attach successfully, please contribute instructions!
