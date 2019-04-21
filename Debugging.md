@@ -22,7 +22,7 @@ However, in order to use hot reload you must disable
 "Track Widget Creation", or the application will crash on hot reload.
 This cannot be done from the settings UI, so you must add:
 ```
-    "dart.flutterTrackWidgetCreation": true
+    "dart.flutterTrackWidgetCreation": false
 ```
 to settings.json (The default setting is unchecked, but this
 is not the same as disabled; as described in the UI, this causes it
