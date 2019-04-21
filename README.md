@@ -39,7 +39,7 @@ You will need developer tools for your platform:
 * Linux: A recent version of GCC
 * macOS: The current version of Xcode
 * Windows: Visual Studio 2017, including the "Desktop development with C++" workload.
-  (2019 will likely work as well, but has not yet been tested.)
+  (See [#342](https://github.com/google/flutter-desktop-embedding/issues/342) for 2019.)
 
 ### Repository Structure
 
