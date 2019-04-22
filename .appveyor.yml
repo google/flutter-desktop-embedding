@@ -26,5 +26,8 @@ install:
 
 build_script:
   - set "PATH=%APPVEYOR_BUILD_FOLDER%\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
-  - msbuild "example\windows\Runner.sln"
-  - msbuild "testbed\windows\Runner.sln"
+  - set "ENABLE_FLUTTER_DESKTOP=true"
+  - ps: cd %APPVEYOR_BUILD_FOLDER%\example
+  - %APPVEYOR_BUILD_FOLDER%\..\flutter\bin\flutter build -v windows --debug
+  - ps: cd %APPVEYOR_BUILD_FOLDER%\testbed
+  - %APPVEYOR_BUILD_FOLDER%\..\flutter\bin\flutter build -v windows --debug
