@@ -23,7 +23,6 @@ import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
 import '../lib/flutter_utils.dart';
-import '../lib/run_command.dart';
 
 Future<void> main(List<String> arguments) async {
   final parser = new ArgParser()
@@ -31,6 +30,8 @@ Future<void> main(List<String> arguments) async {
         help: 'The root of the Flutter tree to run \'flutter\' from.\n'
             'Defaults to a "flutter" directory next to this repository.',
         defaultsTo: getDefaultFlutterRoot())
+    ..addFlag('track-widget-creation',
+        help: 'Passed to flutter build.', negatable: false)
     ..addFlag('help', help: 'Prints this usage message.', negatable: false);
   ArgResults parsedArguments;
 
@@ -46,15 +47,11 @@ Future<void> main(List<String> arguments) async {
   }
   final flutterApplicationDir = parsedArguments.rest[0];
 
-  final flutterName = Platform.isWindows ? 'flutter.bat' : 'flutter';
-  final flutterBinary =
-      path.join(parsedArguments['flutter_root'], 'bin', flutterName);
-  if (!File(flutterBinary).existsSync()) {
-    print("Error: No flutter binary at '$flutterBinary'");
-    exit(1);
-  }
-
   final buildArguments = ['build', 'bundle'];
+
+  if (parsedArguments['track-widget-creation']) {
+    buildArguments.add('--track-widget-creation');
+  }
 
   // Add --local-engine if an override is specified. --local-engine-src-path
   // isn't provided since per
@@ -67,7 +64,7 @@ Future<void> main(List<String> arguments) async {
     buildArguments.insertAll(0, ['--local-engine', engineOverride]);
   }
 
-  await runCommand(flutterBinary, buildArguments,
+  await runFlutterCommand(parsedArguments['flutter_root'], buildArguments,
       workingDirectory: flutterApplicationDir);
 }
 

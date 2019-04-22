@@ -1,0 +1,15 @@
+.atom/
+.idea
+.vscode/
+.packages
+.pub/
+android/
+build/
+ios/
+packages
+.flutter-plugins
+# Since the current expectation is that clients are using Flutter head,
+# and Dart SDK changes unlock dependencies, pubspec.lock isn't useful.
+# Ignore it since it just creates noise. When there's a system in place
+# for versioning this project relative to Flutter, remove this.
+pubspec.lock

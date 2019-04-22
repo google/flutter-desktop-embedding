@@ -14,7 +14,6 @@
 @echo off
 
 set FDE_ROOT=%~dp0..\..\..
-set GN_OUT_DIR=%FDE_ROOT%\out
 set TOOLS_DIR=%FDE_ROOT%\tools
 
 set INTERMEDIATE_DIR=%~1
@@ -24,8 +23,3 @@ set FLUTTER_LIBRARY_DIR=%INTERMEDIATE_DIR%flutter_library
 echo %TOOLS_DIR%\sync_flutter_library %FLUTTER_LIBRARY_DIR%
 call %TOOLS_DIR%\sync_flutter_library "%FLUTTER_LIBRARY_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
-
-:: Build plugins.
-call %FDE_ROOT%\tools\gn_dart gen %GN_OUT_DIR%
-if %errorlevel% neq 0 exit /b %errorlevel%
-ninja -C %GN_OUT_DIR%
