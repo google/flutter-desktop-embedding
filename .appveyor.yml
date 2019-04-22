@@ -28,6 +28,8 @@ build_script:
   - set "PATH=%APPVEYOR_BUILD_FOLDER%\bin;%APPVEYOR_BUILD_FOLDER%\..\flutter\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
   - set "ENABLE_FLUTTER_DESKTOP=true"
   - ps: cd %APPVEYOR_BUILD_FOLDER%\example
+  - flutter packages get
   - flutter build -v windows --debug
   - ps: cd %APPVEYOR_BUILD_FOLDER%\testbed
+  - flutter packages get
   - flutter build -v windows --debug

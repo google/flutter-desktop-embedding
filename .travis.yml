@@ -27,11 +27,15 @@ matrix:
         - git clone -b master https://github.com/flutter/flutter.git $TRAVIS_BUILD_DIR/../flutter
         - build/ci/linux/install_gn bin
       before_script:
-        - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
+        - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin:$TRAVIS_BUILD_DIR/../flutter/bin
         - export ENABLE_FLUTTER_DESKTOP=true
       script:
-        - cd $TRAVIS_BUILD_DIR/example && $TRAVIS_BUILD_DIR/../flutter/bin/flutter build -v linux --debug
-        - cd $TRAVIS_BUILD_DIR/testbed && $TRAVIS_BUILD_DIR/../flutter/bin/flutter build -v linux --debug
+        - cd $TRAVIS_BUILD_DIR/example
+        - flutter packages get
+        - flutter build -v linux --debug
+        - cd $TRAVIS_BUILD_DIR/testbed
+        - flutter packages get
+        - flutter build -v linux --debug
 
     - os: osx
       language: objective-c
@@ -43,8 +47,13 @@ matrix:
         #- build/ci/install_flutter $TRAVIS_BUILD_DIR/..
         - git clone -b master https://github.com/flutter/flutter.git $TRAVIS_BUILD_DIR/../flutter
       before_script:
+        - export PATH=$PATH:$TRAVIS_BUILD_DIR/../flutter/bin
         - export ENABLE_FLUTTER_DESKTOP=true
       script:
-        - cd $TRAVIS_BUILD_DIR/example && $TRAVIS_BUILD_DIR/../flutter/bin/flutter build -v macos --debug
-        - cd $TRAVIS_BUILD_DIR/testbed && $TRAVIS_BUILD_DIR/../flutter/bin/flutter build -v macos --debug
+        - cd $TRAVIS_BUILD_DIR/example
+        - flutter packages get
+        - flutter build -v macos --debug
+        - cd $TRAVIS_BUILD_DIR/testbed
+        - flutter packages get
+        - flutter build -v macos --debug
 
