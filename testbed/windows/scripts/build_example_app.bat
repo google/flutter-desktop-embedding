@@ -29,7 +29,7 @@ if not exist "%DATA_DIR%" call mkdir "%DATA_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Build the Flutter assets.
-call %TOOLS_DIR%\build_flutter_assets %FLUTTER_APP_DIR%
+call %TOOLS_DIR%\build_flutter_assets %FLUTTER_APP_DIR% %EXTRA_BUNDLE_FLAGS%
 if %errorlevel% neq 0 exit /b %errorlevel%
 :: Copy them to the data directory.
 if exist "%TARGET_ASSET_DIR%" call rmdir /s /q "%TARGET_ASSET_DIR%"
