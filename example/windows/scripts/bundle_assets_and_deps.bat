@@ -13,9 +13,7 @@
 :: limitations under the License.
 @echo off
 
-set FDE_ROOT=%~dp0..\..\..
 set FLUTTER_APP_DIR=%~dp0..\..
-set TOOLS_DIR=%FDE_ROOT%\tools
 set ICU_DATA_SOURCE=%FLUTTER_ROOT%\bin\cache\artifacts\engine\windows-x64\icudtl.dat
 set ASSET_DIR_NAME=flutter_assets
 
@@ -28,7 +26,8 @@ if not exist "%DATA_DIR%" call mkdir "%DATA_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Build the Flutter assets.
-call %TOOLS_DIR%\build_flutter_assets %FLUTTER_APP_DIR% %EXTRA_BUNDLE_FLAGS%
+cd "%FLUTTER_APP_DIR%"
+call %FLUTTER_ROOT%\bin\flutter build bundle %EXTRA_BUNDLE_FLAGS%
 if %errorlevel% neq 0 exit /b %errorlevel%
 :: Copy them to the data directory.
 if exist "%TARGET_ASSET_DIR%" call rmdir /s /q "%TARGET_ASSET_DIR%"
