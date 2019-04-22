@@ -16,8 +16,7 @@
 set FDE_ROOT=%~dp0..\..\..
 set FLUTTER_APP_DIR=%~dp0..\..
 set TOOLS_DIR=%FDE_ROOT%\tools
-for /f "delims=" %%i in ('%TOOLS_DIR%\flutter_location') do set FLUTTER_DIR=%%i
-set ICU_DATA_SOURCE=%FLUTTER_DIR%\bin\cache\artifacts\engine\windows-x64\icudtl.dat
+set ICU_DATA_SOURCE=%FLUTTER_ROOT%\bin\cache\artifacts\engine\windows-x64\icudtl.dat
 set ASSET_DIR_NAME=flutter_assets
 
 set FLUTTER_LIBRARY_DIR=%~1
