@@ -95,6 +95,7 @@
 		33D1A10322148B71006C7A3E /* FlutterMacOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterMacOS.framework; path = ../flutter_framework/FlutterMacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
+		9740EEB21CF90195004394FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,21 +143,21 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		D76E93BA226BCA8F00F7932B /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				9740EEB21CF90195004384FC /* Debug.xcconfig */,
+				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
+			);
+			name = "Configs";
+			sourceTree = "<group>";
+		};
 		33D1A10222148A83006C7A3E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				33D1A10322148B71006C7A3E /* FlutterMacOS.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		D76E93BA226BCA8F00F7932B /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				9740EEB21CF90195004384FC /* Debug.xcconfig */,
-				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

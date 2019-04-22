@@ -47,6 +47,9 @@
 		33E98C0521824E4000EB88EF /* FlutterEmbedderMenubar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329009320D84F6E002E5F16 /* FlutterEmbedderMenubar.framework */; };
 		33E98C0721824E4800EB88EF /* FlutterEmbedderFileChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329004F20D2EC7C002E5F16 /* FlutterEmbedderFileChooser.framework */; };
 		33E98C0821824E4C00EB88EF /* FlutterEmbedderColorPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329FFFB20C9F5AC002E5F16 /* FlutterEmbedderColorPanel.framework */; };
+		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
+		9740EEB21CF90195004394FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -224,6 +227,15 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		D76E93BA226BCA8F00F7932B /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				9740EEB21CF90195004384FC /* Debug.xcconfig */,
+				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
+			);
+			name = "Configs";
+			sourceTree = "<group>";
+		};
 		33D1A10222148A83006C7A3E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -366,7 +378,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$FDE_ROOT\"/tools/build_flutter_assets \"$PROJECT_DIR\"/..\n";
+			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_build_flutter_assets.sh";
 		};
 		33D1A0E822148444006C7A3E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -447,6 +459,7 @@
 /* Begin XCBuildConfiguration section */
 		33CC10F92044A3C60003C045 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -507,6 +520,7 @@
 		};
 		33CC10FA2044A3C60003C045 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
