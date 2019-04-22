@@ -28,9 +28,10 @@ matrix:
         - build/ci/linux/install_gn bin
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
+        - export ENABLE_FLUTTER_DESKTOP=true
       script:
-        - make -C example/linux
-        - make -C testbed/linux
+        - cd $TRAVIS_BUILD_DIR/example && $TRAVIS_BUILD_DIR/../flutter/bin/flutter build -v linux --debug
+        - cd $TRAVIS_BUILD_DIR/testbed && $TRAVIS_BUILD_DIR/../flutter/bin/flutter build -v linux --debug
 
     - os: osx
       language: objective-c
@@ -41,11 +42,9 @@ matrix:
         # of FDE, so for now clone master instead.
         #- build/ci/install_flutter $TRAVIS_BUILD_DIR/..
         - git clone -b master https://github.com/flutter/flutter.git $TRAVIS_BUILD_DIR/../flutter
-      # Override the build command to remove 'test'. The example embedder
-      # doesn't have any unit tests, and while a UI test to ensure that it
-      # launches would be useful, that's currently broken by:
-      # https://travis-ci.community/t/issue-cant-run-macos-ui-tests-with-xcode10-1-image/1445
+      before_script:
+        - export ENABLE_FLUTTER_DESKTOP=true
       script:
-        - set -o pipefail && xcodebuild -project $TRAVIS_XCODE_PROJECT -scheme $TRAVIS_XCODE_SCHEME build | xcpretty
-        - set -o pipefail && xcodebuild -project testbed/macos/Runner.xcodeproj -scheme $TRAVIS_XCODE_SCHEME build | xcpretty
+        - cd $TRAVIS_BUILD_DIR/example && $TRAVIS_BUILD_DIR/../flutter/bin/flutter build -v macos --debug
+        - cd $TRAVIS_BUILD_DIR/testbed && $TRAVIS_BUILD_DIR/../flutter/bin/flutter build -v macos --debug
 
