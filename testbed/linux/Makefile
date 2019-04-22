@@ -38,7 +38,7 @@ FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 FLUTTER_EMBEDDER_LIB_DIR=$(FDE_ROOT)/library/linux
 PLUGINS_DIR=$(FDE_ROOT)/plugins
 TOOLS_DIR=$(FDE_ROOT)/tools
-FLUTTER_DIR=$(shell $(TOOLS_DIR)/flutter_location)
+FLUTTER_ROOT:=$(shell $(TOOLS_DIR)/flutter_location)
 GN_OUT_DIR=$(FDE_ROOT)/out
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
@@ -58,13 +58,13 @@ ALL_LIBS=$(FLUTTER_LIB) $(PLUGIN_LIBS)
 # Tools
 BUILD_ASSETS_BIN=$(TOOLS_DIR)/build_flutter_assets
 SYNC_FLUTTER_LIBRARY_BIN=$(TOOLS_DIR)/sync_flutter_library
-FLUTTER_BIN=$(FLUTTER_DIR)/bin/flutter
+FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
 GN_WRAPPER=$(TOOLS_DIR)/gn_dart
 NINJA_BIN=ninja
 
 # Resources
 ICU_DATA_NAME=icudtl.dat
-ICU_DATA_SOURCE=$(FLUTTER_DIR)/bin/cache/artifacts/engine/linux-x64/$(ICU_DATA_NAME)
+ICU_DATA_SOURCE=$(FLUTTER_ROOT)/bin/cache/artifacts/engine/linux-x64/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
@@ -165,7 +165,7 @@ bundleflutterassets: $(FLUTTER_ASSETS_SOURCE)
 # to know if 'build bundle' needs to be re-run.
 .PHONY: $(FLUTTER_ASSETS_SOURCE)
 $(FLUTTER_ASSETS_SOURCE):
-	$(BUILD_ASSETS_BIN) $(FLUTTER_APP_DIR)
+	$(BUILD_ASSETS_BIN) $(FLUTTER_APP_DIR) $(FLUTTER_BUNDLE_FLAGS)
 
 .PHONY: clean
 clean:

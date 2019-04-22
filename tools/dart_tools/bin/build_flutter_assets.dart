@@ -30,6 +30,8 @@ Future<void> main(List<String> arguments) async {
         help: 'The root of the Flutter tree to run \'flutter\' from.\n'
             'Defaults to a "flutter" directory next to this repository.',
         defaultsTo: getDefaultFlutterRoot())
+    ..addFlag('track-widget-creation',
+        help: 'Passed to flutter build.', negatable: false)
     ..addFlag('help', help: 'Prints this usage message.', negatable: false);
   ArgResults parsedArguments;
 
@@ -46,6 +48,10 @@ Future<void> main(List<String> arguments) async {
   final flutterApplicationDir = parsedArguments.rest[0];
 
   final buildArguments = ['build', 'bundle'];
+
+  if (parsedArguments['track-widget-creation']) {
+    buildArguments.add('--track-widget-creation');
+  }
 
   // Add --local-engine if an override is specified. --local-engine-src-path
   // isn't provided since per
