@@ -18,20 +18,6 @@ You may need to restart VS Code for this change to take effect.
 Once desktop support is enabled, you can run and debug using the normal
 Dart Code workflow.
 
-However, in order to use hot reload you must disable 
-"Track Widget Creation", or the application will crash on hot reload.
-This cannot be done from the settings UI, so you must add:
-```
-    "dart.flutterTrackWidgetCreation": false
-```
-to settings.json (The default setting is unchecked, but this
-is not the same as disabled; as described in the UI, this causes it
-to be dynamically set based on the run mode.)
-
-This requirement is due to
-[a bug](https://github.com/flutter/flutter/issues/31274) in the
-desktop `flutter build` support, and will be removed in the future.
-
 ### Attaching
 
 **Attaching from Dart Code is currently broken with Flutter master
