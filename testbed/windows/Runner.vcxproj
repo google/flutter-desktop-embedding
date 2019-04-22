@@ -90,7 +90,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>$(ProjectDir)scripts\build_example_app "$(IntDir)flutter_library\" "$(OutputPath)"</Command>
+      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(IntDir)flutter_library\" "$(OutputPath)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -135,7 +135,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>$(ProjectDir)scripts\build_example_app "$(IntDir)flutter_library\" "$(OutputPath)"</Command>
+      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(IntDir)flutter_library\" "$(OutputPath)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
