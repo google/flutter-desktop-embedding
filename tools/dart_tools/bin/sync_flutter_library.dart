@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This script downloads a specific version of the prebuilt Flutter library
-// for a desktop platform.
+// This script copies the Flutter artifacts (library and support files)
+// necessary to build Flutter.
 
 import 'dart:async';
 import 'dart:io';
@@ -34,23 +34,12 @@ Future<void> main(List<String> arguments) async {
         defaultsTo: Platform.operatingSystem)
     ..addOption('flutter_root',
         help: 'The root of the Flutter tree to get the engine version from.\n'
-            'Ignored if --hash is provided, or if an engine_override file '
-            'is present.\n'
+            'Ignored if an engine_override file is present.\n'
             'Defaults to a "flutter" directory next to this repository.',
         defaultsTo: getDefaultFlutterRoot())
     ..addFlag('skip_min_version_check',
-        help: 'If set, skips the initial check that the Flutter tree whose '
-            'engine version is being fetched is new enough for the framework.')
-    ..addOption(
-      'hash',
-      // Note: engine_override takes precedence over this flag so that
-      // individual developers can easily use engine_override for development
-      // even if the project is configured to use --hash.
-      help: 'The hash of the engine version to use.\n'
-          'This is only required if you want to override the version;\n'
-          'normally you should use flutter_root instead.\n'
-          'Ignored if an engine_override is present\n',
-    )
+        help: 'If set, skips the initial check that the Flutter tree is new '
+            'enough for the framework.')
     ..addFlag('help', help: 'Prints this usage message.', negatable: false);
   ArgResults parsedArguments;
   try {
@@ -86,21 +75,11 @@ Future<void> main(List<String> arguments) async {
   }
 
   final fetcher = FlutterArtifactFetcher(platform, flutterRoot);
-  final artifacts = [FlutterArtifactType.flutter];
-  // Automatically sync the C++ wrapper when syncing the C libraries.
-  if (platform == 'windows' || platform == 'linux') {
-    artifacts.add(FlutterArtifactType.wrapper);
-  }
 
   final engineOverrideBuildType = await getEngineOverrideBuildType();
   if (engineOverrideBuildType == null) {
-    final String targetHash =
-        parsedArguments['hash'] ?? await engineHashForFlutterTree(flutterRoot);
-    for (final artifact in artifacts) {
-      if (!await fetcher.fetchArtifact(artifact, outputRoot,
-          engineHash: targetHash)) {
-        exit(1);
-      }
+    if (!await fetcher.copyCachedArtifacts(outputRoot)) {
+      exit(1);
     }
   } else {
     // Currently the only configuration that is supported is a directory
@@ -108,11 +87,9 @@ Future<void> main(List<String> arguments) async {
     // https://github.com/flutter/flutter/wiki/The-flutter-tool#using-a-locally-built-engine-with-the-flutter-tool
     // for context).
     final engineRoot = path.join(path.dirname(flutterRoot), 'engine');
-    for (final artifact in artifacts) {
-      if (!await fetcher.copyLocalArtifact(
-          artifact, engineRoot, outputRoot, engineOverrideBuildType)) {
-        exit(1);
-      }
+    if (!await fetcher.copyLocalBuildArtifacts(
+        engineRoot, outputRoot, engineOverrideBuildType)) {
+      exit(1);
     }
   }
 }

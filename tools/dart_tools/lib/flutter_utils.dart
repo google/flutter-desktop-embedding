@@ -19,6 +19,8 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
+import 'run_command.dart';
+
 /// The last Flutter hash that's known to be required; a branch that doesn't
 /// contain this commit will either fail to build, or fail to run.
 ///
@@ -43,6 +45,19 @@ String getRepositoryRoot() {
 /// (currently, as a sibling of this repository).
 String getDefaultFlutterRoot() {
   return path.join(path.dirname(getRepositoryRoot()), 'flutter');
+}
+
+/// Runs the 'flutter' tool with the given [arguments].
+Future<void> runFlutterCommand(String flutterRoot, List<String> arguments,
+    {String workingDirectory}) async {
+  final flutterName = Platform.isWindows ? 'flutter.bat' : 'flutter';
+  final flutterBinary = path.join(flutterRoot, 'bin', flutterName);
+  if (!File(flutterBinary).existsSync()) {
+    throw new Exception("No flutter binary at '$flutterBinary'");
+  }
+
+  await runCommand(flutterBinary, arguments,
+      workingDirectory: workingDirectory);
 }
 
 /// Returns the engine hash from [file] as a String, or null.

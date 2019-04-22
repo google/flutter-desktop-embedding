@@ -12,24 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This script downloads a specific version of a prebuilt Flutter artifact
-// for a desktop platform.
+// This script copies Flutter engine artifacts from either the Flutter cache or
+// a local engine build.
 
 import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:archive/archive.dart';
 
 import 'flutter_utils.dart';
 
-/// The base URL for downloading prebuilt artifacts.
-const String _flutterArtifactBaseUrlString =
-    'https://storage.googleapis.com/flutter_infra/flutter';
-
-/// The diretory under [_flutterArtifactBaseUrlString] for each platoform's
-/// artifacts.
-final _flutterArtifactUrlPlatformDirectory = {
+/// The diretory in the Flutter cache for each platform's artifacts.
+final _flutterArtifactPlatformDirectory = {
   'linux': 'linux-x64',
   'macos': 'darwin-x64',
   'windows': 'windows-x64',
@@ -42,140 +36,70 @@ class FlutterArtifactFetchException implements Exception {
   final String message;
 }
 
-/// Types of Flutter artifacts that can be download.
-enum FlutterArtifactType {
-  /// The engine embedder library.
-  engine,
-
-  /// The full Flutter library, including both the engine and the shell.
-  flutter,
-
-  /// The C++ wrapper code.
-  wrapper,
-}
-
-/// Returns the name that should be shown to users for [type].
-String _displayNameForArtifactType(FlutterArtifactType type) {
-  return type.toString().split('.').last;
-}
-
-/// Simple container for platform- and artifact-specific information.
-class _ArtifactDetails {
-  _ArtifactDetails(this.artifactFilename, this.libraryFiles);
-
-  /// The filename on storage.googleapis.com under the platform directory for
-  /// the artifact.
-  final String artifactFilename;
-
-  /// The top-level extracted files for a platform.
-  ///
-  /// The first item in the array is the library itself, and any other items
-  /// are supporting files (headers, symbols, etc.).
-  final List<String> libraryFiles;
-}
-
-/// _ArtifactDetails for each supported platform.
-final Map<String, Map<FlutterArtifactType, _ArtifactDetails>> _artifactDetails =
-    {
-  'linux': {
-    FlutterArtifactType.engine: _ArtifactDetails('linux-x64-embedder', [
-      'libflutter_engine.so',
-      'flutter_embedder.h',
-    ]),
-    FlutterArtifactType.flutter: _ArtifactDetails('linux-x64-flutter.zip', [
-      'libflutter_linux.so',
-      'flutter_export.h',
-      'flutter_messenger.h',
-      'flutter_plugin_registrar.h',
-      'flutter_glfw.h',
-    ]),
-    FlutterArtifactType.wrapper:
-        _ArtifactDetails('flutter-cpp-client-wrapper.zip', [
-      'cpp_client_wrapper/',
-    ])
-  },
-  'macos': {
-    FlutterArtifactType.engine:
-        _ArtifactDetails('FlutterEmbedder.framework.zip', [
-      'FlutterEmbedder.framework',
-    ]),
-    FlutterArtifactType.flutter:
-        _ArtifactDetails('FlutterMacOS.framework.zip', [
-      'FlutterMacOS.framework',
-    ])
-  },
-  'windows': {
-    FlutterArtifactType.engine: _ArtifactDetails('windows-x64-embedder.zip', [
-      'flutter_engine.dll',
-      'flutter_engine.dll.exp',
-      'flutter_engine.dll.lib',
-      'flutter_engine.dll.pdb',
-      'flutter_embedder.h',
-    ]),
-    FlutterArtifactType.flutter: _ArtifactDetails('windows-x64-flutter.zip', [
-      'flutter_windows.dll',
-      'flutter_windows.dll.exp',
-      'flutter_windows.dll.lib',
-      'flutter_windows.dll.pdb',
-      'flutter_export.h',
-      'flutter_messenger.h',
-      'flutter_plugin_registrar.h',
-      'flutter_glfw.h',
-    ]),
-    FlutterArtifactType.wrapper:
-        _ArtifactDetails('flutter-cpp-client-wrapper.zip', [
-      'cpp_client_wrapper/',
-    ])
-  },
+/// The list of artifacts relevant to building for each desktop platform.
+final Map<String, List<String>> _artifactFiles = {
+  'linux': [
+    'libflutter_linux.so',
+    'flutter_export.h',
+    'flutter_messenger.h',
+    'flutter_plugin_registrar.h',
+    'flutter_glfw.h',
+    'cpp_client_wrapper/',
+  ],
+  'macos': [
+    'FlutterMacOS.framework',
+  ],
+  'windows': [
+    'flutter_windows.dll',
+    'flutter_windows.dll.exp',
+    'flutter_windows.dll.lib',
+    'flutter_windows.dll.pdb',
+    'flutter_export.h',
+    'flutter_messenger.h',
+    'flutter_plugin_registrar.h',
+    'flutter_glfw.h',
+    'cpp_client_wrapper/',
+  ],
 };
 
-/// Manages the downloading of prebuilt Flutter artifacts, including tracking
-/// the last downloaded versions and fetching only if necessary.
+/// Manages the copying of cached or locally built Flutter artifacts, including
+/// tracking the last-coied versions and updating only if necessary.
 class FlutterArtifactFetcher {
   /// Creates a new fetcher for the given configuration.
   const FlutterArtifactFetcher(this.platform, this.flutterRoot);
 
-  /// The platform to download artifacts for.
+  /// The platform to copy artifacts for.
   final String platform;
 
-  /// The path to the root of the Flutter tree to match downloaded artifacts to.
+  /// The path to the root of the Flutter tree.
   final String flutterRoot;
 
-  /// Checks [targetDirectory] for an already-downloaded [artifact] with the
-  /// correct hash, and if it's either not present or not up-to-date, attempts
-  /// to download [artifact] for [platform] with that hash.
+  /// Checks [targetDirectory] to see if artifacts have already been copied for
+  /// the current hash, and if not, copies the artifacts for [platform] from the
+  /// Flutter cache (after ensuring that the cache is present).
   ///
-  /// Returns true if the artifact was successfully downloaded, or was already
+  /// Returns true if the artifacts were successfully copied, or were already
   /// present with the correct hash.
-  ///
-  /// By default the version to fetch will be based on the provided Flutter
-  /// tree's version, but that can overridden by passing an [engineHash].
-  ///
-  /// In the future, this will take a parameter for the type of artifact to
-  /// fetch.
-  Future<bool> fetchArtifact(
-      FlutterArtifactType artifact, String targetDirectory,
-      {String engineHash}) async {
-    final artifactDetails = _artifactDetails[platform][artifact];
-    if (artifactDetails == null) {
-      print('Artifact type "${_displayNameForArtifactType(artifact)}" is not '
-          'yet supported for $platform.');
-      return false;
-    }
-
-    final targetHash =
-        engineHash ?? await engineHashForFlutterTree(flutterRoot);
+  Future<bool> copyCachedArtifacts(String targetDirectory) async {
+    final targetHash = await engineHashForFlutterTree(flutterRoot);
 
     try {
-      final primaryFile = _artifactDetails[platform][artifact].libraryFiles[0];
-
-      final currentHash = await _lastDownloadedHash(artifact, targetDirectory);
+      final currentHash = await _lastCopiedHash(targetDirectory);
       if (currentHash == null || targetHash != currentHash) {
-        await _downloadArtifact(artifact, targetHash, targetDirectory);
-        await _setLastDownloadedHash(artifact, targetDirectory, targetHash);
-        print('Downloaded $primaryFile version $targetHash.');
+        // Ensure that Flutter has the host platform's artifacts in its cache.
+        await runFlutterCommand(flutterRoot,
+            ['precache', '--$platform', '--no-android', '--no-ios']);
+
+        // Copy them to the target directory.
+        final flutterCacheDirectory = path.join(flutterRoot, 'bin', 'cache',
+            'artifacts', 'engine', _flutterArtifactPlatformDirectory[platform]);
+        if (!await _copyArtifactFiles(flutterCacheDirectory, targetDirectory)) {
+          return false;
+        }
+        await _setLastCopiedHash(targetDirectory, targetHash);
+        print('Copied artifacts for version $targetHash.');
       } else {
-        print('$primaryFile version $targetHash already present.');
+        print('Artifacts for version $targetHash already present.');
       }
     } on FlutterArtifactFetchException catch (e) {
       print(e.message);
@@ -184,33 +108,41 @@ class FlutterArtifactFetcher {
     return true;
   }
 
-  /// Acts like [fetchArtifact], replacing the downloaded artifacts and updating
+  /// Acts like [copyCachedArtifacts], replacing the artifacts and updating
   /// the version stamp, except that it pulls the artifact from a local engine
   /// build with the given [buildConfiguration] (e.g., host_debug_unopt) whose
   /// checkout is rooted at [engineRoot].
-  ///
-  /// In the future, this will take a parameter for the type of artifact to
-  /// copy.
-  Future<bool> copyLocalArtifact(
-      FlutterArtifactType artifact,
-      String engineRoot,
-      String targetDirectory,
-      String buildConfiguration) async {
-    final artifactDetails = _artifactDetails[platform][artifact];
-    if (artifactDetails == null) {
-      print('${_displayNameForArtifactType(artifact)} is not yet supported '
-          'for $platform.');
-      return false;
-    }
-
+  Future<bool> copyLocalBuildArtifacts(String engineRoot,
+      String targetDirectory, String buildConfiguration) async {
     // TODO: Add a warning if the engine tree's HEAD doesn't have
     // engineHashForFlutterTree(flutterRoot) as an ancestor, to catch some
     // mismatches.
     final buildOutputDirectory =
         path.join(engineRoot, 'src', 'out', buildConfiguration);
 
+    if (!await _copyArtifactFiles(buildOutputDirectory, targetDirectory)) {
+      return false;
+    }
+
+    // Update the hash file to indicate that it's a local build, so that it's
+    // obvious where it came from.
+    await _setLastCopiedHash(
+        targetDirectory, 'local build: $buildOutputDirectory');
+
+    return true;
+  }
+
+  /// Copies the artifact files for [platform] from [sourceDirectory] to
+  /// [targetDirectory].
+  Future<bool> _copyArtifactFiles(
+      String sourceDirectory, String targetDirectory) async {
+    final artifactFiles = _artifactFiles[platform];
+    if (artifactFiles == null) {
+      print('Unsupported platform: $platform.');
+      return false;
+    }
+
     try {
-      final artifactDetails = _artifactDetails[platform][artifact];
       await new Directory(targetDirectory).create(recursive: true);
 
       // On macOS, delete the existing framework if any before copying in the
@@ -219,11 +151,10 @@ class FlutterArtifactFetcher {
       // existing files will do the right thing.
       if (platform == 'macos') {
         await _copyMacOSFramework(
-            path.join(buildOutputDirectory, artifactDetails.libraryFiles[0]),
-            targetDirectory);
+            path.join(sourceDirectory, artifactFiles[0]), targetDirectory);
       } else {
-        for (final filename in artifactDetails.libraryFiles) {
-          final sourcePath = path.join(buildOutputDirectory, filename);
+        for (final filename in artifactFiles) {
+          final sourcePath = path.join(sourceDirectory, filename);
           final targetPath = path.join(targetDirectory, filename);
           if (filename.endsWith('/')) {
             await _copyDirectory(sourcePath, targetPath);
@@ -233,12 +164,7 @@ class FlutterArtifactFetcher {
         }
       }
 
-      print('Copied local artifact from $buildOutputDirectory.');
-
-      // Update the hash file to indicate that it's a local build, so that it's
-      // obvious where it came from.
-      await _setLastDownloadedHash(
-          artifact, targetDirectory, 'local artifact: $buildOutputDirectory');
+      print('Copied artifacts from $sourceDirectory.');
     } on FlutterArtifactFetchException catch (e) {
       print(e.message);
       return false;
@@ -247,128 +173,35 @@ class FlutterArtifactFetcher {
   }
 
   /// The valid platforms that can be passed to the constructor.
-  static List<String> get supportedPlatforms => _artifactDetails.keys.toList();
+  static List<String> get supportedPlatforms => _artifactFiles.keys.toList();
 
-  /// Returns a File object for the file containing the last downloaded hash
-  /// for [artifact] in [directory].
-  File _lastDownloadedHashFile(FlutterArtifactType artifact, String directory) {
-    final typeString = _displayNameForArtifactType(artifact);
-    final lastDownloadedVersionFile = '.last_${typeString}_version';
-    return new File(path.join(directory, lastDownloadedVersionFile));
+  /// Returns a File object for the file containing the last copied hash
+  /// in [directory].
+  File _lastCopiedHashFile(String directory) {
+    const lastCopiedVersionFile = '.last_artifact_version';
+    return new File(path.join(directory, lastCopiedVersionFile));
   }
 
-  /// Returns the last downloaded [artifact]'s hash, or null if there is no
-  /// last downloaded artifact of that type.
-  Future<String> _lastDownloadedHash(
-      FlutterArtifactType artifact, String downloadDirectory) async {
-    final artifactFilePath = path.join(downloadDirectory,
-        _artifactDetails[platform][artifact].libraryFiles[0]);
+  /// Returns the hash of the artifacts last copied to [directory], or null if
+  /// they haven't been copied.
+  Future<String> _lastCopiedHash(String directory) async {
+    // Sanity check that at least one file is present; this won't catch every
+    // case, but handles someone deleting all the non-hidden cached files to
+    // force fresh copy.
+    final artifactFilePath = path.join(directory, _artifactFiles[platform][0]);
     final artifactExists = (FileSystemEntity.typeSync(artifactFilePath)) !=
         FileSystemEntityType.notFound;
     if (!artifactExists) {
       return null;
     }
-    final hashFile = _lastDownloadedHashFile(artifact, downloadDirectory);
+    final hashFile = _lastCopiedHashFile(directory);
     return await readHashFileIfPossible(hashFile);
   }
 
-  /// Writes [hash] to the file that stores the last downloaded hash for
-  /// [artifact] in [directory].
-  Future<void> _setLastDownloadedHash(
-      FlutterArtifactType artifact, String directory, String hash) async {
-    await _lastDownloadedHashFile(artifact, directory).writeAsString(hash);
-  }
-
-  /// Downloads the version of [artifact] specified by [hash] for [platform] to
-  /// the [outputDirectory], extracting and removing the archived version.
-  Future<void> _downloadArtifact(
-      FlutterArtifactType artifact, String hash, String outputDirectory) async {
-    final archiveUri = Uri.parse('$_flutterArtifactBaseUrlString/$hash/'
-        '${_flutterArtifactUrlPlatformDirectory[platform]}/'
-        '${_artifactDetails[platform][artifact].artifactFilename}');
-
-    final httpClient = new HttpClient();
-    final response =
-        await httpClient.getUrl(archiveUri).then((request) => request.close());
-    final archiveData = <int>[];
-    await for (final data in response) {
-      archiveData.addAll(data);
-    }
-    httpClient.close();
-    if (archiveData.length < 500) {
-      final artifactName = _displayNameForArtifactType(artifact);
-      throw new FlutterArtifactFetchException(
-          'Artifact "$artifactName" is not available at $hash.');
-    }
-    try {
-      await _extractArchive(artifact, archiveData, outputDirectory);
-    } on ArchiveException catch (e) {
-      throw new FlutterArtifactFetchException('Unable to extract archive: $e');
-    }
-  }
-
-  /// Extracts the [archiveData] to [outputDirectory].
-  Future<void> _extractArchive(FlutterArtifactType artifact,
-      List<int> archiveData, String outputDirectory) async {
-    await new Directory(outputDirectory).create(recursive: true);
-
-    final archive = new ZipDecoder().decodeBytes(archiveData);
-    if (platform == 'macos') {
-      // Reconstructing a macOS framework, which is a tree containing symlinks,
-      // is non-trivial. Rather than recreate all that logic, just call out to
-      // unzip. Since unzip is shippde with macOS, this should always work.
-
-      // Unwrap the outer zip via Archive to avoid starting an extra process.
-      final isDoubleZipped =
-          archive.numberOfFiles() == 1 && archive[0].name.endsWith('.zip');
-      final List<int> innermostZipData =
-          isDoubleZipped ? archive[0].content : archiveData;
-      await _unzipMacOSFramework(innermostZipData, outputDirectory,
-          _artifactDetails[platform][artifact].libraryFiles[0]);
-    } else {
-      // Windows and Linux have simple archives, so can be easily extracted via
-      // Archive.
-      for (final file in archive) {
-        if (file.name.endsWith('.zip')) {
-          await _extractArchive(artifact, file.content, outputDirectory);
-        } else {
-          final outputPath = path.join(outputDirectory, file.name);
-          if (file.isFile) {
-            // The archive does not contain directory entries on Windows, so
-            // always ensure the directory for the target exists first.
-            await Directory(path.dirname(outputPath)).create(recursive: true);
-            await File(outputPath).writeAsBytes(file.content);
-          } else {
-            await Directory(outputPath).create(recursive: true);
-          }
-        }
-      }
-    }
-  }
-
-  /// Unzips the framework archive [archiveData] in [outputDirectory]
-  /// by invoking /usr/bin/unzip.
-  ///
-  /// Removes any previous version of the framework that already exists there.
-  Future<void> _unzipMacOSFramework(List<int> archiveData,
-      String outputDirectory, String frameworkFilename) async {
-    final temporaryArchiveFile =
-        new File(path.join(outputDirectory, 'artifact_archive.zip'));
-    final targetPath = path.join(outputDirectory, frameworkFilename);
-
-    await _deleteFrameworkIfPresent(targetPath);
-
-    // Temporarily write the data to a file, since unzip doesn't accept piped
-    // input, then delete the file.
-    await temporaryArchiveFile.writeAsBytes(archiveData);
-    final result = await Process.run(
-        '/usr/bin/unzip', [temporaryArchiveFile.path, '-d', targetPath]);
-    await temporaryArchiveFile.delete();
-    if (result.exitCode != 0) {
-      throw new FlutterArtifactFetchException(
-          'Failed to unzip archive (exit ${result.exitCode}:\n'
-          '${result.stdout}\n---\n${result.stderr}');
-    }
+  /// Writes [hash] to the file that stores the last copied hash for
+  /// in [directory].
+  Future<void> _setLastCopiedHash(String directory, String hash) async {
+    await _lastCopiedHashFile(directory).writeAsString(hash);
   }
 
   /// Copies the framework at [frameworkPath] to [targetDirectory]
@@ -415,7 +248,7 @@ class FlutterArtifactFetcher {
       throw new FlutterArtifactFetchException(
           'No such directory to copy: $sourcePath');
     }
-    final destination = Directory(targetPath)..createSync();
+    Directory(targetPath).createSync();
     await for (final file in source.list(followLinks: false)) {
       final filename = path.basename(file.path);
       final fileDestination = path.join(targetPath, filename);

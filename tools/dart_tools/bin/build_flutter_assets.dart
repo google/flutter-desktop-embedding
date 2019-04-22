@@ -23,7 +23,6 @@ import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
 import '../lib/flutter_utils.dart';
-import '../lib/run_command.dart';
 
 Future<void> main(List<String> arguments) async {
   final parser = new ArgParser()
@@ -46,14 +45,6 @@ Future<void> main(List<String> arguments) async {
   }
   final flutterApplicationDir = parsedArguments.rest[0];
 
-  final flutterName = Platform.isWindows ? 'flutter.bat' : 'flutter';
-  final flutterBinary =
-      path.join(parsedArguments['flutter_root'], 'bin', flutterName);
-  if (!File(flutterBinary).existsSync()) {
-    print("Error: No flutter binary at '$flutterBinary'");
-    exit(1);
-  }
-
   final buildArguments = ['build', 'bundle'];
 
   // Add --local-engine if an override is specified. --local-engine-src-path
@@ -67,7 +58,7 @@ Future<void> main(List<String> arguments) async {
     buildArguments.insertAll(0, ['--local-engine', engineOverride]);
   }
 
-  await runCommand(flutterBinary, buildArguments,
+  await runFlutterCommand(parsedArguments['flutter_root'], buildArguments,
       workingDirectory: flutterApplicationDir);
 }
 
