@@ -47,14 +47,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(IntDir)flutter_library;$(LibraryPath)</LibraryPath>
     <TargetName>Flutter Desktop Example</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(IntDir)flutter_library;$(LibraryPath)</LibraryPath>
     <TargetName>Flutter Desktop Example</TargetName>
   </PropertyGroup>
