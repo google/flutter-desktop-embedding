@@ -63,6 +63,10 @@ or
 flutter run --release
 ```
 
+Once you've `flutter run` at least once, you can also build using the underlying projects
+(Visual Studio, Xcode, or make) directly, but the first build must be done via `flutter run`
+in order to generate necessary files.
+
 **Note:** There is still no `flutter create` support for for desktop;
 this works only in a project that has already been configured manually for
 desktop builds. See [the quick-start guide](../Quick-Start.md) for details.

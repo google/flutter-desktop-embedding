@@ -22,6 +22,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 set FLUTTER_ROOT=%1
 set FLUTTER_CONFIG=%2
+set TRACK_WIDGET_CREATION=%3
 
 set SOLUTION_NAME=Runner
 
@@ -35,9 +36,17 @@ if "%FLUTTER_CONFIG%"=="release" (
   set BUILD_CONFIG=Debug
 )
 
-set DART_BIN_DIR=%FLUTTER_ROOT%\bin\cache\dart-sdk\bin
+if "%TRACK_WIDGET_CREATION%"=="track-widget-creation" (
+  set EXTRA_BUNDLE_FLAGS=--track-widget-creation
+)
 
-for /f "delims=" %%i in ('%DART_BIN_DIR%\dart %BASE_DIR%.\find_vcvars.dart') do set VCVARS_PATH=%%i
+set DART_BIN_DIR=%FLUTTER_ROOT%\bin\cache\dart-sdk\bin\
+
+:: Write build settings to Generated.props
+call "%DART_BIN_DIR%dart" "%BASE_DIR%generate_props.dart" "%BASE_DIR%Generated.props" "%FLUTTER_ROOT%" "%EXTRA_BUNDLE_FLAGS%"
+
+:: Attempt to locate and run vcvars64.bat
+for /f "delims=" %%i in ('%DART_BIN_DIR%dart %BASE_DIR%.\find_vcvars.dart') do set VCVARS_PATH=%%i
 if "%VCVARS_PATH%" == "" (
   echo #######################################################################
   echo # Warning: Unable to find vcvars64.bat. Proceeding anyway; if it fails,
@@ -48,4 +57,5 @@ if "%VCVARS_PATH%" == "" (
   if %errorlevel% neq 0 exit /b %errorlevel%
 )
 
+:: Build the project.
 msbuild "%BASE_DIR%%SOLUTION_NAME%.sln" /p:Configuration=%BUILD_CONFIG%

@@ -25,6 +25,11 @@ install:
   - tools\run_dart_tool.bat fetch_jsoncpp %APPVEYOR_BUILD_FOLDER%\third_party\jsoncpp\src
 
 build_script:
-  - set "PATH=%APPVEYOR_BUILD_FOLDER%\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
-  - msbuild "example\windows\Runner.sln"
-  - msbuild "testbed\windows\Runner.sln"
+  - set "PATH=%APPVEYOR_BUILD_FOLDER%\bin;%APPVEYOR_BUILD_FOLDER%\..\flutter\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
+  - set "ENABLE_FLUTTER_DESKTOP=true"
+  - ps: cd "$env:APPVEYOR_BUILD_FOLDER\example"
+  - flutter packages get
+  - flutter build -v windows --debug
+  - ps: cd "$env:APPVEYOR_BUILD_FOLDER\testbed"
+  - flutter packages get
+  - flutter build -v windows --debug

@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Local additions, not from the link above
+Generated.props
+
 # User-specific files
 *.suo
 *.user
