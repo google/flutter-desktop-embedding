@@ -44,9 +44,15 @@ export ENABLE_FLUTTER_DESKTOP=true
 
 On Windows:
 
-```
-$env:ENABLE_FLUTTER_DESKTOP="true"
-```
+* PowerShell:
+  ```
+  $env:ENABLE_FLUTTER_DESKTOP="true"
+  ```
+* CMD:
+
+  ```
+  set ENABLE_FLUTTER_DESKTOP=true
+  ```
 
 ### Build and Run
 
