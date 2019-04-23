@@ -25,7 +25,7 @@ flutter-desktop-embedding checkout.
 
 These directories are self-contained, and can be copied to an existing
 Flutter project. That will allow `flutter run` to work for desktop targets
-(following the [instructions for the example](example/README.md)
+(following the [instructions for the example](example/README.md)).
 
 **Be aware that neither the API surface of the Flutter library nor the interaction
 between the `flutter` tool and the platform directories is stable,
