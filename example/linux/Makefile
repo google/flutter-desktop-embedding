@@ -18,8 +18,6 @@
 
 # Executable name.
 BINARY_NAME=flutter_desktop_example
-# The location of the flutter-desktop-embedding repository.
-FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
 SOURCES=flutter_embedder_example.cc
 
@@ -28,30 +26,27 @@ SOURCES=flutter_embedder_example.cc
 # Currently this only sets NDEBUG, which is used to control the flags passed
 # to the Flutter engine in the example shell, and not the complation settings
 # (e.g., optimization level) of the C++ code.
-BUILD:=debug
+BUILD=debug
 
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
-FLUTTER_EMBEDDER_LIB_DIR=$(FDE_ROOT)/library/linux
-TOOLS_DIR=$(FDE_ROOT)/tools
-FLUTTER_ROOT:=$(shell $(TOOLS_DIR)/flutter_location)
+FLUTTER_ROOT:=$(shell cat $(CURDIR)/.generated_flutter_root)
+FLUTTER_ARTIFACT_CACHE_DIR=$(FLUTTER_ROOT)/bin/cache/artifacts/engine/linux-x64
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
-FLUTTER_LIBRARY_DIR=$(CACHE_DIR)/flutter_library
+FLUTTER_LIBRARY_COPY_DIR=$(CACHE_DIR)/flutter_library
 
 FLUTTER_LIB_NAME=flutter_linux
-FLUTTER_LIB=$(FLUTTER_LIBRARY_DIR)/lib$(FLUTTER_LIB_NAME).so
+FLUTTER_LIB=$(FLUTTER_LIBRARY_COPY_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # Tools
-BUILD_ASSETS_BIN=$(TOOLS_DIR)/build_flutter_assets
-SYNC_FLUTTER_LIBRARY_BIN=$(TOOLS_DIR)/sync_flutter_library
 FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
 
 # Resources
 ICU_DATA_NAME=icudtl.dat
-ICU_DATA_SOURCE=$(FLUTTER_ROOT)/bin/cache/artifacts/engine/linux-x64/$(ICU_DATA_NAME)
+ICU_DATA_SOURCE=$(FLUTTER_ARTIFACT_CACHE_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
@@ -66,7 +61,7 @@ FLUTTER_LIB_OUT=$(BUNDLE_LIB_DIR)/$(notdir $(FLUTTER_LIB))
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the client.
-WRAPPER_ROOT=$(FLUTTER_LIBRARY_DIR)/cpp_client_wrapper
+WRAPPER_ROOT=$(FLUTTER_LIBRARY_COPY_DIR)/cpp_client_wrapper
 WRAPPER_SOURCES= \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
 	$(WRAPPER_ROOT)/plugin_registrar.cc \
@@ -75,10 +70,12 @@ SOURCES+=$(WRAPPER_SOURCES)
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
-INCLUDE_DIRS=$(FLUTTER_LIBRARY_DIR) $(WRAPPER_INCLUDE_DIR)
+INCLUDE_DIRS=$(FLUTTER_LIBRARY_COPY_DIR) $(WRAPPER_INCLUDE_DIR)
 
-# The stamp file created by sync_flutter_library.
-FLUTTER_LIBRARY_STAMP_FILE=$(FLUTTER_LIBRARY_DIR)/.last_flutter_version
+# The stamp file created by copy_flutter_files.
+FLUTTER_COPY_STAMP_FILE=$(FLUTTER_LIBRARY_COPY_DIR)/.last_copied_flutter_version
+# The Flutter engine version file.
+FLUTTER_ENGINE_VERSION_FILE=$(FLUTTER_ROOT)/bin/internal/engine.version
 
 # Build settings
 CXX=g++ -std=c++14
@@ -101,18 +98,19 @@ $(BIN_OUT): $(SOURCES) $(FLUTTER_LIB_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB): $(FLUTTER_LIBRARY_STAMP_FILE)
+$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE): $(FLUTTER_COPY_STAMP_FILE)
 
-# Use an order-only dependency to avoid unnecessary relinking when
-# sync_flutter_library is a no-op.
-$(FLUTTER_LIBRARY_STAMP_FILE): | sync_flutter_library
-
-# This is phony since it should always run; otherwise local engine build changes
-# won't be picked up. For the normal case, the script knows how to avoid doing
-# unnecessary work, so running it is fast.
-.PHONY: sync_flutter_library
-sync_flutter_library:
-	$(TOOLS_DIR)/sync_flutter_library $(FLUTTER_LIBRARY_DIR)
+# When the Flutter engine version changes, the local copy of engine artifacts
+# needs to be updated.
+$(FLUTTER_COPY_STAMP_FILE): $(FLUTTER_ENGINE_VERSION_FILE)
+	$(FLUTTER_BIN) precache --linux --no-android --no-ios
+	rm -rf $(FLUTTER_LIBRARY_COPY_DIR)
+	mkdir -p $(FLUTTER_LIBRARY_COPY_DIR)
+	cp $(FLUTTER_ARTIFACT_CACHE_DIR)/*.h $(FLUTTER_LIBRARY_COPY_DIR)/
+	cp $(FLUTTER_ARTIFACT_CACHE_DIR)/*.so $(FLUTTER_LIBRARY_COPY_DIR)/
+	cp -r $(FLUTTER_ARTIFACT_CACHE_DIR)/cpp_client_wrapper \
+		$(FLUTTER_LIBRARY_COPY_DIR)/
+	touch $(FLUTTER_COPY_STAMP_FILE)
 
 $(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 	mkdir -p $(BUNDLE_LIB_DIR)
@@ -135,7 +133,8 @@ bundleflutterassets: $(FLUTTER_ASSETS_SOURCE)
 # to know if 'build bundle' needs to be re-run.
 .PHONY: $(FLUTTER_ASSETS_SOURCE)
 $(FLUTTER_ASSETS_SOURCE):
-	$(BUILD_ASSETS_BIN) $(FLUTTER_APP_DIR) $(FLUTTER_BUNDLE_FLAGS)
+	cd $(FLUTTER_APP_DIR); \
+	$(FLUTTER_BIN) build bundle $(FLUTTER_BUNDLE_FLAGS)
 
 .PHONY: clean
 clean:
