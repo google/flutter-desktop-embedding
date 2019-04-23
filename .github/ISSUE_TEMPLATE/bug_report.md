@@ -27,10 +27,10 @@ Please provide a clear and concise description of the bug, including steps to re
 * Developer tools version (Xcode, Visual Studio, or gcc): 
 
 **Doctor Output**
-For build issues, please provide the output of both `flutter doctor -v` and `tools/run_dart_tool doctor` below:
-
+For build issues, please provide the output of `flutter doctor -v`:
 ```
 ```
 
+If the build is of anything other than `example`, please also provide the output of `tools/run_dart_tool doctor`:
 ```
 ```
