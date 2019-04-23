@@ -31,6 +31,9 @@ fi
 # Directories
 readonly base_dir="$(dirname "$0")"
 
+# Store the Flutter root so that Make can be used directly for future builds.
+echo $flutter_root > $base_dir/.generated_flutter_root
+
 make -C "$base_dir" \
   BUILD="${flutter_config}" \
   FLUTTER_ROOT="${flutter_root}" \
