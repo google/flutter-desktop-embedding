@@ -348,24 +348,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$TRACK_WIDGET_CREATION\" == \"true\" ]]; then\n  EXTRA_BUNDLE_FLAGS=--track-widget-creation\nfi\n\n\"$FDE_ROOT\"/tools/build_flutter_assets \"$PROJECT_DIR\"/.. $EXTRA_BUNDLE_FLAGS\n";
-		};
-		33D1A0E822148444006C7A3E /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$FDE_ROOT\"/tools/sync_flutter_library \"$SYMROOT\"/flutter_framework\n";
+			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_build_flutter_assets.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
