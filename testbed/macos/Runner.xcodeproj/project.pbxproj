@@ -19,17 +19,6 @@
 			name = "Build Flutter Bundle";
 			productName = FLX;
 		};
-		33D1A0E422148440006C7A3E /* Fetch Flutter Framework */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 33D1A0E522148440006C7A3E /* Build configuration list for PBXAggregateTarget "Fetch Flutter Framework" */;
-			buildPhases = (
-				33D1A0E822148444006C7A3E /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Fetch Flutter Framework";
-			productName = "Fetch Flutter Framework";
-		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -101,20 +90,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 33CC111A2044C6BA0003C045;
 			remoteInfo = FLX;
-		};
-		33D1A0E92214847F006C7A3E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33CC10E52044A3C60003C045 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 33D1A0E422148440006C7A3E;
-			remoteInfo = "Fetch Flutter Framework";
-		};
-		33D1A0EB22148486006C7A3E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33CC10E52044A3C60003C045 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 33D1A0E422148440006C7A3E;
-			remoteInfo = "Fetch Flutter Framework";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -289,10 +264,6 @@
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
-					33D1A0E422148440006C7A3E = {
-						CreatedOnToolsVersion = 10.0;
-						ProvisioningStyle = Automatic;
-					};
 				};
 			};
 			buildConfigurationList = 33CC10E82044A3C60003C045 /* Build configuration list for PBXProject "Runner" */;
@@ -324,7 +295,6 @@
 			targets = (
 				33CC10EC2044A3C60003C045 /* Runner */,
 				33CC111A2044C6BA0003C045 /* Build Flutter Bundle */,
-				33D1A0E422148440006C7A3E /* Fetch Flutter Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -378,24 +348,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$TRACK_WIDGET_CREATION\" == \"true\" ]]; then\n  EXTRA_BUNDLE_FLAGS=--track-widget-creation\nfi\n\n\"$FDE_ROOT\"/tools/build_flutter_assets \"$PROJECT_DIR\"/.. $EXTRA_BUNDLE_FLAGS\n";
-		};
-		33D1A0E822148444006C7A3E /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$FDE_ROOT\"/tools/sync_flutter_library \"$SYMROOT\"/flutter_framework\n";
+			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_build_flutter_assets.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -432,16 +385,6 @@
 			isa = PBXTargetDependency;
 			target = 33CC111A2044C6BA0003C045 /* Build Flutter Bundle */;
 			targetProxy = 33CC111F2044C79F0003C045 /* PBXContainerItemProxy */;
-		};
-		33D1A0EA2214847F006C7A3E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 33D1A0E422148440006C7A3E /* Fetch Flutter Framework */;
-			targetProxy = 33D1A0E92214847F006C7A3E /* PBXContainerItemProxy */;
-		};
-		33D1A0EC22148486006C7A3E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 33D1A0E422148440006C7A3E /* Fetch Flutter Framework */;
-			targetProxy = 33D1A0EB22148486006C7A3E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
