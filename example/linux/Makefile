@@ -28,11 +28,15 @@ SOURCES=flutter_embedder_example.cc
 # (e.g., optimization level) of the C++ code.
 BUILD=debug
 
+# Settings required to be set via command line:
+#
+# FLUTTER_ARTIFACT_CACHE_DIR is required to be set via command line.
+# FLUTTER_ENGINE_VERSION_FILE is required to avoid uneccessary engine rebuilds.
+
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 FLUTTER_ROOT:=$(shell cat $(CURDIR)/.generated_flutter_root)
-FLUTTER_ARTIFACT_CACHE_DIR=$(FLUTTER_ROOT)/bin/cache/artifacts/engine/linux-x64
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
@@ -75,7 +79,7 @@ INCLUDE_DIRS=$(FLUTTER_LIBRARY_COPY_DIR) $(WRAPPER_INCLUDE_DIR)
 # The stamp file created by copy_flutter_files.
 FLUTTER_COPY_STAMP_FILE=$(FLUTTER_LIBRARY_COPY_DIR)/.last_copied_flutter_version
 # The Flutter engine version file.
-FLUTTER_ENGINE_VERSION_FILE=$(FLUTTER_ROOT)/bin/internal/engine.version
+FLUTTER_ENGINE_VERSION_FILE=$(CURDIR)/.generated_engine_stamp
 
 # Build settings
 CXX=g++ -std=c++14
@@ -103,7 +107,6 @@ $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE): $(FLUTTER_COPY_STAMP_FILE)
 # When the Flutter engine version changes, the local copy of engine artifacts
 # needs to be updated.
 $(FLUTTER_COPY_STAMP_FILE): $(FLUTTER_ENGINE_VERSION_FILE)
-	$(FLUTTER_BIN) precache --linux --no-android --no-ios
 	rm -rf $(FLUTTER_LIBRARY_COPY_DIR)
 	mkdir -p $(FLUTTER_LIBRARY_COPY_DIR)
 	cp $(FLUTTER_ARTIFACT_CACHE_DIR)/*.h $(FLUTTER_LIBRARY_COPY_DIR)/
