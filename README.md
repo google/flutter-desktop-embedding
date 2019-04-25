@@ -19,7 +19,8 @@ the [quick start](Quick-Start.md) page before continuing._
 
 #### Source
 
-The tooling and build infrastructure for this project requires that you have
+If you are building anything other than `example/`, the tooling and build
+infrastructure for this project requires that you have
 a Flutter tree in the same parent directory as the clone of this project:
 
 ```
