@@ -22,7 +22,9 @@ group("gn_all") {
   }
   if (is_win) {
     deps = [
-      "//third_party/jsoncpp:jsoncpp_test",
+      # Temporary dependency, to keep a target in the Windows build
+      # until a plugin is supported.
+      "//plugins/common:fetch_flutter_library",
     ]
   }
 }

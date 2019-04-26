@@ -64,7 +64,7 @@
   NSMenu *mainMenu = NSApp.mainMenu;
   NSInteger insertionIndex = [self menuInsertionIndex];
   for (NSDictionary *item in representation.reverseObjectEnumerator) {
-    NSMenuItem *menuItem = [self menuItemFromJSONRepresentation:item];
+    NSMenuItem *menuItem = [self menuItemFromFlutterRepresentation:item];
     menuItem.representedObject = self;
     [mainMenu insertItem:menuItem atIndex:insertionIndex];
   }
@@ -74,7 +74,7 @@
  * Constructs and returns an NSMenuItem corresponding to the item in |representation|, including
  * recursively creating children if it has a submenu.
  */
-- (NSMenuItem *)menuItemFromJSONRepresentation:(NSDictionary *)representation {
+- (NSMenuItem *)menuItemFromFlutterRepresentation:(NSDictionary *)representation {
   if (representation[@(plugins_menubar::kDividerKey)]) {
     return [NSMenuItem separatorItem];
   } else {
@@ -96,7 +96,7 @@
       NSMenu *submenu = [[NSMenu alloc] initWithTitle:title];
       submenu.autoenablesItems = NO;
       for (NSDictionary *child in children) {
-        [submenu addItem:[self menuItemFromJSONRepresentation:child]];
+        [submenu addItem:[self menuItemFromFlutterRepresentation:child]];
       }
       item.submenu = submenu;
     }
@@ -119,8 +119,7 @@
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_menubar::kChannelName)
-                                  binaryMessenger:registrar.messenger
-                                            codec:[FlutterJSONMethodCodec sharedInstance]];
+                                  binaryMessenger:registrar.messenger];
   FLEMenubarPlugin *instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }

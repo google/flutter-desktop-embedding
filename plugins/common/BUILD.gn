@@ -42,11 +42,31 @@ config("relative_flutter_wrapper_headers") {
 }
 
 # A static library build from the Flutter client wrapper.
-# TODO: This is only used for plugins, but plugins don't need the view
-# controller; revisit approach.
+
 source_set("flutter_wrapper") {
   sources = flutter_client_wrapper_source
   public = flutter_client_wrapper_headers
+
+  # TODO: Once the client library stabilizes, explicitly include desired files.
+  # For now, just remove specific unwanted files.
+
+  # Plugins don't need the window controller code.
+  sources -= [
+    "$flutter_library_download_dir/cpp_client_wrapper/flutter_window_controller.cc",
+  ]
+  public -= [
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/flutter_window_controller.h",
+  ]
+  # The plugins in this project all use the standard codec.
+  sources -= [
+    "$flutter_library_download_dir/cpp_client_wrapper/json_message_codec.cc",
+    "$flutter_library_download_dir/cpp_client_wrapper/json_method_codec.cc",
+  ]
+  public -= [
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/json_message_codec.h",
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/json_method_codec.h",
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/json_type.h",
+  ]
 
   # Use shared library settings since this target will be folded into shared
   # libraries.
@@ -54,15 +74,6 @@ source_set("flutter_wrapper") {
   configs += default_dynamic_configs
 
   deps = [ ":fetch_flutter_library" ]
-
-  if (is_linux) {
-    configs += [ "//build/linux/config:jsoncpp" ]
-  }
-  if (is_win) {
-    deps += [
-      "//third_party/jsoncpp:jsoncpp",
-    ]
-  }
 
   public_configs = [ ":relative_flutter_wrapper_headers" ]
 }

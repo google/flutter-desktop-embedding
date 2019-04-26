@@ -15,18 +15,20 @@
 #include "plugins/menubar/linux/include/menubar/menubar_plugin.h"
 
 #include <gtk/gtk.h>
-#include <json/json.h>
 #include <memory>
 
-#include <flutter/json_method_codec.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
+#include <flutter/standard_method_codec.h>
 
 #include "plugins/menubar/common/channel_constants.h"
 
 static constexpr char kWindowTitle[] = "Flutter Menubar";
 
 namespace plugins_menubar {
+
+using flutter::EncodableMap;
+using flutter::EncodableValue;
 
 class MENUBAR_PLUGIN_EXPORT MenubarPlugin : public flutter::Plugin {
  public:
@@ -36,15 +38,16 @@ class MENUBAR_PLUGIN_EXPORT MenubarPlugin : public flutter::Plugin {
 
  private:
   // Creates a plugin that communicates on the given channel.
-  MenubarPlugin(std::unique_ptr<flutter::MethodChannel<Json::Value>> channel);
+  MenubarPlugin(
+      std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel);
 
   // Called when a method is called on |channel_|;
   void HandleMethodCall(
-      const flutter::MethodCall<Json::Value> &method_call,
-      std::unique_ptr<flutter::MethodResult<Json::Value>> result);
+      const flutter::MethodCall<EncodableValue> &method_call,
+      std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
 
   // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter::MethodChannel<Json::Value>> channel_;
+  std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel_;
 
   class Menubar;
   std::unique_ptr<Menubar> menubar_;
@@ -52,9 +55,9 @@ class MENUBAR_PLUGIN_EXPORT MenubarPlugin : public flutter::Plugin {
 
 // static
 void MenubarPlugin::RegisterWithRegistrar(flutter::PluginRegistrar *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<Json::Value>>(
+  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
       registrar->messenger(), kChannelName,
-      &flutter::JsonMethodCodec::GetInstance());
+      &flutter::StandardMethodCodec::GetInstance());
   auto *channel_pointer = channel.get();
 
   // Uses new instead of make_unique due to private constructor.
@@ -69,7 +72,7 @@ void MenubarPlugin::RegisterWithRegistrar(flutter::PluginRegistrar *registrar) {
 }
 
 MenubarPlugin::MenubarPlugin(
-    std::unique_ptr<flutter::MethodChannel<Json::Value>> channel)
+    std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel)
     : channel_(std::move(channel)) {}
 
 MenubarPlugin::~MenubarPlugin() {}
@@ -106,53 +109,55 @@ class MenubarPlugin::Menubar {
     auto plugin = reinterpret_cast<MenubarPlugin *>(data);
 
     plugin->channel_->InvokeMethod(kMenuItemSelectedCallbackMethod,
-                                   std::make_unique<Json::Value>(std::stoi(
+                                   std::make_unique<EncodableValue>(std::stoi(
                                        gtk_widget_get_name(menuItem))));
   }
 
-  // Creates the menu items heirarchy from a given Json object.
-  void SetMenuItems(const Json::Value &root, flutter::Plugin *plugin,
+  // Creates the menu items heirarchy from a given channel representation.
+  void SetMenuItems(const EncodableValue &root, flutter::Plugin *plugin,
                     GtkWidget *parentWidget) {
-    if (root.isArray()) {
-      // This is the base of Json tree. It's not a menu item itself, so there's
-      // no need to create a widget.
-      unsigned int counter = 0;
-      while (counter < root.size()) {
-        if (root[counter].isObject()) {
-          SetMenuItems(root[counter], plugin, parentWidget);
-          counter++;
-        }
+    if (root.IsList()) {
+      // This is the base of the menu representation. It's not a menu item
+      // itself, so there's no need to create a widget.
+      for (const auto &menu : root.ListValue()) {
+        SetMenuItems(menu, plugin, parentWidget);
       }
       gtk_widget_show_all(menubar_window_);
 
       return;
     }
 
-    if (root[kLabelKey].isString()) {
-      std::string label = root[kLabelKey].asString();
+    // Everything else is a map.
+    const EncodableMap &menu_info = root.MapValue();
+    auto label_it = menu_info.find(EncodableValue(kLabelKey));
+    if (label_it != menu_info.end()) {
+      std::string label = label_it->second.StringValue();
 
-      if (root[kChildrenKey].isArray()) {
+      auto enabled_it = menu_info.find(EncodableValue(kEnabledKey));
+      bool enabled =
+          enabled_it == menu_info.end() ? true : enabled_it->second.BoolValue();
+
+      auto children_it = menu_info.find(EncodableValue(kChildrenKey));
+      if (children_it != menu_info.end()) {
         // A parent menu item. Creates a widget with its label and then build
         // the children.
-        auto array = root[kChildrenKey];
+        const EncodableValue &children = children_it->second;
         auto menu = gtk_menu_new();
         auto menuItem = gtk_menu_item_new_with_label(label.c_str());
 
-        if (root[kEnabledKey].isBool()) {
-          gtk_widget_set_sensitive(menuItem, root[kEnabledKey].asBool());
-        }
+        gtk_widget_set_sensitive(menuItem, enabled);
         gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), menu);
         gtk_menu_shell_append(GTK_MENU_SHELL(parentWidget), menuItem);
 
-        SetMenuItems(array, plugin, menu);
+        SetMenuItems(children, plugin, menu);
       } else {
         // A leaf menu item. Only these items will have a callback.
         auto menuItem = gtk_menu_item_new_with_label(label.c_str());
-        if (root[kEnabledKey].isBool()) {
-          gtk_widget_set_sensitive(menuItem, root[kEnabledKey].asBool());
-        }
-        if (root[kIdKey].asInt()) {
-          std::string idString = std::to_string(root[kIdKey].asInt());
+        gtk_widget_set_sensitive(menuItem, enabled);
+
+        auto id_it = menu_info.find(EncodableValue(kIdKey));
+        if (id_it != menu_info.end()) {
+          std::string idString = std::to_string(id_it->second.IntValue());
           gtk_widget_set_name(menuItem, idString.c_str());
         }
         g_signal_connect(G_OBJECT(menuItem), "activate",
@@ -161,7 +166,8 @@ class MenubarPlugin::Menubar {
       }
     }
 
-    if (root.get(kDividerKey, false).asBool()) {
+    auto divider_it = menu_info.find(EncodableValue(kDividerKey));
+    if (divider_it != menu_info.end() && divider_it->second.BoolValue()) {
       auto separator = gtk_separator_menu_item_new();
       gtk_menu_shell_append(GTK_MENU_SHELL(parentWidget), separator);
     }
@@ -185,10 +191,10 @@ class MenubarPlugin::Menubar {
 };
 
 void MenubarPlugin::HandleMethodCall(
-    const flutter::MethodCall<Json::Value> &method_call,
-    std::unique_ptr<flutter::MethodResult<Json::Value>> result) {
+    const flutter::MethodCall<EncodableValue> &method_call,
+    std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
   if (method_call.method_name().compare(kMenuSetMethod) == 0) {
-    if (!method_call.arguments()) {
+    if (!method_call.arguments() || method_call.arguments()->IsNull()) {
       result->Error("Bad Arguments", "Null menu bar arguments received");
       return;
     }
