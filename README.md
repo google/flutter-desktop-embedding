@@ -17,6 +17,14 @@ the [quick start](Quick-Start.md) page before continuing._
 
 ### Setting Up
 
+#### Tools
+
+You will need developer tools for your platform:
+* Linux: A recent version of GCC
+* macOS: The current version of Xcode
+* Windows: Visual Studio 2017, including the "Desktop development with C++" workload.
+  (See [#342](https://github.com/google/flutter-desktop-embedding/issues/342) for 2019.)
+
 #### Source
 
 If you are building anything other than `example/`, the tooling and build
@@ -33,14 +41,6 @@ Alternately, you can place a `.flutter_location_config` file in the directory
 containing flutter-desktop-embedding, containing a path to the Flutter tree to
 use, if you prefer not to have the Flutter tree next to
 flutter-desktop-embedding.
-
-#### Tools
-
-You will need developer tools for your platform:
-* Linux: A recent version of GCC
-* macOS: The current version of Xcode
-* Windows: Visual Studio 2017, including the "Desktop development with C++" workload.
-  (See [#342](https://github.com/google/flutter-desktop-embedding/issues/342) for 2019.)
 
 ### Repository Structure
 
