@@ -30,17 +30,20 @@ void main() {
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
 
   // Try to resize the window to fill the middle 50% of its current screen.
-  window_size.getWindowInfo().then((window) {
-    if (window.screen != null) {
-      final screenFrame = window.screen.visibleFrame;
-      final width = math.max((screenFrame.width / 2).roundToDouble(), 640.0);
-      final height = math.max((screenFrame.height / 2).roundToDouble(), 480.0);
-      final left = ((screenFrame.width - width) / 2).roundToDouble();
-      final top = ((screenFrame.height - height) / 2).roundToDouble();
-      final frame = Rect.fromLTWH(left, top, width, height);
-      window_size.setWindowFrame(frame);
-    }
-  });
+  if (Platform.isMacOS) {
+    window_size.getWindowInfo().then((window) {
+      if (window.screen != null) {
+        final screenFrame = window.screen.visibleFrame;
+        final width = math.max((screenFrame.width / 2).roundToDouble(), 640.0);
+        final height =
+            math.max((screenFrame.height / 2).roundToDouble(), 480.0);
+        final left = ((screenFrame.width - width) / 2).roundToDouble();
+        final top = ((screenFrame.height - height) / 2).roundToDouble();
+        final frame = Rect.fromLTWH(left, top, width, height);
+        window_size.setWindowFrame(frame);
+      }
+    });
+  }
 
   runApp(new MyApp());
 }
