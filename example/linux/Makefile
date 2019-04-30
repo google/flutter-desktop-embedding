@@ -28,11 +28,6 @@ SOURCES=flutter_embedder_example.cc
 # (e.g., optimization level) of the C++ code.
 BUILD=debug
 
-# Settings required to be set via command line:
-#
-# FLUTTER_ARTIFACT_CACHE_DIR is required to be set via command line.
-# FLUTTER_ENGINE_VERSION_FILE is required to avoid uneccessary engine rebuilds.
-
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
@@ -49,8 +44,6 @@ FLUTTER_LIB=$(FLUTTER_LIBRARY_COPY_DIR)/lib$(FLUTTER_LIB_NAME).so
 FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
 
 # Resources
-ICU_DATA_NAME=icudtl.dat
-ICU_DATA_SOURCE=$(FLUTTER_ARTIFACT_CACHE_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
@@ -76,11 +69,6 @@ SOURCES+=$(WRAPPER_SOURCES)
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_LIBRARY_COPY_DIR) $(WRAPPER_INCLUDE_DIR)
 
-# The stamp file created by copy_flutter_files.
-FLUTTER_COPY_STAMP_FILE=$(FLUTTER_LIBRARY_COPY_DIR)/.last_copied_flutter_version
-# The Flutter engine version file.
-FLUTTER_ENGINE_VERSION_FILE=$(CURDIR)/.generated_engine_stamp
-
 # Build settings
 CXX=g++ -std=c++14
 CXXFLAGS.release=-DNDEBUG
@@ -102,26 +90,9 @@ $(BIN_OUT): $(SOURCES) $(FLUTTER_LIB_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE): $(FLUTTER_COPY_STAMP_FILE)
-
-# When the Flutter engine version changes, the local copy of engine artifacts
-# needs to be updated.
-$(FLUTTER_COPY_STAMP_FILE): $(FLUTTER_ENGINE_VERSION_FILE)
-	rm -rf $(FLUTTER_LIBRARY_COPY_DIR)
-	mkdir -p $(FLUTTER_LIBRARY_COPY_DIR)
-	cp $(FLUTTER_ARTIFACT_CACHE_DIR)/*.h $(FLUTTER_LIBRARY_COPY_DIR)/
-	cp $(FLUTTER_ARTIFACT_CACHE_DIR)/*.so $(FLUTTER_LIBRARY_COPY_DIR)/
-	cp -r $(FLUTTER_ARTIFACT_CACHE_DIR)/cpp_client_wrapper \
-		$(FLUTTER_LIBRARY_COPY_DIR)/
-	touch $(FLUTTER_COPY_STAMP_FILE)
-
 $(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 	mkdir -p $(BUNDLE_LIB_DIR)
 	cp $(FLUTTER_LIB) $(BUNDLE_LIB_DIR)
-
-$(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
-	mkdir -p $(dir $(ICU_DATA_OUT))
-	cp $(ICU_DATA_SOURCE) $(ICU_DATA_OUT)
 
 # Fully re-copy the assets directory on each build to avoid having to keep a
 # comprehensive list of all asset files here, which would be fragile to changes
