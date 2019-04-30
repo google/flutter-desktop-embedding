@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import 'dart:io' show Platform;
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
@@ -21,11 +22,26 @@ import 'package:color_panel/color_panel.dart';
 import 'package:example_flutter/keyboard_test_page.dart';
 import 'package:file_chooser/file_chooser.dart' as file_chooser;
 import 'package:menubar/menubar.dart';
+import 'package:window_size/window_size.dart' as window_size;
 
 void main() {
   // Desktop platforms are not recognized as valid targets by
   // Flutter; force a specific target to prevent exceptions.
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+
+  // Try to resize the window to fill the middle 50% of its current screen.
+  window_size.getWindowInfo().then((window) {
+    if (window.screen != null) {
+      final screenFrame = window.screen.visibleFrame;
+      final width = math.max((screenFrame.width / 2).roundToDouble(), 640.0);
+      final height = math.max((screenFrame.height / 2).roundToDouble(), 480.0);
+      final left = ((screenFrame.width - width) / 2).roundToDouble();
+      final top = ((screenFrame.height - height) / 2).roundToDouble();
+      final frame = Rect.fromLTWH(left, top, width, height);
+      window_size.setWindowFrame(frame);
+    }
+  });
+
   runApp(new MyApp());
 }
 

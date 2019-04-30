@@ -16,14 +16,19 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 
+import 'platform_window.dart';
 import 'screen.dart';
 
 // Plugin channel constants. See common/channel_constants.h for details.
 const String _windowSizeChannelName = 'flutter/windowsize';
-const String _getScreenListMethod = 'WindowSize.GetScreens';
+const String _getScreenListMethod = 'getScreenList';
+const String _getCurrentScreenMethod = 'getCurrentScreen';
+const String _getWindowInfoMethod = 'getWindowInfo';
+const String _setWindowFrameMethod = 'setWindowFrame';
 const String _frameKey = 'frame';
 const String _visibleFrameKey = 'visibleFrame';
 const String _scaleFactorKey = 'scaleFactor';
+const String _screenKey = 'screen';
 
 /// A singleton object that handles the interaction with the platform channel.
 class WindowSizeChannel {
@@ -39,27 +44,70 @@ class WindowSizeChannel {
   /// Returns a list of screens.
   Future<List<Screen>> getScreenList() async {
     try {
-      await _platformChannel
-          .invokeMethod(_getScreenListMethod)
-          .then((response) {
-        final List<Screen> screenList =
-            response?.cast<Map>()?.map((screenInfo) {
-          final frame = screenInfo[_frameKey];
-          final visibleFrame = screenInfo[_visibleFrameKey];
-          return Screen(
-              Rect.fromLTWH(frame[0], frame[1], frame[2], frame[3]),
-              Rect.fromLTWH(visibleFrame[0], visibleFrame[1], visibleFrame[2],
-                  visibleFrame[3]),
-              screenInfo[_scaleFactorKey]);
-        });
-        if (screenList == null) {
-          return <Screen>[];
-        }
-        return screenList;
-      });
+      final screenList = <Screen>[];
+      final response =
+          await _platformChannel.invokeMethod(_getScreenListMethod);
+
+      for (final screenInfo in response) {
+        screenList.add(_screenFromInfoMap(screenInfo));
+      }
+      return screenList;
     } on PlatformException catch (e) {
       print('Platform exception getting screen list: ${e.message}');
     }
     return <Screen>[];
+  }
+
+  /// Returns information about the window containing this Flutter instance.
+  Future<PlatformWindow> getWindowInfo() async {
+    try {
+      final response =
+          await _platformChannel.invokeMethod(_getWindowInfoMethod);
+
+      return PlatformWindow(
+          _rectFromLTWHList(response[_frameKey].cast<double>()),
+          response[_scaleFactorKey],
+          _screenFromInfoMap(response[_screenKey]));
+    } on PlatformException catch (e) {
+      print('Platform exception getting window info: ${e.message}');
+    }
+    return null;
+  }
+
+  /// Sets the frame of the window containing this Flutter instance, in
+  /// screen coordinates.
+  ///
+  /// The platform may adjust the frame as necessary if the provided frame would
+  /// cause significant usability issues (e.g., a window with no visible portion
+  /// that can be used to move the window).
+  void setWindowFrame(Rect frame) async {
+    try {
+      await _platformChannel.invokeMethod(_setWindowFrameMethod,
+          [frame.left, frame.top, frame.width, frame.height]);
+    } on PlatformException catch (e) {
+      print('Platform exception setting window frame: ${e.message}');
+    }
+  }
+
+  /// Given an array of the form [left, top, width, height], return the
+  /// corresponding [Rect].
+  ///
+  /// Used for frame deserialiation in the platform channel.
+  Rect _rectFromLTWHList(List<double> ltwh) {
+    return Rect.fromLTWH(ltwh[0], ltwh[1], ltwh[2], ltwh[3]);
+  }
+
+  /// Given a map of information about a screen, return the corresponding
+  /// [Screen] object, or null.
+  ///
+  /// Used for screen deserialiation in the platform channel.
+  Screen _screenFromInfoMap(Map<dynamic, dynamic> map) {
+    if (map == null) {
+      return null;
+    }
+    return Screen(
+        _rectFromLTWHList(map[_frameKey].cast<double>()),
+        _rectFromLTWHList(map[_visibleFrameKey].cast<double>()),
+        map[_scaleFactorKey]);
   }
 }

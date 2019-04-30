@@ -17,10 +17,13 @@ namespace plugins_window_size {
 
 const char kChannelName[] = "flutter/windowsize";
 
-const char kGetScreenListMethod[] = "WindowSize.GetScreens";
+const char kGetScreenListMethod[] = "getScreenList";
+const char kGetWindowInfoMethod[] = "getWindowInfo";
+const char kSetWindowFrameMethod[] = "setWindowFrame";
 
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
+const char kScreenKey[] = "screen";
 
 }  // namespace plugins_window_size

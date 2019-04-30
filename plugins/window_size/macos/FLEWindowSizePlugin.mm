@@ -18,23 +18,46 @@
 
 #include "plugins/window_size/common/channel_constants.h"
 
+@interface FLEWindowSizePlugin ()
+/**
+ * Extracts information from |screen| and returns the serialiable form expected
+ * by the platform channel.
+ */
+- (NSDictionary *)platformChannelRepresentationForScreen:(NSScreen *)screen;
+
+/**
+ * Extracts information from |window| and returns the serialiable form expected
+ * by the platform channel.
+ */
+- (NSDictionary *)platformChannelRepresentationForWindow:(NSWindow *)window;
+
+/**
+ * Returns the serialiable form of |frame| expected by the platform channel.
+ */
+- (NSArray *)platformChannelRepresentationForFrame:(NSRect)frame;
+@end
+
 @implementation FLEWindowSizePlugin {
   // The channel used to communicate with Flutter.
   FlutterMethodChannel *_channel;
+  // The view displaying Flutter content.
+  NSView *_flutterView;
 }
 
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_window_size::kChannelName)
                                   binaryMessenger:registrar.messenger];
-  FLEWindowSizePlugin *instance = [[FLEWindowSizePlugin alloc] initWithChannel:channel];
+  FLEWindowSizePlugin *instance = [[FLEWindowSizePlugin alloc] initWithChannel:channel
+                                                                          view:registrar.view];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (instancetype)initWithChannel:(FlutterMethodChannel *)channel {
+- (instancetype)initWithChannel:(FlutterMethodChannel *)channel view:(NSView *)view {
   self = [super init];
   if (self) {
     _channel = channel;
+    _flutterView = view;
   }
   return self;
 }
@@ -49,23 +72,45 @@
     NSMutableArray<NSDictionary *> *screenList =
         [NSMutableArray arrayWithCapacity:[NSScreen screens].count];
     for (NSScreen *screen in [NSScreen screens]) {
-      NSRect frame = screen.frame;
-      NSRect visibleFrame = screen.visibleFrame;
-      [screenList addObject:@{
-        @(plugins_window_size::kFrameKey) :
-            @[ @(frame.origin.x), @(frame.origin.y), @(frame.size.width), @(frame.size.height) ],
-        @(plugins_window_size::kVisibleFrameKey) : @[
-          @(visibleFrame.origin.x), @(visibleFrame.origin.y), @(visibleFrame.size.width),
-          @(visibleFrame.size.height)
-        ],
-        @(plugins_window_size::kScaleFactorKey) : @(screen.backingScaleFactor),
-      }];
+      [screenList addObject:[self platformChannelRepresentationForScreen:screen]];
     }
     methodResult = screenList;
+  } else if ([call.method isEqualToString:@(plugins_window_size::kGetWindowInfoMethod)]) {
+    methodResult = [self platformChannelRepresentationForWindow:_flutterView.window];
+  } else if ([call.method isEqualToString:@(plugins_window_size::kSetWindowFrameMethod)]) {
+    NSArray<NSNumber *> *arguments = call.arguments;
+    [_flutterView.window setFrame:NSMakeRect(arguments[0].doubleValue, arguments[1].doubleValue,
+                                             arguments[2].doubleValue, arguments[3].doubleValue)
+                          display:YES];
+    methodResult = nil;
   } else {
     methodResult = FlutterMethodNotImplemented;
   }
   result(methodResult);
+}
+
+#pragma mark - Private methods
+
+- (NSDictionary *)platformChannelRepresentationForScreen:(NSScreen *)screen {
+  return @{
+    @(plugins_window_size::kFrameKey) : [self platformChannelRepresentationForFrame:screen.frame],
+    @(plugins_window_size::kVisibleFrameKey) :
+        [self platformChannelRepresentationForFrame:screen.visibleFrame],
+    @(plugins_window_size::kScaleFactorKey) : @(screen.backingScaleFactor),
+  };
+}
+
+- (NSDictionary *)platformChannelRepresentationForWindow:(NSWindow *)window {
+  return @{
+    @(plugins_window_size::kFrameKey) : [self platformChannelRepresentationForFrame:window.frame],
+    @(plugins_window_size::kScreenKey) :
+        [self platformChannelRepresentationForScreen:window.screen],
+    @(plugins_window_size::kScaleFactorKey) : @(window.backingScaleFactor),
+  };
+}
+
+- (NSArray *)platformChannelRepresentationForFrame:(NSRect)frame {
+  return @[ @(frame.origin.x), @(frame.origin.y), @(frame.size.width), @(frame.size.height) ];
 }
 
 @end

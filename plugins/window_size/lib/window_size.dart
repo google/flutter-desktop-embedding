@@ -11,5 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+export 'src/platform_window.dart';
 export 'src/screen.dart';
-export 'src/window_size_channel.dart'; // XXX wrap
+export 'src/window_size_utils.dart';

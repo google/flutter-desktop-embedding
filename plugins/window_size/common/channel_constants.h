@@ -27,19 +27,40 @@ extern const char kChannelName[];
 // Returns a list of screen info maps; see keys below.
 extern const char kGetScreenListMethod[];
 
-// Keys for screen maps returned by kGetScreenListMethod.
+// The method name to request information about the window containing the
+// Flutter instance.
+//
+// Returns a list of window info maps; see keys below.
+extern const char kGetWindowInfoMethod[];
 
-// The frame of the screen. The value is an array of four doubles:
+// The method name to set the frame of a window.
+//
+// Takes a frame array, as documented for the value of kFrameKey.
+extern const char kSetWindowFrameMethod[];
+
+// Keys for screen and window maps returned by kGetScreenListMethod.
+
+// The frame of a screen or window. The value is an array of four doubles:
 //   [left, top, width, height]
 extern const char kFrameKey[];
-// The frame of the screen available for use by applications. The value format
+// The frame of a screen available for use by applications. The value format
 // is the same as kFrameKey's.
+//
+// Only used for screens.
 extern const char kVisibleFrameKey[];
-// The scale factor for the screen, as a double.
+// The scale factor for a screen or window, as a double.
 //
 // This is the number of pixels per screen coordinate, and thus the ratio
-// between sizes as seen by Flutter, and sizes in native screen coordinates.
+// between sizes as seen by Flutter and sizes in native screen coordinates.
 extern const char kScaleFactorKey[];
+// The screen containing this window, if any. The value is a screen map, or null
+// if the window is not visible on a screen.
+//
+// Only used for windows.
+//
+// If a window is on multiple screens, it is up to the platform to decide which
+// screen to report.
+extern const char kScreenKey[];
 
 }  // namespace plugins_window_size
 
