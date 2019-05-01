@@ -18,6 +18,27 @@
 
 #include "plugins/window_size/common/channel_constants.h"
 
+/**
+ * Returns the max Y coordinate across all screens.
+ */
+CGFloat GetMaxScreenY() {
+  CGFloat maxY = 0;
+  for (NSScreen *screen in [NSScreen screens]) {
+    maxY = MAX(maxY, CGRectGetMaxY(screen.frame));
+  }
+  return maxY;
+}
+
+/**
+ * Given |frame| in screen coordinates, returns a frame flipped relative to
+ * GetMaxScreenY().
+ */
+NSRect GetFlippedRect(NSRect frame) {
+  CGFloat maxY = GetMaxScreenY();
+  return NSMakeRect(frame.origin.x, maxY - frame.origin.y - frame.size.height, frame.size.width,
+                    frame.size.height);
+}
+
 @interface FLEWindowSizePlugin ()
 /**
  * Extracts information from |screen| and returns the serialiable form expected
@@ -35,6 +56,7 @@
  * Returns the serialiable form of |frame| expected by the platform channel.
  */
 - (NSArray *)platformChannelRepresentationForFrame:(NSRect)frame;
+
 @end
 
 @implementation FLEWindowSizePlugin {
@@ -79,9 +101,10 @@
     methodResult = [self platformChannelRepresentationForWindow:_flutterView.window];
   } else if ([call.method isEqualToString:@(plugins_window_size::kSetWindowFrameMethod)]) {
     NSArray<NSNumber *> *arguments = call.arguments;
-    [_flutterView.window setFrame:NSMakeRect(arguments[0].doubleValue, arguments[1].doubleValue,
-                                             arguments[2].doubleValue, arguments[3].doubleValue)
-                          display:YES];
+    [_flutterView.window
+        setFrame:GetFlippedRect(NSMakeRect(arguments[0].doubleValue, arguments[1].doubleValue,
+                                           arguments[2].doubleValue, arguments[3].doubleValue))
+         display:YES];
     methodResult = nil;
   } else {
     methodResult = FlutterMethodNotImplemented;
@@ -93,16 +116,18 @@
 
 - (NSDictionary *)platformChannelRepresentationForScreen:(NSScreen *)screen {
   return @{
-    @(plugins_window_size::kFrameKey) : [self platformChannelRepresentationForFrame:screen.frame],
+    @(plugins_window_size::kFrameKey) :
+        [self platformChannelRepresentationForFrame:GetFlippedRect(screen.frame)],
     @(plugins_window_size::kVisibleFrameKey) :
-        [self platformChannelRepresentationForFrame:screen.visibleFrame],
+        [self platformChannelRepresentationForFrame:GetFlippedRect(screen.visibleFrame)],
     @(plugins_window_size::kScaleFactorKey) : @(screen.backingScaleFactor),
   };
 }
 
 - (NSDictionary *)platformChannelRepresentationForWindow:(NSWindow *)window {
   return @{
-    @(plugins_window_size::kFrameKey) : [self platformChannelRepresentationForFrame:window.frame],
+    @(plugins_window_size::kFrameKey) :
+        [self platformChannelRepresentationForFrame:GetFlippedRect(window.frame)],
     @(plugins_window_size::kScreenKey) :
         [self platformChannelRepresentationForScreen:window.screen],
     @(plugins_window_size::kScaleFactorKey) : @(window.backingScaleFactor),

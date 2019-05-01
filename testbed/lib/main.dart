@@ -29,7 +29,8 @@ void main() {
   // Flutter; force a specific target to prevent exceptions.
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
 
-  // Try to resize the window to fill the middle 50% of its current screen.
+  // Try to resize and reposition the window to be half the width and height
+  // of its screen, centered horizontally and shifted up from center.
   if (Platform.isMacOS) {
     window_size.getWindowInfo().then((window) {
       if (window.screen != null) {
@@ -38,7 +39,7 @@ void main() {
         final height =
             math.max((screenFrame.height / 2).roundToDouble(), 480.0);
         final left = ((screenFrame.width - width) / 2).roundToDouble();
-        final top = ((screenFrame.height - height) / 2).roundToDouble();
+        final top = ((screenFrame.height - height) / 3).roundToDouble();
         final frame = Rect.fromLTWH(left, top, width, height);
         window_size.setWindowFrame(frame);
       }
