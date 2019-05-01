@@ -43,16 +43,19 @@ extern const char kSetWindowFrameMethod[];
 // The frame of a screen or window. The value is an array of four doubles:
 //   [left, top, width, height]
 extern const char kFrameKey[];
+
 // The frame of a screen available for use by applications. The value format
 // is the same as kFrameKey's.
 //
 // Only used for screens.
 extern const char kVisibleFrameKey[];
+
 // The scale factor for a screen or window, as a double.
 //
 // This is the number of pixels per screen coordinate, and thus the ratio
 // between sizes as seen by Flutter and sizes in native screen coordinates.
 extern const char kScaleFactorKey[];
+
 // The screen containing this window, if any. The value is a screen map, or null
 // if the window is not visible on a screen.
 //

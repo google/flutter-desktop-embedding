@@ -92,7 +92,7 @@ class WindowSizeChannel {
   /// Given an array of the form [left, top, width, height], return the
   /// corresponding [Rect].
   ///
-  /// Used for frame deserialiation in the platform channel.
+  /// Used for frame deserialization in the platform channel.
   Rect _rectFromLTWHList(List<double> ltwh) {
     return Rect.fromLTWH(ltwh[0], ltwh[1], ltwh[2], ltwh[3]);
   }
@@ -100,7 +100,7 @@ class WindowSizeChannel {
   /// Given a map of information about a screen, return the corresponding
   /// [Screen] object, or null.
   ///
-  /// Used for screen deserialiation in the platform channel.
+  /// Used for screen deserialization in the platform channel.
   Screen _screenFromInfoMap(Map<dynamic, dynamic> map) {
     if (map == null) {
       return null;
