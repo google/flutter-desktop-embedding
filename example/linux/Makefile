@@ -30,20 +30,22 @@ BUILD=debug
 
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
+FLUTTER_APP_CACHE_DIR=$(CURDIR)/flutter
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
-FLUTTER_ROOT:=$(shell cat $(CURDIR)/.generated_flutter_root)
+FLUTTER_ROOT:=$(shell cat $(FLUTTER_APP_CACHE_DIR)/generated_flutter_root)
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
-FLUTTER_LIBRARY_COPY_DIR=$(CACHE_DIR)/flutter_library
 
 FLUTTER_LIB_NAME=flutter_linux
-FLUTTER_LIB=$(FLUTTER_LIBRARY_COPY_DIR)/lib$(FLUTTER_LIB_NAME).so
+FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # Tools
 FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
 
 # Resources
+ICU_DATA_NAME=icudtl.dat
+ICU_DATA_SOURCE=$(FLUTTER_APP_CACHE_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
@@ -58,7 +60,7 @@ FLUTTER_LIB_OUT=$(BUNDLE_LIB_DIR)/$(notdir $(FLUTTER_LIB))
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the client.
-WRAPPER_ROOT=$(FLUTTER_LIBRARY_COPY_DIR)/cpp_client_wrapper
+WRAPPER_ROOT=$(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper
 WRAPPER_SOURCES= \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
 	$(WRAPPER_ROOT)/plugin_registrar.cc \
@@ -67,7 +69,10 @@ SOURCES+=$(WRAPPER_SOURCES)
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
-INCLUDE_DIRS=$(FLUTTER_LIBRARY_COPY_DIR) $(WRAPPER_INCLUDE_DIR)
+INCLUDE_DIRS=$(FLUTTER_APP_CACHE_DIR) $(WRAPPER_INCLUDE_DIR)
+
+# The stamp file created by copy_flutter_files.
+FLUTTER_COPY_STAMP_FILE=$(FLUTTER_APP_CACHE_DIR)/generated_flutter_root
 
 # Build settings
 CXX=g++ -std=c++14
@@ -90,9 +95,15 @@ $(BIN_OUT): $(SOURCES) $(FLUTTER_LIB_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
+$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE): $(FLUTTER_COPY_STAMP_FILE)
+
 $(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 	mkdir -p $(BUNDLE_LIB_DIR)
 	cp $(FLUTTER_LIB) $(BUNDLE_LIB_DIR)
+
+$(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
+	mkdir -p $(dir $(ICU_DATA_OUT))
+	cp $(ICU_DATA_SOURCE) $(ICU_DATA_OUT)
 
 # Fully re-copy the assets directory on each build to avoid having to keep a
 # comprehensive list of all asset files here, which would be fragile to changes
