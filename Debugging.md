@@ -43,12 +43,14 @@ In the future, there will hopefully be a simpler workflow that uses a prompt rat
 having to edit a the launch configuration every time. Watch [this Dart Code
 issue](https://github.com/Dart-Code/Dart-Code/issues/1638) for updates.
 
-## IntelliJ
+## Android Studio/IntelliJ
 
 ### Running
 
 It is not currently possible to set the `ENABLE_FLUTTER_DESKTOP` environment
-variable in IntelliJ.
+variable from within IntelliJ. However, if you set it in the environment used to
+launch the application (details vary by OS), you should be able to use the normal
+run/debug workflow.
 
 ### Attaching
 
