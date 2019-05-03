@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
         // See https://github.com/flutter/flutter/wiki/Desktop-shells#fonts
         fontFamily: 'Roboto',
       ),
+      darkTheme: ThemeData.dark(),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
