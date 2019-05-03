@@ -21,27 +21,29 @@ BINARY_NAME=flutter_desktop_example
 # The C++ code for the embedder application.
 SOURCES=flutter_embedder_example.cc
 
-
 # Default build type. For a release build, set BUILD=release.
 # Currently this only sets NDEBUG, which is used to control the flags passed
 # to the Flutter engine in the example shell, and not the complation settings
 # (e.g., optimization level) of the C++ code.
 BUILD=debug
 
+# Configuration provided via flutter tool.
+include flutter/generated_config
+
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
-FLUTTER_APP_CACHE_DIR=$(CURDIR)/flutter
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
-FLUTTER_ROOT:=$(shell cat $(FLUTTER_APP_CACHE_DIR)/generated_flutter_root)
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
 
 FLUTTER_LIB_NAME=flutter_linux
+FLUTTER_APP_CACHE_DIR=flutter
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # Tools
 FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
+LINUX_BUILD=$(FLUTTER_ROOT)/packages/flutter_tools/bin/linux_backend.sh
 
 # Resources
 ICU_DATA_NAME=icudtl.dat
@@ -71,9 +73,6 @@ SOURCES+=$(WRAPPER_SOURCES)
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_APP_CACHE_DIR) $(WRAPPER_INCLUDE_DIR)
 
-# The stamp file created by copy_flutter_files.
-FLUTTER_COPY_STAMP_FILE=$(FLUTTER_APP_CACHE_DIR)/generated_flutter_root
-
 # Build settings
 CXX=g++ -std=c++14
 CXXFLAGS.release=-DNDEBUG
@@ -84,6 +83,9 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 	-Wl,-rpath=\$$ORIGIN/lib
 
 # Targets
+
+.PHONY: all
+all: $(FLUTTER_ROOT)/packages/flutter_tools/bin/linux_backend.sh
 
 .PHONY: all
 all: $(BIN_OUT) bundle
