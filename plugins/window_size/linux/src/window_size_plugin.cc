@@ -13,15 +13,15 @@
 // limitations under the License.
 #include "plugins/window_size/linux/include/window_size/window_size_plugin.h"
 
-#include <gtk/gtk.h>
-#include <iostream>
-#include <memory>
-#include <vector>
-
 #include <flutter/flutter_window.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_glfw.h>
 #include <flutter/standard_method_codec.h>
+#include <gtk/gtk.h>
+
+#include <iostream>
+#include <memory>
+#include <vector>
 
 #include "plugins/window_size/common/channel_constants.h"
 
@@ -33,7 +33,7 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-// Returns the serialiable form of |frame| expected by the platform channel.
+// Returns the serializable form of |frame| expected by the platform channel.
 EncodableValue GetPlatformChannelRepresentationForFrame(
     const GdkRectangle &frame) {
   return EncodableValue(EncodableList{
@@ -44,8 +44,8 @@ EncodableValue GetPlatformChannelRepresentationForFrame(
   });
 }
 
-// Extracts information from |monitor| and returns the serialiable form expected
-// by the platform channel.
+// Extracts information from |monitor| and returns the serializable form
+// expected by the platform channel.
 EncodableValue GetPlatformChannelRepresentationForMonitor(GdkMonitor *monitor) {
   if (!monitor) {
     return EncodableValue();
@@ -94,7 +94,7 @@ GdkMonitor *GetMonitorForWindowFrame(const GdkRectangle &frame) {
   return nullptr;
 }
 
-// Extracts information from |window| and returns the serialiable form expected
+// Extracts information from |window| and returns the serializable form expected
 // by the platform channel.
 EncodableValue GetPlatformChannelRepresentationForWindow(
     flutter::FlutterWindow *window) {
