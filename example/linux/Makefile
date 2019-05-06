@@ -38,7 +38,7 @@ OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
 
 FLUTTER_LIB_NAME=flutter_linux
-FLUTTER_APP_CACHE_DIR=flutter
+FLUTTER_APP_CACHE_DIR=flutter/cache
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # Tools
@@ -85,10 +85,11 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 # Targets
 
 .PHONY: all
-all: $(FLUTTER_ROOT)/packages/flutter_tools/bin/linux_backend.sh
+all: sync $(BIN_OUT) bundle
 
-.PHONY: all
-all: $(BIN_OUT) bundle
+.PHONY: sync
+sync: flutter/generated_config
+	$(FLUTTER_ROOT)/packages/flutter_tools/bin/linux_backend.sh
 
 .PHONY: bundle
 bundle: $(ICU_DATA_OUT) $(FLUTTER_LIB_OUT) bundleflutterassets
@@ -112,16 +113,9 @@ $(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
 # in the Flutter example (e.g., adding a new font to pubspec.yaml would require
 # changes here).
 .PHONY: bundleflutterassets
-bundleflutterassets: $(FLUTTER_ASSETS_SOURCE)
+bundleflutterassets: sync
 	mkdir -p $(BUNDLE_DATA_DIR)
 	rsync -rpu --delete $(FLUTTER_ASSETS_SOURCE) $(BUNDLE_DATA_DIR)
-
-# PHONY since the Makefile doesn't have all the dependency information necessary
-# to know if 'build bundle' needs to be re-run.
-.PHONY: $(FLUTTER_ASSETS_SOURCE)
-$(FLUTTER_ASSETS_SOURCE):
-	cd $(FLUTTER_APP_DIR); \
-	$(FLUTTER_BIN) build bundle $(FLUTTER_BUNDLE_FLAGS)
 
 .PHONY: clean
 clean:
