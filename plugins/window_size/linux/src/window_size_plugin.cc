@@ -157,7 +157,6 @@ void WindowSizePlugin::RegisterWithRegistrar(
       [plugin_pointer = plugin.get()](const auto &call, auto result) {
         plugin_pointer->HandleMethodCall(call, std::move(result));
       });
-  registrar->EnableInputBlockingForChannel(kChannelName);
 
   registrar->AddPlugin(std::move(plugin));
 }
