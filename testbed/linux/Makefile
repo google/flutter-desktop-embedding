@@ -23,7 +23,7 @@ FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
 SOURCES=testbed.cc
 # Plugins to include (from the flutter-desktop-embedding plugins/ directory).
-PLUGIN_NAMES=color_panel file_chooser menubar
+PLUGIN_NAMES=color_panel file_chooser menubar window_size
 
 
 # Default build type. For a release build, set BUILD=release.
