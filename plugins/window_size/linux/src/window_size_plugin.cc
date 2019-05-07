@@ -33,6 +33,16 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
+// Returns the screen object that contains monitors.
+GdkScreen *GetScreen() {
+  GdkDisplay *display = gdk_display_get_default();
+  if (!display) {
+    return nullptr;
+  }
+  GdkScreen *screen = gdk_display_get_default_screen(display);
+  return screen;
+}
+
 // Returns the serializable form of |frame| expected by the platform channel.
 EncodableValue GetPlatformChannelRepresentationForFrame(
     const GdkRectangle &frame) {
@@ -44,18 +54,21 @@ EncodableValue GetPlatformChannelRepresentationForFrame(
   });
 }
 
-// Extracts information from |monitor| and returns the serializable form
-// expected by the platform channel.
-EncodableValue GetPlatformChannelRepresentationForMonitor(GdkMonitor *monitor) {
-  if (!monitor) {
+// Extracts information from monitor |monitor_index| of |screen| and returns the
+// serializable form expected by the platform channel.
+// TODO: Switch to GdkMonitor once GTK-3.22 is sufficiently available.
+EncodableValue GetPlatformChannelRepresentationForMonitor(GdkScreen *screen,
+                                                          gint monitor_index) {
+  if (!screen || monitor_index == -1) {
     return EncodableValue();
   }
 
   GdkRectangle frame = {};
-  gdk_monitor_get_geometry(monitor, &frame);
+  gdk_screen_get_monitor_geometry(screen, monitor_index, &frame);
   GdkRectangle visible_frame = {};
-  gdk_monitor_get_workarea(monitor, &visible_frame);
-  double scale_factor = gdk_monitor_get_scale_factor(monitor);
+  gdk_screen_get_monitor_workarea(screen, monitor_index, &visible_frame);
+  double scale_factor =
+      gdk_screen_get_monitor_scale_factor(screen, monitor_index);
   return EncodableValue(EncodableMap{
       {EncodableValue(kFrameKey),
        GetPlatformChannelRepresentationForFrame(frame)},
@@ -71,27 +84,31 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(GdkMonitor *monitor) {
 // The heuristic used is:
 // - If a monitor contains the frame's origin, return that.
 // - If not, but there is at least one monitor, return the first one.
-// - Otherwise, return null.
-GdkMonitor *GetMonitorForWindowFrame(const GdkRectangle &frame) {
+// - Otherwise, return -1.
+//
+// TODO: Switch to returning GdkMonitor once GTK-3.22 is sufficiently available.
+gint GetMonitorIndexForWindowFrame(const GdkRectangle &frame) {
   // Treat the window as being on whichever monitor contains its origin. If
   // none do, use the first monitor (if there is one).
-  EncodableValue screen;
-  GdkDisplay *display = gdk_display_get_default();
-  if (display) {
-    int monitor_count = gdk_display_get_n_monitors(display);
-    for (int i = 0; i < monitor_count; ++i) {
-      GdkMonitor *monitor = gdk_display_get_monitor(display, i);
-      GdkRectangle monitor_frame = {};
-      gdk_monitor_get_geometry(monitor, &monitor_frame);
-      if ((frame.x >= monitor_frame.x &&
-           frame.x <= monitor_frame.x + monitor_frame.width) &&
-          (frame.y >= monitor_frame.y &&
-           frame.y <= monitor_frame.y + monitor_frame.width)) {
-        return monitor;
-      }
+  GdkScreen *screen = GetScreen();
+  if (!screen) {
+    return -1;
+  }
+  int monitor_count = gdk_screen_get_n_monitors(screen);
+  for (int i = 0; i < monitor_count; ++i) {
+    GdkRectangle monitor_frame = {};
+    gdk_screen_get_monitor_geometry(screen, i, &monitor_frame);
+    if ((frame.x >= monitor_frame.x &&
+         frame.x <= monitor_frame.x + monitor_frame.width) &&
+        (frame.y >= monitor_frame.y &&
+         frame.y <= monitor_frame.y + monitor_frame.width)) {
+      return i;
     }
   }
-  return nullptr;
+  if (monitor_count > 0) {
+    return 0;
+  }
+  return -1;
 }
 
 // Extracts information from |window| and returns the serializable form expected
@@ -108,8 +125,9 @@ EncodableValue GetPlatformChannelRepresentationForWindow(
   return EncodableValue(EncodableMap{
       {EncodableValue(kFrameKey),
        GetPlatformChannelRepresentationForFrame(gdk_frame)},
-      {EncodableValue(kScreenKey), GetPlatformChannelRepresentationForMonitor(
-                                       GetMonitorForWindowFrame(gdk_frame))},
+      {EncodableValue(kScreenKey),
+       GetPlatformChannelRepresentationForMonitor(
+           GetScreen(), GetMonitorIndexForWindowFrame(gdk_frame))},
       {EncodableValue(kScaleFactorKey),
        EncodableValue(window->GetScaleFactor())},
   });
@@ -173,16 +191,15 @@ void WindowSizePlugin::HandleMethodCall(
     std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
   if (method_call.method_name().compare(kGetScreenListMethod) == 0) {
     EncodableValue screens(EncodableValue::Type::kList);
-    GdkDisplay *display = gdk_display_get_default();
-    if (!display) {
-      result->Error("Unable to get display");
+    GdkScreen *screen = GetScreen();
+    if (!screen) {
+      result->Error("Unable to get screen");
       return;
     }
-    int monitor_count = gdk_display_get_n_monitors(display);
+    int monitor_count = gdk_screen_get_n_monitors(screen);
     for (int i = 0; i < monitor_count; ++i) {
-      GdkMonitor *monitor = gdk_display_get_monitor(display, i);
       screens.ListValue().push_back(
-          GetPlatformChannelRepresentationForMonitor(monitor));
+          GetPlatformChannelRepresentationForMonitor(screen, i));
     }
     result->Success(&screens);
   } else if (method_call.method_name().compare(kGetWindowInfoMethod) == 0) {

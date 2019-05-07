@@ -43,5 +43,10 @@ published_shared_library("window_size") {
     configs += [
       "//build/linux/config:gtk3",
     ]
+
+    cflags = [
+      # Required for use of GdkScreen APIs for pre-GTK 3.22 compat.
+      "-Wno-deprecated-declarations",
+    ]
   }
 }
