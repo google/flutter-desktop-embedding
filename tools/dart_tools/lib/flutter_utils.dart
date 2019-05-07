@@ -27,7 +27,7 @@ import 'run_command.dart';
 /// This should be updated whenever a new dependency is introduced (e.g., a
 /// required embedder API addition or implementation fix).
 const String lastKnownRequiredFlutterCommit =
-    '829130ddfcf84aa683291744fb6d170f61f0287b';
+    'c27d10bf464500ef4e1792e9aa57128c1b281d2f';
 
 /// Returns the path to the root of this repository.
 ///
