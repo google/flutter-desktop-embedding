@@ -81,6 +81,8 @@ class WindowSizeChannel {
   /// cause significant usability issues (e.g., a window with no visible portion
   /// that can be used to move the window).
   void setWindowFrame(Rect frame) async {
+    assert(!frame.isEmpty(), 'Cannot set window frame to an empty rect.');
+    assert(frame.isFinite(), 'Cannot set window frame to a non-finite rect.');
     try {
       await _platformChannel.invokeMethod(_setWindowFrameMethod,
           [frame.left, frame.top, frame.width, frame.height]);

@@ -195,6 +195,8 @@ void WindowSizePlugin::HandleMethodCall(
       result->Error("Bad arguments", "Expected 4-element list");
       return;
     }
+    // Frame validity (e.g., non-zero size) is assumed to be checked on the Dart
+    // side of the call.
     const auto &frame_list = method_call.arguments()->ListValue();
     flutter::WindowFrame frame = {};
     frame.left = static_cast<int>(frame_list[0].DoubleValue());
