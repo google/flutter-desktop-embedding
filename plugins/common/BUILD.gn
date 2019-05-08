@@ -27,7 +27,7 @@ action("fetch_flutter_library") {
     "$flutter_tree_path/bin/internal/engine.version",
   ]
   outputs = flutter_library_files + flutter_library_headers +
-      flutter_client_wrapper_source + flutter_client_wrapper_headers
+            flutter_client_wrapper_source + flutter_client_wrapper_headers
   args = [
     "--flutter_root=$flutter_tree_path",
     rebase_path(flutter_library_download_dir, root_build_dir),
@@ -51,12 +51,9 @@ source_set("flutter_wrapper") {
   # For now, just remove specific unwanted files.
 
   # Plugins don't need the window controller code.
-  sources -= [
-    "$flutter_library_download_dir/cpp_client_wrapper/flutter_window_controller.cc",
-  ]
-  public -= [
-    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/flutter_window_controller.h",
-  ]
+  sources -= [ "$flutter_library_download_dir/cpp_client_wrapper/flutter_window_controller.cc" ]
+  public -= [ "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/flutter_window_controller.h" ]
+
   # The plugins in this project all use the standard codec.
   sources -= [
     "$flutter_library_download_dir/cpp_client_wrapper/json_message_codec.cc",
@@ -73,7 +70,9 @@ source_set("flutter_wrapper") {
   configs -= default_static_configs
   configs += default_dynamic_configs
 
-  deps = [ ":fetch_flutter_library" ]
+  deps = [
+    ":fetch_flutter_library",
+  ]
 
   public_configs = [ ":relative_flutter_wrapper_headers" ]
 }

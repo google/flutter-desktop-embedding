@@ -37,11 +37,9 @@ _flutter_client_wrapper_core_source = [
     "$flutter_library_download_dir/cpp_client_wrapper/standard_codec_serializer.h",
 ]
 _flutter_client_wrapper_glfw_source = [
-
     "$flutter_library_download_dir/cpp_client_wrapper/flutter_window_controller.cc",
 ]
 _flutter_client_wrapper_core_headers = [
-
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/basic_message_channel.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/binary_messenger.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/encodable_value.h",
@@ -59,8 +57,9 @@ _flutter_client_wrapper_core_headers = [
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/standard_method_codec.h",
 ]
 _flutter_client_wrapper_glfw_headers = [
-
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/flutter_window.h",
     "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/flutter_window_controller.h",
+    "$flutter_library_download_dir/cpp_client_wrapper/$flutter_client_wrapper_include_dir/plugin_registrar_glfw.h",
 ]
 
 # The files that make up the downloaded engine library on Linux.

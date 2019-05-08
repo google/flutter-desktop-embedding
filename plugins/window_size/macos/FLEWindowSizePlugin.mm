@@ -41,19 +41,19 @@ NSRect GetFlippedRect(NSRect frame) {
 
 @interface FLEWindowSizePlugin ()
 /**
- * Extracts information from |screen| and returns the serialiable form expected
+ * Extracts information from |screen| and returns the serializable form expected
  * by the platform channel.
  */
 - (NSDictionary *)platformChannelRepresentationForScreen:(NSScreen *)screen;
 
 /**
- * Extracts information from |window| and returns the serialiable form expected
+ * Extracts information from |window| and returns the serializable form expected
  * by the platform channel.
  */
 - (NSDictionary *)platformChannelRepresentationForWindow:(NSWindow *)window;
 
 /**
- * Returns the serialiable form of |frame| expected by the platform channel.
+ * Returns the serializable form of |frame| expected by the platform channel.
  */
 - (NSArray *)platformChannelRepresentationForFrame:(NSRect)frame;
 
