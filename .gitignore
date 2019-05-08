@@ -1,2 +1,4 @@
 out/
 .DS_Store
+.vscode
+.flutter_location_config

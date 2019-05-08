@@ -7,7 +7,7 @@ To enable desktop support in Dart Code, add the flag to
 `settings.json`:
 ```
 "dart.env": {
-    "FLUTTER_DESKTOP_EMBEDDING": true,
+    "ENABLE_FLUTTER_DESKTOP": true,
 }
 ```
 

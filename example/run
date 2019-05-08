@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+export ENABLE_FLUTTER_DESKTOP=true
+exec ../../flutter/bin/flutter run
