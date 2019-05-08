@@ -40,7 +40,7 @@ as both the port (`1234`) and token (`abcdef123456`) portions will change on eve
 Be sure to save the file before trying to attach.
 
 In the future, there will hopefully be a simpler workflow that uses a prompt rather than
-having to edit a the launch configuration every time. Watch [this Dart Code
+having to edit the launch configuration every time. Watch [this Dart Code
 issue](https://github.com/Dart-Code/Dart-Code/issues/1638) for updates.
 
 ## Android Studio/IntelliJ
