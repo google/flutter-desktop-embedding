@@ -87,7 +87,6 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 .PHONY: all
 all: sync $(BIN_OUT) bundle
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB): | sync
 sync: flutter/generated_config
 	$(FLUTTER_ROOT)/packages/flutter_tools/bin/tool_backend.sh linux-x64 $(BUILD)
 
@@ -98,7 +97,7 @@ $(BIN_OUT): $(SOURCES) $(FLUTTER_LIB_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE): $(FLUTTER_COPY_STAMP_FILE)
+$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE): | sync
 
 $(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 	mkdir -p $(BUNDLE_LIB_DIR)
