@@ -37,7 +37,7 @@ FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
 
-FLUTTER_APP_CACHE_DIR=flutter/cache
+FLUTTER_APP_CACHE_DIR=flutter/
 FLUTTER_LIB_NAME=flutter_linux
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
@@ -87,7 +87,7 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 .PHONY: all
 all: sync $(BIN_OUT) bundle
 
-.PHONY: sync
+$(WRAPPER_SOURCES) $(FLUTTER_LIB): | sync
 sync: flutter/generated_config
 	$(FLUTTER_ROOT)/packages/flutter_tools/bin/tool_backend.sh linux-x64 $(BUILD)
 
@@ -113,7 +113,7 @@ $(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
 # in the Flutter example (e.g., adding a new font to pubspec.yaml would require
 # changes here).
 .PHONY: bundleflutterassets
-bundleflutterassets: sync
+bundleflutterassets: | sync
 	mkdir -p $(BUNDLE_DATA_DIR)
 	rsync -rpu --delete $(FLUTTER_ASSETS_SOURCE) $(BUNDLE_DATA_DIR)
 
