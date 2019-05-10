@@ -84,8 +84,10 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 
 # Targets
 
+# These include phony targets because the flutter tool cannot describe
+# its outputs yet.
 .PHONY: all
-all: sync $(BIN_OUT) bundle
+all: $(BIN_OUT) bundle
 
 sync: flutter/generated_config
 	$(FLUTTER_ROOT)/packages/flutter_tools/bin/tool_backend.sh linux-x64 $(BUILD)
