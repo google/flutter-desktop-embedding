@@ -37,7 +37,7 @@ FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 CACHE_DIR=$(OUT_DIR)/cache
 
-export FLUTTER_APP_CACHE_DIR=flutter/cache
+FLUTTER_APP_CACHE_DIR=flutter/cache
 FLUTTER_LIB_NAME=flutter_linux
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
@@ -89,7 +89,7 @@ all: sync $(BIN_OUT) bundle
 
 .PHONY: sync
 sync: flutter/generated_config
-	$(FLUTTER_ROOT)/packages/flutter_tools/bin/linux_backend.sh
+	$(FLUTTER_ROOT)/packages/flutter_tools/bin/tool_backend.sh linux-x64 $(BUILD)
 
 .PHONY: bundle
 bundle: $(ICU_DATA_OUT) $(FLUTTER_LIB_OUT) bundleflutterassets
