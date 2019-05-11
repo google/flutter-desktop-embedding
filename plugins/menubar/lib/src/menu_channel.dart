@@ -35,8 +35,7 @@ class MenuChannel {
     _platformChannel.setMethodCallHandler(_callbackHandler);
   }
 
-  final MethodChannel _platformChannel =
-      const MethodChannel(_kMenuChannelName, const JSONMethodCodec());
+  final MethodChannel _platformChannel = const MethodChannel(_kMenuChannelName);
 
   /// Map from unique identifiers assigned by this class to the callbacks for
   /// those menu items.
@@ -64,7 +63,7 @@ class MenuChannel {
     try {
       _updateInProgress = true;
       await _platformChannel.invokeMethod(
-          _kMenuSetMethod, _jsonRepresentationForMenus(menus));
+          _kMenuSetMethod, _channelRepresentationForMenus(menus));
       _updateInProgress = false;
     } on PlatformException catch (e) {
       print('Platform exception setting menu: ${e.message}');
@@ -77,16 +76,17 @@ class MenuChannel {
   /// As a side-effect, repopulates _selectionCallbacks with a mapping from
   /// the IDs assigned to any menu item with a selection handler to the
   /// callback that should be triggered.
-  List<dynamic> _jsonRepresentationForMenus(List<Submenu> menus) {
+  List<dynamic> _channelRepresentationForMenus(List<Submenu> menus) {
     _selectionCallbacks.clear();
     _nextMenuItemId = 1;
 
-    return menus.map(_jsonRepresentationForMenuItem).toList();
+    return menus.map(_channelRepresentationForMenuItem).toList();
   }
 
-  /// Returns the JSON representation of [item] suitable for passing over the
+  /// Returns a representation of [item] suitable for passing over the
   /// platform channel to the native plugin.
-  Map<String, dynamic> _jsonRepresentationForMenuItem(AbstractMenuItem item) {
+  Map<String, dynamic> _channelRepresentationForMenuItem(
+      AbstractMenuItem item) {
     final representation = <String, dynamic>{};
     if (item is MenuDivider) {
       representation[_kDividerKey] = true;
@@ -94,7 +94,7 @@ class MenuChannel {
       representation[_kLabelKey] = item.label;
       if (item is Submenu) {
         representation[_kChildrenKey] =
-            _jsonRepresentationForMenu(item.children);
+            _channelRepresentationForMenu(item.children);
       } else if (item is MenuItem) {
         if (item.onClicked != null) {
           representation[_kIdKey] = _storeMenuCallback(item.onClicked);
@@ -110,9 +110,9 @@ class MenuChannel {
     return representation;
   }
 
-  /// Returns the JSON representation of [menu] suitable for passing over the
+  /// Returns the representation of [menu] suitable for passing over the
   /// platform channel to the native plugin.
-  List<dynamic> _jsonRepresentationForMenu(List<AbstractMenuItem> menu) {
+  List<dynamic> _channelRepresentationForMenu(List<AbstractMenuItem> menu) {
     final menuItemRepresentations = [];
     // Dividers are only allowed after non-divider items (see ApplicationMenu).
     var skipNextDivider = true;
@@ -122,7 +122,7 @@ class MenuChannel {
         continue;
       }
       skipNextDivider = isDivider;
-      menuItemRepresentations.add(_jsonRepresentationForMenuItem(menuItem));
+      menuItemRepresentations.add(_channelRepresentationForMenuItem(menuItem));
     }
     // If the last item is a divider, remove it (see ApplicationMenu).
     if (skipNextDivider && menuItemRepresentations.isNotEmpty) {

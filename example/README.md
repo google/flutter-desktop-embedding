@@ -27,8 +27,8 @@ Flutter, it *will* break.)
 
 ## Building and Running the Example
 
-Ensure that you are on a recent version of the [Flutter master
-channel](https://github.com/flutter/flutter/wiki/Flutter-build-release-channels).
+Ensure that you are on the latest version of the [Flutter master
+channel](https://github.com/flutter/flutter/wiki/Flutter-build-release-channels#how-to-change-channels).
 
 ### Enable Desktop Support
 

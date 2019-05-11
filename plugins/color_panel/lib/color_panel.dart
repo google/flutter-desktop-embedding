@@ -29,8 +29,7 @@ const String _kGreenKey = 'green';
 const String _kBlueKey = 'blue';
 const String _kAlphaKey = 'alpha';
 
-const MethodChannel _platformChannel =
-    const MethodChannel(_kColorPanelChannel, const JSONMethodCodec());
+const MethodChannel _platformChannel = const MethodChannel(_kColorPanelChannel);
 
 /// A callback to pass to [ColorPanel] to receive user-selected colors.
 typedef ColorPanelCallback = void Function(Color color);
@@ -64,8 +63,8 @@ class ColorPanel {
     try {
       if (!showing) {
         _callback = callback;
-        _platformChannel.invokeMethod(_kShowColorPanelMethod,
-            {_kColorPanelShowAlpha: showAlpha});
+        _platformChannel.invokeMethod(
+            _kShowColorPanelMethod, {_kColorPanelShowAlpha: showAlpha});
       } else {
         throw new StateError('Color panel is already shown');
       }

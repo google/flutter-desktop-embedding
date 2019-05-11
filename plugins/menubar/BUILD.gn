@@ -42,7 +42,6 @@ published_shared_library("menubar") {
 
     configs += [
       "//build/linux/config:gtk3",
-      "//build/linux/config:jsoncpp",
     ]
   }
 }

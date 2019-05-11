@@ -26,8 +26,7 @@
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_color_panel::kChannelName)
-                                  binaryMessenger:registrar.messenger
-                                            codec:[FlutterJSONMethodCodec sharedInstance]];
+                                  binaryMessenger:registrar.messenger];
   FLEColorPanelPlugin *instance = [[FLEColorPanelPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
@@ -119,7 +118,8 @@
 }
 
 /**
- * Converts an instance of NSColor to a dictionary representation suitable for JSON messages.
+ * Converts an instance of NSColor to a dictionary representation suitable for Flutter channel
+ * messages.
  *
  * @param color An instance of NSColor.
  * @return An instance of NSDictionary representing the color.

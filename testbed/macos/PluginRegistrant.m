@@ -21,6 +21,7 @@
 #import <FlutterEmbedderColorPanel/FlutterEmbedderColorPanel.h>
 #import <FlutterEmbedderFileChooser/FlutterEmbedderFileChooser.h>
 #import <FlutterEmbedderMenubar/FlutterEmbedderMenubar.h>
+#import <FlutterEmbedderWindowSize/FlutterEmbedderWindowSize.h>
 
 @implementation PluginRegistrant
 
@@ -28,6 +29,7 @@
   [FLEColorPanelPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEColorPanelPlugin"]];
   [FLEFileChooserPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEFileChooserPlugin"]];
   [FLEMenubarPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEMenubarPlugin"]];
+  [FLEWindowSizePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEWindowSizePlugin"]];
 }
 
 @end

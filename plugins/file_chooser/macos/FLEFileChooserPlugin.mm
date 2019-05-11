@@ -81,8 +81,7 @@
 + (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_file_chooser::kChannelName)
-                                  binaryMessenger:registrar.messenger
-                                            codec:[FlutterJSONMethodCodec sharedInstance]];
+                                  binaryMessenger:registrar.messenger];
   FLEFileChooserPlugin *instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
   [registrar addMethodCallDelegate:instance channel:channel];
 }

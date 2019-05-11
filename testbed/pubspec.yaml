@@ -17,6 +17,8 @@ dependencies:
     path: ../plugins/file_chooser
   menubar:
     path: ../plugins/menubar
+  window_size:
+    path: ../plugins/window_size
 
 dev_dependencies:
   flutter_test:
