@@ -31,13 +31,13 @@ BUILD=debug
 include flutter/generated_config
 
 # Dependency locations
+FLUTTER_APP_CACHE_DIR=flutter/
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
-CACHE_DIR=$(OUT_DIR)/cache
 
-FLUTTER_APP_CACHE_DIR=flutter/
+# Libraries
 FLUTTER_LIB_NAME=flutter_linux
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
@@ -84,11 +84,12 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 
 # Targets
 
-# These include phony targets because the flutter tool cannot describe
-# its outputs yet.
 .PHONY: all
 all: $(BIN_OUT) bundle
 
+# This is a phony target because the flutter tool cannot describe
+# its inputs and outputs yet.
+.PHONY: sync
 sync: flutter/generated_config
 	$(FLUTTER_ROOT)/packages/flutter_tools/bin/tool_backend.sh linux-x64 $(BUILD)
 
@@ -99,7 +100,8 @@ $(BIN_OUT): $(SOURCES) $(FLUTTER_LIB_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE): | sync
+$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE): \
+	| sync
 
 $(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 	mkdir -p $(BUNDLE_LIB_DIR)
@@ -114,7 +116,7 @@ $(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
 # in the Flutter example (e.g., adding a new font to pubspec.yaml would require
 # changes here).
 .PHONY: bundleflutterassets
-bundleflutterassets: | sync
+bundleflutterassets: $(FLUTTER_ASSETS_SOURCE)
 	mkdir -p $(BUNDLE_DATA_DIR)
 	rsync -rpu --delete $(FLUTTER_ASSETS_SOURCE) $(BUNDLE_DATA_DIR)
 
