@@ -5,14 +5,14 @@ Flutter engine](https://github.com/flutter/flutter/wiki/Compiling-the-engine).
 
 ## Building
 
-### macOS
+### macOS and Linux
 
-The `flutter run` workflow for macOS supports `--local-engine`, so just follow
+The `flutter run` workflow for macOS and Linux supports `--local-engine`, so just follow
 the normal Flutter workflow for using a local engine build.
 
-### Windows and Linux
+### Windows
 
-Work is in progress to add `--local-engine` support for Windows and Linux.
+Work is in progress to add `--local-engine` support for Windows.
 In the meantime, you can get the same effect by adding a file called
 `engine_override` at the root of your `flutter_desktop_embedding` checkout
 containing the name of your build output directory. For instance on Linux:
