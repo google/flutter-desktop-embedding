@@ -18,6 +18,7 @@ group("gn_all") {
       "//plugins/color_panel:color_panel",
       "//plugins/file_chooser:file_chooser",
       "//plugins/menubar:menubar",
+      "//plugins/window_size:window_size",
     ]
   }
   if (is_win) {
