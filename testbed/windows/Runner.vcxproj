@@ -90,7 +90,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(ProjectDir)flutter\" "$(OutputPath)"</Command>
+      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -135,7 +135,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(ProjectDir)flutter\" "$(OutputPath)"</Command>
+      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
