@@ -14,7 +14,6 @@
 @echo off
 
 set FLUTTER_APP_DIR=%~dp0..\..
-set ICU_DATA_SOURCE=%FLUTTER_ROOT%\bin\cache\artifacts\engine\windows-x64\icudtl.dat
 set ASSET_DIR_NAME=flutter_assets
 
 set FLUTTER_LIBRARY_DIR=%~1
@@ -25,18 +24,14 @@ set TARGET_ASSET_DIR=%DATA_DIR%\%ASSET_DIR_NAME%
 if not exist "%DATA_DIR%" call mkdir "%DATA_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-:: Build the Flutter assets.
-cd "%FLUTTER_APP_DIR%"
-call %FLUTTER_ROOT%\bin\flutter build bundle %EXTRA_BUNDLE_FLAGS%
-if %errorlevel% neq 0 exit /b %errorlevel%
-:: Copy them to the data directory.
+:: Copy the Flutter assets to the data directory.
 if exist "%TARGET_ASSET_DIR%" call rmdir /s /q "%TARGET_ASSET_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 call xcopy /s /e /i /q "%FLUTTER_APP_DIR%\build\%ASSET_DIR_NAME%" "%TARGET_ASSET_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Copy the icudtl.dat file from the Flutter tree to the data directory.
-call xcopy /y /d /q "%ICU_DATA_SOURCE%" "%DATA_DIR%"
+call xcopy /y /d /q "%FLUTTER_LIBRARY_DIR%icudtl.dat" "%DATA_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Copy the Flutter DLL to the target location.
