@@ -57,10 +57,8 @@ In addition, there is:
 
 ## Debugging
 
-Debugging of the Flutter side of a desktop application is possible, but requires
-[a modified workflow](Debugging.md).
-
-To debug the Flutter engine, you can [use a local engine build](LocalEngine.md).
+Debugging of the Flutter side of a desktop application is possible, but
+[requires setup](Debugging.md).
 
 ## Feedback and Discussion
 
