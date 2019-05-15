@@ -90,7 +90,7 @@ class FileChooserChannelController {
   FileChooserChannelController._();
 
   /// The platform channel used to manage native file chooser affordances.
-  final _channel = new MethodChannel(_kChannelName, new JSONMethodCodec());
+  final _channel = new MethodChannel(_kChannelName);
 
   /// A reference to the singleton instance of the class.
   static final FileChooserChannelController instance =

@@ -14,19 +14,21 @@
 #include "plugins/color_panel/linux/include/color_panel/color_panel_plugin.h"
 
 #include <gtk/gtk.h>
-#include <json/json.h>
 #include <iostream>
 #include <memory>
 
-#include <flutter/json_method_codec.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
+#include <flutter/standard_method_codec.h>
 
 #include "plugins/color_panel/common/channel_constants.h"
 
 static constexpr char kWindowTitle[] = "Flutter Color Picker";
 
 namespace plugins_color_panel {
+
+using flutter::EncodableMap;
+using flutter::EncodableValue;
 
 class ColorPanelPlugin : public flutter::Plugin {
  public:
@@ -45,15 +47,15 @@ class ColorPanelPlugin : public flutter::Plugin {
  private:
   // Creates a plugin that communicates on the given channel.
   ColorPanelPlugin(
-      std::unique_ptr<flutter::MethodChannel<Json::Value>> channel);
+      std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel);
 
   // Called when a method is called on |channel_|;
   void HandleMethodCall(
-      const flutter::MethodCall<Json::Value> &method_call,
-      std::unique_ptr<flutter::MethodResult<Json::Value>> result);
+      const flutter::MethodCall<EncodableValue> &method_call,
+      std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
 
   // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter::MethodChannel<Json::Value>> channel_;
+  std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel_;
 
   // Private implementation.
   class ColorPanel;
@@ -66,11 +68,18 @@ class ColorPanelPlugin : public flutter::Plugin {
 class ColorPanelPlugin::ColorPanel {
  public:
   explicit ColorPanel(ColorPanelPlugin *parent,
-                      const Json::Value *method_args) {
+                      const EncodableValue *method_args) {
     gtk_widget_ = gtk_color_chooser_dialog_new(kWindowTitle, nullptr);
+    bool use_alpha = false;
+    if (method_args) {
+      const auto &arg_map = method_args->MapValue();
+      auto it = arg_map.find(EncodableValue(kColorPanelShowAlpha));
+      if (it != arg_map.end()) {
+        use_alpha = it->second.BoolValue();
+      }
+    }
     gtk_color_chooser_set_use_alpha(
-        reinterpret_cast<GtkColorChooser *>(gtk_widget_),
-        method_args && (*method_args)[kColorPanelShowAlpha].asBool());
+        reinterpret_cast<GtkColorChooser *>(gtk_widget_), use_alpha);
     gtk_widget_show_all(gtk_widget_);
     g_signal_connect(gtk_widget_, "close", G_CALLBACK(CloseCallback), parent);
     g_signal_connect(gtk_widget_, "response", G_CALLBACK(ResponseCallback),
@@ -84,16 +93,16 @@ class ColorPanelPlugin::ColorPanel {
     }
   }
 
-  // Converts a color from ARGB to a JSON object.
+  // Converts a color from ARGB to a encodable object.
   //
   // The format of the message is intended for platform consumption.
-  static Json::Value GdkColorToArgs(const GdkRGBA *color) {
-    Json::Value result;
-    result[kColorComponentAlphaKey] = color->alpha;
-    result[kColorComponentRedKey] = color->red;
-    result[kColorComponentGreenKey] = color->green;
-    result[kColorComponentBlueKey] = color->blue;
-    return result;
+  static EncodableValue GdkColorToArgs(const GdkRGBA *color) {
+    return EncodableValue(EncodableMap{
+        {EncodableValue(kColorComponentAlphaKey), EncodableValue(color->alpha)},
+        {EncodableValue(kColorComponentRedKey), EncodableValue(color->red)},
+        {EncodableValue(kColorComponentGreenKey), EncodableValue(color->green)},
+        {EncodableValue(kColorComponentBlueKey), EncodableValue(color->blue)},
+    });
   }
 
   // Handler for when the user closes the color chooser dialog.
@@ -116,7 +125,7 @@ class ColorPanelPlugin::ColorPanel {
       gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dialog), &color);
       plugin->channel_->InvokeMethod(
           kColorSelectedCallbackMethod,
-          std::make_unique<Json::Value>(GdkColorToArgs(&color)));
+          std::make_unique<EncodableValue>(GdkColorToArgs(&color)));
     }
     // Need this to close the color handler.
     plugin->HidePanel(CloseRequestSource::kUserAction);
@@ -129,9 +138,9 @@ class ColorPanelPlugin::ColorPanel {
 // static
 void ColorPanelPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrar *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<Json::Value>>(
+  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
       registrar->messenger(), kChannelName,
-      &flutter::JsonMethodCodec::GetInstance());
+      &flutter::StandardMethodCodec::GetInstance());
   auto *channel_pointer = channel.get();
 
   // Uses new instead of make_unique due to private constructor.
@@ -147,14 +156,14 @@ void ColorPanelPlugin::RegisterWithRegistrar(
 }
 
 ColorPanelPlugin::ColorPanelPlugin(
-    std::unique_ptr<flutter::MethodChannel<Json::Value>> channel)
+    std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel)
     : channel_(std::move(channel)), color_panel_(nullptr) {}
 
 ColorPanelPlugin::~ColorPanelPlugin() {}
 
 void ColorPanelPlugin::HandleMethodCall(
-    const flutter::MethodCall<Json::Value> &method_call,
-    std::unique_ptr<flutter::MethodResult<Json::Value>> result) {
+    const flutter::MethodCall<EncodableValue> &method_call,
+    std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
   if (method_call.method_name().compare(kShowColorPanelMethod) == 0) {
     result->Success();
     // There is only one color panel that can be displayed at once.

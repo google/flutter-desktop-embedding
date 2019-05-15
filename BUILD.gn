@@ -18,11 +18,14 @@ group("gn_all") {
       "//plugins/color_panel:color_panel",
       "//plugins/file_chooser:file_chooser",
       "//plugins/menubar:menubar",
+      "//plugins/window_size:window_size",
     ]
   }
   if (is_win) {
     deps = [
-      "//third_party/jsoncpp:jsoncpp_test",
+      # Temporary dependency, to keep a target in the Windows build
+      # until a plugin is supported.
+      "//plugins/common:fetch_flutter_library",
     ]
   }
 }

@@ -24,7 +24,7 @@ extern const char kChannelName[];
 
 // The method name to instruct the native plugin to set the menu.
 //
-// The argument to this method will be an array of JSON representations
+// The argument to this method will be an array of map representations
 // of menus that should be set as top-level menu items.
 extern const char kMenuSetMethod[];
 // The method name for the Dart-side callback called when a menu item is
@@ -34,7 +34,7 @@ extern const char kMenuSetMethod[];
 // provided in the kIdKey field in the kMenuSetMethod call.
 extern const char kMenuItemSelectedCallbackMethod[];
 
-// Keys for the JSON representations of menus sent to kMenuSetMethod.
+// Keys for the map representations of menus sent to kMenuSetMethod.
 
 // The ID of the menu item, as an integer. If present, this indicates that the
 // menu item should trigger a kMenuItemSelectedCallbackMethod call when

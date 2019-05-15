@@ -45,7 +45,6 @@ Future<void> main() async {
       '--exists',
       '--print-errors',
       'gtk+-3.0',
-      'jsoncpp',
     ]));
   }
   if (Platform.isWindows) {

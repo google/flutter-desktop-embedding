@@ -21,32 +21,33 @@ BINARY_NAME=flutter_desktop_example
 # The C++ code for the embedder application.
 SOURCES=flutter_embedder_example.cc
 
-
 # Default build type. For a release build, set BUILD=release.
 # Currently this only sets NDEBUG, which is used to control the flags passed
 # to the Flutter engine in the example shell, and not the complation settings
 # (e.g., optimization level) of the C++ code.
 BUILD=debug
 
+# Configuration provided via flutter tool.
+include flutter/generated_config
+
 # Dependency locations
+FLUTTER_APP_CACHE_DIR=flutter/
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
-FLUTTER_ROOT:=$(shell cat $(CURDIR)/.generated_flutter_root)
-FLUTTER_ARTIFACT_CACHE_DIR=$(FLUTTER_ROOT)/bin/cache/artifacts/engine/linux-x64
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
-CACHE_DIR=$(OUT_DIR)/cache
-FLUTTER_LIBRARY_COPY_DIR=$(CACHE_DIR)/flutter_library
 
+# Libraries
 FLUTTER_LIB_NAME=flutter_linux
-FLUTTER_LIB=$(FLUTTER_LIBRARY_COPY_DIR)/lib$(FLUTTER_LIB_NAME).so
+FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # Tools
 FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
+LINUX_BUILD=$(FLUTTER_ROOT)/packages/flutter_tools/bin/linux_backend.sh
 
 # Resources
 ICU_DATA_NAME=icudtl.dat
-ICU_DATA_SOURCE=$(FLUTTER_ARTIFACT_CACHE_DIR)/$(ICU_DATA_NAME)
+ICU_DATA_SOURCE=$(FLUTTER_APP_CACHE_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
@@ -61,7 +62,7 @@ FLUTTER_LIB_OUT=$(BUNDLE_LIB_DIR)/$(notdir $(FLUTTER_LIB))
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the client.
-WRAPPER_ROOT=$(FLUTTER_LIBRARY_COPY_DIR)/cpp_client_wrapper
+WRAPPER_ROOT=$(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper
 WRAPPER_SOURCES= \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
 	$(WRAPPER_ROOT)/plugin_registrar.cc \
@@ -70,12 +71,7 @@ SOURCES+=$(WRAPPER_SOURCES)
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
-INCLUDE_DIRS=$(FLUTTER_LIBRARY_COPY_DIR) $(WRAPPER_INCLUDE_DIR)
-
-# The stamp file created by copy_flutter_files.
-FLUTTER_COPY_STAMP_FILE=$(FLUTTER_LIBRARY_COPY_DIR)/.last_copied_flutter_version
-# The Flutter engine version file.
-FLUTTER_ENGINE_VERSION_FILE=$(FLUTTER_ROOT)/bin/internal/engine.version
+INCLUDE_DIRS=$(FLUTTER_APP_CACHE_DIR) $(WRAPPER_INCLUDE_DIR)
 
 # Build settings
 CXX=g++ -std=c++14
@@ -91,6 +87,12 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 .PHONY: all
 all: $(BIN_OUT) bundle
 
+# This is a phony target because the flutter tool cannot describe
+# its inputs and outputs yet.
+.PHONY: sync
+sync: flutter/generated_config
+	$(FLUTTER_ROOT)/packages/flutter_tools/bin/tool_backend.sh linux-x64 $(BUILD)
+
 .PHONY: bundle
 bundle: $(ICU_DATA_OUT) $(FLUTTER_LIB_OUT) bundleflutterassets
 
@@ -98,19 +100,8 @@ $(BIN_OUT): $(SOURCES) $(FLUTTER_LIB_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE): $(FLUTTER_COPY_STAMP_FILE)
-
-# When the Flutter engine version changes, the local copy of engine artifacts
-# needs to be updated.
-$(FLUTTER_COPY_STAMP_FILE): $(FLUTTER_ENGINE_VERSION_FILE)
-	$(FLUTTER_BIN) precache --linux --no-android --no-ios
-	rm -rf $(FLUTTER_LIBRARY_COPY_DIR)
-	mkdir -p $(FLUTTER_LIBRARY_COPY_DIR)
-	cp $(FLUTTER_ARTIFACT_CACHE_DIR)/*.h $(FLUTTER_LIBRARY_COPY_DIR)/
-	cp $(FLUTTER_ARTIFACT_CACHE_DIR)/*.so $(FLUTTER_LIBRARY_COPY_DIR)/
-	cp -r $(FLUTTER_ARTIFACT_CACHE_DIR)/cpp_client_wrapper \
-		$(FLUTTER_LIBRARY_COPY_DIR)/
-	touch $(FLUTTER_COPY_STAMP_FILE)
+$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE): \
+	| sync
 
 $(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 	mkdir -p $(BUNDLE_LIB_DIR)
@@ -128,13 +119,6 @@ $(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
 bundleflutterassets: $(FLUTTER_ASSETS_SOURCE)
 	mkdir -p $(BUNDLE_DATA_DIR)
 	rsync -rpu --delete $(FLUTTER_ASSETS_SOURCE) $(BUNDLE_DATA_DIR)
-
-# PHONY since the Makefile doesn't have all the dependency information necessary
-# to know if 'build bundle' needs to be re-run.
-.PHONY: $(FLUTTER_ASSETS_SOURCE)
-$(FLUTTER_ASSETS_SOURCE):
-	cd $(FLUTTER_APP_DIR); \
-	$(FLUTTER_BIN) build bundle $(FLUTTER_BUNDLE_FLAGS)
 
 .PHONY: clean
 clean:

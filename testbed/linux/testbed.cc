@@ -23,6 +23,7 @@
 #include <file_chooser/file_chooser_plugin.h>
 #include <flutter/flutter_window_controller.h>
 #include <menubar/menubar_plugin.h>
+#include <window_size/window_size_plugin.h>
 
 namespace {
 
@@ -66,8 +67,8 @@ int main(int argc, char **argv) {
   flutter::FlutterWindowController flutter_controller(icu_data_path);
 
   // Start the engine.
-  if (!flutter_controller.CreateWindow(800, 600, "Testbed",
-                                       assets_path, arguments)) {
+  if (!flutter_controller.CreateWindow(800, 600, "Testbed", assets_path,
+                                       arguments)) {
     return EXIT_FAILURE;
   }
 
@@ -78,6 +79,8 @@ int main(int argc, char **argv) {
       flutter_controller.GetRegistrarForPlugin("ColorPanel"));
   FileChooserRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("FileChooser"));
+  WindowSizeRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("WindowSize"));
 
   // Run until the window is closed.
   flutter_controller.RunEventLoop();
