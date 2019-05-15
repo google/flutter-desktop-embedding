@@ -134,6 +134,7 @@ class _AppState extends State<MyApp> {
         // example behaving differently on different platforms.
         fontFamily: 'Roboto',
       ),
+      darkTheme: ThemeData.dark(),
       home: _MyHomePage(title: 'Flutter Demo Home Page', counter: _counter),
     );
   }
