@@ -118,6 +118,24 @@ function. For instance:
       flutter_controller.GetRegistrarForPlugin("ColorPanel"));
 ```
 
+### Local Engine Support
+
+Since desktop plugin builds are not yet integrated with the Flutter tooling,
+`--local-engine` does not exist for plugin builds, and is not passed through
+from application-level builds (e.g., `testbed`). For now, you can get the same
+effect by adding a file called `engine_override` at the root of your
+`flutter-desktop-embedding` checkout containing the name of your build output
+directory (i.e., the same thing you would pass to `--local-engine`). For instance
+on Linux or macOS:
+```
+$ echo host_debug_unopt > engine_override
+```
+
+This should only be necessary if the plugin build requires changes in your local
+engine, for instance if it use APIs that have been changed or added in your
+local engine build. At runtime, the library used will be determined by
+the application build.
+
 ### Example Use
 
 See the runner under each platform's directory in the `testbed`
