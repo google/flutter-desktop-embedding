@@ -27,7 +27,7 @@ import 'run_command.dart';
 /// This should be updated whenever a new dependency is introduced (e.g., a
 /// required embedder API addition or implementation fix).
 const String lastKnownRequiredFlutterCommit =
-    'c27d10bf464500ef4e1792e9aa57128c1b281d2f';
+    '4e1bfca8470ff088ecb68aaa72086f290b316fd1';
 
 /// Returns the path to the root of this repository.
 ///
@@ -58,29 +58,6 @@ Future<void> runFlutterCommand(String flutterRoot, List<String> arguments,
 
   await runCommand(flutterBinary, arguments,
       workingDirectory: workingDirectory);
-}
-
-/// Returns the engine hash from [file] as a String, or null.
-///
-/// If the file is missing, or cannot be read, returns null.
-Future<String> readHashFileIfPossible(File file) async {
-  if (!file.existsSync()) {
-    return null;
-  }
-  try {
-    return (await file.readAsString()).trim();
-  } on FileSystemException {
-    // If the file can't be read for any reason, just treat it as missing.
-    return null;
-  }
-}
-
-/// Returns the engine version hash for the Flutter tree at [flutterRoot],
-/// or null if it can't be found.
-Future<String> engineHashForFlutterTree(String flutterRoot) async {
-  final versionFile =
-      new File(path.join(flutterRoot, 'bin', 'internal', 'engine.version'));
-  return await readHashFileIfPossible(versionFile);
 }
 
 /// If there is an engine override file, returns the engine build type given in
