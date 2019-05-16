@@ -23,12 +23,10 @@ import 'dart:io';
 /// An exception thrown if the exit code is not 0 and [allowFail] is false.
 ///
 /// An optional [workingDirectory] can be passed for the directory that
-/// [command] should be executed in, and [runInShell] can be passed to run the
-/// command via a shell.
+/// [command] should be executed in.
 Future<int> runCommand(String command, List<String> arguments,
     {String workingDirectory,
     bool allowFail = false,
-    bool runInShell = false,
     bool suppressOutput = false}) async {
   final fullCommand = '$command ${arguments.join(" ")}';
   if (!suppressOutput) {
@@ -36,7 +34,7 @@ Future<int> runCommand(String command, List<String> arguments,
   }
 
   final process = await Process.start(command, arguments,
-      workingDirectory: workingDirectory, runInShell: runInShell);
+      workingDirectory: workingDirectory);
   if (!suppressOutput) {
     await stdout.addStream(process.stdout);
     await stderr.addStream(process.stderr);
