@@ -37,25 +37,25 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Generated.props" />
+    <Import Project="flutter\Generated.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Generated.props" />
+    <Import Project="flutter\Generated.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(IntDir)flutter_library;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)flutter;$(LibraryPath)</LibraryPath>
     <TargetName>Flutter Desktop Example</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(IntDir)flutter_library\;$(IntDir)flutter_library\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(IntDir)flutter_library;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)flutter;$(LibraryPath)</LibraryPath>
     <TargetName>Flutter Desktop Example</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -72,7 +72,7 @@
       <AdditionalDependencies>flutter_windows.dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\prepare_dependencies "$(IntDir)"</Command>
+      <Command>$(ProjectDir)scripts\prepare_dependencies debug</Command>
       <Message>Sync and build dependencies</Message>
     </PreBuildEvent>
     <PreLinkEvent>
@@ -90,7 +90,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(IntDir)flutter_library\" "$(OutputPath)"</Command>
+      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -117,7 +117,7 @@
       <AdditionalDependencies>flutter_windows.dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\prepare_dependencies "$(IntDir)"</Command>
+      <Command>$(ProjectDir)scripts\prepare_dependencies release</Command>
       <Message>Sync and build dependencies</Message>
     </PreBuildEvent>
     <PreLinkEvent>
@@ -135,7 +135,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(IntDir)flutter_library\" "$(OutputPath)"</Command>
+      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -145,9 +145,9 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(IntDir)flutter_library\cpp_client_wrapper\engine_method_result.cc" />
-    <ClCompile Include="$(IntDir)flutter_library\cpp_client_wrapper\flutter_window_controller.cc" />
-    <ClCompile Include="$(IntDir)flutter_library\cpp_client_wrapper\plugin_registrar.cc" />
+    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\engine_method_result.cc" />
+    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\flutter_window_controller.cc" />
+    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\plugin_registrar.cc" />
     <ClCompile Include="flutter_embedder_example.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
