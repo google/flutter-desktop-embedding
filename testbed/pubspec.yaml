@@ -20,6 +20,8 @@ dependencies:
   # checkout.
   color_panel:
     path: ../plugins/color_panel
+  example_plugin:
+    path: ../plugins/example_plugin
   file_chooser:
     path: ../plugins/file_chooser
   menubar:

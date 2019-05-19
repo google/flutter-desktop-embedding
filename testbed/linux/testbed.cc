@@ -20,6 +20,7 @@
 #include <vector>
 
 #include <color_panel/color_panel_plugin.h>
+#include <example_plugin.h>
 #include <file_chooser/file_chooser_plugin.h>
 #include <flutter/flutter_window_controller.h>
 #include <menubar/menubar_plugin.h>
@@ -73,12 +74,14 @@ int main(int argc, char **argv) {
   }
 
   // Register any native plugins.
-  MenubarRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("Menubar"));
   ColorPanelRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("ColorPanel"));
+  ExamplePluginRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
   FileChooserRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("FileChooser"));
+  MenubarRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("Menubar"));
   WindowSizeRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("WindowSize"));
 

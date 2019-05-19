@@ -23,6 +23,7 @@ import 'package:example_flutter/keyboard_test_page.dart';
 import 'package:file_chooser/file_chooser.dart' as file_chooser;
 import 'package:menubar/menubar.dart';
 import 'package:window_size/window_size.dart' as window_size;
+import 'package:example_plugin/example_plugin.dart' as example_plugin;
 
 void main() {
   // Desktop platforms are not recognized as valid targets by
@@ -43,6 +44,13 @@ void main() {
         final frame = Rect.fromLTWH(left, top, width, height);
         window_size.setWindowFrame(frame);
       }
+    });
+  }
+
+  // TODO: Add implementations for the other platforms.
+  if (Platform.isLinux) {
+    example_plugin.ExamplePlugin.platformVersion.then((versionInfo) {
+      print('Example plugin returned $versionInfo');
     });
   }
 
