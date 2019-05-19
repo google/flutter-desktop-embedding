@@ -13,18 +13,17 @@
 // limitations under the License.
 #include <linux/limits.h>
 #include <unistd.h>
-
 #include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <vector>
 
-#include <color_panel/color_panel_plugin.h>
+#include <color_panel_plugin.h>
 #include <example_plugin.h>
-#include <file_chooser/file_chooser_plugin.h>
+#include <file_chooser_plugin.h>
 #include <flutter/flutter_window_controller.h>
-#include <menubar/menubar_plugin.h>
-#include <window_size/window_size_plugin.h>
+#include <menubar_plugin.h>
+#include <window_size_plugin.h>
 
 namespace {
 
