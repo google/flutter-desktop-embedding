@@ -66,6 +66,7 @@ BUNDLE_LIB_DIR=$(BUNDLE_OUT_DIR)/lib
 
 BIN_OUT=$(BUNDLE_OUT_DIR)/$(BINARY_NAME)
 ICU_DATA_OUT=$(BUNDLE_DATA_DIR)/$(ICU_DATA_NAME)
+FLUTTER_LIB_OUT=$(BUNDLE_LIB_DIR)/lib$(FLUTTER_LIB_NAME).so
 ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(BUNDLE_LIB_DIR)/$(notdir $(lib)))
 
 # Add relevant code from the wrapper library, which is intended to be statically
@@ -127,15 +128,18 @@ $(PLUGIN_NAMES) example_plugin:
 	make -C $(PLUGINS_DIR)/$@/linux \
 		OUT_DIR=$(OUT_DIR) FLUTTER_ROOT=$(FLUTTER_ROOT)
 
-# This is slightly inefficient in that it copies all libraries if any of them
-# changes, but is far simpler than setting up individual rules for each library.
-$(ALL_LIBS_OUT): $(ALL_LIBS)
+# Plugin library bundling pattern.
+$(BUNDLE_LIB_DIR)/%: $(OUT_DIR)/%
 	mkdir -p $(BUNDLE_LIB_DIR)
-	cp $(ALL_LIBS) $(BUNDLE_LIB_DIR)
+	cp $< $@
+
+$(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
+	mkdir -p $(@D)
+	cp $< $@
 
 $(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
-	mkdir -p $(dir $(ICU_DATA_OUT))
-	cp $(ICU_DATA_SOURCE) $(ICU_DATA_OUT)
+	mkdir -p $(@D)
+	cp $< $@
 
 # Fully re-copy the assets directory on each build to avoid having to keep a
 # comprehensive list of all asset files here, which would be fragile to changes
