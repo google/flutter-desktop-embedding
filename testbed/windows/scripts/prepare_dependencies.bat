@@ -16,12 +16,3 @@
 :: Run flutter tool backend.
 set BUILD_MODE=%~1
 %FLUTTER_ROOT%\packages\flutter_tools\bin\tool_backend windows-x64 %BUILD_MODE%
-
-:: Build plugins.
-set FDE_ROOT=%~dp0..\..\..
-set GN_OUT_DIR=%FDE_ROOT%\out
-set TOOLS_DIR=%FDE_ROOT%\tools
-
-call %FDE_ROOT%\tools\gn_dart gen %GN_OUT_DIR%
-if %errorlevel% neq 0 exit /b %errorlevel%
-ninja -C %GN_OUT_DIR%

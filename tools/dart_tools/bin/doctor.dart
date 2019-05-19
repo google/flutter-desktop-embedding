@@ -34,11 +34,6 @@ Future<void> main() async {
   final dependencies = [
     _Dependency('git', 'git', ['--version']),
   ];
-  if (Platform.isWindows || Platform.isLinux) {
-    dependencies
-      ..add(_Dependency('GN', 'gn', ['--version']))
-      ..add(_Dependency('ninja', 'ninja', ['--version']));
-  }
   if (Platform.isLinux) {
     dependencies.add(_Dependency('GCC', 'g++', ['--version']));
     dependencies.add(_Dependency('libraries', 'pkg-config', [
