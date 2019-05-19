@@ -79,6 +79,13 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
         final RawKeyEventDataMacOs data = event.data;
         keyCode = data.keyCode;
         break;
+      // The Windows and Linux shells are still sending Android-encoded events.
+      // Once Windows and Linux keyboard support is in place and the shells send
+      // the correct type, this will need to be updated.
+      case RawKeyEventDataAndroid:
+        final RawKeyEventDataAndroid data = event.data;
+        keyCode = data.keyCode;
+        break;
       default:
         throw new Exception('Unsupported platform ${event.data.runtimeType}');
     }
