@@ -73,8 +73,7 @@ void ExamplePlugin::HandleMethodCall(
     struct utsname uname_data = {};
     uname(&uname_data);
     std::ostringstream version_stream;
-    version_stream << "Linux " << uname_data.sysname << " "
-                   << uname_data.release << " " << uname_data.version;
+    version_stream << "Linux " << uname_data.version;
     flutter::EncodableValue response(version_stream.str());
     result->Success(&response);
   } else {
