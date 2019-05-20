@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Example-specific variables.
-# To modify this Makefile for a different application, these are the values
-# that are mostly likely to need to be changed.
-
 # Executable name.
 BINARY_NAME=testbed
 # The location of the flutter-desktop-embedding repository.
 FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
 SOURCES=testbed.cc
+
 # Plugins to include (from the flutter-desktop-embedding plugins/ directory).
-PLUGIN_NAMES=color_panel file_chooser menubar window_size
+PLUGIN_NAMES=example_plugin
+# FDE Plugins still built using GN.
+# TODO: Migrate these to Makefiles.
+GN_PLUGIN_NAMES=color_panel file_chooser menubar window_size
 
 
 # Default build type. For a release build, set BUILD=release.
@@ -48,11 +48,12 @@ OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 FLUTTER_LIB_NAME=flutter_linux
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
-PLUGIN_LIB_NAME_PREFIX=flutter_embedder_
-PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES)\
-	,$(GN_OUT_DIR)/lib$(PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
+GN_PLUGIN_LIB_NAME_PREFIX=flutter_embedder_
+GN_PLUGIN_LIBS=$(foreach plugin,$(GN_PLUGIN_NAMES)\
+	,$(GN_OUT_DIR)/lib$(GN_PLUGIN_LIB_NAME_PREFIX)$(plugin).so)
+PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_NAMES),$(OUT_DIR)/lib$(plugin).so)
 
-ALL_LIBS=$(FLUTTER_LIB) $(PLUGIN_LIBS)
+ALL_LIBS=$(FLUTTER_LIB) $(PLUGIN_LIBS) $(GN_PLUGIN_LIBS)
 
 # Tools
 FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
@@ -85,7 +86,9 @@ SOURCES+=$(WRAPPER_SOURCES)
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
-# The GN build places all published headers in a top-level include/.
+# The plugin builds place all published headers in a top-level include/.
+PLUGIN_INCLUDE_DIRS=$(OUT_DIR)/include
+# As does the GN build, but relative to its output directory.
 PLUGIN_INCLUDE_DIRS+=$(GN_OUT_DIR)/include
 INCLUDE_DIRS=$(FLUTTER_APP_CACHE_DIR) $(PLUGIN_INCLUDE_DIRS) \
 	$(WRAPPER_INCLUDE_DIR)
@@ -97,7 +100,8 @@ CXXFLAGS=-Wall -Werror $(CXXFLAGS.$(BUILD))
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
 LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 	-l$(FLUTTER_LIB_NAME) \
-	$(patsubst %,-l$(PLUGIN_LIB_NAME_PREFIX)%,$(PLUGIN_NAMES)) \
+	$(patsubst %,-l$(GN_PLUGIN_LIB_NAME_PREFIX)%,$(GN_PLUGIN_NAMES)) \
+	$(patsubst %,-l%,$(PLUGIN_NAMES)) \
 	-Wl,-rpath=\$$ORIGIN/lib
 
 # Targets
@@ -121,16 +125,23 @@ $(BIN_OUT): $(SOURCES) $(ALL_LIBS_OUT)
 $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE): \
 	| sync
 
-# Run the GN build for anything depending on the plugins, but use order-only
+# Run the GN build for anything depending on the GN plugins, but use order-only
 # so that it doesn't trigger rebuilds of all dependencies every time.
-$(PLUGIN_LIBS): | gnbuild
+$(GN_PLUGIN_LIBS): | gnbuild
 
 .PHONY: gnbuild
 gnbuild $(WRAPPER_SOURCES): $(GN_OUT_DIR)
-	$(NINJA_BIN) -C $(GN_OUT_DIR) $(PLUGIN_NAMES)
+	$(NINJA_BIN) -C $(GN_OUT_DIR) $(GN_PLUGIN_NAMES)
 
 $(GN_OUT_DIR):
 	$(GN_WRAPPER) gen $(GN_OUT_DIR)
+
+$(OUT_DIR)/libexample_plugin.so: | example_plugin
+
+.PHONY: $(PLUGIN_NAMES)
+$(PLUGIN_NAMES):
+	make -C $(PLUGINS_DIR)/$@/linux \
+		OUT_DIR=$(OUT_DIR) FLUTTER_ROOT=$(FLUTTER_ROOT)
 
 # This is slightly inefficient in that it copies all libraries if any of them
 # changes, but is far simpler than setting up individual rules for each library.
