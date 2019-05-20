@@ -18,13 +18,6 @@ package resources differently, etc. If you are are adding Flutter to an
 existing desktop application, you might instead put the Flutter application code
 inside your existing project structure.
 
-(**Note:** You may be tempted to pre-build a generic binary based on this
-example that can run any Flutter app. If you do, keep in mind that you *must*
-use the same version of Flutter to build `flutter_assets` as you use to build
-the runner. If you later upgrade Flutter, or if you distribute the binary
-version to other people building their applications with different versions of
-Flutter, it *will* break.)
-
 ## Building and Running the Example
 
 Ensure that you are on the latest version of the [Flutter master
