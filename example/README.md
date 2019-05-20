@@ -69,6 +69,9 @@ or
 flutter run --release
 ```
 
+You can also use IDEs that support Flutter such as VS Code and Android Studio with
+[some configuration](../Debugging.md).
+
 Once you've `flutter run` at least once, you can also build using the underlying projects
 (Visual Studio, Xcode, or make) directly, but the first build must be done via `flutter run`
 in order to generate necessary files.
