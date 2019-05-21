@@ -47,8 +47,8 @@ void main() {
     });
   }
 
-  // TODO: Add implementations for the other platforms.
-  if (Platform.isLinux) {
+  // TODO: Add implementation for Windows.
+  if (Platform.isMacOS || Platform.isLinux) {
     example_plugin.ExamplePlugin.platformVersion.then((versionInfo) {
       print('Example plugin returned $versionInfo');
     });

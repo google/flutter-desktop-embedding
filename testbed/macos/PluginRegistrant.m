@@ -18,6 +18,7 @@
 
 #import "PluginRegistrant.h"
 
+#import <ExamplePlugin/ExamplePlugin.h>
 #import <FlutterEmbedderColorPanel/FlutterEmbedderColorPanel.h>
 #import <FlutterEmbedderFileChooser/FlutterEmbedderFileChooser.h>
 #import <FlutterEmbedderMenubar/FlutterEmbedderMenubar.h>
@@ -26,6 +27,7 @@
 @implementation PluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FLEPluginRegistry>*)registry {
+  [FDEExamplePlugin registerWithRegistrar:[registry registrarForPlugin:@"FDEExamplePlugin"]];
   [FLEColorPanelPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEColorPanelPlugin"]];
   [FLEFileChooserPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEFileChooserPlugin"]];
   [FLEMenubarPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEMenubarPlugin"]];
