@@ -27,8 +27,6 @@
 		3399D4652277B94E009A79C7 /* FlutterEmbedderWindowSize.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3399D4642277B915009A79C7 /* FlutterEmbedderWindowSize.framework */; };
 		3399D4662277B95B009A79C7 /* FlutterEmbedderWindowSize.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 3399D4642277B915009A79C7 /* FlutterEmbedderWindowSize.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33A2DE652267798600914F77 /* PluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A2DE642267798600914F77 /* PluginRegistrant.m */; };
-		33B231C6229439E600DAD38E /* ExamplePlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B231C32294399200DAD38E /* ExamplePlugin.framework */; };
-		33B231C7229439F300DAD38E /* ExamplePlugin.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 33B231C32294399200DAD38E /* ExamplePlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC10F02044A3C60003C045 /* AppDelegate.swift */; };
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
@@ -98,20 +96,6 @@
 			remoteGlobalIDString = 332A46C020C9CFE600C30EB9;
 			remoteInfo = FlutterEmbedderWindowSize;
 		};
-		33B231C22294399200DAD38E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33B231BD2294399200DAD38E /* ExamplePlugin.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 332A46C120C9CFE600C30EB9;
-			remoteInfo = ExamplePlugin;
-		};
-		33B231C4229439DE00DAD38E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 33B231BD2294399200DAD38E /* ExamplePlugin.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 332A46C020C9CFE600C30EB9;
-			remoteInfo = ExamplePlugin;
-		};
 		33CC111F2044C79F0003C045 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 33CC10E52044A3C60003C045 /* Project object */;
@@ -128,7 +112,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				33B231C7229439F300DAD38E /* ExamplePlugin.framework in Bundle Framework */,
 				3399D4662277B95B009A79C7 /* FlutterEmbedderWindowSize.framework in Bundle Framework */,
 				33D1A10522148B93006C7A3E /* FlutterMacOS.framework in Bundle Framework */,
 				3329009620D84F99002E5F16 /* FlutterEmbedderMenubar.framework in Bundle Framework */,
@@ -148,7 +131,6 @@
 		3399D45E2277B915009A79C7 /* FlutterEmbedderWindowSize.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderWindowSize.xcodeproj; path = ../../plugins/window_size/macos/FlutterEmbedderWindowSize.xcodeproj; sourceTree = "<group>"; };
 		33A2DE632267798600914F77 /* PluginRegistrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginRegistrant.h; sourceTree = "<group>"; };
 		33A2DE642267798600914F77 /* PluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PluginRegistrant.m; sourceTree = "<group>"; };
-		33B231BD2294399200DAD38E /* ExamplePlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExamplePlugin.xcodeproj; path = ../../plugins/example_plugin/macos/ExamplePlugin.xcodeproj; sourceTree = "<group>"; };
 		33CC10ED2044A3C60003C045 /* Testbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Testbed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33CC10F02044A3C60003C045 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		33CC10F22044A3C60003C045 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -167,7 +149,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33B231C6229439E600DAD38E /* ExamplePlugin.framework in Frameworks */,
 				33E98C0821824E4C00EB88EF /* FlutterEmbedderColorPanel.framework in Frameworks */,
 				33E98C0721824E4800EB88EF /* FlutterEmbedderFileChooser.framework in Frameworks */,
 				33E98C0521824E4000EB88EF /* FlutterEmbedderMenubar.framework in Frameworks */,
@@ -221,14 +202,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		33B231BE2294399200DAD38E /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				33B231C32294399200DAD38E /* ExamplePlugin.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		33CC10E42044A3C60003C045 = {
 			isa = PBXGroup;
 			children = (
@@ -245,7 +218,6 @@
 				3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */,
 				3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */,
 				3399D45E2277B915009A79C7 /* FlutterEmbedderWindowSize.xcodeproj */,
-				33B231BD2294399200DAD38E /* ExamplePlugin.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -293,7 +265,6 @@
 			);
 			dependencies = (
 				33CC11202044C79F0003C045 /* PBXTargetDependency */,
-				33B231C5229439DE00DAD38E /* PBXTargetDependency */,
 				3329FFFE20C9F5CF002E5F16 /* PBXTargetDependency */,
 				3329005220D2EC90002E5F16 /* PBXTargetDependency */,
 				3329009520D84F84002E5F16 /* PBXTargetDependency */,
@@ -337,10 +308,6 @@
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
-				{
-					ProductGroup = 33B231BE2294399200DAD38E /* Products */;
-					ProjectRef = 33B231BD2294399200DAD38E /* ExamplePlugin.xcodeproj */;
-				},
 				{
 					ProductGroup = 3329FFF620C9F5AC002E5F16 /* Products */;
 					ProjectRef = 3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */;
@@ -393,13 +360,6 @@
 			fileType = wrapper.framework;
 			path = FlutterEmbedderWindowSize.framework;
 			remoteRef = 3399D4632277B915009A79C7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		33B231C32294399200DAD38E /* ExamplePlugin.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ExamplePlugin.framework;
-			remoteRef = 33B231C22294399200DAD38E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -483,11 +443,6 @@
 			isa = PBXTargetDependency;
 			name = FlutterEmbedderWindowSize;
 			targetProxy = 3399D4672277BA0B009A79C7 /* PBXContainerItemProxy */;
-		};
-		33B231C5229439DE00DAD38E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ExamplePlugin;
-			targetProxy = 33B231C4229439DE00DAD38E /* PBXContainerItemProxy */;
 		};
 		33CC11202044C79F0003C045 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
