@@ -18,7 +18,7 @@
 
 #import "PluginRegistrant.h"
 
-#import <ExamplePlugin/ExamplePlugin.h>
+#import "FDEExamplePlugin.h"
 #import <FlutterEmbedderColorPanel/FlutterEmbedderColorPanel.h>
 #import <FlutterEmbedderFileChooser/FlutterEmbedderFileChooser.h>
 #import <FlutterEmbedderMenubar/FlutterEmbedderMenubar.h>
