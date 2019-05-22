@@ -11,28 +11,28 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef PLUGINS_FILE_CHOOSER_LINUX_INCLUDE_FILE_CHOOSER_FILE_CHOOSER_PLUGIN_H_
-#define PLUGINS_FILE_CHOOSER_LINUX_INCLUDE_FILE_CHOOSER_FILE_CHOOSER_PLUGIN_H_
+#ifndef PLUGINS_MENUBAR_LINUX_MENUBAR_PLUGIN_H_
+#define PLUGINS_MENUBAR_LINUX_MENUBAR_PLUGIN_H_
 
-// A plugin to show native save/open file choosers.
+// A plugin to control a native menubar.
 
 #include <flutter_plugin_registrar.h>
 
-#ifdef FILE_CHOOSER_PLUGIN_IMPL
-#define FILE_CHOOSER_PLUGIN_EXPORT __attribute__((visibility("default")))
+#ifdef FLUTTER_PLUGIN_IMPL
+#define FLUTTER_PLUGIN_EXPORT __attribute__((visibility("default")))
 #else
-#define FILE_CHOOSER_PLUGIN_EXPORT
+#define FLUTTER_PLUGIN_EXPORT
 #endif
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-FILE_CHOOSER_PLUGIN_EXPORT void FileChooserRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void MenubarRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)
 }  // extern "C"
 #endif
 
-#endif  // PLUGINS_FILE_CHOOSER_LINUX_INCLUDE_FILE_CHOOSER_FILE_CHOOSER_PLUGIN_H_
+#endif  // PLUGINS_MENUBAR_LINUX_MENUBAR_PLUGIN_H_

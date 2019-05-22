@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "plugins/menubar/linux/include/menubar/menubar_plugin.h"
+#include "plugins/menubar/linux/menubar_plugin.h"
 
 #include <gtk/gtk.h>
 #include <memory>
@@ -30,7 +30,7 @@ namespace plugins_menubar {
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-class MENUBAR_PLUGIN_EXPORT MenubarPlugin : public flutter::Plugin {
+class MenubarPlugin : public flutter::Plugin {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
 

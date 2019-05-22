@@ -11,28 +11,28 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef PLUGINS_WINDOW_SIZE_LINUX_INCLUDE_WINDOW_SIZE_WINDOW_SIZE_PLUGIN_H_
-#define PLUGINS_WINDOW_SIZE_LINUX_INCLUDE_WINDOW_SIZE_WINDOW_SIZE_PLUGIN_H_
+#ifndef PLUGINS_COLOR_PANEL_LINUX_COLOR_PANEL_PLUGIN_H_
+#define PLUGINS_COLOR_PANEL_LINUX_COLOR_PANEL_PLUGIN_H_
 
-// A plugin to allow resizing the window.
+// A plugin for communicating with a native color picker panel.
 
 #include <flutter_plugin_registrar.h>
 
-#ifdef WINDOW_SIZE_PLUGIN_IMPL
-#define WINDOW_SIZE_PLUGIN_EXPORT __attribute__((visibility("default")))
+#ifdef FLUTTER_PLUGIN_IMPL
+#define FLUTTER_PLUGIN_EXPORT __attribute__((visibility("default")))
 #else
-#define WINDOW_SIZE_PLUGIN_EXPORT
+#define FLUTTER_PLUGIN_EXPORT
 #endif
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-WINDOW_SIZE_PLUGIN_EXPORT void WindowSizeRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void ColorPanelRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)
 }  // extern "C"
 #endif
 
-#endif  // PLUGINS_WINDOW_SIZE_LINUX_INCLUDE_WINDOW_SIZE_WINDOW_SIZE_PLUGIN_H_
+#endif  // PLUGINS_COLOR_PANEL_LINUX_COLOR_PANEL_PLUGIN_H_

@@ -12,14 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Example-specific variables.
-# To modify this Makefile for a different application, these are the values
-# that are mostly likely to need to be changed.
-
 # The name of the plugin.
 # The primary source file is assumed to be $(PLUGIN_NAME).cc, with
 # $(PLUGIN_NAME).h as the public header meant for inclusion by the application.
-PLUGIN_NAME=color_panel_plugin
+PLUGIN_NAME=window_size_plugin
 # Any files other than the plugin class files that need to be compiled.
 EXTRA_SOURCES=../common/channel_constants.cc
 # Extra flags (e.g., for library dependencies).
@@ -28,6 +24,9 @@ EXTRA_CXXFLAGS=
 EXTRA_CPPFLAGS=-I../../.. \
 	$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
 EXTRA_LDFLAGS=$(shell pkg-config --libs $(SYSTEM_LIBRARIES))
+
+# Required for use of GdkScreen APIs for pre-GTK 3.22 compat.
+EXTRA_CPPFLAGS+= -Wno-deprecated-declarations
 
 # Default build type. For a release build, set BUILD=release.
 # Currently this only sets NDEBUG, which is used to control the flags passed
