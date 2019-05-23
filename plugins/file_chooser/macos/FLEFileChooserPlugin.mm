@@ -76,9 +76,9 @@
   }
 }
 
-#pragma FLEPlugin implementation
+#pragma FlutterPlugin implementation
 
-+ (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
++ (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_file_chooser::kChannelName)
                                   binaryMessenger:registrar.messenger];

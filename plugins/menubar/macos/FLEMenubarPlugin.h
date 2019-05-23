@@ -19,7 +19,7 @@
 /**
  * A Flutter plugin to control the native menu bar.
  */
-@interface FLEMenubarPlugin : NSObject <FLEPlugin>
+@interface FLEMenubarPlugin : NSObject <FlutterPlugin>
 
 /**
  * The menu item that Flutter-provided menus should be inserted after. If unset, Flutter-provided

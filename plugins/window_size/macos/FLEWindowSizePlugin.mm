@@ -66,7 +66,7 @@ NSRect GetFlippedRect(NSRect frame) {
   NSView *_flutterView;
 }
 
-+ (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
++ (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_window_size::kChannelName)
                                   binaryMessenger:registrar.messenger];
