@@ -22,7 +22,6 @@ import 'screen.dart';
 // Plugin channel constants. See common/channel_constants.h for details.
 const String _windowSizeChannelName = 'flutter/windowsize';
 const String _getScreenListMethod = 'getScreenList';
-const String _getCurrentScreenMethod = 'getCurrentScreen';
 const String _getWindowInfoMethod = 'getWindowInfo';
 const String _setWindowFrameMethod = 'setWindowFrame';
 const String _frameKey = 'frame';
