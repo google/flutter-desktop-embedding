@@ -30,7 +30,3 @@ Please provide a clear and concise description of the bug, including steps to re
 For build issues, please provide the output of `flutter doctor -v`:
 ```
 ```
-
-If the build is of anything other than `example`, please also provide the output of `tools/run_dart_tool doctor`:
-```
-```
