@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 
+#include <example_plugin.h>
+
 #include "flutter/flutter_window_controller.h"
 
 // Include windows.h last, to minimize potential conflicts. The CreateWindow
@@ -64,10 +66,14 @@ int main(int argc, char **argv) {
   flutter::FlutterWindowController flutter_controller(icu_data_path);
 
   // Start the engine.
-  if (!flutter_controller.CreateWindow(800, 600, "Testbed",
-                                       assets_path, arguments)) {
+  if (!flutter_controller.CreateWindow(800, 600, "Testbed", assets_path,
+                                       arguments)) {
     return EXIT_FAILURE;
   }
+
+  // Register any native plugins.
+  ExamplePluginRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
 
   // Run until the window is closed.
   flutter_controller.RunEventLoop();
