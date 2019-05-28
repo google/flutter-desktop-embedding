@@ -74,7 +74,7 @@
       <AdditionalDependencies>flutter_windows.dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\prepare_dependencies debug</Command>
+      <Command>"$(ProjectDir)scripts\prepare_dependencies" debug</Command>
       <Message>Sync and build dependencies</Message>
     </PreBuildEvent>
     <PreLinkEvent>
@@ -92,7 +92,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
+      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -119,7 +119,7 @@
       <AdditionalDependencies>flutter_windows.dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>$(ProjectDir)scripts\prepare_dependencies release</Command>
+      <Command>"$(ProjectDir)scripts\prepare_dependencies" release</Command>
       <Message>Sync and build dependencies</Message>
     </PreBuildEvent>
     <PreLinkEvent>
@@ -137,7 +137,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>$(ProjectDir)scripts\bundle_assets_and_deps "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
+      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
