@@ -56,11 +56,9 @@ You can now run using the `flutter` tool as you would for mobile. In the
 flutter run
 ```
 
-or
-
-```
-flutter run --release
-```
+(Only `debug` mode is currently available. Running with `--release` will succeed, but the
+result will still be using a `debug` Flutter configuration: asserts will fire, the
+observatory will be enabled, etc.)
 
 You can also use IDEs that support Flutter such as VS Code and Android Studio with
 [some configuration](../Debugging.md).
