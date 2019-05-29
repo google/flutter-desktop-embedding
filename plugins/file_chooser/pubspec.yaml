@@ -1,8 +1,16 @@
 name: file_chooser
-description: Native file chooser plugin for desktop Flutter
+description: Displays native platform open and save panels.
+version: 0.0.1
+author: Flutter Desktop Embedding Developers <flutter-desktop-embedding-dev@googlegroups.com>
+homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugins/file_chooser
+
+flutter:
+  plugin:
+    macosPrefix: FLE
+    pluginClass: FileChooserPlugin
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
-
-environment:
-  sdk: '<3.0.0'
