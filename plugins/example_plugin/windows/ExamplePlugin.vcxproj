@@ -38,24 +38,30 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)flutter\Generated.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)flutter\Generated.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)flutter\cpp_client_wrapper\include;$(SolutionDir)flutter</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)flutter</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)flutter\cpp_client_wrapper\include;$(ProjectDir)flutter</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(ProjectDir)flutter</LibraryPath>
     <OutDir>$(SolutionDir)..\build\windows\$(Platform)\$(Configuration)\Plugins\</OutDir>
     <IntDir>$(SolutionDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)flutter\cpp_client_wrapper\include;$(SolutionDir)flutter</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(SolutionDir)flutter</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)flutter\cpp_client_wrapper\include;$(ProjectDir)flutter</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;$(ProjectDir)flutter</LibraryPath>
     <OutDir>$(SolutionDir)..\build\windows\$(Platform)\$(Configuration)\Plugins\</OutDir>
     <IntDir>$(SolutionDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -72,8 +78,8 @@
       <AdditionalDependencies>flutter_windows.dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy /q /i /s /y "$(SolutionDir)flutter" "$(ProjectDir)flutter"</Command>
-      <Message>Copy Flutter SDK cache from enclosing solution.</Message>
+      <Command>"$(ProjectDir)scripts\cache_flutter" "$(ProjectDir)flutter" debug</Command>
+      <Message>Cache Flutter artifacts</Message>
     </PreBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -82,6 +88,8 @@
     <CustomBuildStep>
       <Message>
       </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>xcopy /q /i /s /y "$(ProjectDir)example_plugin.h" "$(OutDir)"</Command>
@@ -109,8 +117,8 @@
       <AdditionalDependencies>flutter_windows.dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy /q /i /s /y "$(SolutionDir)flutter" "$(ProjectDir)flutter"</Command>
-      <Message>Copy Flutter SDK cache from enclosing solution.</Message>
+      <Command>"$(ProjectDir)scripts\cache_flutter" "$(ProjectDir)flutter" release</Command>
+      <Message>Cache Flutter artifacts</Message>
     </PreBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -119,6 +127,8 @@
     <CustomBuildStep>
       <Message>
       </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
       <Command>xcopy /q /i /s /y "$(ProjectDir)example_plugin.h" "$(OutDir)"</Command>
