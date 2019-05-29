@@ -58,9 +58,7 @@ int main(int argc, char **argv) {
 
   // Arguments for the Flutter Engine.
   std::vector<std::string> arguments;
-#ifndef _DEBUG
-  arguments.push_back("--disable-dart-asserts");
-#endif
+
   flutter::FlutterWindowController flutter_controller(icu_data_path);
 
   // Start the engine.

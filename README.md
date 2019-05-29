@@ -69,15 +69,6 @@ When submitting issues related to build errors or other bugs, please make sure
 to include the git hash of the Flutter checkout you are using. This will help
 speed up the debugging process.
 
-For build errors, please also run:
-
-```
-tools/run_dart_tool doctor
-```
-
-before filing a bug or emailing the list, to ensure that you have all the basic
-dependencies set up correctly.
-
 ## Caveats
 
 * This is not an officially supported Google product.
