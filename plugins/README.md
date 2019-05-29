@@ -12,8 +12,8 @@ of plugins in your application (unlike on mobile, where the `flutter` tool
 handles that automatically).
 
 An overview of the approach for each platform is below. See the `testbed`
-example of including optional plugins, including the changes to each platform's
-runner in the corresponding platform directory.
+application for an example of including optional plugins, including the changes
+to each platform's runner in the corresponding platform directory.
 
 ### Dart
 
