@@ -47,12 +47,9 @@ void main() {
     });
   }
 
-  // TODO: Add implementation for Windows.
-  if (Platform.isMacOS || Platform.isLinux) {
-    example_plugin.ExamplePlugin.platformVersion.then((versionInfo) {
-      print('Example plugin returned $versionInfo');
-    });
-  }
+  example_plugin.ExamplePlugin.platformVersion.then((versionInfo) {
+    print('Example plugin returned $versionInfo');
+  });
 
   runApp(new MyApp());
 }
