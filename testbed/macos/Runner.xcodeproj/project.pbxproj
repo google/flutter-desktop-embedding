@@ -144,6 +144,8 @@
 		33CEB334229F4E8C004F2AC0 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		33CEB3B8229F4E8D004F2AC0 /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Generated.xcconfig; sourceTree = "<group>"; };
 		33CEB3B9229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		33CEB46322A05203004F2AC0 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		33CEB46422A05203004F2AC0 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		33D1A10322148B71006C7A3E /* FlutterMacOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterMacOS.framework; path = Flutter/FlutterMacOS.framework; sourceTree = SOURCE_ROOT; };
 		549071713EC6C2A17B5881F2 /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Configs/Release.xcconfig; sourceTree = "<group>"; };
@@ -255,6 +257,8 @@
 			children = (
 				33CEB334229F4E8C004F2AC0 /* GeneratedPluginRegistrant.h */,
 				33CEB3B9229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m */,
+				33CEB46422A05203004F2AC0 /* Debug.xcconfig */,
+				33CEB46322A05203004F2AC0 /* Release.xcconfig */,
 				33CEB3B8229F4E8D004F2AC0 /* Generated.xcconfig */,
 			);
 			path = Flutter;

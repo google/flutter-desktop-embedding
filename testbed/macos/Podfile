@@ -32,6 +32,19 @@ def parse_KV_file(file, separator='=')
   return pods_ary
 end
 
+def pubspec_supports_macos(file)
+  file_abs_path = File.expand_path(file)
+  if !File.exists? file_abs_path
+    return false;
+  end
+  File.foreach(file_abs_path) { |line|
+    # TODO(stuartmorgan): Use formal platform declaration once it exists,
+    # see https://github.com/flutter/flutter/issues/33597.
+    return true if line =~ /^\s*macosPrefix:/
+  }
+  return false
+end
+
 target 'Runner' do
   # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
   # referring to absolute paths on developers' machines.
@@ -58,6 +71,8 @@ target 'Runner' do
   plugin_pods.map { |p|
     symlink = File.join(symlink_plugins_dir, p[:name])
     File.symlink(p[:path], symlink)
-    pod p[:name], :path => File.join(symlink, 'macos')
+    if pubspec_supports_macos(File.join(symlink, 'pubspec.yaml'))
+      pod p[:name], :path => File.join(symlink, 'macos')
+    end
   }
 end

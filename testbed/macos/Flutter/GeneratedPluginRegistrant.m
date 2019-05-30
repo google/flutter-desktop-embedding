@@ -8,7 +8,7 @@
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
-  [ExamplePlugin registerWithRegistrar:[registry registrarForPlugin:@"ExamplePlugin"]];
+  [FDEExamplePlugin registerWithRegistrar:[registry registrarForPlugin:@"FDEExamplePlugin"]];
 }
 
 @end
