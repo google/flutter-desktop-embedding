@@ -32,14 +32,15 @@
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* FlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* FlutterWindow.swift */; };
 		33CC112F204626C80003C045 /* flutter_assets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC112C20461AD40003C045 /* flutter_assets */; };
-		33CEB41E229F4E8D004F2AC0 /* Generated.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 33CEB3B8229F4E8D004F2AC0 /* Generated.xcconfig */; };
+		33CEB41E229F4E8D004F2AC0 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		33CEB41F229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 33CEB3B9229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m */; };
 		33D1A10422148B71006C7A3E /* FlutterMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D1A10322148B71006C7A3E /* FlutterMacOS.framework */; };
 		33D1A10522148B93006C7A3E /* FlutterMacOS.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 33D1A10322148B71006C7A3E /* FlutterMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33E98C0521824E4000EB88EF /* FlutterEmbedderMenubar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329009320D84F6E002E5F16 /* FlutterEmbedderMenubar.framework */; };
 		33E98C0721824E4800EB88EF /* FlutterEmbedderFileChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329004F20D2EC7C002E5F16 /* FlutterEmbedderFileChooser.framework */; };
 		33E98C0821824E4C00EB88EF /* FlutterEmbedderColorPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329FFFB20C9F5AC002E5F16 /* FlutterEmbedderColorPanel.framework */; };
-		4A557530B933D8CBDA648260 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 549071713EC6C2A17B5881F2 /* libPods-Runner.a */; };
+		4A557530B933D8CBDA648260 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		6F6885D2E4940F5CFFE0D9F7 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07EA98EA67649474B8D6437A /* libPods-Runner.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +128,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		07EA98EA67649474B8D6437A /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderFileChooser.xcodeproj; path = ../../plugins/file_chooser/macos/FlutterEmbedderFileChooser.xcodeproj; sourceTree = "<group>"; };
 		3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMenubar.xcodeproj; path = ../../plugins/menubar/macos/FlutterEmbedderMenubar.xcodeproj; sourceTree = "<group>"; };
 		3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderColorPanel.xcodeproj; path = ../../plugins/color_panel/macos/FlutterEmbedderColorPanel.xcodeproj; sourceTree = "<group>"; };
@@ -143,10 +145,10 @@
 		33CC112C20461AD40003C045 /* flutter_assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = flutter_assets; path = ../build/flutter_assets; sourceTree = "<group>"; };
 		33CEB334229F4E8C004F2AC0 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		33CEB3B9229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
- 		33CEB47222A05771004F2AC0 /* Flutter-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Debug.xcconfig"; sourceTree = "<group>"; };
- 		33CEB47422A05771004F2AC0 /* Flutter-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Release.xcconfig"; sourceTree = "<group>"; };
- 		33CEB47722A0578A004F2AC0 /* Flutter-Generated.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Flutter-Generated.xcconfig"; path = "ephemeral/Flutter-Generated.xcconfig"; sourceTree = "<group>"; };
- 		33D1A10322148B71006C7A3E /* FlutterMacOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterMacOS.framework; path = Flutter/ephemeral/FlutterMacOS.framework; sourceTree = SOURCE_ROOT; };
+		33CEB47222A05771004F2AC0 /* Flutter-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Debug.xcconfig"; sourceTree = "<group>"; };
+		33CEB47422A05771004F2AC0 /* Flutter-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Flutter-Release.xcconfig"; sourceTree = "<group>"; };
+		33CEB47722A0578A004F2AC0 /* Flutter-Generated.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Flutter-Generated.xcconfig"; path = "ephemeral/Flutter-Generated.xcconfig"; sourceTree = "<group>"; };
+		33D1A10322148B71006C7A3E /* FlutterMacOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterMacOS.framework; path = Flutter/ephemeral/FlutterMacOS.framework; sourceTree = SOURCE_ROOT; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Configs/Release.xcconfig; sourceTree = "<group>"; };
 		871C6D2F6747BDFED5CCA762 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Configs/Debug.xcconfig; sourceTree = "<group>"; };
@@ -163,7 +165,8 @@
 				33E98C0521824E4000EB88EF /* FlutterEmbedderMenubar.framework in Frameworks */,
 				3399D4652277B94E009A79C7 /* FlutterEmbedderWindowSize.framework in Frameworks */,
 				33D1A10422148B71006C7A3E /* FlutterMacOS.framework in Frameworks */,
-				4A557530B933D8CBDA648260 /* libPods-Runner.a in Frameworks */,
+				4A557530B933D8CBDA648260 /* BuildFile in Frameworks */,
+				6F6885D2E4940F5CFFE0D9F7 /* libPods-Runner.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,16 +222,16 @@
 				33A2DE632267798600914F77 /* PluginRegistrant.h */,
 				33A2DE642267798600914F77 /* PluginRegistrant.m */,
 				33CC11162044C3600003C045 /* Runner-Bridging-Header.h */,
-				33CEB331229F4E8C004F2AC0 /* Flutter */,
 				33CC11242044D66E0003C045 /* Resources */,
 				3399D4432277B6F6009A79C7 /* Configs */,
- 				33CEB47122A05771004F2AC0 /* Flutter */,
+				33CEB47122A05771004F2AC0 /* Flutter */,
 				33CC10EE2044A3C60003C045 /* Products */,
 				3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */,
 				3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */,
 				3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */,
 				3399D45E2277B915009A79C7 /* FlutterEmbedderWindowSize.xcodeproj */,
 				3E81EDF61A33C66B4CED636D /* Pods */,
+				6023CF9B57495D9ECE3BC0C9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -251,18 +254,17 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
- 		33CEB47122A05771004F2AC0 /* Flutter */ = {
+		33CEB47122A05771004F2AC0 /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
 				33CEB334229F4E8C004F2AC0 /* GeneratedPluginRegistrant.h */,
 				33CEB3B9229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m */,
- 				33CEB47222A05771004F2AC0 /* Flutter-Debug.xcconfig */,
- 				33CEB47422A05771004F2AC0 /* Flutter-Release.xcconfig */,
- 				33CEB47722A0578A004F2AC0 /* Flutter-Generated.xcconfig */,
+				33CEB47222A05771004F2AC0 /* Flutter-Debug.xcconfig */,
+				33CEB47422A05771004F2AC0 /* Flutter-Release.xcconfig */,
+				33CEB47722A0578A004F2AC0 /* Flutter-Generated.xcconfig */,
 				33D1A10322148B71006C7A3E /* FlutterMacOS.framework */,
-				549071713EC6C2A17B5881F2 /* libPods-Runner.a */,
 			);
- 			path = Flutter;
+			path = Flutter;
 			sourceTree = "<group>";
 		};
 		3E81EDF61A33C66B4CED636D /* Pods */ = {
@@ -272,6 +274,14 @@
 				871C6D2F6747BDFED5CCA762 /* Pods-Runner.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		6023CF9B57495D9ECE3BC0C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				07EA98EA67649474B8D6437A /* libPods-Runner.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -397,7 +407,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33CEB41E229F4E8D004F2AC0 /* Generated.xcconfig in Resources */,
+				33CEB41E229F4E8D004F2AC0 /* BuildFile in Resources */,
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
 				33CC112F204626C80003C045 /* flutter_assets in Resources */,
@@ -438,7 +448,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
-				"${PODS_ROOT}/../Flutter/.symlinks/flutter/darwin-x64/FlutterMacOS.framework",
+				"${PODS_ROOT}/../Flutter/ephemeral/.symlinks/flutter/darwin-x64/FlutterMacOS.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -574,7 +584,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FDE_ROOT = $PROJECT_DIR/../..;
+				FDE_ROOT = "$PROJECT_DIR/../..";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -635,7 +645,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FDE_ROOT = $PROJECT_DIR/../..;
+				FDE_ROOT = "$PROJECT_DIR/../..";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -661,7 +671,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
-					$PROJECT_DIR/Flutter/ephemeral,
+					"$PROJECT_DIR/Flutter/ephemeral",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Info.plist;
@@ -685,7 +695,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
-					$PROJECT_DIR/Flutter/ephemeral,
+					"$PROJECT_DIR/Flutter/ephemeral",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Info.plist;
