@@ -224,7 +224,7 @@
 				33CC11162044C3600003C045 /* Runner-Bridging-Header.h */,
 				33CC11242044D66E0003C045 /* Resources */,
 				3399D4432277B6F6009A79C7 /* Configs */,
-				33CEB47122A05771004F2AC0 /* Flutter */,
+ 				33CEB47122A05771004F2AC0 /* Flutter */,
 				33CC10EE2044A3C60003C045 /* Products */,
 				3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */,
 				3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */,
@@ -254,7 +254,7 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		33CEB47122A05771004F2AC0 /* Flutter */ = {
+ 		33CEB47122A05771004F2AC0 /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
 				33CEB334229F4E8C004F2AC0 /* GeneratedPluginRegistrant.h */,
@@ -281,7 +281,7 @@
 			children = (
 				07EA98EA67649474B8D6437A /* libPods-Runner.a */,
 			);
-			name = Frameworks;
+ 			path = Flutter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
