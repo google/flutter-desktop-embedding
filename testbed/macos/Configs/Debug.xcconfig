@@ -1,1 +1,1 @@
-#include "../Flutter/Debug.xcconfig"
+#include "../Flutter/Flutter-Debug.xcconfig"

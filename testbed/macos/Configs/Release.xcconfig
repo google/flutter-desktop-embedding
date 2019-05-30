@@ -1,1 +1,1 @@
-#include "../Flutter/Release.xcconfig"
+#include "../Flutter/Flutter-Release.xcconfig"
