@@ -26,7 +26,7 @@
 
 @implementation PluginRegistrant
 
-+ (void)registerWithRegistry:(NSObject<FLEPluginRegistry>*)registry {
++ (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FDEExamplePlugin registerWithRegistrar:[registry registrarForPlugin:@"FDEExamplePlugin"]];
   [FLEColorPanelPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEColorPanelPlugin"]];
   [FLEFileChooserPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLEFileChooserPlugin"]];

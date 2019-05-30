@@ -6,7 +6,7 @@ homepage:
 
 flutter:
   plugin:
-    # TODO: Add a macosPrefix once Flutter tooling is updated.
+    macosPrefix: FDE
     pluginClass: ExamplePlugin
 
 environment:

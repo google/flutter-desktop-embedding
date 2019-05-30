@@ -20,6 +20,6 @@
  * A FlutterPlugin to manage macOS's shared NSColorPanel singleton.
  * Responsible for managing the panel's display state and sending selected color data to Flutter.
  */
-@interface FLEColorPanelPlugin : NSObject <FLEPlugin, NSWindowDelegate>
+@interface FLEColorPanelPlugin : NSObject <FlutterPlugin, NSWindowDelegate>
 
 @end

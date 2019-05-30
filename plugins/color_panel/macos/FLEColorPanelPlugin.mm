@@ -23,7 +23,7 @@
   FlutterMethodChannel *_channel;
 }
 
-+ (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
++ (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_color_panel::kChannelName)
                                   binaryMessenger:registrar.messenger];
