@@ -16,7 +16,7 @@
 
 @implementation FDEExamplePlugin
 
-+ (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
++ (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"example_plugin"
                                                               binaryMessenger:registrar.messenger];
   FDEExamplePlugin *instance = [[FDEExamplePlugin alloc] init];

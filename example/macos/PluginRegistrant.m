@@ -20,7 +20,7 @@
 
 @implementation PluginRegistrant
 
-+ (void)registerWithRegistry:(NSObject<FLEPluginRegistry>*)registry {
++ (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   // Add your plugin regitration here.
 }
 

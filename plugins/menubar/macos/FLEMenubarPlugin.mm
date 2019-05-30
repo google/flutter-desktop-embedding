@@ -114,9 +114,9 @@
   [_channel invokeMethod:@(plugins_menubar::kMenuItemSelectedCallbackMethod) arguments:@(item.tag)];
 }
 
-#pragma FLEPlugin implementation
+#pragma FlutterPlugin implementation
 
-+ (void)registerWithRegistrar:(id<FLEPluginRegistrar>)registrar {
++ (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@(plugins_menubar::kChannelName)
                                   binaryMessenger:registrar.messenger];

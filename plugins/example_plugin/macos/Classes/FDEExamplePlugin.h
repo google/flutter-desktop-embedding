@@ -19,6 +19,6 @@
 /**
  * An example Flutter plugin for macOS.
  */
-@interface FDEExamplePlugin : NSObject <FLEPlugin>
+@interface FDEExamplePlugin : NSObject <FlutterPlugin>
 
 @end

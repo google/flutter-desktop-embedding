@@ -15,5 +15,5 @@
 #import <FlutterMacOS/FlutterMacOS.h>
 
 @interface PluginRegistrant : NSObject
-+ (void)registerWithRegistry:(NSObject<FLEPluginRegistry>*)registry;
++ (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry;
 @end
