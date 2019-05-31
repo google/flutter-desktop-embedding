@@ -27,35 +27,15 @@ You will need developer tools for your platform:
 * macOS: Make sure `flutter doctor` reports no issues for the "Xcode" section.
 * Windows: Visual Studio 2017 or 2019, including the "Desktop development with C++" workload.
 
-#### Source
-
-If you are building anything other than `example/`, the tooling and build
-infrastructure for this project requires that you have
-a Flutter tree in the same parent directory as the clone of this project:
-
-```
-<parent dir>
-  ├─ flutter (from https://github.com/flutter/flutter)
-  └─ flutter-desktop-embedding (from https://github.com/google/flutter-desktop-embedding)
-```
-
-Alternately, you can place a `.flutter_location_config` file in the directory
-containing flutter-desktop-embedding, containing a path to the Flutter tree to
-use, if you prefer not to have the Flutter tree next to
-flutter-desktop-embedding.
-
 ### Repository Structure
 
 The `example` directory contains an example application built using the library
 for each platform. See [its README](example/README.md) to get started.
 
-In addition, there is:
-* `plugins`: Plugins which provide access to additional platform functionality.
-  These follow a similar structure to [Flutter
-  plugins](https://flutter.io/developing-packages/). See the
-  [README](plugins/README.md) for details.
-* `third_party`: Dependencies used by this repository, beyond Flutter itself.
-* `tools`: Tools used in the development process.
+The `plugins` directory has early-stage plugins, which provide access to
+additional platform functionality. These follow a similar structure to
+[Flutter plugins](https://flutter.io/developing-packages/). See the
+[README](plugins/README.md) for details.
 
 ## Debugging
 

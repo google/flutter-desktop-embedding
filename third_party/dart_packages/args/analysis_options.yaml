@@ -1,7 +1,0 @@
-analyzer:
-  strong-mode: true
-
-  errors:
-    # TODO(nweiz): Remove this ignore when sdk#30084 is fixed or when args no
-    # longer refers to its own deprecated members.
-    deprecated_member_use: ignore
