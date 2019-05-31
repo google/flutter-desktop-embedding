@@ -125,9 +125,8 @@ static NSString *const kDividerKey = @"isDivider";
 #pragma FlutterPlugin implementation
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:kChannelName
-                                  binaryMessenger:registrar.messenger];
+  FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:kChannelName
+                                                              binaryMessenger:registrar.messenger];
   FLEMenubarPlugin *instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }

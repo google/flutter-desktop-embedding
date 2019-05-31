@@ -34,9 +34,8 @@ static NSString *const kColorComponentBlueKey = @"blue";
 }
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:kChannelName
-                                  binaryMessenger:registrar.messenger];
+  FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:kChannelName
+                                                              binaryMessenger:registrar.messenger];
   FLEColorPanelPlugin *instance = [[FLEColorPanelPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
@@ -57,14 +56,12 @@ static NSString *const kColorComponentBlueKey = @"blue";
   id methodResult = nil;
   if ([call.method isEqualToString:kShowColorPanelMethod]) {
     if ([call.arguments isKindOfClass:[NSDictionary class]]) {
-      BOOL showAlpha =
-          [[call.arguments valueForKey:kColorPanelShowAlpha] boolValue];
+      BOOL showAlpha = [[call.arguments valueForKey:kColorPanelShowAlpha] boolValue];
       [self showColorPanelWithAlpha:showAlpha];
     } else {
-      NSString *errorString =
-          [NSString stringWithFormat:@"Malformed call for %@. Expected an NSDictionary but got %@",
-                                     kShowColorPanelMethod,
-                                     NSStringFromClass([call.arguments class])];
+      NSString *errorString = [NSString
+          stringWithFormat:@"Malformed call for %@. Expected an NSDictionary but got %@",
+                           kShowColorPanelMethod, NSStringFromClass([call.arguments class])];
       methodResult = [FlutterError errorWithCode:@"Bad arguments" message:errorString details:nil];
     }
   } else if ([call.method isEqualToString:kHideColorPanelMethod]) {
@@ -123,8 +120,7 @@ static NSString *const kColorComponentBlueKey = @"blue";
 - (void)selectedColorDidChange {
   NSColor *color = [NSColorPanel sharedColorPanel].color;
   NSDictionary *colorDictionary = [self dictionaryWithColor:color];
-  [_channel invokeMethod:kColorSelectedCallbackMethod
-               arguments:colorDictionary];
+  [_channel invokeMethod:kColorSelectedCallbackMethod arguments:colorDictionary];
 }
 
 /**

@@ -75,9 +75,8 @@ NSRect GetFlippedRect(NSRect frame) {
 }
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:kChannelName
-                                  binaryMessenger:registrar.messenger];
+  FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:kChannelName
+                                                              binaryMessenger:registrar.messenger];
   FLEWindowSizePlugin *instance = [[FLEWindowSizePlugin alloc] initWithChannel:channel
                                                                           view:registrar.view];
   [registrar addMethodCallDelegate:instance channel:channel];
@@ -124,8 +123,7 @@ NSRect GetFlippedRect(NSRect frame) {
 
 - (NSDictionary *)platformChannelRepresentationForScreen:(NSScreen *)screen {
   return @{
-    kFrameKey :
-        [self platformChannelRepresentationForFrame:GetFlippedRect(screen.frame)],
+    kFrameKey : [self platformChannelRepresentationForFrame:GetFlippedRect(screen.frame)],
     kVisibleFrameKey :
         [self platformChannelRepresentationForFrame:GetFlippedRect(screen.visibleFrame)],
     kScaleFactorKey : @(screen.backingScaleFactor),
@@ -134,10 +132,8 @@ NSRect GetFlippedRect(NSRect frame) {
 
 - (NSDictionary *)platformChannelRepresentationForWindow:(NSWindow *)window {
   return @{
-    kFrameKey :
-        [self platformChannelRepresentationForFrame:GetFlippedRect(window.frame)],
-    kScreenKey :
-        [self platformChannelRepresentationForScreen:window.screen],
+    kFrameKey : [self platformChannelRepresentationForFrame:GetFlippedRect(window.frame)],
+    kScreenKey : [self platformChannelRepresentationForScreen:window.screen],
     kScaleFactorKey : @(window.backingScaleFactor),
   };
 }

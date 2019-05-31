@@ -50,8 +50,7 @@ static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
              withArguments:(nonnull NSDictionary<NSString *, id> *)arguments {
   NSSet *argKeys = [NSSet setWithArray:arguments.allKeys];
   if ([argKeys containsObject:kInitialDirectoryKey]) {
-    panel.directoryURL =
-        [NSURL URLWithString:arguments[kInitialDirectoryKey]];
+    panel.directoryURL = [NSURL URLWithString:arguments[kInitialDirectoryKey]];
   }
   if ([argKeys containsObject:kAllowedFileTypesKey]) {
     panel.allowedFileTypes = arguments[kAllowedFileTypesKey];
@@ -74,12 +73,10 @@ static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
              withArguments:(nonnull NSDictionary<NSString *, id> *)arguments {
   NSSet *argKeys = [NSSet setWithArray:arguments.allKeys];
   if ([argKeys containsObject:kAllowsMultipleSelectionKey]) {
-    panel.allowsMultipleSelection =
-        [arguments[kAllowsMultipleSelectionKey] boolValue];
+    panel.allowsMultipleSelection = [arguments[kAllowsMultipleSelectionKey] boolValue];
   }
   if ([argKeys containsObject:kCanChooseDirectoriesKey]) {
-    BOOL canChooseDirectories =
-        [arguments[kCanChooseDirectoriesKey] boolValue];
+    BOOL canChooseDirectories = [arguments[kCanChooseDirectoriesKey] boolValue];
     panel.canChooseDirectories = canChooseDirectories;
     panel.canChooseFiles = !canChooseDirectories;
   }
@@ -88,9 +85,8 @@ static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
 #pragma FlutterPlugin implementation
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:kChannelName
-                                  binaryMessenger:registrar.messenger];
+  FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:kChannelName
+                                                              binaryMessenger:registrar.messenger];
   FLEFileChooserPlugin *instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
