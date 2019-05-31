@@ -12,11 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEColorPanelPlugin.h"
+#import "ColorPanelPlugin.h"
 
 #import <AppKit/AppKit.h>
 
-#include "plugins/color_panel/common/channel_constants.h"
+// See color_panel.dart for descriptions.
+static NSString *const kChannelName = @"flutter/colorpanel";
+static NSString *const kShowColorPanelMethod = @"ColorPanel.Show";
+static NSString *const kColorPanelShowAlpha = @"ColorPanel.ShowAlpha";
+static NSString *const kHideColorPanelMethod = @"ColorPanel.Hide";
+static NSString *const kColorSelectedCallbackMethod = @"ColorPanel.ColorSelectedCallback";
+static NSString *const kClosedCallbackMethod = @"ColorPanel.ClosedCallback";
+static NSString *const kColorComponentAlphaKey = @"alpha";
+static NSString *const kColorComponentRedKey = @"red";
+static NSString *const kColorComponentGreenKey = @"green";
+static NSString *const kColorComponentBlueKey = @"blue";
 
 @implementation FLEColorPanelPlugin {
   // The channel used to communicate with Flutter.
@@ -25,7 +35,7 @@
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@(plugins_color_panel::kChannelName)
+      [FlutterMethodChannel methodChannelWithName:kChannelName
                                   binaryMessenger:registrar.messenger];
   FLEColorPanelPlugin *instance = [[FLEColorPanelPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
@@ -45,19 +55,19 @@
  */
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
   id methodResult = nil;
-  if ([call.method isEqualToString:@(plugins_color_panel::kShowColorPanelMethod)]) {
+  if ([call.method isEqualToString:kShowColorPanelMethod]) {
     if ([call.arguments isKindOfClass:[NSDictionary class]]) {
       BOOL showAlpha =
-          [[call.arguments valueForKey:@(plugins_color_panel::kColorPanelShowAlpha)] boolValue];
+          [[call.arguments valueForKey:kColorPanelShowAlpha] boolValue];
       [self showColorPanelWithAlpha:showAlpha];
     } else {
       NSString *errorString =
           [NSString stringWithFormat:@"Malformed call for %@. Expected an NSDictionary but got %@",
-                                     @(plugins_color_panel::kShowColorPanelMethod),
+                                     kShowColorPanelMethod,
                                      NSStringFromClass([call.arguments class])];
       methodResult = [FlutterError errorWithCode:@"Bad arguments" message:errorString details:nil];
     }
-  } else if ([call.method isEqualToString:@(plugins_color_panel::kHideColorPanelMethod)]) {
+  } else if ([call.method isEqualToString:kHideColorPanelMethod]) {
     [self hideColorPanel];
   } else {
     methodResult = FlutterMethodNotImplemented;
@@ -113,7 +123,7 @@
 - (void)selectedColorDidChange {
   NSColor *color = [NSColorPanel sharedColorPanel].color;
   NSDictionary *colorDictionary = [self dictionaryWithColor:color];
-  [_channel invokeMethod:@(plugins_color_panel::kColorSelectedCallbackMethod)
+  [_channel invokeMethod:kColorSelectedCallbackMethod
                arguments:colorDictionary];
 }
 
@@ -128,10 +138,10 @@
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
   // TODO: Consider being able to pass other type of color space (Gray scale, CMYK, etc).
   NSColor *rgbColor = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
-  result[@(plugins_color_panel::kColorComponentAlphaKey)] = @(rgbColor.alphaComponent);
-  result[@(plugins_color_panel::kColorComponentRedKey)] = @(rgbColor.redComponent);
-  result[@(plugins_color_panel::kColorComponentGreenKey)] = @(rgbColor.greenComponent);
-  result[@(plugins_color_panel::kColorComponentBlueKey)] = @(rgbColor.blueComponent);
+  result[kColorComponentAlphaKey] = @(rgbColor.alphaComponent);
+  result[kColorComponentRedKey] = @(rgbColor.redComponent);
+  result[kColorComponentGreenKey] = @(rgbColor.greenComponent);
+  result[kColorComponentBlueKey] = @(rgbColor.blueComponent);
   return result;
 }
 
@@ -139,7 +149,7 @@
 
 - (void)windowWillClose:(NSNotification *)notification {
   [self removeColorPanelConnections];
-  [_channel invokeMethod:@(plugins_color_panel::kClosedCallbackMethod) arguments:nil];
+  [_channel invokeMethod:kClosedCallbackMethod arguments:nil];
 }
 
 @end

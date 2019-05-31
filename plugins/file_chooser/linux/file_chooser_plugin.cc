@@ -22,8 +22,6 @@
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
 
-#include "plugins/file_chooser/common/channel_constants.h"
-
 // File chooser callback results.
 static constexpr int kCancelResultValue = 0;
 static constexpr int kOkResultValue = 1;
@@ -35,6 +33,17 @@ namespace {
 using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
+
+// See channel_controller.dart for documentation.
+const char kChannelName[] = "flutter/filechooser";
+const char kShowOpenPanelMethod[] = "FileChooser.Show.Open";
+const char kShowSavePanelMethod[] = "FileChooser.Show.Save";
+const char kInitialDirectoryKey[] = "initialDirectory";
+const char kInitialFileNameKey[] = "initialFileName";
+const char kAllowedFileTypesKey[] = "allowedFileTypes";
+const char kConfirmButtonTextKey[] = "confirmButtonText";
+const char kAllowsMultipleSelectionKey[] = "allowsMultipleSelection";
+const char kCanChooseDirectoriesKey[] = "canChooseDirectories";
 
 // Looks for |key| in |map|, returning the associated value if it is present, or
 // a Null EncodableValue if not.

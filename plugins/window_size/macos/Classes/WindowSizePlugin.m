@@ -12,11 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEWindowSizePlugin.h"
+#import "WindowSizePlugin.h"
 
 #import <AppKit/AppKit.h>
 
-#include "plugins/window_size/common/channel_constants.h"
+// See window_size_channel.dart for documentation.
+static NSString *const kChannelName = @"flutter/windowsize";
+static NSString *const kGetScreenListMethod = @"getScreenList";
+static NSString *const kGetWindowInfoMethod = @"getWindowInfo";
+static NSString *const kSetWindowFrameMethod = @"setWindowFrame";
+static NSString *const kFrameKey = @"frame";
+static NSString *const kVisibleFrameKey = @"visibleFrame";
+static NSString *const kScaleFactorKey = @"scaleFactor";
+static NSString *const kScreenKey = @"screen";
 
 /**
  * Returns the max Y coordinate across all screens.
@@ -68,7 +76,7 @@ NSRect GetFlippedRect(NSRect frame) {
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@(plugins_window_size::kChannelName)
+      [FlutterMethodChannel methodChannelWithName:kChannelName
                                   binaryMessenger:registrar.messenger];
   FLEWindowSizePlugin *instance = [[FLEWindowSizePlugin alloc] initWithChannel:channel
                                                                           view:registrar.view];
@@ -90,16 +98,16 @@ NSRect GetFlippedRect(NSRect frame) {
  */
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
   id methodResult = nil;
-  if ([call.method isEqualToString:@(plugins_window_size::kGetScreenListMethod)]) {
+  if ([call.method isEqualToString:kGetScreenListMethod]) {
     NSMutableArray<NSDictionary *> *screenList =
         [NSMutableArray arrayWithCapacity:[NSScreen screens].count];
     for (NSScreen *screen in [NSScreen screens]) {
       [screenList addObject:[self platformChannelRepresentationForScreen:screen]];
     }
     methodResult = screenList;
-  } else if ([call.method isEqualToString:@(plugins_window_size::kGetWindowInfoMethod)]) {
+  } else if ([call.method isEqualToString:kGetWindowInfoMethod]) {
     methodResult = [self platformChannelRepresentationForWindow:_flutterView.window];
-  } else if ([call.method isEqualToString:@(plugins_window_size::kSetWindowFrameMethod)]) {
+  } else if ([call.method isEqualToString:kSetWindowFrameMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
     [_flutterView.window
         setFrame:GetFlippedRect(NSMakeRect(arguments[0].doubleValue, arguments[1].doubleValue,
@@ -116,21 +124,21 @@ NSRect GetFlippedRect(NSRect frame) {
 
 - (NSDictionary *)platformChannelRepresentationForScreen:(NSScreen *)screen {
   return @{
-    @(plugins_window_size::kFrameKey) :
+    kFrameKey :
         [self platformChannelRepresentationForFrame:GetFlippedRect(screen.frame)],
-    @(plugins_window_size::kVisibleFrameKey) :
+    kVisibleFrameKey :
         [self platformChannelRepresentationForFrame:GetFlippedRect(screen.visibleFrame)],
-    @(plugins_window_size::kScaleFactorKey) : @(screen.backingScaleFactor),
+    kScaleFactorKey : @(screen.backingScaleFactor),
   };
 }
 
 - (NSDictionary *)platformChannelRepresentationForWindow:(NSWindow *)window {
   return @{
-    @(plugins_window_size::kFrameKey) :
+    kFrameKey :
         [self platformChannelRepresentationForFrame:GetFlippedRect(window.frame)],
-    @(plugins_window_size::kScreenKey) :
+    kScreenKey :
         [self platformChannelRepresentationForScreen:window.screen],
-    @(plugins_window_size::kScaleFactorKey) : @(window.backingScaleFactor),
+    kScaleFactorKey : @(window.backingScaleFactor),
   };
 }
 

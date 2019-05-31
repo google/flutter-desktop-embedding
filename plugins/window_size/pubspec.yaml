@@ -6,7 +6,7 @@ homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugin
 
 flutter:
   plugin:
-    #macosPrefix: FLE
+    macosPrefix: FLE
     pluginClass: WindowSizePlugin
 
 environment:

@@ -16,17 +16,29 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 
-// Plugin channel constants. See common/channel_constants.h for details.
+/// The name of the plugin's platform channel.
 const String _kColorPanelChannel = 'flutter/colorpanel';
+
+/// The method name to instruct the native plugin to show the panel.
 const String _kShowColorPanelMethod = 'ColorPanel.Show';
+/// The method name to instruct the native plugin to hide the panel.
 const String _kHideColorPanelMethod = 'ColorPanel.Hide';
+/// The method name for the Dart-side callback that receives color values.
 const String _kColorPanelColorSelectedCallback =
     'ColorPanel.ColorSelectedCallback';
+/// The method name for the Dart-side callback that is called if the panel is
+/// closed from the UI, rather than via a call to kHideColorPanelMethod.
 const String _kColorPanelClosedCallback = 'ColorPanel.ClosedCallback';
+
+/// The argument to show an opacity modifier on the panel. Default is true.
 const String _kColorPanelShowAlpha = 'ColorPanel.ShowAlpha';
+
+// Keys for the ARGB color map sent to kColorPanelCallback.
+// The values should be numbers between 0 and 1.
 const String _kRedKey = 'red';
 const String _kGreenKey = 'green';
 const String _kBlueKey = 'blue';
+// Platform implementations should return 1 if the opacity slider is not shown.
 const String _kAlphaKey = 'alpha';
 
 const MethodChannel _platformChannel = const MethodChannel(_kColorPanelChannel);

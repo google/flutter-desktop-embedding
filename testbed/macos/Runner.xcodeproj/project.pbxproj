@@ -21,12 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		3329005320D2EC9E002E5F16 /* FlutterEmbedderFileChooser.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 3329004F20D2EC7C002E5F16 /* FlutterEmbedderFileChooser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3329009620D84F99002E5F16 /* FlutterEmbedderMenubar.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 3329009320D84F6E002E5F16 /* FlutterEmbedderMenubar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3329FFFF20C9F5D9002E5F16 /* FlutterEmbedderColorPanel.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 3329FFFB20C9F5AC002E5F16 /* FlutterEmbedderColorPanel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3399D4652277B94E009A79C7 /* FlutterEmbedderWindowSize.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3399D4642277B915009A79C7 /* FlutterEmbedderWindowSize.framework */; };
-		3399D4662277B95B009A79C7 /* FlutterEmbedderWindowSize.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 3399D4642277B915009A79C7 /* FlutterEmbedderWindowSize.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		33A2DE652267798600914F77 /* PluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 33A2DE642267798600914F77 /* PluginRegistrant.m */; };
 		33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC10F02044A3C60003C045 /* AppDelegate.swift */; };
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
@@ -35,69 +29,10 @@
 		33CEB41F229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 33CEB3B9229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m */; };
 		33D1A10422148B71006C7A3E /* FlutterMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D1A10322148B71006C7A3E /* FlutterMacOS.framework */; };
 		33D1A10522148B93006C7A3E /* FlutterMacOS.framework in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 33D1A10322148B71006C7A3E /* FlutterMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		33E98C0521824E4000EB88EF /* FlutterEmbedderMenubar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329009320D84F6E002E5F16 /* FlutterEmbedderMenubar.framework */; };
-		33E98C0721824E4800EB88EF /* FlutterEmbedderFileChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329004F20D2EC7C002E5F16 /* FlutterEmbedderFileChooser.framework */; };
-		33E98C0821824E4C00EB88EF /* FlutterEmbedderColorPanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3329FFFB20C9F5AC002E5F16 /* FlutterEmbedderColorPanel.framework */; };
 		DD483B73F307097FF135FD10 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 006D31AACFD6922B0211F576 /* libPods-Runner.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3329004E20D2EC7C002E5F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3329001620D2D6F7002E5F16;
-			remoteInfo = FlutterEmbedderFileChooser;
-		};
-		3329005120D2EC90002E5F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3329001520D2D6F7002E5F16;
-			remoteInfo = FlutterEmbedderFileChooser;
-		};
-		3329009220D84F6E002E5F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3329006820D84C56002E5F16;
-			remoteInfo = FlutterEmbedderMenubar;
-		};
-		3329009420D84F84002E5F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3329006720D84C56002E5F16;
-			remoteInfo = FlutterEmbedderMenubar;
-		};
-		3329FFFA20C9F5AC002E5F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 332A46C120C9CFE600C30EB9;
-			remoteInfo = FlutterEmbedderColorPanel;
-		};
-		3329FFFD20C9F5CF002E5F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 332A46C020C9CFE600C30EB9;
-			remoteInfo = FlutterEmbedderColorPanel;
-		};
-		3399D4632277B915009A79C7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3399D45E2277B915009A79C7 /* FlutterEmbedderWindowSize.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 332A46C120C9CFE600C30EB9;
-			remoteInfo = FlutterEmbedderWindowSize;
-		};
-		3399D4672277BA0B009A79C7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3399D45E2277B915009A79C7 /* FlutterEmbedderWindowSize.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 332A46C020C9CFE600C30EB9;
-			remoteInfo = FlutterEmbedderWindowSize;
-		};
 		33CC111F2044C79F0003C045 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 33CC10E52044A3C60003C045 /* Project object */;
@@ -114,11 +49,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3399D4662277B95B009A79C7 /* FlutterEmbedderWindowSize.framework in Bundle Framework */,
 				33D1A10522148B93006C7A3E /* FlutterMacOS.framework in Bundle Framework */,
-				3329009620D84F99002E5F16 /* FlutterEmbedderMenubar.framework in Bundle Framework */,
-				3329005320D2EC9E002E5F16 /* FlutterEmbedderFileChooser.framework in Bundle Framework */,
-				3329FFFF20C9F5D9002E5F16 /* FlutterEmbedderColorPanel.framework in Bundle Framework */,
 			);
 			name = "Bundle Framework";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -127,12 +58,6 @@
 
 /* Begin PBXFileReference section */
 		006D31AACFD6922B0211F576 /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderFileChooser.xcodeproj; path = ../../plugins/file_chooser/macos/FlutterEmbedderFileChooser.xcodeproj; sourceTree = "<group>"; };
-		3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderMenubar.xcodeproj; path = ../../plugins/menubar/macos/FlutterEmbedderMenubar.xcodeproj; sourceTree = "<group>"; };
-		3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderColorPanel.xcodeproj; path = ../../plugins/color_panel/macos/FlutterEmbedderColorPanel.xcodeproj; sourceTree = "<group>"; };
-		3399D45E2277B915009A79C7 /* FlutterEmbedderWindowSize.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FlutterEmbedderWindowSize.xcodeproj; path = ../../plugins/window_size/macos/FlutterEmbedderWindowSize.xcodeproj; sourceTree = "<group>"; };
-		33A2DE632267798600914F77 /* PluginRegistrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginRegistrant.h; sourceTree = "<group>"; };
-		33A2DE642267798600914F77 /* PluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PluginRegistrant.m; sourceTree = "<group>"; };
 		33CC10ED2044A3C60003C045 /* Testbed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Testbed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33CC10F02044A3C60003C045 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		33CC10F22044A3C60003C045 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -158,10 +83,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33E98C0821824E4C00EB88EF /* FlutterEmbedderColorPanel.framework in Frameworks */,
-				33E98C0721824E4800EB88EF /* FlutterEmbedderFileChooser.framework in Frameworks */,
-				33E98C0521824E4000EB88EF /* FlutterEmbedderMenubar.framework in Frameworks */,
-				3399D4652277B94E009A79C7 /* FlutterEmbedderWindowSize.framework in Frameworks */,
 				33D1A10422148B71006C7A3E /* FlutterMacOS.framework in Frameworks */,
 				DD483B73F307097FF135FD10 /* libPods-Runner.a in Frameworks */,
 			);
@@ -170,30 +91,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3329004A20D2EC7C002E5F16 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3329004F20D2EC7C002E5F16 /* FlutterEmbedderFileChooser.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		3329008E20D84F6E002E5F16 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3329009320D84F6E002E5F16 /* FlutterEmbedderMenubar.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		3329FFF620C9F5AC002E5F16 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3329FFFB20C9F5AC002E5F16 /* FlutterEmbedderColorPanel.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		3399D4432277B6F6009A79C7 /* Configs */ = {
 			isa = PBXGroup;
 			children = (
@@ -203,30 +100,16 @@
 			name = Configs;
 			sourceTree = "<group>";
 		};
-		3399D45F2277B915009A79C7 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3399D4642277B915009A79C7 /* FlutterEmbedderWindowSize.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		33CC10E42044A3C60003C045 = {
 			isa = PBXGroup;
 			children = (
 				33CC10F02044A3C60003C045 /* AppDelegate.swift */,
 				33CC11122044BFA00003C045 /* FlutterWindow.swift */,
-				33A2DE632267798600914F77 /* PluginRegistrant.h */,
-				33A2DE642267798600914F77 /* PluginRegistrant.m */,
 				33CC11162044C3600003C045 /* Runner-Bridging-Header.h */,
 				33CC11242044D66E0003C045 /* Resources */,
 				3399D4432277B6F6009A79C7 /* Configs */,
 				33CEB47122A05771004F2AC0 /* Flutter */,
 				33CC10EE2044A3C60003C045 /* Products */,
-				3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */,
-				3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */,
-				3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */,
-				3399D45E2277B915009A79C7 /* FlutterEmbedderWindowSize.xcodeproj */,
 				42A25AC27C6DDF3AFC9C5E6E /* Pods */,
 				9AD75AA05535B54DFB4DB30B /* Frameworks */,
 			);
@@ -270,7 +153,6 @@
 				57F1506676D982B7D34CC3A5 /* Pods-Runner.debug.xcconfig */,
 				3A212F0C701BE2A93596D313 /* Pods-Runner.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -301,10 +183,6 @@
 			);
 			dependencies = (
 				33CC11202044C79F0003C045 /* PBXTargetDependency */,
-				3329FFFE20C9F5CF002E5F16 /* PBXTargetDependency */,
-				3329005220D2EC90002E5F16 /* PBXTargetDependency */,
-				3329009520D84F84002E5F16 /* PBXTargetDependency */,
-				3399D4682277BA0B009A79C7 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Testbed;
@@ -343,24 +221,6 @@
 			mainGroup = 33CC10E42044A3C60003C045;
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 3329FFF620C9F5AC002E5F16 /* Products */;
-					ProjectRef = 3329FFF520C9F5AC002E5F16 /* FlutterEmbedderColorPanel.xcodeproj */;
-				},
-				{
-					ProductGroup = 3329004A20D2EC7C002E5F16 /* Products */;
-					ProjectRef = 3329004920D2EC7C002E5F16 /* FlutterEmbedderFileChooser.xcodeproj */;
-				},
-				{
-					ProductGroup = 3329008E20D84F6E002E5F16 /* Products */;
-					ProjectRef = 3329008D20D84F6E002E5F16 /* FlutterEmbedderMenubar.xcodeproj */;
-				},
-				{
-					ProductGroup = 3399D45F2277B915009A79C7 /* Products */;
-					ProjectRef = 3399D45E2277B915009A79C7 /* FlutterEmbedderWindowSize.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				33CC10EC2044A3C60003C045 /* Runner */,
@@ -368,37 +228,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		3329004F20D2EC7C002E5F16 /* FlutterEmbedderFileChooser.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = FlutterEmbedderFileChooser.framework;
-			remoteRef = 3329004E20D2EC7C002E5F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3329009320D84F6E002E5F16 /* FlutterEmbedderMenubar.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = FlutterEmbedderMenubar.framework;
-			remoteRef = 3329009220D84F6E002E5F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3329FFFB20C9F5AC002E5F16 /* FlutterEmbedderColorPanel.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = FlutterEmbedderColorPanel.framework;
-			remoteRef = 3329FFFA20C9F5AC002E5F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3399D4642277B915009A79C7 /* FlutterEmbedderWindowSize.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = FlutterEmbedderWindowSize.framework;
-			remoteRef = 3399D4632277B915009A79C7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		33CC10EB2044A3C60003C045 /* Resources */ = {
@@ -449,15 +278,11 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
 				"${PODS_ROOT}/../Flutter/ephemeral/.symlinks/flutter/darwin-x64/FlutterMacOS.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FlutterMacOS.framework",
 			);
@@ -497,7 +322,6 @@
 			files = (
 				33CC11132044BFA00003C045 /* FlutterWindow.swift in Sources */,
 				33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */,
-				33A2DE652267798600914F77 /* PluginRegistrant.m in Sources */,
 				33CEB41F229F4E8D004F2AC0 /* GeneratedPluginRegistrant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -505,26 +329,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3329005220D2EC90002E5F16 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = FlutterEmbedderFileChooser;
-			targetProxy = 3329005120D2EC90002E5F16 /* PBXContainerItemProxy */;
-		};
-		3329009520D84F84002E5F16 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = FlutterEmbedderMenubar;
-			targetProxy = 3329009420D84F84002E5F16 /* PBXContainerItemProxy */;
-		};
-		3329FFFE20C9F5CF002E5F16 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = FlutterEmbedderColorPanel;
-			targetProxy = 3329FFFD20C9F5CF002E5F16 /* PBXContainerItemProxy */;
-		};
-		3399D4682277BA0B009A79C7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = FlutterEmbedderWindowSize;
-			targetProxy = 3399D4672277BA0B009A79C7 /* PBXContainerItemProxy */;
-		};
 		33CC11202044C79F0003C045 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 33CC111A2044C6BA0003C045 /* Build Flutter Bundle */;

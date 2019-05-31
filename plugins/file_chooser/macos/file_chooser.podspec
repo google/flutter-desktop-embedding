@@ -2,15 +2,15 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
-  s.name             = 'example_plugin'
+  s.name             = 'file_chooser'
   s.version          = '0.0.1'
-  s.summary          = 'A new flutter plugin project.'
+  s.summary          = 'Displays macOS open and save panels.'
   s.description      = <<-DESC
-A new flutter plugin project.
+Displays macOS open and save panels.
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/google/flutter-desktop-embedding/tree/master/plugins/file_chooser'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Flutter Desktop Embedding Developers' => 'flutter-desktop-embedding-dev@googlegroups.com' }
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'

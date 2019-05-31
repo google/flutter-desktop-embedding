@@ -17,14 +17,37 @@ import 'package:flutter/services.dart';
 
 import 'menu_item.dart';
 
-// Plugin channel constants. See common/channel_constants.h for details.
+/// Whether or not the menu item is a divider, as a boolean. If true, no other
+/// The name of the plugin's platform channel.
 const String _kMenuChannelName = 'flutter/menubar';
+
+/// The method name to instruct the native plugin to set the menu.
+//
+/// The argument to this method will be an array of map representations
+/// of menus that should be set as top-level menu items.
 const String _kMenuSetMethod = 'Menubar.SetMenu';
+/// The method name for the Dart-side callback called when a menu item is
+/// selected.
+//
+/// The argument to this method must be the ID of the selected menu item, as
+/// provided in the kIdKey field in the kMenuSetMethod call.
 const String _kMenuItemSelectedCallbackMethod = 'Menubar.SelectedCallback';
+
+// Keys for the map representations of menus sent to kMenuSetMethod.
+
+/// The ID of the menu item, as an integer. If present, this indicates that the
+/// menu item should trigger a kMenuItemSelectedCallbackMethod call when
+/// selected.
 const String _kIdKey = 'id';
+/// The label that should be displayed for the menu, as a string.
 const String _kLabelKey = 'label';
+/// Whether or not the menu item should be enabled, as a boolean. If not present
+/// the defualt is to enabled the item.
 const String _kEnabledKey = 'enabled';
+/// Menu items that should be shown as a submenu of this item, as an array.
 const String _kChildrenKey = 'children';
+/// Whether or not the menu item is a divider, as a boolean. If true, no other
+/// keys will be present.
 const String _kDividerKey = 'isDivider';
 
 /// A singleton object that handles the interaction with the menu bar platform
