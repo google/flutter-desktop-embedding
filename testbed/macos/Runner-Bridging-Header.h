@@ -13,4 +13,6 @@
 // limitations under the License.
 
 #import <FlutterMacOS/FlutterMacOS.h>
+#import "GeneratedPluginRegistrant.h"
+// TODO: Remove once all plugins are converted to use pod.
 #import "PluginRegistrant.h"

@@ -17,11 +17,14 @@ the [quick start](Quick-Start.md) page before continuing._
 
 ### Setting Up
 
+Ensure that you are on the latest version of the [Flutter master
+channel](https://github.com/flutter/flutter/wiki/Flutter-build-release-channels#how-to-change-channels).
+
 #### Tools
 
 You will need developer tools for your platform:
 * Linux: A recent version of GCC
-* macOS: The current version of Xcode
+* macOS: Make sure `flutter doctor` reports no issues for the "Xcode" section.
 * Windows: Visual Studio 2017 or 2019, including the "Desktop development with C++" workload.
 
 #### Source
