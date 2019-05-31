@@ -23,8 +23,6 @@
 #include <memory>
 #include <vector>
 
-#include "plugins/window_size/common/channel_constants.h"
-
 namespace plugins_window_size {
 
 namespace {

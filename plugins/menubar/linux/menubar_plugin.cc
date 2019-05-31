@@ -21,8 +21,6 @@
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
 
-#include "plugins/menubar/common/channel_constants.h"
-
 static constexpr char kWindowTitle[] = "Flutter Menubar";
 
 namespace plugins_menubar {

@@ -66,7 +66,7 @@ class FileChooserConfigurationOptions {
       this.canSelectDirectories,
       this.confirmButtonText});
 
-  // See channel_constants.h for documentation; these correspond exactly to
+  // See the constants above for documentation; these correspond exactly to
   // the configuration parameters defined in the channel protocol.
   final String initialDirectory; // ignore: public_member_api_docs
   final String initialFileName; // ignore: public_member_api_docs
