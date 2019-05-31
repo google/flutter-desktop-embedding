@@ -19,7 +19,6 @@ class FlutterWindow: NSWindow {
 
   override func awakeFromNib() {
     GeneratedPluginRegistrant.register(with: flutterViewController)
-    PluginRegistrant.register(with: flutterViewController)
 
     let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
     var arguments: [String] = [];

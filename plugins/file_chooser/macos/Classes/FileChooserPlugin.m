@@ -12,11 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEFileChooserPlugin.h"
+#import "FileChooserPlugin.h"
 
 #import <AppKit/AppKit.h>
 
-#include "plugins/file_chooser/common/channel_constants.h"
+// See channel_controller.dart for documentation.
+static NSString *const kChannelName = @"flutter/filechooser";
+static NSString *const kShowOpenPanelMethod = @"FileChooser.Show.Open";
+static NSString *const kShowSavePanelMethod = @"FileChooser.Show.Save";
+static NSString *const kInitialDirectoryKey = @"initialDirectory";
+static NSString *const kInitialFileNameKey = @"initialFileName";
+static NSString *const kAllowedFileTypesKey = @"allowedFileTypes";
+static NSString *const kConfirmButtonTextKey = @"confirmButtonText";
+static NSString *const kAllowsMultipleSelectionKey = @"allowsMultipleSelection";
+static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
 
 @implementation FLEFileChooserPlugin {
   // The view displaying Flutter content.
@@ -40,18 +49,17 @@
 - (void)configureSavePanel:(nonnull NSSavePanel *)panel
              withArguments:(nonnull NSDictionary<NSString *, id> *)arguments {
   NSSet *argKeys = [NSSet setWithArray:arguments.allKeys];
-  if ([argKeys containsObject:@(plugins_file_chooser::kInitialDirectoryKey)]) {
-    panel.directoryURL =
-        [NSURL URLWithString:arguments[@(plugins_file_chooser::kInitialDirectoryKey)]];
+  if ([argKeys containsObject:kInitialDirectoryKey]) {
+    panel.directoryURL = [NSURL URLWithString:arguments[kInitialDirectoryKey]];
   }
-  if ([argKeys containsObject:@(plugins_file_chooser::kAllowedFileTypesKey)]) {
-    panel.allowedFileTypes = arguments[@(plugins_file_chooser::kAllowedFileTypesKey)];
+  if ([argKeys containsObject:kAllowedFileTypesKey]) {
+    panel.allowedFileTypes = arguments[kAllowedFileTypesKey];
   }
-  if ([argKeys containsObject:@(plugins_file_chooser::kInitialFileNameKey)]) {
-    panel.nameFieldStringValue = arguments[@(plugins_file_chooser::kInitialFileNameKey)];
+  if ([argKeys containsObject:kInitialFileNameKey]) {
+    panel.nameFieldStringValue = arguments[kInitialFileNameKey];
   }
-  if ([argKeys containsObject:@(plugins_file_chooser::kConfirmButtonTextKey)]) {
-    panel.prompt = arguments[@(plugins_file_chooser::kConfirmButtonTextKey)];
+  if ([argKeys containsObject:kConfirmButtonTextKey]) {
+    panel.prompt = arguments[kConfirmButtonTextKey];
   }
 }
 
@@ -64,13 +72,11 @@
 - (void)configureOpenPanel:(nonnull NSOpenPanel *)panel
              withArguments:(nonnull NSDictionary<NSString *, id> *)arguments {
   NSSet *argKeys = [NSSet setWithArray:arguments.allKeys];
-  if ([argKeys containsObject:@(plugins_file_chooser::kAllowsMultipleSelectionKey)]) {
-    panel.allowsMultipleSelection =
-        [arguments[@(plugins_file_chooser::kAllowsMultipleSelectionKey)] boolValue];
+  if ([argKeys containsObject:kAllowsMultipleSelectionKey]) {
+    panel.allowsMultipleSelection = [arguments[kAllowsMultipleSelectionKey] boolValue];
   }
-  if ([argKeys containsObject:@(plugins_file_chooser::kCanChooseDirectoriesKey)]) {
-    BOOL canChooseDirectories =
-        [arguments[@(plugins_file_chooser::kCanChooseDirectoriesKey)] boolValue];
+  if ([argKeys containsObject:kCanChooseDirectoriesKey]) {
+    BOOL canChooseDirectories = [arguments[kCanChooseDirectoriesKey] boolValue];
     panel.canChooseDirectories = canChooseDirectories;
     panel.canChooseFiles = !canChooseDirectories;
   }
@@ -79,9 +85,8 @@
 #pragma FlutterPlugin implementation
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@(plugins_file_chooser::kChannelName)
-                                  binaryMessenger:registrar.messenger];
+  FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:kChannelName
+                                                              binaryMessenger:registrar.messenger];
   FLEFileChooserPlugin *instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
@@ -89,7 +94,7 @@
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
   NSDictionary *arguments = call.arguments;
 
-  if ([call.method isEqualToString:@(plugins_file_chooser::kShowSavePanelMethod)]) {
+  if ([call.method isEqualToString:kShowSavePanelMethod]) {
     NSSavePanel *savePanel = [NSSavePanel savePanel];
     savePanel.canCreateDirectories = YES;
     [self configureSavePanel:savePanel withArguments:arguments];
@@ -100,7 +105,7 @@
                         result([URLs valueForKey:@"path"]);
                       }];
 
-  } else if ([call.method isEqualToString:@(plugins_file_chooser::kShowOpenPanelMethod)]) {
+  } else if ([call.method isEqualToString:kShowOpenPanelMethod]) {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [self configureSavePanel:openPanel withArguments:arguments];
     [self configureOpenPanel:openPanel withArguments:arguments];

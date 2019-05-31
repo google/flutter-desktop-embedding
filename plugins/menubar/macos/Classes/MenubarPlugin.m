@@ -12,9 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "FLEMenubarPlugin.h"
+#import "MenubarPlugin.h"
 
-#include "plugins/menubar/common/channel_constants.h"
+// See menu_channel.dart for documentation.
+static NSString *const kChannelName = @"flutter/menubar";
+static NSString *const kMenuSetMethod = @"Menubar.SetMenu";
+static NSString *const kMenuItemSelectedCallbackMethod = @"Menubar.SelectedCallback";
+static NSString *const kIdKey = @"id";
+static NSString *const kLabelKey = @"label";
+static NSString *const kEnabledKey = @"enabled";
+static NSString *const kChildrenKey = @"children";
+static NSString *const kDividerKey = @"isDivider";
 
 @implementation FLEMenubarPlugin {
   // The channel used to communicate with Flutter.
@@ -75,11 +83,11 @@
  * recursively creating children if it has a submenu.
  */
 - (NSMenuItem *)menuItemFromFlutterRepresentation:(NSDictionary *)representation {
-  if (representation[@(plugins_menubar::kDividerKey)]) {
+  if (representation[kDividerKey]) {
     return [NSMenuItem separatorItem];
   } else {
-    NSString *title = representation[@(plugins_menubar::kLabelKey)];
-    NSNumber *boxedID = representation[@(plugins_menubar::kIdKey)];
+    NSString *title = representation[kLabelKey];
+    NSNumber *boxedID = representation[kIdKey];
     NSMenuItem *item = [[NSMenuItem alloc]
         initWithTitle:title
                action:(boxedID ? @selector(flutterMenuItemSelected:) : NULL)keyEquivalent:@""];
@@ -87,11 +95,11 @@
       item.tag = boxedID.intValue;
       item.target = self;
     }
-    NSNumber *enabled = representation[@(plugins_menubar::kEnabledKey)];
+    NSNumber *enabled = representation[kEnabledKey];
     if (enabled) {
       item.enabled = enabled.boolValue;
     }
-    NSArray *children = representation[@(plugins_menubar::kChildrenKey)];
+    NSArray *children = representation[kChildrenKey];
     if (children) {
       NSMenu *submenu = [[NSMenu alloc] initWithTitle:title];
       submenu.autoenablesItems = NO;
@@ -111,21 +119,20 @@
  */
 - (void)flutterMenuItemSelected:(id)sender {
   NSMenuItem *item = sender;
-  [_channel invokeMethod:@(plugins_menubar::kMenuItemSelectedCallbackMethod) arguments:@(item.tag)];
+  [_channel invokeMethod:kMenuItemSelectedCallbackMethod arguments:@(item.tag)];
 }
 
 #pragma FlutterPlugin implementation
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@(plugins_menubar::kChannelName)
-                                  binaryMessenger:registrar.messenger];
+  FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:kChannelName
+                                                              binaryMessenger:registrar.messenger];
   FLEMenubarPlugin *instance = [[FLEMenubarPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([call.method isEqualToString:@(plugins_menubar::kMenuSetMethod)]) {
+  if ([call.method isEqualToString:kMenuSetMethod]) {
     NSArray *menus = call.arguments;
     [self rebuildFlutterMenusFromRepresentation:menus];
     result(nil);

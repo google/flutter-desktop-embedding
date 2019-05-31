@@ -1,22 +1,46 @@
 PODS:
+  - color_panel (0.0.1):
+    - FlutterMacOS
   - example_plugin (0.0.1):
     - FlutterMacOS
+  - file_chooser (0.0.1):
+    - FlutterMacOS
   - FlutterMacOS (1.0.0)
+  - menubar (0.0.1):
+    - FlutterMacOS
+  - window_size (0.0.1):
+    - FlutterMacOS
 
 DEPENDENCIES:
+  - color_panel (from `Flutter/ephemeral/.symlinks/plugins/color_panel/macos`)
   - example_plugin (from `Flutter/ephemeral/.symlinks/plugins/example_plugin/macos`)
+  - file_chooser (from `Flutter/ephemeral/.symlinks/plugins/file_chooser/macos`)
   - FlutterMacOS (from `Flutter/ephemeral/.symlinks/flutter/darwin-x64`)
+  - menubar (from `Flutter/ephemeral/.symlinks/plugins/menubar/macos`)
+  - window_size (from `Flutter/ephemeral/.symlinks/plugins/window_size/macos`)
 
 EXTERNAL SOURCES:
+  color_panel:
+    :path: Flutter/ephemeral/.symlinks/plugins/color_panel/macos
   example_plugin:
     :path: Flutter/ephemeral/.symlinks/plugins/example_plugin/macos
+  file_chooser:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_chooser/macos
   FlutterMacOS:
     :path: Flutter/ephemeral/.symlinks/flutter/darwin-x64
+  menubar:
+    :path: Flutter/ephemeral/.symlinks/plugins/menubar/macos
+  window_size:
+    :path: Flutter/ephemeral/.symlinks/plugins/window_size/macos
 
 SPEC CHECKSUMS:
-  example_plugin: 4d0da5ac486a6a2a9f66796bc70ef23a6b3f7ba9
+  color_panel: edeaa72f31e864550574a41ac2b01a27afe93363
+  example_plugin: 9b9c6bce3d44d6f5e1cad6770629ce1334c63973
+  file_chooser: f03aec623d1f36716916546f61e047b27941f288
   FlutterMacOS: a0cd115f6cc6d3a91b8e3fb792e5babf85bcfee1
+  menubar: 2c3beb319e775b4e301604ba2c3d7201eaed94a5
+  window_size: 3b836660213487307b304e8484636a0d433216c2
 
 PODFILE CHECKSUM: b3530b82cea4ab30cd8bae86402dcbe75ea5e0a2
 
-COCOAPODS: 1.6.2
+COCOAPODS: 1.7.0
