@@ -1,9 +1,0 @@
-archive:../../third_party/dart_packages/archive/lib/
-args:../../third_party/dart_packages/args/lib/
-charcode:../../third_party/dart_packages/charcode/lib/
-collection:../../third_party/dart_packages/collection/lib/
-convert:../../third_party/dart_packages/convert/lib/
-crypto:../../third_party/dart_packages/crypto/lib/
-path:../../third_party/dart_packages/path/lib/
-typed_data:../../third_party/dart_packages/typed_data/lib/
-update_flutter_engine:lib/
