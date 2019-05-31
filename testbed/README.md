@@ -6,9 +6,9 @@ libraries](https://github.com/flutter/flutter/wiki/Desktop-shells), as well
 as the plugins that are part of this repository.
 
 If you aren't working on the libraries themselves, this application is
-unlikely to be useful to you; see the [exmaple](../example/) instead.
+unlikely to be useful to you; see the [example](../example/) instead.
 
-This follows the same general structure as the exmaple app. However,
+This follows the same general structure as the example app. However,
 because it is for development use, it depends on scripts from
 [tools](../tools/) that make it easy to use a local engine, rather than
 simple calls to `flutter` commands. Most projects would have no need for
