@@ -24,28 +24,9 @@ Dart Code workflow.
 
 ### Attaching
 
-Add a [launch
-configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)	
-like the following:	
-
-
- ```
-  {
-    "name": "Flutter Desktop Attach",
-    "request": "attach",		
-    "observatoryUri": "http://127.0.0.1:1234/abcdef123456/",	
-    "type": "dart"	
-  }	
-```
-
-You will need to update the `observatoryUri` every time you re-launch your application
-using the logged Observatry URI (look for a line starting with `Observatory listening on`),
-as both the port (`1234`) and token (`abcdef123456`) portions will change on every launch.
-Be sure to save the file before trying to attach.
-
-In the future, there will hopefully be a simpler workflow that uses a prompt rather than
-having to edit the launch configuration every time. Watch [this Dart Code
-issue](https://github.com/Dart-Code/Dart-Code/issues/1638) for updates.
+Run the `Debug: Attach to Flutter Process` and paste in the Observatory URI logged to
+the console when you started your application (look for a line starting with
+`Observatory listening on`).
 
 ## Android Studio/IntelliJ
 
