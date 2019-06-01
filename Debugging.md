@@ -11,12 +11,6 @@ To enable desktop support in Dart Code, add the flag to
 }
 ```
 
-You may need to restart VS Code for this change to take effect.
-
-**Note**: This is not consistently working for everyone; investigation is
-in progress, but for now if this doesn't work, use the approach described
-under "Android Studio/IntelliJ" below.
-
 ### Running
 
 Once desktop support is enabled, you can run and debug using the normal
