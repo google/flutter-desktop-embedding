@@ -1,72 +1,56 @@
 # Desktop Flutter Example
 
-This application shows a minimal example of how to use the [desktop
-libraries](https://github.com/flutter/flutter/wiki/Desktop-shells) to build
-a runner on each platform, including resource bundling.
+This is the standard Flutter template application, modified to run on desktop.
 
-In this example, the platform-specific code lives in `<platform>`. For
-instance, the macOS project is in macos. This follows the pattern of
-the `android/` and `ios/` directories in a typical Flutter application.
-They are designed to serve as early prototypes of what eventual
-`flutter create` for desktop would create, and will be evolving over time
-to better reflect that goal.
+The `linux`, `macos`, and `windows` directories serve as early prototypes of
+what will eventually become the `flutter create` templates for desktop, and will
+be evolving over time to better reflect that goal.
 
-If you are planning to use Flutter in a project that you maintain manually,
-this example application should be treated as a starting point, rather than an
-authoritative example. For instance, you might use a different build system,
-package resources differently, etc. If you are are adding Flutter to an
-existing desktop application, you might instead put the Flutter application code
-inside your existing project structure.
+## Building and Running
 
-## Building and Running the Example
+See [the main project README](../README.md).
 
-Ensure that you are on the latest version of the [Flutter master
-channel](https://github.com/flutter/flutter/wiki/Flutter-build-release-channels#how-to-change-channels).
+## Dart Differences from Flutter Template
 
-### Enable Desktop Support
+The `main.dart` and `pubspec.yaml` have minor changes to support desktop:
+* `debugDefaultTargetPlatformOverride` is set to avoid 'Unknown platform'
+  exceptions.
+* The font is explicitly set to Roboto, and Roboto is bundled via
+  `pubspec.yaml`, to ensure that text displays on all platforms.
 
-The desktop support in the `flutter` tool is still highly experimental, and
-must be enabled with an environment variable. Run the command below in the
-terminal/console you will be using to build and run the example.
+See the [Flutter Application Requirements section of the Flutter page on
+desktop support](https://github.com/flutter/flutter/wiki/Desktop-shells#flutter-application-requirements)
+for more information.
 
-On macOS or Linux:
+## Adapting for Another Project
 
-```
-export ENABLE_FLUTTER_DESKTOP=true
-```
+Since `flutter create` is not yet supported for desktop, the easiest way to
+try out desktop support with an existing Flutter application is to start
+from this example. Two different approaches are described below.
 
-On Windows:
+With either approach, be sure to read the [Flutter page on desktop
+support](https://github.com/flutter/flutter/wiki/Desktop-shells), especially
+the [Flutter Application Requirements
+section](https://github.com/flutter/flutter/wiki/Desktop-shells#flutter-application-requirements).
 
-* PowerShell:
-  ```
-  $env:ENABLE_FLUTTER_DESKTOP="true"
-  ```
-* CMD:
+### Copy the 'linux', 'macos', and/or 'windows' Directories
 
-  ```
-  set ENABLE_FLUTTER_DESKTOP=true
-  ```
+These directories are self-contained, and can be copied to an existing
+Flutter project, enabling `flutter run` for those platforms.
 
-### Build and Run
+**Be aware that neither the API surface of the Flutter desktop libraries nor the
+interaction between the `flutter` tool and the platform directories is stable,
+and no attempt will be made to provide supported migration paths as things
+change.** If you use this approach, you should expect that every time you
+update Flutter you may have to delete your copies of the platform
+directories and re-copy them from an updated version of
+flutter-desktop-embedding.
 
-You can now run using the `flutter` tool as you would for mobile. In the
-'example' directory, run:
+### Replace Flutter Components
 
-```
-flutter run
-```
+Since this example already supports running on desktop platforms, you can
+swap in your project's Dart code, `pubspec.yaml`, resources, etc.
 
-(Only `debug` mode is currently available. Running with `--release` will succeed, but the
-result will still be using a `debug` Flutter configuration: asserts will fire, the
-observatory will be enabled, etc.)
-
-You can also use IDEs that support Flutter such as VS Code and Android Studio with
-[some configuration](../Debugging.md).
-
-Once you've `flutter run` at least once, you can also build using the underlying projects
-(Visual Studio, Xcode, or make) directly, but the first build must be done via `flutter run`
-in order to generate necessary files.
-
-**Note:** There is still no `flutter create` support for for desktop;
-this works only in a project that has already been configured manually for
-desktop builds. See [the quick-start guide](../Quick-Start.md) for details.
+This will be the easiest approach to keep working as desktop support evolves,
+but requires that you develop your project in a flutter-desktop-embedding
+fork.
