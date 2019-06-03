@@ -5,7 +5,8 @@ embeddings of [Flutter](https://github.com/flutter/flutter). That work has
 since [become part of
 Flutter](https://github.com/flutter/flutter/wiki/Desktop-shells), and this
 project is now just an example of, and test environment for, building
-applications using those libraries in their current state.
+applications using those libraries in their current state. It also
+includes some experimental, early stage desktop plugins.
 
 As explained in the link above, desktop libraries are still in early stages.
 **The code here is not stable, nor intended for production use.**
@@ -55,7 +56,8 @@ example as a starting point to run another project.
 
 If you want to use an IDE to run a Flutter project on desktop, you will need
 `ENABLE_FLUTTER_DESKTOP` to be set for the IDE:
-* VS Code: Add the flag to [dart.env](https://dartcode.org/docs/settings/#dartenv)   in the VS Code `settings.json`:
+* VS Code: Add the flag to [dart.env](https://dartcode.org/docs/settings/#dartenv)
+  in the VS Code `settings.json`:
   ```
   "dart.env": {
       "ENABLE_FLUTTER_DESKTOP": true,
