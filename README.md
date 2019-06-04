@@ -32,7 +32,7 @@ relevant to your platform.
 
 `doctor` support for Windows and Linux is coming soon; in the meantime the
 requirements are:
-* Linux: Make, and a recent version of GCC.
+* Linux: Make, and a recent version of clang.
 * Windows: Visual Studio 2017 or 2019, including the "Desktop development with
   C++" workload.
 

@@ -85,12 +85,12 @@ WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_CACHE_DIR) $(WRAPPER_INCLUDE_DIR)
 
 # Build settings
-CXX=g++ -std=c++14
+CXX=clang++
 CXXFLAGS.release=-DNDEBUG
-CXXFLAGS=-Wall -Werror -shared -fPIC -fvisibility=hidden \
+CXXFLAGS=-std=c++14 -Wall -Werror -fPIC -fvisibility=hidden \
 	-DFLUTTER_PLUGIN_IMPL $(CXXFLAGS.$(BUILD)) $(EXTRA_CXXFLAGS)
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) $(EXTRA_CPPFLAGS)
-LDFLAGS=-L$(FLUTTER_CACHE_DIR) -l$(FLUTTER_LIB_NAME) $(EXTRA_LDFLAGS)
+LDFLAGS=-shared -L$(FLUTTER_CACHE_DIR) -l$(FLUTTER_LIB_NAME) $(EXTRA_LDFLAGS)
 
 # Final output files that will be used by applications.
 LIBRARY_OUT=$(OUT_DIR)/lib$(PLUGIN_NAME).so

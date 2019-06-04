@@ -22,10 +22,6 @@
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
 
-// File chooser callback results.
-static constexpr int kCancelResultValue = 0;
-static constexpr int kOkResultValue = 1;
-
 namespace plugins_file_chooser {
 
 namespace {
