@@ -40,6 +40,8 @@ matrix:
       language: objective-c
       xcode_project: example/macos/Runner.xcodeproj
       xcode_scheme: Runner
+      before_install:
+        - gem install cocoapods -v '1.6.0'
       install:
         # None of the packaged channels are new enough for the current state
         # of FDE, so for now clone master instead.
