@@ -23,8 +23,6 @@
 #include <memory>
 #include <vector>
 
-#include "plugins/window_size/common/channel_constants.h"
-
 namespace plugins_window_size {
 
 namespace {
@@ -32,6 +30,16 @@ namespace {
 using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
+
+// See window_size_channel.dart for documentation.
+const char kChannelName[] = "flutter/windowsize";
+const char kGetScreenListMethod[] = "getScreenList";
+const char kGetWindowInfoMethod[] = "getWindowInfo";
+const char kSetWindowFrameMethod[] = "setWindowFrame";
+const char kFrameKey[] = "frame";
+const char kVisibleFrameKey[] = "visibleFrame";
+const char kScaleFactorKey[] = "scaleFactor";
+const char kScreenKey[] = "screen";
 
 // Returns the screen object that contains monitors.
 GdkScreen *GetScreen() {

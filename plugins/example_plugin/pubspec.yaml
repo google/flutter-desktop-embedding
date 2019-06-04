@@ -4,6 +4,11 @@ version: 0.0.1
 author:
 homepage:
 
+flutter:
+  plugin:
+    macosPrefix: FDE
+    pluginClass: ExamplePlugin
+
 environment:
   sdk: ">=2.1.0 <3.0.0"
 

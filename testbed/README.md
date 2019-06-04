@@ -1,28 +1,34 @@
 # Testbed Application
 
-This application is intended as a useful tool for developing and testing
+This application is intended as a tool for developing and testing
 the [desktop
 libraries](https://github.com/flutter/flutter/wiki/Desktop-shells), as well
 as the plugins that are part of this repository.
 
-If you aren't working on the libraries themselves, this application is
-unlikely to be useful to you; see the [exmaple](../example/) instead.
+This application is only likely to be useful if:
+* you are working on the Flutter desktop libraries themselves, and want to test
+  something,
+* you are porting one of this repository's plugins to a new platform, or
+* you are looking for an example of how to use plugins on Windows or Linux
+  before the `flutter` tooling for plugins is available on those platforms.
 
-This follows the same general structure as the exmaple app. However,
-because it is for development use, it depends on scripts from
-[tools](../tools/) that make it easy to use a local engine, rather than
-simple calls to `flutter` commands. Most projects would have no need for
-the scripts used here.
+Otherwise, you probably want the [example](../example/) instead.
 
 Since it serves as simple test environment for the plugins that are part of
 this project, and some desktop-specific Flutter functionality, it is a
 collection of unrelated functionality rather than a usable application.
 
-## Building and Running
+## Setting Up
 
-The examples build the plugins from source, so you will need to ensure you
+This application uses all of the plugins in this repository, so make sure you
 have all the dependencies for
 [building the plugins on your platform](../plugins/README.md).
 
-Otherwise, other than the exact paths and project names, the instructions
-are the same as for the [example application](../example/README.md).
+## Building and Running
+
+Just `flutter run`, as with `example`.
+
+During `testbed` development it may be useful to run the native build directly
+(e.g., building from within Visual Studio). The first build needs to be done
+via the `flutter` tool, but after that building the native project directly
+works as well.

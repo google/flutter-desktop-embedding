@@ -1,8 +1,17 @@
 name: color_panel
-description: Native color panel plugin for desktop Flutter
+description: Provides access to the platform's native color picker.
+version: 0.0.1
+author: Flutter Desktop Embedding Developers <flutter-desktop-embedding-dev@googlegroups.com>
+homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugins/color_panel
+
+flutter:
+  plugin:
+    macosPrefix: FLE
+    pluginClass: ColorPanelPlugin
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
-
-environment:
-  sdk: '<3.0.0'

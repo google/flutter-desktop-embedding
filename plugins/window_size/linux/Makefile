@@ -17,7 +17,7 @@
 # $(PLUGIN_NAME).h as the public header meant for inclusion by the application.
 PLUGIN_NAME=window_size_plugin
 # Any files other than the plugin class files that need to be compiled.
-EXTRA_SOURCES=../common/channel_constants.cc
+EXTRA_SOURCES=
 # Extra flags (e.g., for library dependencies).
 SYSTEM_LIBRARIES=gtk+-3.0
 EXTRA_CXXFLAGS=

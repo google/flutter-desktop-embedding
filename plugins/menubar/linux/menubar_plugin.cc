@@ -21,14 +21,26 @@
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
 
-#include "plugins/menubar/common/channel_constants.h"
-
 static constexpr char kWindowTitle[] = "Flutter Menubar";
 
 namespace plugins_menubar {
 
+namespace {
+
 using flutter::EncodableMap;
 using flutter::EncodableValue;
+
+// See menu_channel.dart for documentation.
+const char kChannelName[] = "flutter/menubar";
+const char kMenuSetMethod[] = "Menubar.SetMenu";
+const char kMenuItemSelectedCallbackMethod[] = "Menubar.SelectedCallback";
+const char kIdKey[] = "id";
+const char kLabelKey[] = "label";
+const char kEnabledKey[] = "enabled";
+const char kChildrenKey[] = "children";
+const char kDividerKey[] = "isDivider";
+
+}
 
 class MenubarPlugin : public flutter::Plugin {
  public:

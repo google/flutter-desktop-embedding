@@ -15,15 +15,35 @@ import 'package:flutter/services.dart';
 
 import 'callbacks.dart';
 
-// Plugin channel constants. See common/channel_constants.h for details.
+/// The name of the plugin's platform channel.
 const String _kChannelName = 'flutter/filechooser';
+
+/// The method name to instruct the native plugin to show an open panel.
 const String _kShowOpenPanelMethod = 'FileChooser.Show.Open';
+/// The method name to instruct the native plugin to show a save panel.
 const String _kShowSavePanelMethod = 'FileChooser.Show.Save';
+
+// Configuration parameters for file chooser panels:
+
+/// The path, as a string, for initial directory to display. Default behavior is
+/// left to the OS if not provided.]
 const String _kInitialDirectoryKey = 'initialDirectory';
+/// The initial file name that should appears in the file chooser. Defaults to
+/// an empty string if not provided.
 const String _kInitialFileNameKey = 'initialFileName';
+/// An array of UTI or file extension strings a panel is allowed to choose.
 const String _kAllowedFileTypesKey = 'allowedFileTypes';
+/// The text that appears on the panel's confirmation button. If not provided,
+/// the OS default is used.
 const String _kConfirmButtonTextKey = 'confirmButtonText';
+
+// Configuration parameters that only apply to open panels:
+
+/// A boolean indicating whether a panel should allow choosing multiple file
+/// paths. Defaults to false if not set.
 const String _kAllowsMultipleSelectionKey = 'allowsMultipleSelection';
+/// A boolean indicating whether a panel should allow choosing directories
+/// instead of files. Defaults to false if not set.
 const String _kCanChooseDirectoriesKey = 'canChooseDirectories';
 
 /// A File chooser type.
@@ -46,7 +66,7 @@ class FileChooserConfigurationOptions {
       this.canSelectDirectories,
       this.confirmButtonText});
 
-  // See channel_constants.h for documentation; these correspond exactly to
+  // See the constants above for documentation; these correspond exactly to
   // the configuration parameters defined in the channel protocol.
   final String initialDirectory; // ignore: public_member_api_docs
   final String initialFileName; // ignore: public_member_api_docs

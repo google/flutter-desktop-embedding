@@ -19,14 +19,45 @@ import 'package:flutter/services.dart';
 import 'platform_window.dart';
 import 'screen.dart';
 
-// Plugin channel constants. See common/channel_constants.h for details.
+/// The name of the plugin's platform channel.
 const String _windowSizeChannelName = 'flutter/windowsize';
+
+/// The method name to request information about the available screens.
+///
+/// Returns a list of screen info maps; see keys below.
 const String _getScreenListMethod = 'getScreenList';
+/// The method name to request information about the window containing the
+/// Flutter instance.
+///
+/// Returns a list of window info maps; see keys below.
 const String _getWindowInfoMethod = 'getWindowInfo';
+/// The method name to set the frame of a window.
+///
+/// Takes a frame array, as documented for the value of _frameKey.
 const String _setWindowFrameMethod = 'setWindowFrame';
+
+// Keys for screen and window maps returned by _getScreenListMethod.
+
+/// The frame of a screen or window. The value is a list of four doubles:
+///   [left, top, width, height]
 const String _frameKey = 'frame';
+/// The frame of a screen available for use by applications. The value format
+/// is the same as _frameKey's.
+///
+/// Only used for screens.
 const String _visibleFrameKey = 'visibleFrame';
+/// The scale factor for a screen or window, as a double.
+///
+/// This is the number of pixels per screen coordinate, and thus the ratio
+/// between sizes as seen by Flutter and sizes in native screen coordinates.
 const String _scaleFactorKey = 'scaleFactor';
+/// The screen containing this window, if any. The value is a screen map, or
+/// null if the window is not visible on a screen.
+///
+/// Only used for windows.
+///
+/// If a window is on multiple screens, it is up to the platform to decide which
+/// screen to report.
 const String _screenKey = 'screen';
 
 /// A singleton object that handles the interaction with the platform channel.
