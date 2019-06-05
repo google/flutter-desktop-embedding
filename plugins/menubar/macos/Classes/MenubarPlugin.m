@@ -20,9 +20,81 @@ static NSString *const kMenuSetMethod = @"Menubar.SetMenu";
 static NSString *const kMenuItemSelectedCallbackMethod = @"Menubar.SelectedCallback";
 static NSString *const kIdKey = @"id";
 static NSString *const kLabelKey = @"label";
+static NSString *const kShortcutKeyEquivalent = @"keyEquivalent";
+static NSString *const kShortcutSpecialKey = @"specialKey";
+static NSString *const kShortcutKeyModifiers = @"keyModifiers";
 static NSString *const kEnabledKey = @"enabled";
 static NSString *const kChildrenKey = @"children";
 static NSString *const kDividerKey = @"isDivider";
+
+static const int kFlutterShortcutModifierMeta = 1 << 0;
+static const int kFlutterShortcutModifierShift = 1 << 1;
+static const int kFlutterShortcutModifierAlt = 1 << 2;
+static const int kFlutterShortcutModifierControl = 1 << 3;
+
+// Returns the string used by NSMenuItem for the given special key.
+// See _shortcutSpecialKeyValues in menu_channel.dart for values.
+static NSString *KeyEquivalentCharacterForSpecialKey(int specialKey) {
+  unichar character;
+  switch (specialKey) {
+    case 1:
+      character = NSF1FunctionKey;
+      break;
+    case 2:
+      character = NSF2FunctionKey;
+      break;
+    case 3:
+      character = NSF3FunctionKey;
+      break;
+    case 4:
+      character = NSF4FunctionKey;
+      break;
+    case 5:
+      character = NSF5FunctionKey;
+      break;
+    case 6:
+      character = NSF6FunctionKey;
+      break;
+    case 7:
+      character = NSF7FunctionKey;
+      break;
+    case 8:
+      character = NSF8FunctionKey;
+      break;
+    case 9:
+      character = NSF9FunctionKey;
+      break;
+    case 10:
+      character = NSF10FunctionKey;
+      break;
+    case 11:
+      character = NSF11FunctionKey;
+      break;
+    case 12:
+      character = NSF12FunctionKey;
+      break;
+    case 13:
+      character = NSBackspaceCharacter;
+      break;
+    case 14:
+      character = NSDeleteCharacter;
+      break;
+    default:
+      return nil;
+  }
+  return [NSString stringWithCharacters:&character length:1];
+}
+
+// Returns the NSEventModifierFlags of |modifiers|, a value from kShortcutKeyModifiers.
+static NSEventModifierFlags KeyEquivalentModifierMaskForModifiers(NSNumber *modifiers) {
+  int flutterModifierFlags = modifiers.intValue;
+  NSEventModifierFlags flags = 0;
+  if (flutterModifierFlags & kFlutterShortcutModifierMeta) flags |= NSEventModifierFlagCommand;
+  if (flutterModifierFlags & kFlutterShortcutModifierShift) flags |= NSEventModifierFlagShift;
+  if (flutterModifierFlags & kFlutterShortcutModifierAlt) flags |= NSEventModifierFlagOption;
+  if (flutterModifierFlags & kFlutterShortcutModifierControl) flags |= NSEventModifierFlagControl;
+  return flags;
+}
 
 @implementation FLEMenubarPlugin {
   // The channel used to communicate with Flutter.
@@ -88,9 +160,23 @@ static NSString *const kDividerKey = @"isDivider";
   } else {
     NSString *title = representation[kLabelKey];
     NSNumber *boxedID = representation[kIdKey];
-    NSMenuItem *item = [[NSMenuItem alloc]
-        initWithTitle:title
-               action:(boxedID ? @selector(flutterMenuItemSelected:) : NULL)keyEquivalent:@""];
+
+    NSString *keyEquivalent = nil;
+    if (representation[kShortcutKeyEquivalent]) {
+      keyEquivalent = representation[kShortcutKeyEquivalent];
+    } else if (representation[kShortcutSpecialKey]) {
+      int specialKey = ((NSNumber *)representation[kShortcutSpecialKey]).intValue;
+      keyEquivalent = KeyEquivalentCharacterForSpecialKey(specialKey);
+    }
+
+    SEL action = (boxedID ? @selector(flutterMenuItemSelected:) : NULL);
+    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title
+                                                  action:action
+                                           keyEquivalent:(keyEquivalent ?: @"")];
+    if (keyEquivalent) {
+      item.keyEquivalentModifierMask =
+          KeyEquivalentModifierMaskForModifiers(representation[kShortcutKeyModifiers]);
+    }
     if (boxedID) {
       item.tag = boxedID.intValue;
       item.target = self;
@@ -99,6 +185,7 @@ static NSString *const kDividerKey = @"isDivider";
     if (enabled) {
       item.enabled = enabled.boolValue;
     }
+
     NSArray *children = representation[kChildrenKey];
     if (children) {
       NSMenu *submenu = [[NSMenu alloc] initWithTitle:title];

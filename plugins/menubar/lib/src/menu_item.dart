@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 /// A callback provided to [MenuItem] to handle menu selection.
@@ -33,6 +34,7 @@ class MenuItem extends AbstractMenuItem {
   /// or the menu item will be selectable but not do anything.
   const MenuItem({
     @required String label,
+    this.shortcut,
     this.enabled = true,
     this.onClicked,
   }) : super(label);
@@ -42,6 +44,16 @@ class MenuItem extends AbstractMenuItem {
 
   /// Whether or not the menu item is enabled.
   final bool enabled;
+
+  /// The shortcut/accelerator for the menu item, if any.
+  ///
+  /// Note: Currently modifiers have only Left or Right variants, so must be
+  /// specified with one of those. The actual left/right distinction will be
+  /// ignored. This part of the API is likely to change in the future.
+  ///
+  /// Example: a Save menu item would likely use:
+  ///   LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyS)
+  final LogicalKeySet shortcut;
 }
 
 /// A menu item continaing a submenu.
