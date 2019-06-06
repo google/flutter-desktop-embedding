@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import Cocoa
+import FlutterMacOS
 
 class ExampleWindow: NSWindow {
   @IBOutlet weak var flutterViewController: FLEViewController!
