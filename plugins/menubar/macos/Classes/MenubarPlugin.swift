@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <Foundation/Foundation.h>
+import FlutterMacOS
+import Foundation
 
-#import <FlutterMacOS/FlutterMacOS.h>
-
-/**
- * An example Flutter plugin for macOS.
- */
-@interface FDEExamplePlugin : NSObject <FlutterPlugin>
-
-@end
+public class MenubarPlugin: NSObject, FlutterPlugin {
+  public static func register(with registrar: FlutterPluginRegistrar) {
+    FLEMenubarPlugin.register(with: registrar)
+  }
+}

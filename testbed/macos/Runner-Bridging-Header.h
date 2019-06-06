@@ -13,4 +13,3 @@
 // limitations under the License.
 
 #import <FlutterMacOS/FlutterMacOS.h>
-#import "GeneratedPluginRegistrant.h"

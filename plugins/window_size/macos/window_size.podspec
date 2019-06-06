@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'window_size'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'Allows resizing and repositioning the window containing Flutter.'
   s.description      = <<-DESC
 Allows resizing and repositioning the window containing Flutter.
@@ -13,10 +13,9 @@ Allows resizing and repositioning the window containing Flutter.
   s.author           = { 'Flutter Desktop Embedding Developers' => 'flutter-desktop-embedding-dev@googlegroups.com' }
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx
-  s.osx.deployment_target = '10.9'
+  s.osx.deployment_target = '10.12'
 end
 

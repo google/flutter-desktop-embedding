@@ -12,14 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "ExamplePlugin.h"
+import FlutterMacOS
+import Foundation
 
-#import <example_plugin/example_plugin-Swift.h>
-
-@implementation FDEExamplePlugin
-
-+ (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
-  [SwiftExamplePlugin registerWithRegistrar:registrar];
+public class FileChooserPlugin: NSObject, FlutterPlugin {
+  public static func register(with registrar: FlutterPluginRegistrar) {
+    FLEFileChooserPlugin.register(with: registrar)
+  }
 }
-
-@end

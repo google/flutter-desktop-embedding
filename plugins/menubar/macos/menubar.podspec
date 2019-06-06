@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'menubar'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'Provides the ability to add menubar items with Dart callbacks.'
   s.description      = <<-DESC
 Provides the ability to add menubar items with Dart callbacks.
@@ -13,10 +13,9 @@ Provides the ability to add menubar items with Dart callbacks.
   s.author           = { 'Flutter Desktop Embedding Developers' => 'flutter-desktop-embedding-dev@googlegroups.com' }
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx
-  s.osx.deployment_target = '10.9'
+  s.osx.deployment_target = '10.12'
 end
 
