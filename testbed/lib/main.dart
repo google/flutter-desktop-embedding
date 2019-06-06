@@ -17,6 +17,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:color_panel/color_panel.dart';
 import 'package:example_flutter/keyboard_test_page.dart';
@@ -102,6 +103,8 @@ class _AppState extends State<MyApp> {
         MenuItem(
             label: 'Reset',
             enabled: _primaryColor != Colors.blue,
+            shortcut: LogicalKeySet(
+                LogicalKeyboardKey.meta, LogicalKeyboardKey.backspace),
             onClicked: () {
               setPrimaryColor(Colors.blue);
             }),
@@ -110,18 +113,24 @@ class _AppState extends State<MyApp> {
           MenuItem(
               label: 'Red',
               enabled: _primaryColor != Colors.red,
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.shift, LogicalKeyboardKey.keyR),
               onClicked: () {
                 setPrimaryColor(Colors.red);
               }),
           MenuItem(
               label: 'Green',
               enabled: _primaryColor != Colors.green,
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.alt, LogicalKeyboardKey.keyG),
               onClicked: () {
                 setPrimaryColor(Colors.green);
               }),
           MenuItem(
               label: 'Purple',
               enabled: _primaryColor != Colors.deepPurple,
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.control, LogicalKeyboardKey.keyP),
               onClicked: () {
                 setPrimaryColor(Colors.deepPurple);
               }),
@@ -131,14 +140,20 @@ class _AppState extends State<MyApp> {
         MenuItem(
             label: 'Reset',
             enabled: _counter != 0,
+            shortcut: LogicalKeySet(
+                LogicalKeyboardKey.meta, LogicalKeyboardKey.digit0),
             onClicked: () {
               _setCounter(0);
             }),
         MenuDivider(),
-        MenuItem(label: 'Increment', onClicked: incrementCounter),
+        MenuItem(
+            label: 'Increment',
+            shortcut: LogicalKeySet(LogicalKeyboardKey.f2),
+            onClicked: incrementCounter),
         MenuItem(
             label: 'Decrement',
             enabled: _counter > 0,
+            shortcut: LogicalKeySet(LogicalKeyboardKey.f1),
             onClicked: _decrementCounter),
       ]),
     ]);
