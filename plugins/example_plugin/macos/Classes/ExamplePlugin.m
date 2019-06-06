@@ -14,22 +14,12 @@
 
 #import "ExamplePlugin.h"
 
+#import <example_plugin/example_plugin-Swift.h>
+
 @implementation FDEExamplePlugin
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
-  FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:@"example_plugin"
-                                                              binaryMessenger:registrar.messenger];
-  FDEExamplePlugin *instance = [[FDEExamplePlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
-}
-
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"getPlatformVersion" isEqualToString:call.method]) {
-    result([@"macOS "
-        stringByAppendingString:[[NSProcessInfo processInfo] operatingSystemVersionString]]);
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
+  [SwiftExamplePlugin registerWithRegistrar:registrar];
 }
 
 @end
