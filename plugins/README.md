@@ -1,15 +1,21 @@
 # Desktop Plugins
 
-These are optional plugins that can be included in an embedder to access OS
-functionality.
+See [the Flutter dekstop
+page](https://github.com/flutter/flutter/wiki/Desktop-shells#plugins)
+for an overview of the current state of plugin development on desktop.
 
-## How to use this code
+This directory contains two types of plugins:
+* `example_plugin`, which like `example/` will eventually be replaced by
+  `flutter create -t plugin` support for desktop.
+* Plugins that prototype functionality that will likely become part of
+  Flutter itself.
 
-In the long term plugins would be managed via pub, as they are with mobile
-Flutter plugins. For now, however, they are designed to be included directly
-from this repository, and you must manually manage the linking and registration
-of plugins in your application (unlike on mobile, where the `flutter` tool
-handles that automatically).
+## Using Plugins
+
+Since the plugins in this repository are not intended to live here long term,
+the `flutter` tool doesn't have plugin supprot on all platform yet, these plugins
+are not published on pub.dev like normal Flutter plugins. Instead, you include
+them directly from this repository.
 
 An overview of the approach for each platform is below. See the `testbed`
 application for an example of including optional plugins, including the changes
@@ -64,8 +70,8 @@ The plugin builds in this project put the library at the top level of the
 output directory (set `OUT_DIR` when calling `make` to set the location),
 and the public header you will need in the `include/` directory next to it.
 
-After creating your Flutter window controller, call your plugin's registrar
-function. For instance:
+Then to register the plugin, after creating your Flutter window controller
+call your plugin's registrar function. For instance:
 
 ```cpp
   ExamplePluginRegisterWithRegistrar(
@@ -78,7 +84,8 @@ function. For instance:
 
 The plugin projects are designed to be built from within the solution of
 the application using them. Add the .vcxproj files for the plugins you want
-to build to your application's Runner.sln.
+to build to your application's Runner.sln. (Opening a plugin project directly
+and trying to build it **will not work** with the current structure.)
 
 #### Adding to an Application
 
@@ -86,17 +93,21 @@ Link the library files for the plugins you want to include into your exe.
 The plugin builds in this project put the library at the top level of the
 Plugins directory in the build output, along with their public headers.
 
-After creating your Flutter window controller, call your plugin's registrar
-function. For instance:
+Then to register the plugin, after creating your Flutter window controller
+call your plugin's registrar function. For instance:
 
 ```cpp
   ExamplePluginRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
 ```
 
-## Writing your own plugins
+## Writing Your Own Plugins
 
 You can create local packages following the model of plugins here to
 use in your own projects. In particular, `example_plugin` is intended to
-serve as a starting point for new plugins, standing in for the current lack
-of `flutter create -t plugin` support for desktop.
+serve as a starting point for new plugins.
+
+Keep in mind the notes about API stability on the Flutter desktop page
+linked above. On platforms where the plugin API is still unstable, or
+where `flutter` tool support doesn't exist yet, you should expect to
+need to substantially change plugins written now as the APIs evolve.
