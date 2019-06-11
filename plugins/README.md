@@ -13,9 +13,9 @@ This directory contains two types of plugins:
 ## Using Plugins
 
 Since the plugins in this repository are not intended to live here long term,
-the `flutter` tool doesn't have plugin supprot on all platform yet, these plugins
-are not published on pub.dev like normal Flutter plugins. Instead, you include
-them directly from this repository.
+and the `flutter` tool doesn't have plugin support on all platforms yet, these
+plugins are not published on pub.dev like normal Flutter plugins. Instead, you
+should include them directly from this repository.
 
 An overview of the approach for each platform is below. See the `testbed`
 application for an example of including optional plugins, including the changes
