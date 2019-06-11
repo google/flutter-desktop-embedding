@@ -1,6 +1,6 @@
 # Desktop Plugins
 
-See [the Flutter dekstop
+See [the Flutter desktop
 page](https://github.com/flutter/flutter/wiki/Desktop-shells#plugins)
 for an overview of the current state of plugin development on desktop.
 
