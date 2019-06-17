@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "url_launcher_fde.h"
+#include "url_launcher_fde_plugin.h"
 
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include <memory>
@@ -34,9 +36,7 @@ class UrlLauncherPlugin : public flutter::Plugin {
   virtual ~UrlLauncherPlugin();
 
  private:
-  // Creates a plugin that communicates on the given channel.
-  UrlLauncherPlugin(
-      std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel);
+  UrlLauncherPlugin();
 
   // Called when a method is called on |channel_|;
   void HandleMethodCall(
@@ -50,13 +50,11 @@ void UrlLauncherPlugin::RegisterWithRegistrar(
   auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
       registrar->messenger(), "plugins.flutter.io/url_launcher",
       &flutter::StandardMethodCodec::GetInstance());
-  auto *channel_pointer = channel.get();
 
   // Uses new instead of make_unique due to private constructor.
-  std::unique_ptr<UrlLauncherPlugin> plugin(
-      new UrlLauncherPlugin(std::move(channel)));
+  std::unique_ptr<UrlLauncherPlugin> plugin(new UrlLauncherPlugin());
 
-  channel_pointer->SetMethodCallHandler(
+  channel->SetMethodCallHandler(
       [plugin_pointer = plugin.get()](const auto &call, auto result) {
         plugin_pointer->HandleMethodCall(call, std::move(result));
       });
@@ -74,7 +72,7 @@ void UrlLauncherPlugin::HandleMethodCall(
   if (method_call.method_name().compare("launch") == 0) {
     std::string url;
     if (method_call.arguments() && method_call.arguments()->IsMap()) {
-      EncodableMap &arguments = method_call.arguments()->MapValue();
+      const EncodableMap &arguments = method_call.arguments()->MapValue();
       auto url_it = arguments.find(EncodableValue("url"));
       if (url_it != arguments.end()) {
         url = url_it->second.StringValue();
@@ -85,9 +83,9 @@ void UrlLauncherPlugin::HandleMethodCall(
       return;
     }
 
-    pid = fork();
+    pid_t pid = fork();
     if (pid == 0) {
-      execl("/usr/bin/xdg-open", "xdg-open", url, nullptr);
+      execl("/usr/bin/xdg-open", "xdg-open", url.c_str(), nullptr);
       exit(1);
     }
     int status = 0;

@@ -19,8 +19,10 @@ FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
 SOURCES=testbed.cc
 
-# Plugins to include (from the flutter-desktop-embedding plugins/ directory).
+# Plugins to include from the flutter-desktop-embedding plugins/ directory.
 PLUGIN_NAMES=color_panel file_chooser menubar window_size
+# Additional plugins to include from the plugins/flutter_plugins subdirectory.
+FLUTTER_PLUGIN_NAMES=url_launcher_fde
 
 
 # Default build type. For a release build, set BUILD=release.
@@ -37,6 +39,7 @@ FLUTTER_APP_CACHE_DIR=flutter/
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 PLUGINS_DIR=$(FDE_ROOT)/plugins
+FLUTTER_PLUGINS_DIR=$(PLUGINS_DIR)/flutter_plugins
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 
@@ -44,9 +47,9 @@ OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 FLUTTER_LIB_NAME=flutter_linux
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 # The name of each plugin library is the name of its directory with _plugin
-# appendend. The exception is example_plugin (to avoid confusion with the
+# appended. The exception is example_plugin (to avoid confusion with the
 # top-level example/ directory), so it's added here separately.
-PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGIN_NAMES),$(plugin)_plugin) example_plugin
+PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGIN_NAMES) $(FLUTTER_PLUGIN_NAMES),$(plugin)_plugin) example_plugin
 PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_LIB_NAMES),$(OUT_DIR)/lib$(plugin).so)
 ALL_LIBS=$(FLUTTER_LIB) $(PLUGIN_LIBS)
 
@@ -122,10 +125,16 @@ $(OUT_DIR)/libcolor_panel_plugin.so: | color_panel
 $(OUT_DIR)/libfile_chooser_plugin.so: | file_chooser
 $(OUT_DIR)/libmenubar_plugin.so: | menubar
 $(OUT_DIR)/libwindow_size_plugin.so: | window_size
+$(OUT_DIR)/liburl_launcher_fde_plugin.so: | url_launcher_fde
 
 .PHONY: $(PLUGIN_NAMES) example_plugin
 $(PLUGIN_NAMES) example_plugin:
 	make -C $(PLUGINS_DIR)/$@/linux \
+		OUT_DIR=$(OUT_DIR) FLUTTER_ROOT=$(FLUTTER_ROOT)
+
+.PHONY: $(FLUTTER_PLUGIN_NAMES)
+$(FLUTTER_PLUGIN_NAMES):
+	make -C $(FLUTTER_PLUGINS_DIR)/$@/linux \
 		OUT_DIR=$(OUT_DIR) FLUTTER_ROOT=$(FLUTTER_ROOT)
 
 # Plugin library bundling pattern.
