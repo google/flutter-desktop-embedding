@@ -24,8 +24,12 @@ import 'package:example_flutter/keyboard_test_page.dart';
 import 'package:example_plugin/example_plugin.dart' as example_plugin;
 import 'package:file_chooser/file_chooser.dart' as file_chooser;
 import 'package:menubar/menubar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
+
+// The shared_preferences key for the testbed's color.
+const _prefKeyColor = 'color';
 
 void main() {
   // Desktop platforms are not recognized as valid targets by
@@ -66,6 +70,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _AppState extends State<MyApp> {
+  _AppState() {
+    if (Platform.isMacOS) {
+      SharedPreferences.getInstance().then((prefs) {
+        if (prefs.containsKey(_prefKeyColor)) {
+          setPrimaryColor(Color(prefs.getInt(_prefKeyColor)));
+        }
+      });
+    }
+  }
+
   Color _primaryColor = Colors.blue;
   int _counter = 0;
 
@@ -77,6 +91,14 @@ class _AppState extends State<MyApp> {
     setState(() {
       _primaryColor = color;
     });
+    _saveColor();
+  }
+
+  void _saveColor() async {
+    if (Platform.isMacOS) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_prefKeyColor, _primaryColor.value);
+    }
   }
 
   void incrementCounter() {
