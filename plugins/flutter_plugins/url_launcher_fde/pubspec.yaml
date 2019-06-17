@@ -1,0 +1,17 @@
+name: url_launcher_fde
+description: Temporary desktop implmentations of url_launcher from flutter/plugins
+version: 0.0.1
+author: Flutter Desktop Embedding Developers <flutter-desktop-embedding-dev@googlegroups.com>
+homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugins/flutter_plugins/url_launcher_fde
+
+flutter:
+  plugin:
+    macosPrefix: FLE
+    pluginClass: UrlLauncherPlugin
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter

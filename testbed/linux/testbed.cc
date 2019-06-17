@@ -23,6 +23,7 @@
 #include <file_chooser_plugin.h>
 #include <flutter/flutter_window_controller.h>
 #include <menubar_plugin.h>
+#include <url_launcher_fde_plugin.h>
 #include <window_size_plugin.h>
 
 namespace {
@@ -81,6 +82,8 @@ int main(int argc, char **argv) {
       flutter_controller.GetRegistrarForPlugin("FileChooser"));
   MenubarRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("Menubar"));
+  UrlLauncherRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("UrlLauncher"));
   WindowSizeRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("WindowSize"));
 
