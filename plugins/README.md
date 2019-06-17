@@ -4,9 +4,13 @@ See [the Flutter desktop
 page](https://github.com/flutter/flutter/wiki/Desktop-shells#plugins)
 for an overview of the current state of plugin development on desktop.
 
-This directory contains two types of plugins:
+This directory contains three types of plugins:
 * `example_plugin`, which like `example/` will eventually be replaced by
   `flutter create -t plugin` support for desktop.
+* `flutter_plugins`, which contain desktop implementations of plugins
+  from [the flutter/plugins repository](https://github.com/flutter/plugins)
+  that are expected to move to an official location once the plugin APIs are
+  sufficiently stable.
 * Plugins that prototype functionality that will likely become part of
   Flutter itself.
 
@@ -37,6 +41,9 @@ Then import it in your dart code as you would any other package:
 ```dart
 import 'package:example_plugin/example_plugin.dart';
 ```
+
+This step does not apply to `flutter_plugins` plugins, as the
+Dart code for those plugins comes from the official plugin.
 
 ### macOS
 
