@@ -11,15 +11,14 @@ plugins.
 
 ## Using These Plugins
 
-See  for details. The only difference
-with these plugins is that the Dart code comes from the main plugin, so you
+For these plugins, the Dart code comes from the official plugin, so you
 must include that in your `pubspec.yaml` as well. For instance, to use
 url\_launcher on desktop, you would include:
 
 ```
 dependencies:
   ...
-  url_launcher: ^5.0.4
+  url_launcher: ^5.0.0
   url_launcher_fde:
     path: relative/path/to/fde/plugins/flutter_plugins/url_launcher_fde
 ```
