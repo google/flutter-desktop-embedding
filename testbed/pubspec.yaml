@@ -28,6 +28,10 @@ dependencies:
     path: ../plugins/menubar
   window_size:
     path: ../plugins/window_size
+  # Plugins from flutter/plugins, with local desktop implementations.
+  url_launcher: ^5.0.0
+  url_launcher_fde:
+    path: ../plugins/flutter_plugins/url_launcher_fde
 
 dev_dependencies:
   flutter_test:
