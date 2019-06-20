@@ -13,28 +13,16 @@ As explained in the link above, desktop libraries are still in early stages.
 
 ## Setting Up
 
-Everything in this project requires [enabling desktop support in
-Flutter](https://github.com/flutter/flutter/wiki/Desktop-shells#tooling):
-* Ensure that you are on the latest version of the [Flutter master
-  channel](https://github.com/flutter/flutter/wiki/Flutter-build-release-channels#how-to-change-channels).
-  * You should always update this repository and Flutter at the same time,
-    as breaking changes for desktop happen frequently.
-* Set the environment variable to enable desktop in the terminal you will be
-  using:
-  * macOS/Linux: `export ENABLE_FLUTTER_DESKTOP=true`
-  * Windows: `$env:ENABLE_FLUTTER_DESKTOP="true"` (PowerShell) or
-    `set ENABLE_FLUTTER_DESKTOP=true` (CMD).
+This project is closely tied to changes in the Flutter repository, so
+you must be on the latest version of the [Flutter master
+channel](https://github.com/flutter/flutter/wiki/Flutter-build-release-channels#how-to-change-channels).
+You should always update this repository and Flutter at the same time,
+as breaking changes for desktop happen frequently.
 
 ### Tools
 
 Run `flutter doctor` and be sure that no issues are reported for the sections
 relevant to your platform.
-
-`doctor` support for Windows and Linux is coming soon; in the meantime the
-requirements are:
-* Linux: Make, and a recent version of clang.
-* Windows: Visual Studio 2017 or 2019, including the "Desktop development with
-  C++" workload.
 
 ## Running a Project
 
@@ -54,8 +42,8 @@ example as a starting point to run another project.
 
 ### IDEs
 
-If you want to use an IDE to run a Flutter project on desktop, you will need
-`ENABLE_FLUTTER_DESKTOP` to be set for the IDE:
+If you want to use an IDE to run a Flutter project on desktop, you will need to
+have the `ENABLE_FLUTTER_DESKTOP` environment variable set to `true` in the IDE:
 * VS Code: Add the flag to [dart.env](https://dartcode.org/docs/settings/#dartenv)
   in the VS Code `settings.json`:
   ```
