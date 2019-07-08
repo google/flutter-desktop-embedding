@@ -234,28 +234,55 @@ class _MyHomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: LayoutBuilder(
+        builder: (context, viewportConstraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints:
+                  BoxConstraints(minHeight: viewportConstraints.maxHeight),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text(
+                      'You have pushed the button this many times:',
+                    ),
+                    new Text(
+                      '$counter',
+                      style: Theme.of(context).textTheme.display1,
+                    ),
+                    TextInputTestWidget(),
+                    FileChooserTestWidget(),
+                    URLLauncherTestWidget(),
+                    new RaisedButton(
+                      child: new Text('Test raw keyboard events'),
+                      onPressed: () {
+                        Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (context) => KeyboardTestPage()));
+                      },
+                    ),
+                    Container(
+                      width: 380.0,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 1.0)),
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          padding: EdgeInsets.all(8.0),
+                          itemExtent: 20.0,
+                          itemCount: 50,
+                          itemBuilder: (context, index) {
+                            return Text('entry $index');
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            new Text(
-              '$counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-            TextInputTestWidget(),
-            FileChooserTestWidget(),
-            URLLauncherTestWidget(),
-            new RaisedButton(
-                child: new Text('Test raw keyboard events'),
-                onPressed: () {
-                  Navigator.of(context).push(new MaterialPageRoute(
-                      builder: (context) => KeyboardTestPage()));
-                })
-          ],
-        ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _AppState.of(context).incrementCounter,
