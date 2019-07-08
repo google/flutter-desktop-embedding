@@ -21,14 +21,13 @@ class FlutterWindow: NSWindow {
   override func awakeFromNib() {
     RegisterGeneratedPlugins(registry: flutterViewController)
 
-    let assets = NSURL.fileURL(withPath: "flutter_assets", relativeTo: Bundle.main.resourceURL)
+    let project = FLEDartProject.init()
     var arguments: [String] = [];
 #if !DEBUG
     arguments.append("--disable-dart-asserts");
 #endif
-    flutterViewController.launchEngine(
-      withAssetsPath: assets,
-      commandLineArguments: arguments)
+    project.engineSwitches = arguments
+    flutterViewController.launchEngine(with: project)
 
     super.awakeFromNib()
   }
