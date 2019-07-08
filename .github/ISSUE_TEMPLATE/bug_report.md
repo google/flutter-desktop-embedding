@@ -22,11 +22,7 @@ If you're not sure whether the issue is in the code here or in Flutter itself, y
 **Describe the bug**
 Please provide a clear and concise description of the bug, including steps to reproduce, and, if relevant, screenshots.
 
-**Development Environment (please complete the following information):**
-* OS: 
-* Developer tools version (Xcode, Visual Studio, or gcc): 
-
 **Doctor Output**
-For build issues, please provide the output of `flutter doctor -v`:
+Please provide the output of `flutter doctor -v`:
 ```
 ```
