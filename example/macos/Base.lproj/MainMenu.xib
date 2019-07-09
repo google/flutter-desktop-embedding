@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -12,7 +13,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Example_Embedder" customModuleProvider="target">
+        <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Flutter_Desktop_Example" customModuleProvider="target">
             <connections>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
@@ -322,38 +323,16 @@
                     </menu>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="142" y="-258"/>
         </menu>
-        <window title="Flutter Desktop Example" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g" customClass="ExampleWindow" customModule="Example_Embedder" customModuleProvider="target">
+        <window title="Flutter Desktop Example" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g" customClass="ExampleWindow" customModule="Flutter_Desktop_Example" customModuleProvider="target">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="335" y="390" width="480" height="360"/>
+            <rect key="contentRect" x="335" y="390" width="800" height="600"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1577"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
+                <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
                 <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <openGLView colorSize="5bit_RGB_8bit_Alpha" useAuxiliaryDepthBufferStencil="NO" useDoubleBufferingEnabled="YES" allowOffline="YES" wantsBestResolutionOpenGLSurface="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gEc-a8-YO4" userLabel="Flutter View" customClass="FLEView">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
-                        <connections>
-                            <outlet property="reshapeListener" destination="G1H-AI-kys" id="1cc-4d-RFE"/>
-                        </connections>
-                    </openGLView>
-                </subviews>
-                <constraints>
-                    <constraint firstAttribute="trailing" secondItem="gEc-a8-YO4" secondAttribute="trailing" id="48l-99-Yo3"/>
-                    <constraint firstItem="gEc-a8-YO4" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="Hnt-3S-GUm"/>
-                    <constraint firstItem="gEc-a8-YO4" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="Zcl-HH-aUv"/>
-                    <constraint firstAttribute="bottom" secondItem="gEc-a8-YO4" secondAttribute="bottom" id="mOL-Lq-el9"/>
-                </constraints>
             </view>
-            <connections>
-                <outlet property="flutterViewController" destination="G1H-AI-kys" id="Icn-Jl-i3i"/>
-            </connections>
         </window>
-        <viewController id="G1H-AI-kys" userLabel="Flutter View Controller" customClass="FLEViewController">
-            <connections>
-                <outlet property="view" destination="gEc-a8-YO4" id="5gV-MI-Qu1"/>
-            </connections>
-        </viewController>
     </objects>
 </document>
