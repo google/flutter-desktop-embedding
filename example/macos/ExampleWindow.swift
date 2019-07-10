@@ -24,8 +24,6 @@ class ExampleWindow: NSWindow {
 
     RegisterGeneratedPlugins(registry: flutterViewController)
 
-    flutterViewController.launchEngine(with: nil)
-
     super.awakeFromNib()
   }
 }

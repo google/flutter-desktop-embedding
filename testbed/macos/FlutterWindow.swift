@@ -17,20 +17,19 @@ import FlutterMacOS
 
 class FlutterWindow: NSWindow {
   override func awakeFromNib() {
-    let flutterViewController = FLEViewController.init()
-    let windowFrame = self.frame
-    self.contentViewController = flutterViewController
-    self.setFrame(windowFrame, display: true)
-
-    RegisterGeneratedPlugins(registry: flutterViewController)
-
     let project = FLEDartProject.init()
     var arguments: [String] = [];
 #if !DEBUG
     arguments.append("--disable-dart-asserts");
 #endif
     project.engineSwitches = arguments
-    flutterViewController.launchEngine(with: project)
+
+    let flutterViewController = FLEViewController.init(project: project)
+    let windowFrame = self.frame
+    self.contentViewController = flutterViewController
+    self.setFrame(windowFrame, display: true)
+
+    RegisterGeneratedPlugins(registry: flutterViewController)
 
     super.awakeFromNib()
   }
