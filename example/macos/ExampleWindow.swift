@@ -16,9 +16,12 @@ import Cocoa
 import FlutterMacOS
 
 class ExampleWindow: NSWindow {
-  @IBOutlet weak var flutterViewController: FLEViewController!
-
   override func awakeFromNib() {
+    let flutterViewController = FLEViewController.init()
+    let windowFrame = self.frame
+    self.contentViewController = flutterViewController
+    self.setFrame(windowFrame, display: true)
+
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     flutterViewController.launchEngine(with: nil)
