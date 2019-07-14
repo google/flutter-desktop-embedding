@@ -83,14 +83,18 @@ void UrlLauncherPlugin::HandleMethodCall(
 
     // Win32-specific code
     size_t size = url.length() + 1;
-    wchar_t *wurl = new wchar_t[size];
+    std::wstring wurl;
+    wurl.reserve(size);
     size_t outSize;
-    mbstowcs_s(&outSize, wurl, size, url.c_str(), size - 1);
+    mbstowcs_s(&outSize, &wurl[0], size, url.c_str(), size - 1);
 
 #pragma warning(push)
-#pragma warning(disable : 4311) // warning C4311: 'type cast': pointer truncation from 'HINSTANCE' to 'int'
-#pragma warning(disable : 4302) // warning C4302: 'type cast': truncation from 'HINSTANCE' to 'int'
-    int status = (int)ShellExecute(NULL, TEXT("open"), wurl, NULL, NULL, SW_SHOWNORMAL);
+#pragma warning(disable : 4311)  // warning C4311: 'type cast': pointer
+                                 // truncation from 'HINSTANCE' to 'int'
+#pragma warning(disable : 4302)  // warning C4302: 'type cast': truncation from
+                                 // 'HINSTANCE' to 'int'
+    int status =
+        (int)ShellExecute(NULL, TEXT("open"), wurl.c_str(), NULL, NULL, SW_SHOWNORMAL);
 #pragma warning(pop)
 
     if (status <= 32) {
