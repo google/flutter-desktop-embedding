@@ -1,0 +1,7 @@
+flutter/
+scripts/*.log
+
+# Visual Studio files
+*.user
+*.suo
+.vs
