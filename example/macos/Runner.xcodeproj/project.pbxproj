@@ -220,7 +220,11 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+			);
 			inputPaths = (
+			);
+			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
@@ -238,10 +242,10 @@
 			outputPaths = (
 			);
 			inputFileListPaths = (
-				"FlutterInputs.xcfilelist"
+				"Flutter/ephemeral/FlutterInputs.xcfilelist"
 			);
 			outputFileListPaths = (
-				"FlutterOutputs.xcfilelist"
+				"Flutter/ephemeral/FlutterOutputs.xcfilelist"
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

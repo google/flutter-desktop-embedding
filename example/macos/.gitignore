@@ -4,7 +4,3 @@ xcuserdata
 Flutter/ephemeral/
 # Created by CocoaPods for plugins.
 Pods/
-
-# Create by flutter tool for XCode
-FlutterInputs.xcfilelist
-FlutterOutputs.xcfilelist
