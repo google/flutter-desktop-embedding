@@ -38,7 +38,7 @@ class UrlLauncherPlugin : public flutter::Plugin {
  private:
   UrlLauncherPlugin();
 
-  // Called when a method is called on |channel_|;
+  // Called when a method is called on the plugin's channel;
   void HandleMethodCall(
       const flutter::MethodCall<EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
@@ -94,6 +94,7 @@ void UrlLauncherPlugin::HandleMethodCall(
       std::ostringstream error_message;
       error_message << "Failed to open " << url << ": error " << status;
       result->Error("open_error", error_message.str());
+      return;
     }
     result->Success();
   } else {
