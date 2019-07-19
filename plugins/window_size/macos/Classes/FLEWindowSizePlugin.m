@@ -48,6 +48,10 @@ NSRect GetFlippedRect(NSRect frame) {
 }
 
 @interface FLEWindowSizePlugin ()
+
+/// The view displaying Flutter content.
+@property(nonatomic, readonly) NSView *flutterView;
+
 /**
  * Extracts information from |screen| and returns the serializable form expected
  * by the platform channel.
@@ -70,13 +74,12 @@ NSRect GetFlippedRect(NSRect frame) {
 @implementation FLEWindowSizePlugin {
   // The channel used to communicate with Flutter.
   FlutterMethodChannel *_channel;
-   
+
   // A reference to the registrar holding the NSView used by the plugin. Holding a reference
   // since the view might be nil at the time the plugin is created.
   id<FlutterPluginRegistrar> _registrar;
 }
 
-/// The view displaying Flutter content.
 - (NSView *)flutterView {
   return _registrar.view;
 }
