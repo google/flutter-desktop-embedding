@@ -48,6 +48,10 @@ NSRect GetFlippedRect(NSRect frame) {
 }
 
 @interface FLEWindowSizePlugin ()
+
+/// The view displaying Flutter content.
+@property(nonatomic, readonly) NSView *flutterView;
+
 /**
  * Extracts information from |screen| and returns the serializable form expected
  * by the platform channel.
@@ -70,23 +74,30 @@ NSRect GetFlippedRect(NSRect frame) {
 @implementation FLEWindowSizePlugin {
   // The channel used to communicate with Flutter.
   FlutterMethodChannel *_channel;
-  // The view displaying Flutter content.
-  NSView *_flutterView;
+
+  // A reference to the registrar holding the NSView used by the plugin. Holding a reference
+  // since the view might be nil at the time the plugin is created.
+  id<FlutterPluginRegistrar> _registrar;
+}
+
+- (NSView *)flutterView {
+  return _registrar.view;
 }
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:kChannelName
                                                               binaryMessenger:registrar.messenger];
   FLEWindowSizePlugin *instance = [[FLEWindowSizePlugin alloc] initWithChannel:channel
-                                                                          view:registrar.view];
+                                                                     registrar:registrar];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (instancetype)initWithChannel:(FlutterMethodChannel *)channel view:(NSView *)view {
+- (instancetype)initWithChannel:(FlutterMethodChannel *)channel
+                      registrar:(id<FlutterPluginRegistrar>)registrar {
   self = [super init];
   if (self) {
     _channel = channel;
-    _flutterView = view;
+    _registrar = registrar;
   }
   return self;
 }
@@ -105,10 +116,10 @@ NSRect GetFlippedRect(NSRect frame) {
     }
     methodResult = screenList;
   } else if ([call.method isEqualToString:kGetWindowInfoMethod]) {
-    methodResult = [self platformChannelRepresentationForWindow:_flutterView.window];
+    methodResult = [self platformChannelRepresentationForWindow:self.flutterView.window];
   } else if ([call.method isEqualToString:kSetWindowFrameMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
-    [_flutterView.window
+    [self.flutterView.window
         setFrame:GetFlippedRect(NSMakeRect(arguments[0].doubleValue, arguments[1].doubleValue,
                                            arguments[2].doubleValue, arguments[3].doubleValue))
          display:YES];
