@@ -21,8 +21,11 @@ as breaking changes for desktop happen frequently.
 
 ### Tools
 
-Run `flutter doctor` and be sure that no issues are reported for the sections
-relevant to your platform.
+First you will need to [enable Flutter desktop support for your
+platform](https://github.com/flutter/flutter/wiki/Desktop-shells#tooling).
+
+Then run `flutter doctor` and be sure that no issues are reported for the
+sections relevant to your platform.
 
 ## Running a Project
 
@@ -39,25 +42,6 @@ asserts will fire, the observatory will be enabled, etc.
 
 See [the example README](example/README.md) for information on using the
 example as a starting point to run another project.
-
-### IDEs
-
-If you want to use an IDE to run a Flutter project on desktop, you will need to
-have the `ENABLE_FLUTTER_DESKTOP` environment variable set to `true` in the IDE:
-* VS Code: Add the flag to [dart.env](https://dartcode.org/docs/settings/#dartenv)
-  in the VS Code `settings.json`:
-  ```
-  "dart.env": {
-      "ENABLE_FLUTTER_DESKTOP": true,
-  }
-  ```
-  * You can also attach to a desktop Flutter application launched some other way
-    using the `Debug: Attach to Flutter Process` command and copying in the
-    Observatory URI that was logged on launch.
-* IntelliJ/Android Studio: You will need to set the environment for the
-  application using the normal process for your OS (e.g., launching it from a
-  terminal with the environment variable set may work). You will know the
-  variable is correctly set if the devices menu lists your machine as a device.
 
 ## Repository Structure
 
