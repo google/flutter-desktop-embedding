@@ -36,7 +36,7 @@ class UrlLauncherPlugin : public flutter::Plugin {
  private:
   UrlLauncherPlugin();
 
-  // Called when a method is called on |channel_|;
+  // Called when a method is called on plugin channel;
   void HandleMethodCall(
       const flutter::MethodCall<EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
@@ -81,7 +81,7 @@ void UrlLauncherPlugin::HandleMethodCall(
       return;
     }
 
-    // Win32-specific code
+    // launch a URL on Windows
     size_t size = url.length() + 1;
     std::wstring wurl;
     wurl.reserve(size);
@@ -94,7 +94,7 @@ void UrlLauncherPlugin::HandleMethodCall(
 #pragma warning(disable : 4302)  // warning C4302: 'type cast': truncation from
                                  // 'HINSTANCE' to 'int'
     int status =
-        (int)ShellExecute(NULL, TEXT("open"), wurl.c_str(), NULL, NULL, SW_SHOWNORMAL);
+        reinterpret_cast<int>(ShellExecute(NULL, TEXT("open"), wurl.c_str(), NULL, NULL, SW_SHOWNORMAL));
 #pragma warning(pop)
 
     if (status <= 32) {
@@ -102,6 +102,7 @@ void UrlLauncherPlugin::HandleMethodCall(
       error_message << "Failed to open " << url << ": ShellExecute error code "
                     << status;
       result->Error("open_error", error_message.str());
+      return;
     }
     result->Success();
   } else {
