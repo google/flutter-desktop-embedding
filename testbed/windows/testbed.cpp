@@ -17,6 +17,7 @@
 #include <vector>
 
 #include <example_plugin.h>
+#include <url_launcher_fde.h>
 
 #include "flutter/flutter_window_controller.h"
 
@@ -74,6 +75,8 @@ int main(int argc, char **argv) {
   // Register any native plugins.
   ExamplePluginRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
+  UrlLauncherRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("UrlLauncherPlugin"));
 
   // Run until the window is closed.
   flutter_controller.RunEventLoop();
