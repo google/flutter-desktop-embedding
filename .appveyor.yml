@@ -28,6 +28,7 @@ build_script:
   - ps: cd "$env:APPVEYOR_BUILD_FOLDER\example"
   - flutter packages get
   - flutter build -v windows --debug
+  - flutter build -v windows --release
   - ps: cd "$env:APPVEYOR_BUILD_FOLDER\testbed"
   - flutter packages get
   - flutter build -v windows --debug
