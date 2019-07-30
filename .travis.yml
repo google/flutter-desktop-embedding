@@ -32,6 +32,7 @@ matrix:
         - cd $TRAVIS_BUILD_DIR/example
         - flutter packages get
         - flutter build -v linux --debug
+        - flutter build -v linux --release
         - cd $TRAVIS_BUILD_DIR/testbed
         - flutter packages get
         - flutter build -v linux --debug
@@ -54,6 +55,7 @@ matrix:
         - cd $TRAVIS_BUILD_DIR/example
         - flutter packages get
         - flutter build -v macos --debug
+        - flutter build -v macos --release
         - cd $TRAVIS_BUILD_DIR/testbed
         - flutter packages get
         - flutter build -v macos --debug
