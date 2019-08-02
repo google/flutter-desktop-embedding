@@ -1,4 +1,5 @@
 .atom/
+.dart_tool/
 .idea
 .vscode/
 .packages
