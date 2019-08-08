@@ -88,7 +88,7 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
         logicalKey = data.logicalKey.debugName;
         physicalKey = data.physicalKey.debugName;
         break;
-      // TODO(https://github.com/flutter/flutter/issues/37830): The Windows and Linux shells share a 
+      // TODO(https://github.com/flutter/flutter/issues/37830): The Windows and Linux shells share a
       // GLFW implementation. Update once RawKeyEventDataWindows is implemented.
       case RawKeyEventDataLinux:
         final RawKeyEventDataLinux data = event.data;
