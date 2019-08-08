@@ -88,9 +88,8 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
         logicalKey = data.logicalKey.debugName;
         physicalKey = data.physicalKey.debugName;
         break;
-      // The Windows and Linux shells are still sending Android-encoded events.
-      // Once Windows and Linux keyboard support is in place and the shells send
-      // the correct type, this will need to be updated.
+      // TODO(https://github.com/flutter/flutter/issues/37830): The Windows and Linux shells share a 
+      // GLFW implementation. Update once RawKeyEventDataWindows is implemented.
       case RawKeyEventDataLinux:
         final RawKeyEventDataLinux data = event.data;
         keyCode = data.keyCode;
@@ -101,7 +100,8 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
         throw new Exception('Unsupported platform ${event.data.runtimeType}');
     }
 
-    _addMessage('''${isKeyDown ? 'KeyDown' : 'KeyUp'}: $keyCode \nLogical key: ${logicalKey}\nPhysical key: ${physicalKey}''');
+    _addMessage('${isKeyDown ? 'KeyDown' : 'KeyUp'}: $keyCode \nLogical key: ${logicalKey}\n'
+      'Physical key: ${physicalKey}');
   }
 
   void _addMessage(String message) {
