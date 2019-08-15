@@ -275,8 +275,11 @@
 			outputFileListPaths = (
 				Flutter/ephemeral/FlutterOutputs.xcfilelist,
 			);
+<<<<<<< HEAD
 			inputPaths = (
 			);
+=======
+>>>>>>> 9547b5cce505aaaf69dbf36eada5dfbc714c4b16
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
