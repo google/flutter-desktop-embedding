@@ -256,10 +256,10 @@
 			inputFileListPaths = (
 				Flutter/ephemeral/FlutterInputs.xcfilelist,
 			);
-			inputPaths = (
-			);
 			outputFileListPaths = (
 				Flutter/ephemeral/FlutterOutputs.xcfilelist,
+			);
+			inputPaths = (
 			);
 			outputPaths = (
 			);
