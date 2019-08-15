@@ -16,6 +16,6 @@ Displays macOS open and save panels.
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx
-  s.osx.deployment_target = '10.12'
+  s.osx.deployment_target = '10.11'
 end
 

@@ -44,15 +44,15 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/window_size/macos
 
 SPEC CHECKSUMS:
-  color_panel: d23285066e3370baf3f1ba4e6a8c9e95ebe74c22
-  example_plugin: 0d478b71398fb6f30f1edd1cf67e84c9060ecddb
-  file_chooser: 63ad990f95e224777292e0e8892f8c38d7992357
+  color_panel: aa0c449e8c5dc9a2c50b67c16771b203685acea0
+  example_plugin: 47735b684ede2e4aeb69a821377704af3295c19c
+  file_chooser: 24432cf5dc836722b05c11c2a0a30d19c3c9b996
   FlutterMacOS: a0cd115f6cc6d3a91b8e3fb792e5babf85bcfee1
-  menubar: 245e2654b62bfd26bee776d189de75394a43e024
-  shared_preferences_fde: 966452374734ac7e9d3a505ae101b502e0b1c9ce
-  url_launcher_fde: 503ab389174e7ef6ef643082122a1819dec018df
-  window_size: c334402be97be6968be0efe5fa379ecca2fbe107
+  menubar: 4e3d461d62d775540277ce6639acafe2a111a231
+  shared_preferences_fde: 71710025ac76ed132b9a27108b3ec0816f3a7dbb
+  url_launcher_fde: 2e3afc0d9c7c0dfe63e0ef42030ec62d56096b38
+  window_size: 339dafa0b27a95a62a843042038fa6c3c48de195
 
-PODFILE CHECKSUM: 8e22ef6b498b5efcd617873b5b5fe67bc84c66ed
+PODFILE CHECKSUM: 90d5cd1bb0e961f19bc55f87effd3fd89f9abb55
 
 COCOAPODS: 1.7.1
