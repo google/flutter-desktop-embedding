@@ -276,7 +276,7 @@
 				Flutter/ephemeral/FlutterOutputs.xcfilelist,
 			);
 			inputPaths = (
-			)
+			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
