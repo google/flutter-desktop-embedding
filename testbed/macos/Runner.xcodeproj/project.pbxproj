@@ -276,8 +276,11 @@
 				Flutter/ephemeral/FlutterOutputs.xcfilelist,
 			);
 <<<<<<< HEAD
+<<<<<<< HEAD
 			inputPaths = (
 			);
+=======
+>>>>>>> 9547b5cce505aaaf69dbf36eada5dfbc714c4b16
 =======
 >>>>>>> 9547b5cce505aaaf69dbf36eada5dfbc714c4b16
 			outputPaths = (
