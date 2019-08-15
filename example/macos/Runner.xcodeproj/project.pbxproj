@@ -410,7 +410,6 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
-					$PROJECT_DIR/Flutter/ephemeral,
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter/ephemeral",
 				);
@@ -436,7 +435,6 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
-					$PROJECT_DIR/Flutter/ephemeral,
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter/ephemeral",
 				);
