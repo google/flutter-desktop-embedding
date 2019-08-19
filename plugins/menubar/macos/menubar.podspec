@@ -16,6 +16,6 @@ Provides the ability to add menubar items with Dart callbacks.
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx
-  s.osx.deployment_target = '10.12'
+  s.osx.deployment_target = '10.11'
 end
 
