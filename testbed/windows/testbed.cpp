@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
   }*/
 
   std::unique_ptr<flutter::FlutterViewWin32> view =
-      flutter_controller.CreateFlutterView(assets_path, arguments);
+      flutter_controller.CreateFlutterView(1000,1000,assets_path, arguments);
 
   // Register any native plugins.
   ExamplePluginRegisterWithRegistrar(
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
   //messageloop_running_ = true;
 
   Win32Window w;
-  w.Initialize("sss", 10, 10, 800, 800);
+  w.Initialize("sss", 10, 10, 1000, 1000);
 
   HWND flutterViewNative = (HWND)view->GetNativeWindow();
   auto res = SetParent(flutterViewNative, w.GetWindowHandle());
