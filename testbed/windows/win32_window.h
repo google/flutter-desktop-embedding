@@ -47,6 +47,8 @@ class Win32Window {
                                   WPARAM const wparam,
                                   LPARAM const lparam) noexcept;
 
+  static BOOL CALLBACK EnumChildProc(HWND child_window, LPARAM lParam);
+
   // Processes and route salient window messages for mouse handling,
   // size change and DPI.  Delegates handling of these to member overloads that
   // inheriting classes can handle.
@@ -67,44 +69,21 @@ class Win32Window {
   //// Called when a resize occurs.
   // virtual void OnResize(UINT width, UINT height) = 0;
 
-  //// Called when the pointer moves within the
-  //// window bounds.
-  // virtual void OnPointerMove(double x, double y) = 0;
-
-  //// Called when the left mouse button goes down
-  // virtual void OnPointerDown(double x, double y) = 0;
-
-  //// Called when the left mouse button goes from
-  //// down to up
-  // virtual void OnPointerUp(double x, double y) = 0;
-
-  //// Called when character input occurs.
-  // virtual void OnChar(unsigned int code_point) = 0;
-
-  //// Called when raw keyboard input occurs.
-  // virtual void OnKey(int key, int scancode, int action, int mods) = 0;
-
-  //// Called when mouse scrollwheel input occurs.
-  // virtual void OnScroll(double delta_x, double delta_y) = 0;
-
-  //// Called when the user closes the Windows
-  // virtual void OnClose() = 0;
-
   UINT GetCurrentDPI();
 
-  UINT GetCurrentWidth();
+  //UINT GetCurrentWidth();
 
-  UINT GetCurrentHeight();
+  //UINT GetCurrentHeight();
 
  private:
-  // Stores new width and height and calls |OnResize| to notify inheritors
-  void HandleResize(UINT width, UINT height);
+  //// Stores new width and height and calls |OnResize| to notify inheritors
+  //void HandleResize(UINT width, UINT height);
 
   // Retrieves a class instance pointer for |window|
   static Win32Window *GetThisFromHandle(HWND const window) noexcept;
   int current_dpi_ = 0;
-  int current_width_ = 0;
-  int current_height_ = 0;
+  //int current_width_ = 0;
+  //int current_height_ = 0;
 
   // Member variable to hold window handle.
   HWND window_handle_ = nullptr;

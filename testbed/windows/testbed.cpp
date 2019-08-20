@@ -70,12 +70,6 @@ int main(int argc, char **argv) {
 #endif
   flutter::FlutterWindowController flutter_controller(icu_data_path);
 
-  // Start the engine.
-  /*if (!flutter_controller.CreateWindow(800, 600, "Testbed", assets_path,
-                                       arguments)) {
-    return EXIT_FAILURE;
-  }*/
-
   std::unique_ptr<flutter::FlutterViewWin32> view =
       flutter_controller.CreateFlutterView(1000,1000,assets_path, arguments);
 
@@ -85,25 +79,22 @@ int main(int argc, char **argv) {
   UrlLauncherRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("UrlLauncherPlugin"));
 
-  // Run until the window is closed.
-  //flutter_controller.RunEventLoop();
-
-  MSG message;
-
   //messageloop_running_ = true;
 
   Win32Window w;
   w.Initialize("sss", 10, 10, 1000, 1000);
 
+  // Parent and resize
   HWND flutterViewNative = (HWND)view->GetNativeWindow();
   auto res = SetParent(flutterViewNative, w.GetWindowHandle());
   RECT rcClient;
   GetClientRect(w.GetWindowHandle(),&rcClient);
   
-  auto res2 = MoveWindow(flutterViewNative, rcClient.left, rcClient.top, rcClient.right-rcClient.left, rcClient.bottom-rcClient.top,true);
-  res2 = ShowWindow(flutterViewNative, SW_SHOWNORMAL);
+  MoveWindow(flutterViewNative, rcClient.left, rcClient.top, rcClient.right-rcClient.left, rcClient.bottom-rcClient.top,true);
+  //auto res2 = ShowWindow(flutterViewNative, SW_SHOWNORMAL);
 
-
+  // Run until the window is closed.
+  MSG message;
   while (GetMessage(&message, nullptr, 0, 0)) { //&& messageloop_running_) {
     TranslateMessage(&message);
     DispatchMessage(&message);

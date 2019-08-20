@@ -22,21 +22,17 @@ Win32Window::Win32Window() {
   // particularly important once there is a means of hosting Flutter content in
   // an existing app.
 
-  //BOOL result = dpi_helper_->SetProcessDpiAwarenessContext(
+  // BOOL result = dpi_helper_->SetProcessDpiAwarenessContext(
   //    DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
-  //if (result != TRUE) {
+  // if (result != TRUE) {
   //  OutputDebugString(L"Failed to set PMV2");
   //}
 }
-Win32Window::~Win32Window() {
-  Destroy();
-}
+Win32Window::~Win32Window() { Destroy(); }
 
-void Win32Window::Initialize(const char* title,
-                             const unsigned int x,
-                             const unsigned int y,
-                             const unsigned int width,
+void Win32Window::Initialize(const char *title, const unsigned int x,
+                             const unsigned int y, const unsigned int width,
                              const unsigned int height) {
   Destroy();
   std::wstring converted_title = NarrowToWide(title);
@@ -48,7 +44,7 @@ void Win32Window::Initialize(const char* title,
                nullptr, window_class.hInstance, this);
 }
 
-std::wstring Win32Window::NarrowToWide(const char* source) {
+std::wstring Win32Window::NarrowToWide(const char *source) {
   size_t length = strlen(source);
   size_t outlen = 0;
   std::wstring wideTitle(length, L'#');
@@ -56,7 +52,7 @@ std::wstring Win32Window::NarrowToWide(const char* source) {
   return wideTitle;
 }
 
-WNDCLASS Win32Window::ResgisterWindowClass(std::wstring& title) {
+WNDCLASS Win32Window::ResgisterWindowClass(std::wstring &title) {
   window_class_name_ = title;
 
   WNDCLASS window_class{};
@@ -74,26 +70,25 @@ WNDCLASS Win32Window::ResgisterWindowClass(std::wstring& title) {
   return window_class;
 }
 
-LRESULT CALLBACK Win32Window::WndProc(HWND const window,
-                                      UINT const message,
+LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
                                       WPARAM const wparam,
                                       LPARAM const lparam) noexcept {
   if (message == WM_NCCREATE) {
-    auto cs = reinterpret_cast<CREATESTRUCT*>(lparam);
+    auto cs = reinterpret_cast<CREATESTRUCT *>(lparam);
     SetWindowLongPtr(window, GWLP_USERDATA,
                      reinterpret_cast<LONG_PTR>(cs->lpCreateParams));
 
-    auto that = static_cast<Win32Window*>(cs->lpCreateParams);
+    auto that = static_cast<Win32Window *>(cs->lpCreateParams);
 
     //// Since the application is running in Per-monitor V2 mode, turn on
     //// automatic titlebar scaling
-    //BOOL result = that->dpi_helper_->EnableNonClientDpiScaling(window);
-    //if (result != TRUE) {
+    // BOOL result = that->dpi_helper_->EnableNonClientDpiScaling(window);
+    // if (result != TRUE) {
     //  OutputDebugString(L"Failed to enable non-client area autoscaling");
     //}
-    //that->current_dpi_ = that->dpi_helper_->GetDpiForWindow(window);
+    // that->current_dpi_ = that->dpi_helper_->GetDpiForWindow(window);
     that->window_handle_ = window;
-  } else if (Win32Window* that = GetThisFromHandle(window)) {
+  } else if (Win32Window *that = GetThisFromHandle(window)) {
     return that->MessageHandler(window, message, wparam, lparam);
   }
 
@@ -101,14 +96,12 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window,
 }
 
 LRESULT
-Win32Window::MessageHandler(HWND hwnd,
-                            UINT const message,
-                            WPARAM const wparam,
+Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
                             LPARAM const lparam) noexcept {
   int xPos = 0, yPos = 0;
   UINT width = 0, height = 0;
   auto window =
-      reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+      reinterpret_cast<Win32Window *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
   if (window != nullptr) {
     switch (message) {
@@ -122,53 +115,10 @@ Win32Window::MessageHandler(HWND hwnd,
         break;
 
       case WM_SIZE:
-        width = LOWORD(lparam);
-        height = HIWORD(lparam);
-
-        current_width_ = width;
-        current_height_ = height;
-        window->HandleResize(width, height);
-        break;
-
-      case WM_MOUSEMOVE:
-        xPos = GET_X_LPARAM(lparam);
-        yPos = GET_Y_LPARAM(lparam);
-
-        /*window->OnPointerMove(static_cast<double>(xPos),
-                              static_cast<double>(yPos));*/
-        break;
-      case WM_LBUTTONDOWN:
-        xPos = GET_X_LPARAM(lparam);
-        yPos = GET_Y_LPARAM(lparam);
-        /*window->OnPointerDown(static_cast<double>(xPos),
-                              static_cast<double>(yPos));*/
-        break;
-      case WM_LBUTTONUP:
-        xPos = GET_X_LPARAM(lparam);
-        yPos = GET_Y_LPARAM(lparam);
-        /*window->OnPointerUp(static_cast<double>(xPos),
-                            static_cast<double>(yPos));*/
-        break;
-      case WM_MOUSEWHEEL:
-       /* window->OnScroll(
-            0.0, -(static_cast<short>(HIWORD(wparam)) / (double)WHEEL_DELTA));*/
-        break;
-      case WM_CHAR:
-      case WM_SYSCHAR:
-      case WM_UNICHAR:
-       /* if (wparam != VK_BACK) {
-          window->OnChar(static_cast<unsigned int>(wparam));
-        }*/
-        break;
-      case WM_KEYDOWN:
-      case WM_SYSKEYDOWN:
-      case WM_KEYUP:
-      case WM_SYSKEYUP:
-       /* unsigned char scancode = ((unsigned char*)&lparam)[2];
-        unsigned int virtualKey = MapVirtualKey(scancode, MAPVK_VSC_TO_VK);
-        const int key = virtualKey;
-        const int action = message == WM_KEYDOWN ? WM_KEYDOWN : WM_KEYUP;
-        window->OnKey(key, scancode, action, 0);*/
+        RECT rcClient;
+        GetClientRect(hwnd, &rcClient);
+        auto result = EnumChildWindows(hwnd, Win32Window::EnumChildProc, (LPARAM)&rcClient);
+        return 0;
         break;
     }
     return DefWindowProc(hwnd, message, wparam, lparam);
@@ -177,21 +127,23 @@ Win32Window::MessageHandler(HWND hwnd,
   return DefWindowProc(window_handle_, message, wparam, lparam);
 }
 
-UINT Win32Window::GetCurrentDPI() {
-  return current_dpi_;
+BOOL CALLBACK Win32Window::EnumChildProc(HWND child_window, LPARAM lParam) {
+  LPRECT parent_rect;
+  int i, idChild;
+
+  // Retrieve the child-window identifier. Use it to set the
+  // position of the child window.
+  idChild = GetWindowLong(child_window, GWL_ID);
+
+  // Size and position the child window.
+  parent_rect = (LPRECT)lParam;
+  MoveWindow(child_window, (parent_rect->left), parent_rect->top, parent_rect->right-parent_rect->left,
+             parent_rect->bottom - parent_rect->top, TRUE);
+
+  return TRUE;
 }
 
-UINT Win32Window::GetCurrentWidth() {
-  return current_width_;
-}
-
-UINT Win32Window::GetCurrentHeight() {
-  return current_height_;
-}
-
-HWND Win32Window::GetWindowHandle() {
-  return window_handle_;
-}
+HWND Win32Window::GetWindowHandle() { return window_handle_; }
 
 void Win32Window::Destroy() {
   if (window_handle_) {
@@ -207,14 +159,14 @@ LRESULT
 Win32Window::HandleDpiChange(HWND hwnd, WPARAM wparam, LPARAM lparam) {
   if (hwnd != nullptr) {
     auto window =
-        reinterpret_cast<Win32Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+        reinterpret_cast<Win32Window *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
     UINT uDpi = HIWORD(wparam);
     current_dpi_ = uDpi;
-    //window->OnDpiScale(uDpi);
+    // window->OnDpiScale(uDpi);
 
     // Resize the window
-    auto lprcNewScale = reinterpret_cast<RECT*>(lparam);
+    auto lprcNewScale = reinterpret_cast<RECT *>(lparam);
     LONG newWidth = lprcNewScale->right - lprcNewScale->left;
     LONG newHeight = lprcNewScale->bottom - lprcNewScale->top;
 
@@ -224,13 +176,7 @@ Win32Window::HandleDpiChange(HWND hwnd, WPARAM wparam, LPARAM lparam) {
   return 0;
 }
 
-void Win32Window::HandleResize(UINT width, UINT height) {
-  current_width_ = width;
-  current_height_ = height;
-  //OnResize(width, height);
-}
-
-Win32Window* Win32Window::GetThisFromHandle(HWND const window) noexcept {
-  return reinterpret_cast<Win32Window*>(
+Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
+  return reinterpret_cast<Win32Window *>(
       GetWindowLongPtr(window, GWLP_USERDATA));
 }
