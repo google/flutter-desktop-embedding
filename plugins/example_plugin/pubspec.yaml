@@ -6,10 +6,9 @@ homepage:
 
 flutter:
   plugin:
-    # Currently macosPrefix is used to indicate macOS support, but the value is
-    # not actually used. See https://github.com/flutter/flutter/issues/33597
-    macosPrefix: unused
-    pluginClass: ExamplePlugin
+    platforms:
+      macos:
+        pluginClass: ExamplePlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

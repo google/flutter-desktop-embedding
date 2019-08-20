@@ -6,8 +6,9 @@ homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugin
 
 flutter:
   plugin:
-    macosPrefix: FLE
-    pluginClass: SharedPreferencesPlugin
+    platforms:
+      macos:
+        pluginClass: SharedPreferencesPlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
