@@ -110,10 +110,21 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
         break;
 
       case WM_SIZE:
-        RECT rcClient;
-        GetClientRect(hwnd, &rcClient);
-        auto result = EnumChildWindows(hwnd, Win32Window::EnumChildProc,
-                                       (LPARAM)&rcClient);
+        RECT rect;
+        GetClientRect(hwnd, &rect);
+        if (child_content_ != nullptr) {
+          // Size and position the child window.
+
+          MoveWindow(child_content_, (rect.left), rect.top,
+                     rect.right - rect.left, rect.bottom - rect.top, TRUE);
+            }
+        return 0;
+        break;
+
+      case WM_ACTIVATE:
+        if (child_content_ != nullptr) {
+          SetFocus(child_content_);
+        }
         return 0;
         break;
     }
@@ -123,22 +134,22 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
   return DefWindowProc(window_handle_, message, wparam, lparam);
 }
 
-BOOL CALLBACK Win32Window::EnumChildProc(HWND child_window, LPARAM lParam) {
-  LPRECT parent_rect;
-  int i, idChild;
-
-  // Retrieve the child-window identifier. Use it to set the
-  // position of the child window.
-  idChild = GetWindowLong(child_window, GWL_ID);
-
-  // Size and position the child window.
-  parent_rect = (LPRECT)lParam;
-  MoveWindow(child_window, (parent_rect->left), parent_rect->top,
-             parent_rect->right - parent_rect->left,
-             parent_rect->bottom - parent_rect->top, TRUE);
-
-  return TRUE;
-}
+//BOOL CALLBACK Win32Window::EnumChildProc(HWND child_window, LPARAM lParam) {
+//  LPRECT parent_rect;
+//  int i, idChild;
+//
+//  // Retrieve the child-window identifier. Use it to set the
+//  // position of the child window.
+//  idChild = GetWindowLong(child_window, GWL_ID);
+//
+//  // Size and position the child window.
+//  parent_rect = (LPRECT)lParam;
+//  MoveWindow(child_window, (parent_rect->left), parent_rect->top,
+//             parent_rect->right - parent_rect->left,
+//             parent_rect->bottom - parent_rect->top, TRUE);
+//
+//  return TRUE;
+//}
 
 void Win32Window::Destroy() {
   if (window_handle_) {
@@ -177,6 +188,7 @@ Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
 }
 
 void Win32Window::SetChildContent(HWND content) {
+  child_content_ = content;
   auto res = SetParent(content, window_handle_);
   RECT rcClient;
   GetClientRect(window_handle_, &rcClient);
@@ -184,4 +196,6 @@ void Win32Window::SetChildContent(HWND content) {
   MoveWindow(content, rcClient.left, rcClient.top,
              rcClient.right - rcClient.left, rcClient.bottom - rcClient.top,
              true);
+
+  SetFocus(child_content_);
 }

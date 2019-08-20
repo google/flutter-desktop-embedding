@@ -74,8 +74,11 @@ class Win32Window {
   static Win32Window *GetThisFromHandle(HWND const window) noexcept;
   int current_dpi_ = 0;
 
-  // Member variable to hold window handle.
+  // window handle for top level window.
   HWND window_handle_ = nullptr;
+
+  // window handle for hosted content.
+  HWND child_content_ = nullptr;
 
   // Member variable to hold the window title.
   const char* window_class_name_;
