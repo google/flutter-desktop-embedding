@@ -76,7 +76,8 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }*/
 
-  std::unique_ptr<flutter::FlutterView> view = flutter_controller.CreateFlutterView(assets_path, arguments);
+  std::unique_ptr<flutter::FlutterViewWin32> view =
+      flutter_controller.CreateFlutterView(assets_path, arguments);
 
   // Register any native plugins.
   ExamplePluginRegisterWithRegistrar(
@@ -92,7 +93,16 @@ int main(int argc, char **argv) {
   //messageloop_running_ = true;
 
   Win32Window w;
-  w.Initialize("sss", 10, 10, 400, 400);
+  w.Initialize("sss", 10, 10, 800, 800);
+
+  HWND flutterViewNative = (HWND)view->GetNativeWindow();
+  auto res = SetParent(flutterViewNative, w.GetWindowHandle());
+  RECT rcClient;
+  GetClientRect(w.GetWindowHandle(),&rcClient);
+  
+  auto res2 = MoveWindow(flutterViewNative, rcClient.left, rcClient.top, rcClient.right-rcClient.left, rcClient.bottom-rcClient.top,true);
+  res2 = ShowWindow(flutterViewNative, SW_SHOWNORMAL);
+
 
   while (GetMessage(&message, nullptr, 0, 0)) { //&& messageloop_running_) {
     TranslateMessage(&message);
