@@ -49,14 +49,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\;$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper_glfw\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)flutter;$(OutDir)..\Plugins;$(LibraryPath)</LibraryPath>
     <TargetName>Testbed</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\;$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper_glfw\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)flutter;$(OutDir)..\Plugins;$(LibraryPath)</LibraryPath>
     <TargetName>Testbed</TargetName>
   </PropertyGroup>
@@ -71,7 +71,7 @@
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>flutter_windows.dll.lib;ExamplePlugin.lib;url_launcher_fde.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows_glfw.dll.lib;ExamplePlugin.lib;url_launcher_fde.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>"$(ProjectDir)scripts\prepare_dependencies" debug</Command>
@@ -116,7 +116,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>flutter_windows.dll.lib;ExamplePlugin.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows_glfw.dll.lib;ExamplePlugin.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>"$(ProjectDir)scripts\prepare_dependencies" release</Command>
@@ -147,9 +147,9 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="flutter\cpp_client_wrapper\engine_method_result.cc" />
-    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\flutter_window_controller.cc" />
-    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\plugin_registrar.cc" />
+    <ClCompile Include="flutter\cpp_client_wrapper_glfw\engine_method_result.cc" />
+    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper_glfw\flutter_window_controller.cc" />
+    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper_glfw\plugin_registrar.cc" />
     <ClCompile Include="testbed.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
