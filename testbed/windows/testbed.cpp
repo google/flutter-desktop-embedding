@@ -16,10 +16,14 @@
 #include <string>
 #include <vector>
 
+
+
 #include <example_plugin.h>
 #include <url_launcher_fde.h>
 
 #include "flutter/flutter_window_controller.h"
+
+#include "win32_window.h"
 
 // Include windows.h last, to minimize potential conflicts. The CreateWindow
 // macro needs to be undefined because it prevents calling
@@ -67,10 +71,12 @@ int main(int argc, char **argv) {
   flutter::FlutterWindowController flutter_controller(icu_data_path);
 
   // Start the engine.
-  if (!flutter_controller.CreateWindow(800, 600, "Testbed", assets_path,
+  /*if (!flutter_controller.CreateWindow(800, 600, "Testbed", assets_path,
                                        arguments)) {
     return EXIT_FAILURE;
-  }
+  }*/
+
+  std::unique_ptr<flutter::FlutterView> view = flutter_controller.CreateFlutterView(assets_path, arguments);
 
   // Register any native plugins.
   ExamplePluginRegisterWithRegistrar(
@@ -79,6 +85,21 @@ int main(int argc, char **argv) {
       flutter_controller.GetRegistrarForPlugin("UrlLauncherPlugin"));
 
   // Run until the window is closed.
-  flutter_controller.RunEventLoop();
+  //flutter_controller.RunEventLoop();
+
+  MSG message;
+
+  //messageloop_running_ = true;
+
+  Win32Window w;
+  w.Initialize("sss", 10, 10, 400, 400);
+
+  while (GetMessage(&message, nullptr, 0, 0)) { //&& messageloop_running_) {
+    TranslateMessage(&message);
+    DispatchMessage(&message);
+    //TODO: need Wrapper
+    //__FlutterEngineFlushPendingTasksNow();
+  }
+
   return EXIT_SUCCESS;
 }
