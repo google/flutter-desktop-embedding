@@ -96,8 +96,9 @@ int main(int argc, char **argv) {
   while (GetMessage(&message, nullptr, 0, 0)) {  //&& messageloop_running_) {
     TranslateMessage(&message);
     DispatchMessage(&message);
-    // TODO: need Wrapper
-    //__FlutterEngineFlushPendingTasksNow();
+    
+    // Allow flutter view to process it's messages
+    flutter_view->ProcessMessages();
   }
 
   return EXIT_SUCCESS;
