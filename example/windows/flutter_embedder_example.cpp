@@ -18,6 +18,8 @@
 
 #include "flutter/flutter_window_controller.h"
 
+#include "..\..\common\windows\win32_window.h"
+
 // Include windows.h last, to minimize potential conflicts. The CreateWindow
 // macro needs to be undefined because it prevents calling
 // FlutterWindowController's method.
@@ -61,13 +63,33 @@ int main(int argc, char **argv) {
 
   flutter::FlutterWindowController flutter_controller(icu_data_path);
 
-  // Start the engine.
-  if (!flutter_controller.CreateWindow(800, 600, "Flutter Desktop Example",
-                                       assets_path, arguments)) {
+  // Height and width for content and top-level window.
+  const int width = 800, height = 600;
+
+    // Start the engine; create a Flutter view.
+  std::unique_ptr<flutter::FlutterViewWin32> view =
+      flutter_controller.CreateFlutterView(width, height, assets_path, arguments);
+  if (view == nullptr) {
     return EXIT_FAILURE;
   }
 
-  // Run until the window is closed.
-  flutter_controller.RunEventLoop();
+  // Create a top-level win32 window to host the Flutter view.
+  Win32Window window;
+  if (!window.CreateAndShow("Flutter Desktop Example", 10, 10, width, height)) {
+    return EXIT_FAILURE;
+  }
+
+  // Parent and resize Flutter view into top-level window.
+  window.SetChildContent(reinterpret_cast<HWND>(view->GetNativeWindow()));
+
+    // Run until the window is closed.
+  MSG message;
+  while (GetMessage(&message, nullptr, 0, 0)) {  //&& messageloop_running_) {
+    TranslateMessage(&message);
+    DispatchMessage(&message);
+    // TODO: need Wrapper
+    //__FlutterEngineFlushPendingTasksNow();
+  }
+
   return EXIT_SUCCESS;
 }

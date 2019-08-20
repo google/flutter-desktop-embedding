@@ -16,14 +16,12 @@
 #include <string>
 #include <vector>
 
-
-
 #include <example_plugin.h>
 #include <url_launcher_fde.h>
 
 #include "flutter/flutter_window_controller.h"
 
-#include "win32_window.h"
+#include "..\..\common\windows\win32_window.h"
 
 // Include windows.h last, to minimize potential conflicts. The CreateWindow
 // macro needs to be undefined because it prevents calling
@@ -68,10 +66,14 @@ int main(int argc, char **argv) {
 #ifndef _DEBUG
   arguments.push_back("--disable-dart-asserts");
 #endif
+
+  // Height and width for content and top-level window.
+  const int width = 800, height = 600;
+
   flutter::FlutterWindowController flutter_controller(icu_data_path);
 
-  std::unique_ptr<flutter::FlutterViewWin32> view =
-      flutter_controller.CreateFlutterView(1000,1000,assets_path, arguments);
+  std::unique_ptr<flutter::FlutterViewWin32> flutter_view =
+      flutter_controller.CreateFlutterView(width, height, assets_path, arguments);
 
   // Register any native plugins.
   ExamplePluginRegisterWithRegistrar(
@@ -79,26 +81,22 @@ int main(int argc, char **argv) {
   UrlLauncherRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("UrlLauncherPlugin"));
 
-  //messageloop_running_ = true;
+  // messageloop_running_ = true;
 
-  Win32Window w;
-  w.Initialize("sss", 10, 10, 1000, 1000);
+  Win32Window window;
+  if (!window.CreateAndShow("Flutter Desktop testbed", 10, 10, width, height)) {
+    return EXIT_FAILURE;
+  }
 
-  // Parent and resize
-  HWND flutterViewNative = (HWND)view->GetNativeWindow();
-  auto res = SetParent(flutterViewNative, w.GetWindowHandle());
-  RECT rcClient;
-  GetClientRect(w.GetWindowHandle(),&rcClient);
-  
-  MoveWindow(flutterViewNative, rcClient.left, rcClient.top, rcClient.right-rcClient.left, rcClient.bottom-rcClient.top,true);
-  //auto res2 = ShowWindow(flutterViewNative, SW_SHOWNORMAL);
+  // Parent and resize Flutter view into top-level window.
+  window.SetChildContent(reinterpret_cast<HWND>(flutter_view->GetNativeWindow()));
 
   // Run until the window is closed.
   MSG message;
-  while (GetMessage(&message, nullptr, 0, 0)) { //&& messageloop_running_) {
+  while (GetMessage(&message, nullptr, 0, 0)) {  //&& messageloop_running_) {
     TranslateMessage(&message);
     DispatchMessage(&message);
-    //TODO: need Wrapper
+    // TODO: need Wrapper
     //__FlutterEngineFlushPendingTasksNow();
   }
 

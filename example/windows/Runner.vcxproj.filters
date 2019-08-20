@@ -30,5 +30,13 @@
     <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\plugin_registrar.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\common\windows\win32_window.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\common\windows\win32_window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

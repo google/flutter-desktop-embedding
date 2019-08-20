@@ -31,28 +31,23 @@ Win32Window::Win32Window() {
 }
 Win32Window::~Win32Window() { Destroy(); }
 
-void Win32Window::Initialize(const char *title, const unsigned int x,
-                             const unsigned int y, const unsigned int width,
-                             const unsigned int height) {
+bool Win32Window::CreateAndShow(const char *title, const unsigned int x,
+                                const unsigned int y, const unsigned int width,
+                                const unsigned int height) {
   Destroy();
-  std::wstring converted_title = NarrowToWide(title);
 
-  WNDCLASS window_class = ResgisterWindowClass(converted_title);
+  WNDCLASS window_class = ResgisterWindowClass(title);
 
-  CreateWindow(window_class.lpszClassName, "SSS",
-               WS_OVERLAPPEDWINDOW | WS_VISIBLE, x, y, width, height, nullptr,
-               nullptr, window_class.hInstance, this);
+  auto window = CreateWindow(
+      window_class.lpszClassName, title, WS_OVERLAPPEDWINDOW | WS_VISIBLE, x, y,
+      width, height, nullptr, nullptr, window_class.hInstance, this);
+  if (window == nullptr) {
+    return false;
+  }
+  return true;
 }
 
-std::wstring Win32Window::NarrowToWide(const char *source) {
-  size_t length = strlen(source);
-  size_t outlen = 0;
-  std::wstring wideTitle(length, L'#');
-  mbstowcs_s(&outlen, &wideTitle[0], length + 1, source, length);
-  return wideTitle;
-}
-
-WNDCLASS Win32Window::ResgisterWindowClass(std::wstring &title) {
+WNDCLASS Win32Window::ResgisterWindowClass(const char *title) {
   window_class_name_ = title;
 
   WNDCLASS window_class{};
@@ -117,7 +112,8 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
       case WM_SIZE:
         RECT rcClient;
         GetClientRect(hwnd, &rcClient);
-        auto result = EnumChildWindows(hwnd, Win32Window::EnumChildProc, (LPARAM)&rcClient);
+        auto result = EnumChildWindows(hwnd, Win32Window::EnumChildProc,
+                                       (LPARAM)&rcClient);
         return 0;
         break;
     }
@@ -137,13 +133,12 @@ BOOL CALLBACK Win32Window::EnumChildProc(HWND child_window, LPARAM lParam) {
 
   // Size and position the child window.
   parent_rect = (LPRECT)lParam;
-  MoveWindow(child_window, (parent_rect->left), parent_rect->top, parent_rect->right-parent_rect->left,
+  MoveWindow(child_window, (parent_rect->left), parent_rect->top,
+             parent_rect->right - parent_rect->left,
              parent_rect->bottom - parent_rect->top, TRUE);
 
   return TRUE;
 }
-
-HWND Win32Window::GetWindowHandle() { return window_handle_; }
 
 void Win32Window::Destroy() {
   if (window_handle_) {
@@ -179,4 +174,14 @@ Win32Window::HandleDpiChange(HWND hwnd, WPARAM wparam, LPARAM lparam) {
 Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
   return reinterpret_cast<Win32Window *>(
       GetWindowLongPtr(window, GWLP_USERDATA));
+}
+
+void Win32Window::SetChildContent(HWND content) {
+  auto res = SetParent(content, window_handle_);
+  RECT rcClient;
+  GetClientRect(window_handle_, &rcClient);
+
+  MoveWindow(content, rcClient.left, rcClient.top,
+             rcClient.right - rcClient.left, rcClient.bottom - rcClient.top,
+             true);
 }
