@@ -71,7 +71,7 @@
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>flutter_windows_win32.dll.lib;ExamplePlugin.lib;url_launcher_fde.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows_win32.dll.lib;ExamplePlugin.lib;url_launcher_fde.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>"$(ProjectDir)scripts\prepare_dependencies" debug</Command>
@@ -155,6 +155,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\windows\win32_window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="testbed.exe.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

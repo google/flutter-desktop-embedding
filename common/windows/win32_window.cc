@@ -3,32 +3,20 @@
 // found in the LICENSE file.
 
 #include "win32_window.h"
+#include "shellscalingapi.h"
 
-Win32Window::Win32Window() {
-  // Assume Windows 10 1703 or greater for DPI handling.  When running on a
-  // older release of Windows where this context doesn't exist, DPI calls will
-  // fail and Flutter rendering will be impacted until this is fixed.
-  // To handle downlevel correctly, dpi_helper must use the most recent DPI
-  // context available should be used: Windows 1703: Per-Monitor V2, 8.1:
-  // Per-Monitor V1, Windows 7: System See
-  // https://docs.microsoft.com/en-us/windows/win32/hidpi/high-dpi-desktop-application-development-on-windows
-  // for more information.
+// the Windows DPI system is based on this
+// constant for machines running at 100% scaling.
+constexpr int base_dpi = 96;
 
-  // TODO the calling applicaiton should participate in setting the DPI.
-  // Currently dpi_helper is asserting per-monitor V2.  There are two problems
-  // with this: 1) it is advised that the awareness mode is set using manifest,
-  // not programatically.  2) The calling executable should be responsible for
-  // setting an appropriate scaling mode, not a library.  This will be
-  // particularly important once there is a means of hosting Flutter content in
-  // an existing app.
-
-  // BOOL result = dpi_helper_->SetProcessDpiAwarenessContext(
-  //    DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-
-  // if (result != TRUE) {
-  //  OutputDebugString(L"Failed to set PMV2");
-  //}
+// Scale helper to convert logical scaler values to physical using passed in
+// scale factor
+int Scale(int source, double scale_factor) {
+  return static_cast<int>(static_cast<double>(source * scale_factor));
 }
+
+Win32Window::Win32Window() {}
+
 Win32Window::~Win32Window() { Destroy(); }
 
 bool Win32Window::CreateAndShow(const char *title, const unsigned int x,
@@ -38,9 +26,21 @@ bool Win32Window::CreateAndShow(const char *title, const unsigned int x,
 
   WNDCLASS window_class = ResgisterWindowClass(title);
 
+  // New windows are created on the default monitor.  Window sizes are specified
+  // to the OS in physical pixels, hence to ensure a consistent size to will
+  // treat the width height passed in to this function as logical pixels and
+  // scale to appropriate for the default monitor.
+  HMONITOR defaut_mon = MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
+  UINT dpi_x = 0, dpi_y = 0;
+  GetDpiForMonitor(defaut_mon, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
+
+  double scaleFactor = static_cast<double>(dpi_x) / base_dpi;
+
   auto window = CreateWindow(
-      window_class.lpszClassName, title, WS_OVERLAPPEDWINDOW | WS_VISIBLE, x, y,
-      width, height, nullptr, nullptr, window_class.hInstance, this);
+      window_class.lpszClassName, title, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+      Scale(x, scaleFactor), Scale(y, scaleFactor), Scale(width, scaleFactor),
+      Scale(height, scaleFactor), nullptr, nullptr, window_class.hInstance,
+      this);
   if (window == nullptr) {
     return false;
   }
@@ -75,13 +75,6 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
 
     auto that = static_cast<Win32Window *>(cs->lpCreateParams);
 
-    //// Since the application is running in Per-monitor V2 mode, turn on
-    //// automatic titlebar scaling
-    // BOOL result = that->dpi_helper_->EnableNonClientDpiScaling(window);
-    // if (result != TRUE) {
-    //  OutputDebugString(L"Failed to enable non-client area autoscaling");
-    //}
-    // that->current_dpi_ = that->dpi_helper_->GetDpiForWindow(window);
     that->window_handle_ = window;
   } else if (Win32Window *that = GetThisFromHandle(window)) {
     return that->MessageHandler(window, message, wparam, lparam);
@@ -100,10 +93,6 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
 
   if (window != nullptr) {
     switch (message) {
-      case WM_DPICHANGED:
-        return HandleDpiChange(window_handle_, wparam, lparam);
-        break;
-
       case WM_DESTROY:
         /*window->OnClose();*/
         return 0;
@@ -114,10 +103,9 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
         GetClientRect(hwnd, &rect);
         if (child_content_ != nullptr) {
           // Size and position the child window.
-
           MoveWindow(child_content_, (rect.left), rect.top,
                      rect.right - rect.left, rect.bottom - rect.top, TRUE);
-            }
+        }
         return 0;
         break;
 
@@ -134,23 +122,6 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
   return DefWindowProc(window_handle_, message, wparam, lparam);
 }
 
-//BOOL CALLBACK Win32Window::EnumChildProc(HWND child_window, LPARAM lParam) {
-//  LPRECT parent_rect;
-//  int i, idChild;
-//
-//  // Retrieve the child-window identifier. Use it to set the
-//  // position of the child window.
-//  idChild = GetWindowLong(child_window, GWL_ID);
-//
-//  // Size and position the child window.
-//  parent_rect = (LPRECT)lParam;
-//  MoveWindow(child_window, (parent_rect->left), parent_rect->top,
-//             parent_rect->right - parent_rect->left,
-//             parent_rect->bottom - parent_rect->top, TRUE);
-//
-//  return TRUE;
-//}
-
 void Win32Window::Destroy() {
   if (window_handle_) {
     DestroyWindow(window_handle_);
@@ -158,28 +129,6 @@ void Win32Window::Destroy() {
   }
 
   UnregisterClass("CLASSNAME", nullptr);
-}
-
-// DPI Change handler. on WM_DPICHANGE resize the window
-LRESULT
-Win32Window::HandleDpiChange(HWND hwnd, WPARAM wparam, LPARAM lparam) {
-  if (hwnd != nullptr) {
-    auto window =
-        reinterpret_cast<Win32Window *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-
-    UINT uDpi = HIWORD(wparam);
-    current_dpi_ = uDpi;
-    // window->OnDpiScale(uDpi);
-
-    // Resize the window
-    auto lprcNewScale = reinterpret_cast<RECT *>(lparam);
-    LONG newWidth = lprcNewScale->right - lprcNewScale->left;
-    LONG newHeight = lprcNewScale->bottom - lprcNewScale->top;
-
-    SetWindowPos(hwnd, nullptr, lprcNewScale->left, lprcNewScale->top, newWidth,
-                 newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
-  }
-  return 0;
 }
 
 Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
