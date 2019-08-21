@@ -94,7 +94,7 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
   if (window != nullptr) {
     switch (message) {
       case WM_DESTROY:
-        /*window->OnClose();*/
+        messageloop_running_ = false;
         return 0;
         break;
 
@@ -147,4 +147,19 @@ void Win32Window::SetChildContent(HWND content) {
              true);
 
   SetFocus(child_content_);
+}
+
+void Win32Window::RunMessageLoop(std::function<void()> callback) {
+  // Run until the window is closed.
+  MSG message;
+  while (GetMessage(&message, nullptr, 0, 0) &&
+         messageloop_running_) {  //&& messageloop_running_) {
+    TranslateMessage(&message);
+    DispatchMessage(&message);
+
+    // Allow flutter view to process it's messages
+    if (callback != nullptr) {
+      callback();
+    }
+  }
 }

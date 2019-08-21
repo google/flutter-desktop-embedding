@@ -73,7 +73,8 @@ int main(int argc, char **argv) {
   flutter::FlutterWindowController flutter_controller(icu_data_path);
 
   std::unique_ptr<flutter::FlutterViewWin32> flutter_view =
-      flutter_controller.CreateFlutterView(width, height, assets_path, arguments);
+      flutter_controller.CreateFlutterView(width, height, assets_path,
+                                           arguments);
 
   // Register any native plugins.
   ExamplePluginRegisterWithRegistrar(
@@ -81,25 +82,18 @@ int main(int argc, char **argv) {
   UrlLauncherRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("UrlLauncherPlugin"));
 
-  // messageloop_running_ = true;
-
+  // Create a top-level window to host flutter content
   Win32Window window;
   if (!window.CreateAndShow("Flutter Desktop testbed", 10, 10, width, height)) {
     return EXIT_FAILURE;
   }
 
   // Parent and resize Flutter view into top-level window.
-  window.SetChildContent(reinterpret_cast<HWND>(flutter_view->GetNativeWindow()));
+  window.SetChildContent(
+      reinterpret_cast<HWND>(flutter_view->GetNativeWindow()));
 
-  // Run until the window is closed.
-  MSG message;
-  while (GetMessage(&message, nullptr, 0, 0)) {  //&& messageloop_running_) {
-    TranslateMessage(&message);
-    DispatchMessage(&message);
-    
-    // Allow flutter view to process it's messages
-    flutter_view->ProcessMessages();
-  }
+  // run messageloop with a hook for flutter_view to do work
+  window.RunMessageLoop([&flutter_view]() { flutter_view->ProcessMessages(); });
 
   return EXIT_SUCCESS;
 }

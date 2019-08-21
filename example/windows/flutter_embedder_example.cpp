@@ -66,10 +66,11 @@ int main(int argc, char **argv) {
   // Height and width for content and top-level window.
   const int width = 800, height = 600;
 
-    // Start the engine; create a Flutter view.
-  std::unique_ptr<flutter::FlutterViewWin32> view =
-      flutter_controller.CreateFlutterView(width, height, assets_path, arguments);
-  if (view == nullptr) {
+  // Start the engine; create a Flutter view.
+  std::unique_ptr<flutter::FlutterViewWin32> flutter_view =
+      flutter_controller.CreateFlutterView(width, height, assets_path,
+                                           arguments);
+  if (flutter_view == nullptr) {
     return EXIT_FAILURE;
   }
 
@@ -80,17 +81,11 @@ int main(int argc, char **argv) {
   }
 
   // Parent and resize Flutter view into top-level window.
-  window.SetChildContent(reinterpret_cast<HWND>(view->GetNativeWindow()));
+  window.SetChildContent(
+      reinterpret_cast<HWND>(flutter_view->GetNativeWindow()));
 
-    // Run until the window is closed.
-  MSG message;
-  while (GetMessage(&message, nullptr, 0, 0)) {  //&& messageloop_running_) {
-    TranslateMessage(&message);
-    DispatchMessage(&message);
-
-    // enable view to process it's messages
-    view->ProcessMessages();
-  }
+  // run messageloop with a hook for flutter_view to do work
+  window.RunMessageLoop([&flutter_view]() { flutter_view->ProcessMessages(); });
 
   return EXIT_SUCCESS;
 }

@@ -8,6 +8,7 @@
 #include <Windows.h>
 #include <Windowsx.h>
 
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -19,18 +20,20 @@ class Win32Window {
   Win32Window();
   ~Win32Window();
 
-  // Creates and shows a win32 window with |title| and position and size using |x|,
-  // |y|, |width| and |height|
-  bool CreateAndShow(const char *title, const unsigned int x, const unsigned int y,
-                  const unsigned int width, const unsigned int height);
+  // Creates and shows a win32 window with |title| and position and size using
+  // |x|, |y|, |width| and |height|
+  bool CreateAndShow(const char *title, const unsigned int x,
+                     const unsigned int y, const unsigned int width,
+                     const unsigned int height);
 
   // Release OS resources asociated with window.
   void Destroy();
 
   void SetChildContent(HWND content);
 
- protected:
+  void RunMessageLoop(std::function<void()> callback);
 
+ protected:
   // Registers a window class with default style attributes, cursor and
   // icon.
   WNDCLASS ResgisterWindowClass(const char *title);
@@ -67,8 +70,8 @@ class Win32Window {
   UINT GetCurrentDPI();
 
  private:
-  //// Stores new width and height and calls |OnResize| to notify inheritors
-  // void HandleResize(UINT width, UINT height);
+  // should message loop keep running
+  bool messageloop_running_ = true;
 
   // Retrieves a class instance pointer for |window|
   static Win32Window *GetThisFromHandle(HWND const window) noexcept;
@@ -81,7 +84,7 @@ class Win32Window {
   HWND child_content_ = nullptr;
 
   // Member variable to hold the window title.
-  const char* window_class_name_;
+  const char *window_class_name_;
 
   //// Member variable referencing an instance of dpi_helper used to abstract
   /// some / aspects of win32 High DPI handling across different OS versions.
