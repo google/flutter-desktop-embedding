@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-#include "flutter/flutter_window_controller.h"
+#include "flutter/flutter_view_controller.h"
 
 #include "..\..\common\windows\win32_window.h"
 
@@ -61,13 +61,13 @@ int main(int argc, char **argv) {
   // Arguments for the Flutter Engine.
   std::vector<std::string> arguments;
 
-  flutter::FlutterWindowController flutter_controller(icu_data_path);
+  flutter::FlutterViewController flutter_controller(icu_data_path);
 
   // Height and width for content and top-level window.
   const int width = 800, height = 600;
 
   // Start the engine; create a Flutter view.
-  std::unique_ptr<flutter::FlutterViewWin32> flutter_view =
+  flutter::FlutterView flutter_view =
       flutter_controller.CreateFlutterView(width, height, assets_path,
                                            arguments);
   if (flutter_view == nullptr) {
