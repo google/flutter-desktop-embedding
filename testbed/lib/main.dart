@@ -38,6 +38,7 @@ void main() {
 
   // Try to resize and reposition the window to be half the width and height
   // of its screen, centered horizontally and shifted up from center.
+  WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isMacOS || Platform.isLinux) {
     window_size.getWindowInfo().then((window) {
       if (window.screen != null) {
