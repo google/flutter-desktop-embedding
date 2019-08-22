@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#include <flutter/flutter_window_controller.h>
 #include <linux/limits.h>
 #include <unistd.h>
 
@@ -18,8 +19,6 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-
-#include <flutter/flutter_window_controller.h>
 
 namespace {
 
@@ -66,6 +65,8 @@ int main(int argc, char **argv) {
   }
 
   // Run until the window is closed.
-  flutter_controller.RunEventLoop();
+  while (!flutter_controller.RunEventLoopWithTimeout(
+      std::chrono::milliseconds::max())) {
+  }
   return EXIT_SUCCESS;
 }

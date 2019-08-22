@@ -18,6 +18,11 @@ BINARY_NAME=testbed
 FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
 SOURCES=testbed.cc
+# Extra flags (e.g., for library dependencies).
+SYSTEM_LIBRARIES=gtk+-3.0 x11
+EXTRA_CXXFLAGS=
+EXTRA_CPPFLAGS=$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
+EXTRA_LDFLAGS=$(shell pkg-config --libs $(SYSTEM_LIBRARIES))
 
 # Plugins to include from the flutter-desktop-embedding plugins/ directory.
 PLUGIN_NAMES=color_panel file_chooser menubar window_size
@@ -89,13 +94,14 @@ INCLUDE_DIRS=$(FLUTTER_APP_CACHE_DIR) $(PLUGIN_INCLUDE_DIRS) \
 	$(WRAPPER_INCLUDE_DIR)
 
 # Build settings
-CXX=clang++
+CXX=clang++ $(EXTRA_CXXFLAGS)
 CXXFLAGS.release=-DNDEBUG
 CXXFLAGS=-std=c++14 -Wall -Werror $(CXXFLAGS.$(BUILD))
-CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
+CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) $(EXTRA_CPPFLAGS)
 LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 	-l$(FLUTTER_LIB_NAME) \
 	$(patsubst %,-l%,$(PLUGIN_LIB_NAMES)) \
+	$(EXTRA_LDFLAGS) \
 	-Wl,-rpath=\$$ORIGIN/lib
 
 # Targets
