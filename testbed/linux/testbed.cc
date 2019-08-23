@@ -13,15 +13,19 @@
 // limitations under the License.
 #include <linux/limits.h>
 #include <unistd.h>
+
 #include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <vector>
 
+// For plugin-compatible event handling (e.g., modal windows).
+#include <X11/Xlib.h>
 #include <color_panel_plugin.h>
 #include <example_plugin.h>
 #include <file_chooser_plugin.h>
 #include <flutter/flutter_window_controller.h>
+#include <gtk/gtk.h>
 #include <menubar_plugin.h>
 #include <url_launcher_fde_plugin.h>
 #include <window_size_plugin.h>
@@ -91,7 +95,17 @@ int main(int argc, char **argv) {
   WindowSizeRegisterWithRegistrar(
       flutter_controller.GetRegistrarForPlugin("WindowSize"));
 
-  // Run until the window is closed.
-  flutter_controller.RunEventLoop();
+  // Set up for GTK event handling, needed by the GTK-based plugins.
+  gtk_init(0, nullptr);
+  XInitThreads();
+
+  // Run until the window is closed, processing GTK events in parallel for
+  // plugin handling.
+  while (flutter_controller.RunEventLoopWithTimeout(
+      std::chrono::milliseconds(10))) {
+    if (gtk_events_pending()) {
+      gtk_main_iteration();
+    }
+  }
   return EXIT_SUCCESS;
 }
