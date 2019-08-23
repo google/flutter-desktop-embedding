@@ -65,9 +65,13 @@ int main(int argc, char **argv) {
   arguments.push_back("--disable-dart-asserts");
 #endif
   flutter::FlutterWindowController flutter_controller(icu_data_path);
+  flutter::WindowProperties window_properties = {};
+  window_properties.title = "Testbed";
+  window_properties.width = 800;
+  window_properties.height = 600;
 
   // Start the engine.
-  if (!flutter_controller.CreateWindow(800, 600, "Testbed", assets_path,
+  if (!flutter_controller.CreateWindow(window_properties, assets_path,
                                        arguments)) {
     return EXIT_FAILURE;
   }
