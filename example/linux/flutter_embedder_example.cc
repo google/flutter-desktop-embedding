@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
   }
 
   // Run until the window is closed.
-  while (!flutter_controller.RunEventLoopWithTimeout(
+  while (flutter_controller.RunEventLoopWithTimeout(
       std::chrono::milliseconds::max())) {
   }
   return EXIT_SUCCESS;
