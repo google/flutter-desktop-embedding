@@ -61,18 +61,11 @@ int main(int argc, char **argv) {
   // Arguments for the Flutter Engine.
   std::vector<std::string> arguments;
 
-  flutter::FlutterViewController flutter_controller(icu_data_path);
-
   // Height and width for content and top-level window.
   const int width = 800, height = 600;
 
-  // Start the engine; create a Flutter view.
-  flutter::FlutterView flutter_view =
-      flutter_controller.CreateFlutterView(width, height, assets_path,
-                                           arguments);
-  if (flutter_view == nullptr) {
-    return EXIT_FAILURE;
-  }
+  flutter::FlutterViewController flutter_controller(
+      icu_data_path, width, height, assets_path, arguments);
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
@@ -82,10 +75,11 @@ int main(int argc, char **argv) {
 
   // Parent and resize Flutter view into top-level window.
   window.SetChildContent(
-      reinterpret_cast<HWND>(flutter_view->GetNativeWindow()));
+      reinterpret_cast<HWND>(flutter_controller.GetNativeWindow()));
 
   // run messageloop with a hook for flutter_view to do work
-  window.RunMessageLoop([&flutter_view]() { flutter_view->ProcessMessages(); });
+  window.RunMessageLoop(
+      [&flutter_controller]() { flutter_controller.ProcessMessages(); });
 
   return EXIT_SUCCESS;
 }
