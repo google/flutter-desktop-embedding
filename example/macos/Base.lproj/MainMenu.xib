@@ -15,6 +15,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Flutter_Desktop_Example" customModuleProvider="target">
             <connections>
+                <outlet property="applicationMenu" destination="uQy-DD-JDr" id="XBo-yE-nKs"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -25,7 +26,7 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Flutter Desktop Example" systemMenu="apple" id="uQy-DD-JDr">
                         <items>
-                            <menuItem title="About Flutter Desktop Example" id="5kV-Vb-QxS">
+                            <menuItem title="About APP_NAME" id="5kV-Vb-QxS">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="orderFrontStandardAboutPanel:" target="-1" id="Exp-CZ-Vem"/>
@@ -39,7 +40,7 @@
                                 <menu key="submenu" title="Services" systemMenu="services" id="hz9-B4-Xy5"/>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="4je-JR-u6R"/>
-                            <menuItem title="Hide Flutter Desktop Example" keyEquivalent="h" id="Olw-nP-bQN">
+                            <menuItem title="Hide APP_NAME" keyEquivalent="h" id="Olw-nP-bQN">
                                 <connections>
                                     <action selector="hide:" target="-1" id="PnN-Uc-m68"/>
                                 </connections>
@@ -57,7 +58,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
-                            <menuItem title="Quit Flutter Desktop Example" keyEquivalent="q" id="4sb-4s-VLi">
+                            <menuItem title="Quit APP_NAME" keyEquivalent="q" id="4sb-4s-VLi">
                                 <connections>
                                     <action selector="terminate:" target="-1" id="Te7-pn-YzF"/>
                                 </connections>
@@ -325,7 +326,7 @@
             </items>
             <point key="canvasLocation" x="142" y="-258"/>
         </menu>
-        <window title="Flutter Desktop Example" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g" customClass="ExampleWindow" customModule="Flutter_Desktop_Example" customModuleProvider="target">
+        <window title="APP_NAME" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g" customClass="MainFlutterWindow" customModule="Flutter_Desktop_Example" customModuleProvider="target">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="335" y="390" width="800" height="600"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1577"/>
