@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -249,9 +249,9 @@
 			);
 			inputFileListPaths = (
 			);
-			outputFileListPaths = (
-			);
 			inputPaths = (
+			);
+			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
@@ -462,8 +462,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};
@@ -480,10 +479,7 @@
 					"$(PROJECT_DIR)/Flutter/ephemeral",
 				);
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.FlutterEmbedderMacExample.FlutterDesktopExample;
 				PRODUCT_NAME = "Flutter Desktop Example";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -505,10 +501,7 @@
 					"$(PROJECT_DIR)/Flutter/ephemeral",
 				);
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.FlutterEmbedderMacExample.FlutterDesktopExample;
 				PRODUCT_NAME = "Flutter Desktop Example";
 				PROVISIONING_PROFILE_SPECIFIER = "";
