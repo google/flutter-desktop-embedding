@@ -46,7 +46,11 @@ std::string GetExecutableDirectory() {
 
 }  // namespace
 
+#if !defined(WIN_CONSOLE_APP)
+int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *, int) {
+#else
 int main(int argc, char **argv) {
+#endif  // WIN_CONSOLE_APP
   // Resources are located relative to the executable.
   std::string base_directory = GetExecutableDirectory();
   if (base_directory.empty()) {

@@ -68,10 +68,11 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)WIN_CONSOLE_APP</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>flutter_windows_glfw.dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
     <PreBuildEvent>
       <Command>"$(ProjectDir)scripts\prepare_dependencies" debug</Command>
@@ -117,6 +118,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>flutter_windows_glfw.dll.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
     <PreBuildEvent>
       <Command>"$(ProjectDir)scripts\prepare_dependencies" release</Command>
