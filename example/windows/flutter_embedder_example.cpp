@@ -128,7 +128,7 @@ void RouteStdioToConsole(bool create_console_if_not_found) {
 }  // namespace
 
 
-int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *, int) {
+int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t * lpCmdLine, int) {
 
   // 1. if parent or current process has console, attach it.
   // 2. if --force-console exist && parent or current process have not conole, 
