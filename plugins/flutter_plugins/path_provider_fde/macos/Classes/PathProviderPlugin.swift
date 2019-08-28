@@ -30,7 +30,7 @@ public class PathProviderPlugin: NSObject, FlutterPlugin {
       result(getDirectory(ofType: FileManager.SearchPathDirectory.cachesDirectory))
     } else if method == "getApplicationDocumentsDirectory" {
       result(getDirectory(ofType: FileManager.SearchPathDirectory.documentDirectory))
-    } else if (method == "getApplicationSupportDirectory") {
+    } else if method == "getApplicationSupportDirectory" {
       var path = getDirectory(ofType: FileManager.SearchPathDirectory.applicationSupportDirectory)
       if let basePath = path {
         let basePathURL = URL.init(fileURLWithPath: basePath)
