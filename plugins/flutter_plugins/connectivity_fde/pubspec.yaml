@@ -1,0 +1,17 @@
+name: connectivity_fde
+description: Temporary desktop implmentations of connectivity from flutter/plugins
+version: 0.0.1
+author: Andrei Lesnitsky <andrei.lesnitksy@gmail.com>
+homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugins/flutter_plugins/connectivity_fde
+
+flutter:
+  plugin:
+    macosPrefix: unused
+    pluginClass: ConnectivityPlugin
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
