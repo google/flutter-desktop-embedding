@@ -29,6 +29,9 @@ dependencies:
   window_size:
     path: ../plugins/window_size
   # Plugins from flutter/plugins, with local desktop implementations.
+  path_provider: ^1.2.0
+  path_provider_fde:
+    path: ../plugins/flutter_plugins/path_provider_fde
   shared_preferences: ^0.5.3
   shared_preferences_fde:
     path: ../plugins/flutter_plugins/shared_preferences_fde
