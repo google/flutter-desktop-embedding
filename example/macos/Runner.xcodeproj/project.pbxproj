@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		33CC111A2044C6BA0003C045 /* Build Flutter Bundle */ = {
+		33CC111A2044C6BA0003C045 /* Flutter Assemble */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 33CC111B2044C6BA0003C045 /* Build configuration list for PBXAggregateTarget "Build Flutter Bundle" */;
+			buildConfigurationList = 33CC111B2044C6BA0003C045 /* Build configuration list for PBXAggregateTarget "Flutter Assemble" */;
 			buildPhases = (
 				33CC111E2044C6BF0003C045 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = "Build Flutter Bundle";
+			name = "Flutter Assemble";
 			productName = FLX;
 		};
 /* End PBXAggregateTarget section */
@@ -207,7 +207,7 @@
 			projectRoot = "";
 			targets = (
 				33CC10EC2044A3C60003C045 /* Runner */,
-				33CC111A2044C6BA0003C045 /* Build Flutter Bundle */,
+				33CC111A2044C6BA0003C045 /* Flutter Assemble */,
 			);
 		};
 /* End PBXProject section */
@@ -257,7 +257,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_build_flutter_assets.sh\n";
+			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -277,7 +277,7 @@
 /* Begin PBXTargetDependency section */
 		33CC11202044C79F0003C045 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 33CC111A2044C6BA0003C045 /* Build Flutter Bundle */;
+			target = 33CC111A2044C6BA0003C045 /* Flutter Assemble */;
 			targetProxy = 33CC111F2044C79F0003C045 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -548,7 +548,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33CC111B2044C6BA0003C045 /* Build configuration list for PBXAggregateTarget "Build Flutter Bundle" */ = {
+		33CC111B2044C6BA0003C045 /* Build configuration list for PBXAggregateTarget "Flutter Assemble" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33CC111C2044C6BA0003C045 /* Debug */,
