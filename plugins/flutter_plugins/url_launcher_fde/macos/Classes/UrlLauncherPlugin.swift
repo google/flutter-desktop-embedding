@@ -47,6 +47,7 @@ public class UrlLauncherPlugin: NSObject, FlutterPlugin {
   }
 }
 
+/// Returns an error for the case where a URL string can't be parsed as a URL.
 private func invalidURLError(_ url: String?) -> FlutterError {
   return FlutterError(
     code:"argument_error",
