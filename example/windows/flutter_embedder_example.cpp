@@ -46,13 +46,11 @@ std::string GetExecutableDirectory() {
 
 }  // namespace
 
-int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *, int) {
-
-  if (AttachConsole(ATTACH_PARENT_PROCESS)) {
-    FILE *p_fCout = nullptr;
-    freopen_s(&p_fCout, "CONOUT$", "w", stdout);
-    freopen_s(&p_fCout,"CONOUT$", "w", stderr);
-  }
+int APIENTRY wWinMain(HINSTANCE instance,
+                      HINSTANCE prev,
+                      wchar_t *command_line,
+                      int show_command) {
+  (void)AttachConsole(ATTACH_PARENT_PROCESS);
 
   // Resources are located relative to the executable.
   std::string base_directory = GetExecutableDirectory();
