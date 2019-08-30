@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
                        DESC
   s.homepage         = 'https://github.com/google/flutter-desktop-embedding/tree/master/plugins/flutter_plugins/connectivity_fde'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Andrei Lesnitksy' => 'andrei.lesnitsky@gmail.com' }
+  s.author           = { 'Flutter Desktop Embedding Developers' => 'flutter-desktop-embedding-dev@googlegroups.com' }
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
   s.dependency 'FlutterMacOS'
