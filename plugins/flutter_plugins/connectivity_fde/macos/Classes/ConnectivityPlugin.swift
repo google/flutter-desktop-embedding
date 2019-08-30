@@ -19,15 +19,15 @@ import Reachability
 import SystemConfiguration.CaptiveNetwork
 
 public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
-  var _reach: Reachability?
-  var _eventSink: FlutterEventSink?
-  var _cwinterface: CWInterface?
+  var reach: Reachability?
+  var eventSink: FlutterEventSink?
+  var cwinterface: CWInterface?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "plugins.flutter.io/connectivity", binaryMessenger: registrar.messenger)
 
     let instance = ConnectivityPlugin()
-    instance._cwinterface = CWWiFiClient.shared().interface()!
+    instance.cwinterface = CWWiFiClient.shared().interface()!
 
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
@@ -36,9 +36,9 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     if call.method == "check" {
       result(statusFromReachability(reachability: Reachability.forInternetConnection()))
     } else if call.method == "wifiName" {
-      result(_cwinterface!.ssid()!)
+      result(cwinterface!.ssid()!)
     } else if call.method == "wifiBSSID" {
-      result(_cwinterface!.bssid()!)
+      result(cwinterface!.bssid()!)
     } else if call.method == "wifiIPAddress" {
       result(getWiFiIP())
     } else {
@@ -87,9 +87,9 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   }
 
   public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-    _reach = Reachability.forInternetConnection()
-    _reach!.reachableOnWWAN = false
-    _eventSink = events
+    reach = Reachability.forInternetConnection()
+    reach!.reachableOnWWAN = false
+    eventSink = events
 
     NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: NSNotification.Name.reachabilityChanged, object: nil)
 
@@ -99,13 +99,13 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   @objc func reachabilityChanged(notification: NSNotification) {
     let reach = notification.object
     let reachability = statusFromReachability(reachability: reach as! Reachability)
-    (_eventSink as! FlutterEventSink)(reachability)
+    (eventSink as! FlutterEventSink)(reachability)
   }
 
   public func onCancel(withArguments _: Any?) -> FlutterError? {
-    _reach?.stopNotifier()
+    reach?.stopNotifier()
     NotificationCenter.default.removeObserver(self)
-    _eventSink = nil
+    eventSink = nil
     return nil
   }
 }
