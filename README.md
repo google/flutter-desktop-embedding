@@ -34,9 +34,10 @@ sections relevant to your platform.
 Once you have everything set up, just `flutter run` in the `example` directory
 to run your first desktop Flutter application!
 
-Note: Only `debug` mode is currently available. Running with `--release` will
-succeed, but the result will still be using a `debug` Flutter configuration:
-asserts will fire, the observatory will be enabled, etc.
+Note: Only `debug` mode is currently available for Windows and Linux. Running with
+`--release` or `--profile` will succeed, but the result will still be using a
+`debug` Flutter configuration: asserts will fire, the observatory will be enabled,
+etc.
 
 ### Running Other Flutter Projects
 
@@ -50,7 +51,8 @@ actively working on Flutter for desktop. See [its README](testbed/README.md)
 for details.
 
 The `plugins` directory has early-stage desktop
-[plugins](https://flutter.dev/docs/development/packages-and-plugins/developing-packages). See the [README](plugins/README.md) for details.
+[plugins](https://flutter.dev/docs/development/packages-and-plugins/developing-packages).
+See the [README](plugins/README.md) for details.
 
 ## Feedback and Discussion
 
