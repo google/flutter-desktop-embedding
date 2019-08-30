@@ -49,7 +49,7 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         }
     }
     
-    func getWiFiIP() -> String? {
+    private func getWiFiIP() -> String? {
         var ifaddr: UnsafeMutablePointer<ifaddrs>?
         let result = getifaddrs(&ifaddr)
         
@@ -77,7 +77,7 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         return nil
     }
     
-    public func statusFromReachability(reachability: Reachability) -> String {
+    private func statusFromReachability(reachability: Reachability) -> String {
         if reachability.isReachableViaWiFi() {
             return "wifi"
         }
@@ -102,7 +102,7 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         return nil
     }
     
-    @objc func reachabilityChanged(notification: NSNotification) {
+    @objc private func reachabilityChanged(notification: NSNotification) {
         let reach = notification.object
         let reachability = statusFromReachability(reachability: reach as! Reachability)
         (eventSink as! FlutterEventSink)(reachability)
