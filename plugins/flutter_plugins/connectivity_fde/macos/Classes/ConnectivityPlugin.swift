@@ -75,7 +75,6 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     eventSink events: @escaping FlutterEventSink
   ) -> FlutterError? {
     reach = Reachability.forInternetConnection()
-    reach?.reachableOnWWAN = false
     eventSink = events
 
     NotificationCenter.default.addObserver(
