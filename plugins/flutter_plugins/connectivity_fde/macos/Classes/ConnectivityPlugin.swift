@@ -19,93 +19,99 @@ import Reachability
 import SystemConfiguration.CaptiveNetwork
 
 public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
-  var reach: Reachability?
-  var eventSink: FlutterEventSink?
-  var cwinterface: CWInterface?
-
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "plugins.flutter.io/connectivity", binaryMessenger: registrar.messenger)
-
-    let instance = ConnectivityPlugin()
-    instance.cwinterface = CWWiFiClient.shared().interface()!
-
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    if call.method == "check" {
-      result(statusFromReachability(reachability: Reachability.forInternetConnection()))
-    } else if call.method == "wifiName" {
-      result(cwinterface!.ssid()!)
-    } else if call.method == "wifiBSSID" {
-      result(cwinterface!.bssid()!)
-    } else if call.method == "wifiIPAddress" {
-      result(getWiFiIP())
-    } else {
-      result(FlutterMethodNotImplemented)
+    var reach: Reachability?
+    var eventSink: FlutterEventSink?
+    var cwinterface: CWInterface?
+    
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        let channel = FlutterMethodChannel(
+            name: "plugins.flutter.io/connectivity",
+            binaryMessenger: registrar.messenger
+        )
+        
+        let instance = ConnectivityPlugin()
+        instance.cwinterface = CWWiFiClient.shared().interface()!
+        
+        registrar.addMethodCallDelegate(instance, channel: channel)
     }
-  }
-
-  func getWiFiIP() -> String? {
-    var ifaddr: UnsafeMutablePointer<ifaddrs>?
-    let result = getifaddrs(&ifaddr)
-
-    if result == 0 {
-      guard let firstAddr = ifaddr else { return nil }
-
-      for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
-        let name = String(cString: ptr.pointee.ifa_name)
-        let addr = ptr.pointee.ifa_addr.pointee
-
-        if addr.sa_family == UInt8(AF_INET), name == "en0" {
-          var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-          if getnameinfo(ptr.pointee.ifa_addr, socklen_t(addr.sa_len), &hostname, socklen_t(hostname.count),
-                   nil, socklen_t(0), NI_NUMERICHOST) == 0 {
-            let address = String(cString: hostname)
-            freeifaddrs(ifaddr)
-            return address
-          }
+    
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        if call.method == "check" {
+            result(statusFromReachability(reachability: Reachability.forInternetConnection()))
+        } else if call.method == "wifiName" {
+            result(cwinterface!.ssid()!)
+        } else if call.method == "wifiBSSID" {
+            result(cwinterface!.bssid()!)
+        } else if call.method == "wifiIPAddress" {
+            result(getWiFiIP())
+        } else {
+            result(FlutterMethodNotImplemented)
         }
-      }
     }
-
-    freeifaddrs(ifaddr)
-
-    return nil
-  }
-
-  public func statusFromReachability(reachability: Reachability) -> String {
-    if reachability.isReachableViaWiFi() {
-      return "wifi"
+    
+    func getWiFiIP() -> String? {
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        let result = getifaddrs(&ifaddr)
+        
+        if result == 0 {
+            guard let firstAddr = ifaddr else { return nil }
+            
+            for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+                let name = String(cString: ptr.pointee.ifa_name)
+                let addr = ptr.pointee.ifa_addr.pointee
+                
+                if addr.sa_family == UInt8(AF_INET), name == "en0" {
+                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    if getnameinfo(ptr.pointee.ifa_addr, socklen_t(addr.sa_len), &hostname, socklen_t(hostname.count),
+                                   nil, socklen_t(0), NI_NUMERICHOST) == 0 {
+                        let address = String(cString: hostname)
+                        freeifaddrs(ifaddr)
+                        return address
+                    }
+                }
+            }
+        }
+        
+        freeifaddrs(ifaddr)
+        
+        return nil
     }
-
-    if reachability.isReachableViaWWAN() {
-      return "mobile"
+    
+    public func statusFromReachability(reachability: Reachability) -> String {
+        if reachability.isReachableViaWiFi() {
+            return "wifi"
+        }
+        
+        if reachability.isReachableViaWWAN() {
+            return "mobile"
+        }
+        
+        return "none"
     }
-
-    return "none"
-  }
-
-  public func onListen(withArguments _: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-    reach = Reachability.forInternetConnection()
-    reach!.reachableOnWWAN = false
-    eventSink = events
-
-    NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: NSNotification.Name.reachabilityChanged, object: nil)
-
-    return nil
-  }
-
-  @objc func reachabilityChanged(notification: NSNotification) {
-    let reach = notification.object
-    let reachability = statusFromReachability(reachability: reach as! Reachability)
-    (eventSink as! FlutterEventSink)(reachability)
-  }
-
-  public func onCancel(withArguments _: Any?) -> FlutterError? {
-    reach?.stopNotifier()
-    NotificationCenter.default.removeObserver(self)
-    eventSink = nil
-    return nil
-  }
+    
+    public func onListen(
+        withArguments _: Any?,
+        eventSink events: @escaping FlutterEventSink
+    ) -> FlutterError? {
+        reach = Reachability.forInternetConnection()
+        reach!.reachableOnWWAN = false
+        eventSink = events
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: NSNotification.Name.reachabilityChanged, object: nil)
+        
+        return nil
+    }
+    
+    @objc func reachabilityChanged(notification: NSNotification) {
+        let reach = notification.object
+        let reachability = statusFromReachability(reachability: reach as! Reachability)
+        (eventSink as! FlutterEventSink)(reachability)
+    }
+    
+    public func onCancel(withArguments _: Any?) -> FlutterError? {
+        reach?.stopNotifier()
+        NotificationCenter.default.removeObserver(self)
+        eventSink = nil
+        return nil
+    }
 }
