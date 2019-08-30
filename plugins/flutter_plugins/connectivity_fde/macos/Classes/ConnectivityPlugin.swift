@@ -41,9 +41,9 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         if call.method == "check" {
             result(statusFromReachability(reachability: Reachability.forInternetConnection()))
         } else if call.method == "wifiName" {
-            result(cwinterface!.ssid())
+            result(cwinterface?.ssid())
         } else if call.method == "wifiBSSID" {
-            result(cwinterface!.bssid())
+            result(cwinterface?.bssid())
         } else if call.method == "wifiIPAddress" {
             result(getWiFiIP())
         } else {
