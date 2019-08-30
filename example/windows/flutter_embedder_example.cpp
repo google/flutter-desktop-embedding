@@ -50,8 +50,8 @@ int APIENTRY wWinMain(HINSTANCE instance,
                       HINSTANCE prev,
                       wchar_t *command_line,
                       int show_command) {
-  // attach to console of 'flutter run'
-  // or create new console when start with debugger
+  // Attach to console of 'flutter run' 
+  // or create new console when start with debugger.
   if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
     ::AllocConsole();
   }
