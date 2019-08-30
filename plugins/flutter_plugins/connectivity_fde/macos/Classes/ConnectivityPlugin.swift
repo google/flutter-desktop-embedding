@@ -22,6 +22,10 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     var reach: Reachability?
     var eventSink: FlutterEventSink?
     var cwinterface: CWInterface?
+
+    public override init() {
+        cwinterface = CWWiFiClient.shared().interface()
+    }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(
@@ -30,8 +34,6 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         )
         
         let instance = ConnectivityPlugin()
-        instance.cwinterface = CWWiFiClient.shared().interface()!
-        
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
@@ -39,9 +41,9 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         if call.method == "check" {
             result(statusFromReachability(reachability: Reachability.forInternetConnection()))
         } else if call.method == "wifiName" {
-            result(cwinterface!.ssid()!)
+            result(cwinterface!.ssid())
         } else if call.method == "wifiBSSID" {
-            result(cwinterface!.bssid()!)
+            result(cwinterface!.bssid())
         } else if call.method == "wifiIPAddress" {
             result(getWiFiIP())
         } else {
@@ -80,12 +82,10 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     private func statusFromReachability(reachability: Reachability) -> String {
         if reachability.isReachableViaWiFi() {
             return "wifi"
-        }
-        
-        if reachability.isReachableViaWWAN() {
+        } else if reachability.isReachableViaWWAN() {
             return "mobile"
         }
-        
+
         return "none"
     }
     
@@ -93,11 +93,11 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         withArguments _: Any?,
         eventSink events: @escaping FlutterEventSink
     ) -> FlutterError? {
-        reach = Reachability.forInternetConnection()
-        reach!.reachableOnWWAN = false
+        reach = Reachability.forInternetConnection()!
+        reach?.reachableOnWWAN = false
         eventSink = events
         
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: NSNotification.Name.reachabilityChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: NSNotification.Name.reachabilityChanged, object: reach)
         
         return nil
     }
@@ -105,7 +105,7 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     @objc private func reachabilityChanged(notification: NSNotification) {
         let reach = notification.object
         let reachability = statusFromReachability(reachability: reach as! Reachability)
-        (eventSink as! FlutterEventSink)(reachability)
+        eventSink?(reachability)
     }
     
     public func onCancel(withArguments _: Any?) -> FlutterError? {
