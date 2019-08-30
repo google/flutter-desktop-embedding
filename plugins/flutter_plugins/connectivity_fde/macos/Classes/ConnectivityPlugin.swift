@@ -38,47 +38,23 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        if call.method == "check" {
+        switch call.method {
+        case "check":
             result(statusFromReachability(reachability: Reachability.forInternetConnection()))
-        } else if call.method == "wifiName" {
+        case "wifiName":
             result(cwinterface?.ssid())
-        } else if call.method == "wifiBSSID" {
+        case "wifiBSSID":
             result(cwinterface?.bssid())
-        } else if call.method == "wifiIPAddress" {
-            result(getWiFiIP())
-        } else {
+        default:
             result(FlutterMethodNotImplemented)
         }
     }
-    
-    private func getWiFiIP() -> String? {
-        var ifaddr: UnsafeMutablePointer<ifaddrs>?
-        let result = getifaddrs(&ifaddr)
-        
-        if result == 0 {
-            guard let firstAddr = ifaddr else { return nil }
-            
-            for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
-                let name = String(cString: ptr.pointee.ifa_name)
-                let addr = ptr.pointee.ifa_addr.pointee
-                
-                if addr.sa_family == UInt8(AF_INET), name == "en0" {
-                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                    if getnameinfo(ptr.pointee.ifa_addr, socklen_t(addr.sa_len), &hostname, socklen_t(hostname.count),
-                                   nil, socklen_t(0), NI_NUMERICHOST) == 0 {
-                        let address = String(cString: hostname)
-                        freeifaddrs(ifaddr)
-                        return address
-                    }
-                }
-            }
-        }
-        
-        freeifaddrs(ifaddr)
-        
-        return nil
-    }
-    
+
+    /// Returns a string describing connection type
+    ///
+    /// - Parameters:
+    ///   - reachability: an instance of reachability
+    /// - Returns: connection type string
     private func statusFromReachability(reachability: Reachability) -> String {
         if reachability.isReachableViaWiFi() {
             return "wifi"
