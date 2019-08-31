@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 
-// A class abstraction for a high DPI aware Win32 Window.  Intended to be
+// A class abstraction for a high DPI-aware Win32 Window.  Intended to be
 // inherited from by classes that wish to specialize with custom
 // rendering and input handling
 class Win32Window {
@@ -21,7 +21,11 @@ class Win32Window {
   ~Win32Window();
 
   // Creates and shows a win32 window with |title| and position and size using
-  // |x|, |y|, |width| and |height|
+  // |x|, |y|, |width| and |height|. New windows are created on the default
+  // monitor.  Window sizes are specified to the OS in physical pixels, hence to
+  // ensure a consistent size to will treat the width height passed in to this
+  // function as logical pixels and scale to appropriate for the default
+  // monitor. Returns false if window couldn't be created otherwise true.
   bool CreateAndShow(const char *title, const unsigned int x,
                      const unsigned int y, const unsigned int width,
                      const unsigned int height);
@@ -29,6 +33,7 @@ class Win32Window {
   // Release OS resources asociated with window.
   void Destroy();
 
+  // Inserts |content| into the window tree.
   void SetChildContent(HWND content);
 
   void RunMessageLoop(std::function<void()> callback);
@@ -47,9 +52,6 @@ class Win32Window {
                                   WPARAM const wparam,
                                   LPARAM const lparam) noexcept;
 
-  // TODO
-  static BOOL CALLBACK EnumChildProc(HWND child_window, LPARAM lParam);
-
   // Processes and route salient window messages for mouse handling,
   // size change and DPI.  Delegates handling of these to member overloads that
   // inheriting classes can handle.
@@ -57,16 +59,10 @@ class Win32Window {
   MessageHandler(HWND window, UINT const message, WPARAM const wparam,
                  LPARAM const lparam) noexcept;
 
-  // When WM_DPICHANGE resizes the window to the new suggested
-  // size and notifies inheriting class.
-  LRESULT
-  HandleDpiChange(HWND hWnd, WPARAM wParam, LPARAM lParam);
-
   //// Called when the DPI changes either when a
   //// user drags the window between monitors of differing DPI or when the user
   //// manually changes the scale factor.
   // virtual void OnDpiScale(UINT dpi) = 0;
-
   UINT GetCurrentDPI();
 
  private:

@@ -3,16 +3,17 @@
 // found in the LICENSE file.
 
 #include "win32_window.h"
+
 #include "shellscalingapi.h"
 
 // the Windows DPI system is based on this
 // constant for machines running at 100% scaling.
-constexpr int base_dpi = 96;
+constexpr int kBaseDpi = 96;
 
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
 int Scale(int source, double scale_factor) {
-  return static_cast<int>(static_cast<double>(source * scale_factor));
+  return static_cast<int>(source * scale_factor);
 }
 
 Win32Window::Win32Window() {}
@@ -26,25 +27,18 @@ bool Win32Window::CreateAndShow(const char *title, const unsigned int x,
 
   WNDCLASS window_class = ResgisterWindowClass(title);
 
-  // New windows are created on the default monitor.  Window sizes are specified
-  // to the OS in physical pixels, hence to ensure a consistent size to will
-  // treat the width height passed in to this function as logical pixels and
-  // scale to appropriate for the default monitor.
   HMONITOR defaut_mon = MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
   UINT dpi_x = 0, dpi_y = 0;
   GetDpiForMonitor(defaut_mon, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
 
-  double scaleFactor = static_cast<double>(dpi_x) / base_dpi;
+  double scale_factor = static_cast<double>(dpi_x) / kBaseDpi;
 
-  auto window = CreateWindow(
+  HWND window = CreateWindow(
       window_class.lpszClassName, title, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-      Scale(x, scaleFactor), Scale(y, scaleFactor), Scale(width, scaleFactor),
-      Scale(height, scaleFactor), nullptr, nullptr, window_class.hInstance,
-      this);
-  if (window == nullptr) {
-    return false;
-  }
-  return true;
+      Scale(x, scale_factor), Scale(y, scale_factor),
+      Scale(width, scale_factor), Scale(height, scale_factor), nullptr, nullptr,
+      window_class.hInstance, this);
+  return window != nullptr;
 }
 
 WNDCLASS Win32Window::ResgisterWindowClass(const char *title) {
