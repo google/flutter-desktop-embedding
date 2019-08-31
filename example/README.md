@@ -10,6 +10,9 @@ be evolving over time to better reflect that goal.
 
 See [the main project README](../README.md).
 
+To build without running, use `flutter build macos`/`windows`/`linux` rather than `flutter run`, as with
+a standard Flutter project.
+
 ## Dart Differences from Flutter Template
 
 The `main.dart` and `pubspec.yaml` have minor changes to support desktop:

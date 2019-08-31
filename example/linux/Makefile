@@ -20,6 +20,11 @@
 BINARY_NAME=flutter_desktop_example
 # The C++ code for the embedder application.
 SOURCES=flutter_embedder_example.cc
+# Extra flags (e.g., for library dependencies).
+SYSTEM_LIBRARIES=
+EXTRA_CXXFLAGS=
+EXTRA_CPPFLAGS=$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
+EXTRA_LDFLAGS=$(shell pkg-config --libs $(SYSTEM_LIBRARIES))
 
 # Default build type. For a release build, set BUILD=release.
 # Currently this only sets NDEBUG, which is used to control the flags passed
@@ -38,7 +43,7 @@ FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 
 # Libraries
-FLUTTER_LIB_NAME=flutter_linux
+FLUTTER_LIB_NAME=flutter_linux_glfw
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # Tools
@@ -62,7 +67,7 @@ FLUTTER_LIB_OUT=$(BUNDLE_LIB_DIR)/$(notdir $(FLUTTER_LIB))
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the client.
-WRAPPER_ROOT=$(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper
+WRAPPER_ROOT=$(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper_glfw
 WRAPPER_SOURCES= \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
 	$(WRAPPER_ROOT)/plugin_registrar.cc \
@@ -74,12 +79,13 @@ WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_APP_CACHE_DIR) $(WRAPPER_INCLUDE_DIR)
 
 # Build settings
-CXX=clang++
+CXX=clang++ $(EXTRA_CXXFLAGS)
 CXXFLAGS.release=-DNDEBUG
 CXXFLAGS=-std=c++14 -Wall -Werror $(CXXFLAGS.$(BUILD))
-CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
+CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) $(EXTRA_CPPFLAGS)
 LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 	-l$(FLUTTER_LIB_NAME) \
+	$(EXTRA_LDFLAGS) \
 	-Wl,-rpath=\$$ORIGIN/lib
 
 # Targets

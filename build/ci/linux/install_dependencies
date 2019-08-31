@@ -16,4 +16,4 @@
 
 set -e
 
-sudo apt-get install -y libgtk-3-dev pkg-config
+sudo apt-get install -y libgtk-3-dev libx11-dev pkg-config
