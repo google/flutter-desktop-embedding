@@ -6,8 +6,9 @@ homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugin
 
 flutter:
   plugin:
-    macosPrefix: FLE
-    pluginClass: MenubarPlugin
+    platforms:
+      macos:
+        pluginClass: MenubarPlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
