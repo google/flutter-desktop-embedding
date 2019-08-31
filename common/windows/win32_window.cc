@@ -10,6 +10,8 @@
 // constant for machines running at 100% scaling.
 constexpr int kBaseDpi = 96;
 
+constexpr LPCSTR kClassName = "CLASSNAME";
+
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
 int Scale(int source, double scale_factor) {
@@ -27,9 +29,10 @@ bool Win32Window::CreateAndShow(const char *title, const unsigned int x,
 
   WNDCLASS window_class = ResgisterWindowClass(title);
 
-  HMONITOR defaut_mon = MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
+  HMONITOR defaut_monitor =
+      MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
   UINT dpi_x = 0, dpi_y = 0;
-  GetDpiForMonitor(defaut_mon, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
+  GetDpiForMonitor(defaut_monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
 
   double scale_factor = static_cast<double>(dpi_x) / kBaseDpi;
 
@@ -46,7 +49,7 @@ WNDCLASS Win32Window::ResgisterWindowClass(const char *title) {
 
   WNDCLASS window_class{};
   window_class.hCursor = LoadCursor(nullptr, IDC_ARROW);
-  window_class.lpszClassName = "CLASSNAME";
+  window_class.lpszClassName = kClassName;
   window_class.style = CS_HREDRAW | CS_VREDRAW;
   window_class.cbClsExtra = 0;
   window_class.cbWndExtra = 0;
@@ -80,37 +83,33 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
 LRESULT
 Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
                             LPARAM const lparam) noexcept {
-  int xPos = 0, yPos = 0;
-  UINT width = 0, height = 0;
   auto window =
       reinterpret_cast<Win32Window *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
-  if (window != nullptr) {
-    switch (message) {
-      case WM_DESTROY:
-        messageloop_running_ = false;
-        return 0;
-        break;
+  if (window == nullptr) {
+    return 0;
+  }
 
-      case WM_SIZE:
-        RECT rect;
-        GetClientRect(hwnd, &rect);
-        if (child_content_ != nullptr) {
-          // Size and position the child window.
-          MoveWindow(child_content_, (rect.left), rect.top,
-                     rect.right - rect.left, rect.bottom - rect.top, TRUE);
-        }
-        return 0;
-        break;
+  switch (message) {
+    case WM_DESTROY:
+      messageloop_running_ = false;
+      return 0;
 
-      case WM_ACTIVATE:
-        if (child_content_ != nullptr) {
-          SetFocus(child_content_);
-        }
-        return 0;
-        break;
-    }
-    return DefWindowProc(hwnd, message, wparam, lparam);
+    case WM_SIZE:
+      RECT rect;
+      GetClientRect(hwnd, &rect);
+      if (child_content_ != nullptr) {
+        // Size and position the child window.
+        MoveWindow(child_content_, rect.left, rect.top, rect.right - rect.left,
+                   rect.bottom - rect.top, TRUE);
+      }
+      return 0;
+
+    case WM_ACTIVATE:
+      if (child_content_ != nullptr) {
+        SetFocus(child_content_);
+      }
+      return 0;
   }
 
   return DefWindowProc(window_handle_, message, wparam, lparam);
@@ -122,7 +121,7 @@ void Win32Window::Destroy() {
     window_handle_ = nullptr;
   }
 
-  UnregisterClass("CLASSNAME", nullptr);
+  UnregisterClass(kClassName, nullptr);
 }
 
 Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
@@ -133,12 +132,11 @@ Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
 void Win32Window::SetChildContent(HWND content) {
   child_content_ = content;
   auto res = SetParent(content, window_handle_);
-  RECT rcClient;
-  GetClientRect(window_handle_, &rcClient);
+  RECT frame;
+  GetClientRect(window_handle_, &frame);
 
-  MoveWindow(content, rcClient.left, rcClient.top,
-             rcClient.right - rcClient.left, rcClient.bottom - rcClient.top,
-             true);
+  MoveWindow(content, frame.left, frame.top, frame.right - frame.left,
+             frame.bottom - frame.top, true);
 
   SetFocus(child_content_);
 }
@@ -146,14 +144,15 @@ void Win32Window::SetChildContent(HWND content) {
 void Win32Window::RunMessageLoop(std::function<void()> callback) {
   // Run until the window is closed.
   MSG message;
-  while (GetMessage(&message, nullptr, 0, 0) &&
-         messageloop_running_) {  //&& messageloop_running_) {
+  while (GetMessage(&message, nullptr, 0, 0) && messageloop_running_) {
     TranslateMessage(&message);
     DispatchMessage(&message);
 
-    // Allow flutter view to process it's messages
+    // Allow flutter view to process its messages
     if (callback != nullptr) {
       callback();
     }
   }
 }
+
+HWND Win32Window::GetHandle() { return window_handle_; }

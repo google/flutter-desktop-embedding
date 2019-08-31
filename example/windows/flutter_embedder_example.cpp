@@ -74,8 +74,7 @@ int main(int argc, char **argv) {
   }
 
   // Parent and resize Flutter view into top-level window.
-  window.SetChildContent(
-      reinterpret_cast<HWND>(flutter_controller.GetNativeWindow()));
+  window.SetChildContent(flutter_controller.GetNativeWindow());
 
   // run messageloop with a hook for flutter_view to do work
   window.RunMessageLoop(
