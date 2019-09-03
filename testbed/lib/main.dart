@@ -24,6 +24,7 @@ import 'package:example_flutter/keyboard_test_page.dart';
 import 'package:example_plugin/example_plugin.dart' as example_plugin;
 import 'package:file_chooser/file_chooser.dart' as file_chooser;
 import 'package:menubar/menubar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
@@ -314,13 +315,22 @@ class FileChooserTestWidget extends StatelessWidget {
         ),
         new FlatButton(
           child: const Text('OPEN'),
-          onPressed: () {
-            file_chooser.showOpenPanel((result, paths) {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(_resultTextForFileChooserOperation(
-                    _FileChooserType.open, result, paths)),
-              ));
-            }, allowsMultipleSelection: true);
+          onPressed: () async {
+            String initialDirectory;
+            if (Platform.isMacOS) {
+              initialDirectory =
+                  (await getApplicationDocumentsDirectory()).path;
+            }
+            file_chooser.showOpenPanel(
+              (result, paths) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(_resultTextForFileChooserOperation(
+                      _FileChooserType.open, result, paths)),
+                ));
+              },
+              allowsMultipleSelection: true,
+              initialDirectory: initialDirectory,
+            );
           },
         ),
       ],
