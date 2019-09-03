@@ -23,7 +23,7 @@ public class ExamplePlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    if (call.method == "getPlatformVersion") {
+    if call.method == "getPlatformVersion" {
       result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
     } else {
       result(FlutterMethodNotImplemented);

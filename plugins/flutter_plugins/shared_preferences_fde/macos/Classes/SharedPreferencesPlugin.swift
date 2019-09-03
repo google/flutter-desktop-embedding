@@ -1,6 +1,16 @@
-// Copyright 2019 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2019 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 import FlutterMacOS
 import Foundation
@@ -24,19 +34,19 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin {
               method == "setDouble" ||
               method == "setString" ||
               method == "setStringList" {
-      let arguments = call.arguments as! [String : Any]
+      let arguments = call.arguments as! [String: Any]
       let key = arguments["key"] as! String
       UserDefaults.standard.set(arguments["value"], forKey: key)
       result(true)
-    } else if (method == "commit") {
+    } else if method == "commit" {
       // UserDefaults does not need to be synchronized.
       result(true)
-    } else if (method == "remove") {
-      let arguments = call.arguments as! [String : Any]
+    } else if method == "remove" {
+      let arguments = call.arguments as! [String: Any]
       let key = arguments["key"] as! String
       UserDefaults.standard.removeObject(forKey: key)
       result(true)
-    } else if (method == "clear") {
+    } else if method == "clear" {
       let defaults = UserDefaults.standard
       for (key, _) in getAllPrefs() {
         defaults.removeObject(forKey: key)
@@ -48,14 +58,13 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin {
   }
 }
 
-private func getAllPrefs() -> [String : Any] {
-  var filteredPrefs: [String : Any] = [:]
+/// Returns all preferences stored by this plugin.
+private func getAllPrefs() -> [String: Any] {
+  var filteredPrefs: [String: Any] = [:]
   if let appDomain = Bundle.main.bundleIdentifier,
      let prefs = UserDefaults.standard.persistentDomain(forName: appDomain) {
-    for (key, value) in prefs {
-      if key.hasPrefix("flutter.") {
-        filteredPrefs[key] = value
-      }
+    for (key, value) in prefs where key.hasPrefix("flutter.") {
+      filteredPrefs[key] = value
     }
   }
   return filteredPrefs
