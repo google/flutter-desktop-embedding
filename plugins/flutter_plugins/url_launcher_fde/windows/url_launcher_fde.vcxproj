@@ -15,7 +15,7 @@
     <ProjectGuid>{18F565CD-7BD5-459C-9FEB-2E2379E88105}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>UrlLauncherPlugin</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
