@@ -69,12 +69,13 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 #ifndef _DEBUG
   arguments.push_back("--disable-dart-asserts");
 #endif
-  // Height and width for content and top-level window.
-  const int width = 800;
-  const int height = 600;
+
+  // Top-level window frame.
+  Win32Window::Point origin(10, 10);
+  Win32Window::Size size(800, 600);
 
   flutter::FlutterViewController flutter_controller(
-      icu_data_path, width, height, assets_path, arguments);
+      icu_data_path, size.width, size.height, assets_path, arguments);
 
   // Register any native plugins.
   ExamplePluginRegisterWithRegistrar(
@@ -84,7 +85,7 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
-  if (!window.CreateAndShow(L"Testbed", 10, 10, width, height)) {
+  if (!window.CreateAndShow(L"Testbed", origin, size)) {
     return EXIT_FAILURE;
   }
 

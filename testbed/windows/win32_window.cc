@@ -22,9 +22,8 @@ Win32Window::Win32Window() {}
 
 Win32Window::~Win32Window() { Destroy(); }
 
-bool Win32Window::CreateAndShow(const std::wstring &title, unsigned int x,
-                                unsigned int y, unsigned int width,
-                                unsigned int height) {
+bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
+                                const Size &size) {
   Destroy();
 
   WNDCLASS window_class = RegisterWindowClass();
@@ -37,9 +36,10 @@ bool Win32Window::CreateAndShow(const std::wstring &title, unsigned int x,
   double scale_factor = static_cast<double>(dpi_x) / kBaseDpi;
 
   HWND window = CreateWindow(
-      window_class.lpszClassName, title.c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-      Scale(x, scale_factor), Scale(y, scale_factor),
-      Scale(width, scale_factor), Scale(height, scale_factor), nullptr, nullptr,
+      window_class.lpszClassName, title.c_str(),
+      WS_OVERLAPPEDWINDOW | WS_VISIBLE, Scale(origin.x, scale_factor),
+      Scale(origin.y, scale_factor), Scale(size.width, scale_factor),
+      Scale(size.height, scale_factor), nullptr, nullptr,
       window_class.hInstance, this);
   return window != nullptr;
 }
