@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <codecvt>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -31,12 +32,13 @@ namespace {
 // Returns the path of the directory containing this executable, or an empty
 // string if the directory cannot be found.
 std::string GetExecutableDirectory() {
-  char buffer[MAX_PATH];
+  wchar_t buffer[MAX_PATH];
   if (GetModuleFileName(nullptr, buffer, MAX_PATH) == 0) {
     std::cerr << "Couldn't locate executable" << std::endl;
     return "";
   }
-  std::string executable_path(buffer);
+  std::wstring_convert<std::codecvt_utf8<wchar_t>> wide_to_utf8;
+  std::string executable_path = wide_to_utf8.to_bytes(buffer);
   size_t last_separator_position = executable_path.find_last_of('\\');
   if (last_separator_position == std::string::npos) {
     std::cerr << "Unabled to find parent directory of " << executable_path
@@ -77,7 +79,7 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
-  if (!window.CreateAndShow("Flutter Desktop Example", 10, 10, width, height)) {
+  if (!window.CreateAndShow(L"Flutter Desktop Example", 10, 10, width, height)) {
     return EXIT_FAILURE;
   }
 

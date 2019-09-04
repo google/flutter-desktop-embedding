@@ -26,9 +26,8 @@ class Win32Window {
   // ensure a consistent size to will treat the width height passed in to this
   // function as logical pixels and scale to appropriate for the default
   // monitor. Returns false if window couldn't be created otherwise true.
-  bool CreateAndShow(const char *title, const unsigned int x,
-                     const unsigned int y, const unsigned int width,
-                     const unsigned int height);
+  bool CreateAndShow(const std::wstring &title, unsigned int x, unsigned int y,
+                     unsigned int width, unsigned int height);
 
   // Release OS resources asociated with window.
   void Destroy();
@@ -47,7 +46,7 @@ class Win32Window {
  protected:
   // Registers a window class with default style attributes, cursor and
   // icon.
-  WNDCLASS ResgisterWindowClass(const char *title);
+  WNDCLASS RegisterWindowClass();
 
   // OS callback called by message pump.  Handles the WM_NCCREATE message which
   // is passed when the non-client area is being created and enables automatic
@@ -84,9 +83,6 @@ class Win32Window {
 
   // window handle for hosted content.
   HWND child_content_ = nullptr;
-
-  // Member variable to hold the window title.
-  const char *window_class_name_;
 
   //// Member variable referencing an instance of dpi_helper used to abstract
   /// some / aspects of win32 High DPI handling across different OS versions.

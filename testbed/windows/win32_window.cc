@@ -10,7 +10,7 @@
 // constant for machines running at 100% scaling.
 constexpr int kBaseDpi = 96;
 
-constexpr LPCSTR kClassName = "CLASSNAME";
+constexpr LPCWSTR kClassName = L"CLASSNAME";
 
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
@@ -22,12 +22,12 @@ Win32Window::Win32Window() {}
 
 Win32Window::~Win32Window() { Destroy(); }
 
-bool Win32Window::CreateAndShow(const char *title, const unsigned int x,
-                                const unsigned int y, const unsigned int width,
-                                const unsigned int height) {
+bool Win32Window::CreateAndShow(const std::wstring &title, unsigned int x,
+                                unsigned int y, unsigned int width,
+                                unsigned int height) {
   Destroy();
 
-  WNDCLASS window_class = ResgisterWindowClass(title);
+  WNDCLASS window_class = RegisterWindowClass();
 
   HMONITOR defaut_monitor =
       MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
@@ -37,16 +37,14 @@ bool Win32Window::CreateAndShow(const char *title, const unsigned int x,
   double scale_factor = static_cast<double>(dpi_x) / kBaseDpi;
 
   HWND window = CreateWindow(
-      window_class.lpszClassName, title, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+      window_class.lpszClassName, title.c_str(), WS_OVERLAPPEDWINDOW | WS_VISIBLE,
       Scale(x, scale_factor), Scale(y, scale_factor),
       Scale(width, scale_factor), Scale(height, scale_factor), nullptr, nullptr,
       window_class.hInstance, this);
   return window != nullptr;
 }
 
-WNDCLASS Win32Window::ResgisterWindowClass(const char *title) {
-  window_class_name_ = title;
-
+WNDCLASS Win32Window::RegisterWindowClass() {
   WNDCLASS window_class{};
   window_class.hCursor = LoadCursor(nullptr, IDC_ARROW);
   window_class.lpszClassName = kClassName;
