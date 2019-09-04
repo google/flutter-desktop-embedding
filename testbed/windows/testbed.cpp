@@ -82,9 +82,21 @@ int APIENTRY wWinMain(HINSTANCE instance,
   flutter::FlutterViewController flutter_controller(
       icu_data_path, width, height, assets_path, arguments);
 
+  // Register any native plugins.
+  ExamplePluginRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
+  UrlLauncherRegisterWithRegistrar(
+      flutter_controller.GetRegistrarForPlugin("UrlLauncherPlugin"));
+
+  // Create a top-level win32 window to host the Flutter view.
+  Win32Window window;
+  if (!window.CreateAndShow("Flutter Desktop Example", 10, 10, width, height)) {
+    return EXIT_FAILURE;
+  }
+
   window.SetChildContent(flutter_controller.GetNativeWindow());
 
-  // run messageloop with a hook for flutter_view to do work
+  // Run messageloop with a hook for flutter_view to do work.
   window.RunMessageLoop(
       [&flutter_controller]() { flutter_controller.ProcessMessages(); });
 

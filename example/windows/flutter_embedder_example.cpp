@@ -86,7 +86,7 @@ int APIENTRY wWinMain(HINSTANCE instance,
   // Parent and resize Flutter view into top-level window.
   window.SetChildContent(flutter_controller.GetNativeWindow());
 
-  // run messageloop with a hook for flutter_view to do work
+  // Run messageloop with a hook for flutter_view to do work.
   window.RunMessageLoop(
       [&flutter_controller]() { flutter_controller.ProcessMessages(); });
 
