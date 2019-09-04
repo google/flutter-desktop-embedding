@@ -12,22 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <example_plugin.h>
+#include <flutter/flutter_view_controller.h>
+#include <url_launcher_fde.h>
+#include <windows.h>
+
 #include <codecvt>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include <example_plugin.h>
-#include <flutter/flutter_view_controller.h>
-#include <url_launcher_fde.h>
-
 #include "win32_window.h"
-
-// Include windows.h last, to minimize potential conflicts. The CreateWindow
-// macro needs to be undefined because it prevents calling
-// FlutterWindowController's method.
-#include <windows.h>
-#undef CreateWindow
 
 namespace {
 

@@ -12,20 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <flutter/flutter_view_controller.h>
+#include <windows.h>
+
 #include <codecvt>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include <flutter/flutter_view_controller.h>
-
 #include "win32_window.h"
-
-// Include windows.h last, to minimize potential conflicts. The CreateWindow
-// macro needs to be undefined because it prevents calling
-// FlutterWindowController's method.
-#include <windows.h>
-#undef CreateWindow
 
 namespace {
 
@@ -79,7 +74,8 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
-  if (!window.CreateAndShow(L"Flutter Desktop Example", 10, 10, width, height)) {
+  if (!window.CreateAndShow(L"Flutter Desktop Example", 10, 10, width,
+                            height)) {
     return EXIT_FAILURE;
   }
 
