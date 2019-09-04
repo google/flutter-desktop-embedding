@@ -36,6 +36,9 @@ support](https://github.com/flutter/flutter/wiki/Desktop-shells), especially
 the [Flutter Application Requirements
 section](https://github.com/flutter/flutter/wiki/Desktop-shells#flutter-application-requirements).
 
+If you are building for macOS, you should also read about [managing macOS
+security configurations](../macOS-Security.md).
+
 ### Copy the 'linux', 'macos', and/or 'windows' Directories
 
 These directories are self-contained, and can be copied to an existing
