@@ -6,8 +6,9 @@ homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugin
 
 flutter:
   plugin:
-    macosPrefix: unused
-    pluginClass: ConnectivityPlugin
+    platforms:
+      macos:
+        pluginClass: ConnectivityPlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
