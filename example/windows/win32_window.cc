@@ -6,6 +6,8 @@
 
 #include "shellscalingapi.h"
 
+namespace {
+
 // the Windows DPI system is based on this
 // constant for machines running at 100% scaling.
 constexpr int kBaseDpi = 96;
@@ -17,6 +19,8 @@ constexpr LPCWSTR kClassName = L"CLASSNAME";
 int Scale(int source, double scale_factor) {
   return static_cast<int>(source * scale_factor);
 }
+
+}  // namespace
 
 Win32Window::Win32Window() {}
 
