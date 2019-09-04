@@ -18,9 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="flutter_embedder_example.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\engine_method_result.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
@@ -31,6 +28,9 @@
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="win32_window.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
