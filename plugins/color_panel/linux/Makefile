@@ -44,7 +44,7 @@ OBJ_DIR=$(PLUGIN_OUT_DIR)/obj
 FLUTTER_CACHE_DIR=$(PLUGIN_OUT_DIR)/flutter
 
 # Flutter library
-FLUTTER_LIB_NAME=flutter_linux
+FLUTTER_LIB_NAME=flutter_linux_glfw
 FLUTTER_LIB=$(FLUTTER_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # If FLUTTER_ROOT is set, use that version of Flutter. Otherwise, assume that
@@ -72,7 +72,7 @@ endif
 # Use abspath for the wrapper root, which can contain relative paths; the
 # intermediate build files will be based on the source path, which will cause
 # issues if they start with one or more '../'s.
-WRAPPER_ROOT=$(abspath $(FLUTTER_CACHE_DIR)/cpp_client_wrapper)
+WRAPPER_ROOT=$(abspath $(FLUTTER_CACHE_DIR)/cpp_client_wrapper_glfw)
 # TODO: Once JSON codec files are merged, make a PLUGIN_CODEC variable in the
 # top section. For now, using JSON codec would require changes here.
 WRAPPER_SOURCES= \

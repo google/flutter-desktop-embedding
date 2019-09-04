@@ -10,6 +10,9 @@ be evolving over time to better reflect that goal.
 
 See [the main project README](../README.md).
 
+To build without running, use `flutter build macos`/`windows`/`linux` rather than `flutter run`, as with
+a standard Flutter project.
+
 ## Dart Differences from Flutter Template
 
 The `main.dart` and `pubspec.yaml` have minor changes to support desktop:
@@ -32,6 +35,9 @@ With either approach, be sure to read the [Flutter page on desktop
 support](https://github.com/flutter/flutter/wiki/Desktop-shells), especially
 the [Flutter Application Requirements
 section](https://github.com/flutter/flutter/wiki/Desktop-shells#flutter-application-requirements).
+
+If you are building for macOS, you should also read about [managing macOS
+security configurations](../macOS-Security.md).
 
 ### Copy the 'linux', 'macos', and/or 'windows' Directories
 

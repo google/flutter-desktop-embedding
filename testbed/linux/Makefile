@@ -18,6 +18,11 @@ BINARY_NAME=testbed
 FDE_ROOT=$(CURDIR)/../..
 # The C++ code for the embedder application.
 SOURCES=testbed.cc
+# Extra flags (e.g., for library dependencies).
+SYSTEM_LIBRARIES=gtk+-3.0 x11
+EXTRA_CXXFLAGS=
+EXTRA_CPPFLAGS=$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
+EXTRA_LDFLAGS=$(shell pkg-config --libs $(SYSTEM_LIBRARIES))
 
 # Plugins to include from the flutter-desktop-embedding plugins/ directory.
 PLUGIN_NAMES=color_panel file_chooser menubar window_size
@@ -44,7 +49,7 @@ FLUTTER_PLUGINS_DIR=$(PLUGINS_DIR)/flutter_plugins
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 
 # Libraries
-FLUTTER_LIB_NAME=flutter_linux
+FLUTTER_LIB_NAME=flutter_linux_glfw
 FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
 # The name of each plugin library is the name of its directory with _plugin
 # appended. The exception is example_plugin (to avoid confusion with the
@@ -74,7 +79,7 @@ ALL_LIBS_OUT=$(foreach lib,$(ALL_LIBS),$(BUNDLE_LIB_DIR)/$(notdir $(lib)))
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the client.
-WRAPPER_ROOT=$(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper
+WRAPPER_ROOT=$(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper_glfw
 WRAPPER_SOURCES= \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
 	$(WRAPPER_ROOT)/plugin_registrar.cc \
@@ -89,13 +94,14 @@ INCLUDE_DIRS=$(FLUTTER_APP_CACHE_DIR) $(PLUGIN_INCLUDE_DIRS) \
 	$(WRAPPER_INCLUDE_DIR)
 
 # Build settings
-CXX=clang++
+CXX=clang++ $(EXTRA_CXXFLAGS)
 CXXFLAGS.release=-DNDEBUG
 CXXFLAGS=-std=c++14 -Wall -Werror $(CXXFLAGS.$(BUILD))
-CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS))
+CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) $(EXTRA_CPPFLAGS)
 LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 	-l$(FLUTTER_LIB_NAME) \
 	$(patsubst %,-l%,$(PLUGIN_LIB_NAMES)) \
+	$(EXTRA_LDFLAGS) \
 	-Wl,-rpath=\$$ORIGIN/lib
 
 # Targets

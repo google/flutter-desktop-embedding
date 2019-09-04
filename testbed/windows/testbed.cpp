@@ -51,7 +51,16 @@ std::string GetExecutableDirectory() {
 
 }  // namespace
 
-int main(int argc, char **argv) {
+int APIENTRY wWinMain(HINSTANCE instance,
+                      HINSTANCE prev,
+                      wchar_t *command_line,
+                      int show_command) {
+  // Attach to console when present (e.g., 'flutter run') or create a
+  // new console when running with a debugger.
+  if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
+    ::AllocConsole();
+  }
+
   // Resources are located relative to the executable.
   std::string base_directory = GetExecutableDirectory();
   if (base_directory.empty()) {
@@ -66,26 +75,13 @@ int main(int argc, char **argv) {
 #ifndef _DEBUG
   arguments.push_back("--disable-dart-asserts");
 #endif
-
   // Height and width for content and top-level window.
-  const int width = 800, height = 600;
+  const int width = 800;
+  const int height = 600;
 
   flutter::FlutterViewController flutter_controller(
       icu_data_path, width, height, assets_path, arguments);
 
-  // Register any native plugins.
-  ExamplePluginRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
-  UrlLauncherRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("UrlLauncherPlugin"));
-
-  // Create a top-level window to host flutter content
-  Win32Window window;
-  if (!window.CreateAndShow("Flutter Desktop testbed", 10, 10, width, height)) {
-    return EXIT_FAILURE;
-  }
-
-  // Parent and resize Flutter view into top-level window.
   window.SetChildContent(flutter_controller.GetNativeWindow());
 
   // run messageloop with a hook for flutter_view to do work

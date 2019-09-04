@@ -13,7 +13,7 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\cpp_client_wrapper">
+    <Filter Include="Source Files\cpp_client_wrapper_glfw">
       <UniqueIdentifier>{dbe2dac9-4a21-4849-bef5-2069d695609d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -29,14 +29,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="flutter\cpp_client_wrapper\plugin_registrar.cc">
-      <Filter>Source Files\cpp_client_wrapper</Filter>
+    <ClCompile Include="flutter\cpp_client_wrapper_glfw\plugin_registrar.cc">
+      <Filter>Source Files\cpp_client_wrapper_glfw</Filter>
     </ClCompile>
-    <ClCompile Include="flutter\cpp_client_wrapper\standard_codec.cc">
-      <Filter>Source Files\cpp_client_wrapper</Filter>
+    <ClCompile Include="flutter\cpp_client_wrapper_glfw\standard_codec.cc">
+      <Filter>Source Files\cpp_client_wrapper_glfw</Filter>
     </ClCompile>
-    <ClCompile Include="flutter\cpp_client_wrapper\engine_method_result.cc">
-      <Filter>Source Files\cpp_client_wrapper</Filter>
+    <ClCompile Include="flutter\cpp_client_wrapper_glfw\engine_method_result.cc">
+      <Filter>Source Files\cpp_client_wrapper_glfw</Filter>
     </ClCompile>
     <ClCompile Include="example_plugin.cpp">
       <Filter>Source Files</Filter>

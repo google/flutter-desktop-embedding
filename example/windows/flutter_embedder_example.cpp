@@ -48,7 +48,16 @@ std::string GetExecutableDirectory() {
 
 }  // namespace
 
-int main(int argc, char **argv) {
+int APIENTRY wWinMain(HINSTANCE instance,
+                      HINSTANCE prev,
+                      wchar_t *command_line,
+                      int show_command) {
+  // Attach to console when present (e.g., 'flutter run') or create a
+  // new console when running with a debugger.
+  if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
+    ::AllocConsole();
+  }
+
   // Resources are located relative to the executable.
   std::string base_directory = GetExecutableDirectory();
   if (base_directory.empty()) {
@@ -62,7 +71,8 @@ int main(int argc, char **argv) {
   std::vector<std::string> arguments;
 
   // Height and width for content and top-level window.
-  const int width = 800, height = 600;
+  const int width = 800;
+  const int height = 600;
 
   flutter::FlutterViewController flutter_controller(
       icu_data_path, width, height, assets_path, arguments);
