@@ -16,9 +16,9 @@
 #include <string>
 #include <vector>
 
-#include "flutter/flutter_view_controller.h"
+#include <flutter/flutter_view_controller.h>
 
-#include "..\..\common\windows\win32_window.h"
+#include "win32_window.h"
 
 // Include windows.h last, to minimize potential conflicts. The CreateWindow
 // macro needs to be undefined because it prevents calling
@@ -48,9 +48,7 @@ std::string GetExecutableDirectory() {
 
 }  // namespace
 
-int APIENTRY wWinMain(HINSTANCE instance,
-                      HINSTANCE prev,
-                      wchar_t *command_line,
+int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
                       int show_command) {
   // Attach to console when present (e.g., 'flutter run') or create a
   // new console when running with a debugger.

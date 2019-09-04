@@ -27,7 +27,7 @@
     <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\engine_method_result.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\common\windows\win32_window.cc">
+    <ClCompile Include="win32_window.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="flutter\cpp_client_wrapper\flutter_view_controller.cc">
@@ -35,7 +35,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\common\windows\win32_window.h">
+    <ClInclude Include="win32_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
