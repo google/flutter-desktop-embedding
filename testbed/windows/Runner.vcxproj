@@ -157,7 +157,7 @@
     <ClInclude Include="win32_window.h" />
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="testbed.exe.manifest" />
+    <Manifest Include="runner.exe.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

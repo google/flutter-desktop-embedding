@@ -40,6 +40,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="testbed.exe.manifest" />
+    <Manifest Include="runner.exe.manifest" />
   </ItemGroup>
 </Project>
