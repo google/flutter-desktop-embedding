@@ -13,7 +13,8 @@ If you are used to managing entitlement files through the Xcode capabilities UI,
 be aware that it appears that the capabilities editor will update only one of
 the two files, or in some cases create a whole new entitlements file and switch
 the project to use it for all configurations, either of which will cause issues.
-The recommended approach is to edit the files directly.
+The recommended approach is to edit the files directly. Unless you have a very
+specific reason, you should always make identical changes to both files.
 
 ## App Sandbox Entitlements
 
