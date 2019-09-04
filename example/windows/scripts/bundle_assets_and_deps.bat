@@ -39,5 +39,5 @@ call xcopy /y /d /q "%FLUTTER_CACHE_DIR%icudtl.dat" "%DATA_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Copy the Flutter DLL to the target location.
-call xcopy /y /d /q "%FLUTTER_CACHE_DIR%flutter_windows_glfw.dll" "%BUNDLE_DIR%"
+call xcopy /y /d /q "%FLUTTER_CACHE_DIR%flutter_windows.dll" "%BUNDLE_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%

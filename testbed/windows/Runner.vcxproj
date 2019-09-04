@@ -49,14 +49,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper_glfw\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\;$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)flutter;$(OutDir)..\Plugins;$(LibraryPath)</LibraryPath>
     <TargetName>Testbed</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper_glfw\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\;$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)flutter;$(OutDir)..\Plugins;$(LibraryPath)</LibraryPath>
     <TargetName>Testbed</TargetName>
   </PropertyGroup>
