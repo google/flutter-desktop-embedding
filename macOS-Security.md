@@ -28,6 +28,13 @@ For instance, using the file\_chooser plugin requires adding either the
 Using App Sandbox is required if you plan to distribute your application in the
 App Store.
 
+**Important**: `com.apple.security.network.server`, which allows incoming
+network connections, is enabled by default only for Debug and Profile
+(to enable the Dart observatory). If you need to allow incoming network
+requests in your application, you must add it to `Runner-Release.entitlements`
+as well, otherwise your app will work correctly in Debug testing, but fail
+with Release builds.
+
 ## Hardened Runtime
 
 If you choose to distribute your application outside the App Store, you will
