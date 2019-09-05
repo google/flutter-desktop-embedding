@@ -15,15 +15,9 @@
 #include "plugin_registrant.h"
 
 // Add plugin headers here.
-#include <example_plugin.h>
-#include <url_launcher_fde.h>
 
 void RegisterPlugins(flutter::FlutterViewController *registry) {
   // In the future, when the Flutter tooling supports Windows plugins, this will
   // be replaced by a generated plugin registration. For now, plugins must be
   // added here manually.
-  ExamplePluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("ExamplePlugin"));
-  UrlLauncherRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("UrlLauncherPlugin"));
 }

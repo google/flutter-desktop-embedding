@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "plugin_registrant.h"
 #include "win32_window.h"
 
 namespace {
@@ -71,6 +72,7 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   flutter::FlutterViewController flutter_controller(
       icu_data_path, size.width, size.height, assets_path, arguments);
+  RegisterPlugins(&flutter_controller);
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
