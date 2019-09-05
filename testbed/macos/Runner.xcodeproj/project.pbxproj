@@ -277,10 +277,13 @@
 			files = (
 			);
 			inputFileListPaths = (
+				"Flutter/ephemeral/FlutterInputs.xcfilelist"
 			);
 			inputPaths = (
+				"Flutter/ephemeral/tripwire"
 			);
 			outputFileListPaths = (
+				"Flutter/ephemeral/FlutterOutputs.xcfilelist"
 			);
 			outputPaths = (
 			);
