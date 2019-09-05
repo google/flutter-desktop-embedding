@@ -63,8 +63,6 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private func statusFromReachability(reachability: Reachability?) -> String {
     if reachability?.isReachableViaWiFi() ?? false {
       return "wifi"
-    } else if reachability?.isReachableViaWWAN() ?? false {
-      return "mobile"
     }
 
     return "none"
