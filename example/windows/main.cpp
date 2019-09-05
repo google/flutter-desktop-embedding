@@ -12,9 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <example_plugin.h>
 #include <flutter/flutter_view_controller.h>
-#include <url_launcher_fde.h>
 #include <windows.h>
 
 #include <codecvt>
@@ -22,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "plugin_registrant.h"
 #include "win32_window.h"
 
 namespace {
@@ -66,9 +65,6 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   // Arguments for the Flutter Engine.
   std::vector<std::string> arguments;
-#ifndef _DEBUG
-  arguments.push_back("--disable-dart-asserts");
-#endif
 
   // Top-level window frame.
   Win32Window::Point origin(10, 10);
@@ -76,19 +72,15 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   flutter::FlutterViewController flutter_controller(
       icu_data_path, size.width, size.height, assets_path, arguments);
-
-  // Register any native plugins.
-  ExamplePluginRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
-  UrlLauncherRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("UrlLauncherPlugin"));
+  RegisterPlugins(&flutter_controller);
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
-  if (!window.CreateAndShow(L"Testbed", origin, size)) {
+  if (!window.CreateAndShow(L"Flutter Desktop Example", origin, size)) {
     return EXIT_FAILURE;
   }
 
+  // Parent and resize Flutter view into top-level window.
   window.SetChildContent(flutter_controller.GetNativeWindow());
 
   // Run messageloop with a hook for flutter_view to do work.
