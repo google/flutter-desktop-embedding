@@ -147,6 +147,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="plugin_registrant.cpp" />
     <ClCompile Include="win32_window.cc" />
     <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\engine_method_result.cc" />
     <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\plugin_registrar.cc" />
@@ -154,6 +155,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="plugin_registrant.h" />
     <ClInclude Include="win32_window.h" />
   </ItemGroup>
   <ItemGroup>
