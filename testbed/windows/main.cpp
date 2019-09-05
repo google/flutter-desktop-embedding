@@ -22,6 +22,7 @@
 
 #include "plugin_registrant.h"
 #include "win32_window.h"
+#include "window_configuration.h"
 
 namespace {
 
@@ -70,8 +71,8 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 #endif
 
   // Top-level window frame.
-  Win32Window::Point origin(10, 10);
-  Win32Window::Size size(800, 600);
+  Win32Window::Point origin(kFlutterWindowOriginX, kFlutterWindowOriginY);
+  Win32Window::Size size(kFlutterWindowWidth, kFlutterWindowHeight);
 
   flutter::FlutterViewController flutter_controller(
       icu_data_path, size.width, size.height, assets_path, arguments);
@@ -79,10 +80,11 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
-  if (!window.CreateAndShow(L"Testbed", origin, size)) {
+  if (!window.CreateAndShow(kFlutterWindowTitle, origin, size)) {
     return EXIT_FAILURE;
   }
 
+  // Parent and resize Flutter view into top-level window.
   window.SetChildContent(flutter_controller.GetNativeWindow());
 
   // Run messageloop with a hook for flutter_view to do work.
