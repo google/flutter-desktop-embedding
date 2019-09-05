@@ -19,7 +19,7 @@
 # Executable name.
 BINARY_NAME=flutter_desktop_example
 # The C++ code for the embedder application.
-SOURCES=flutter_embedder_example.cc
+SOURCES=main.cc
 # Extra flags (e.g., for library dependencies).
 SYSTEM_LIBRARIES=
 EXTRA_CXXFLAGS=
