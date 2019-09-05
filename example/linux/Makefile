@@ -18,8 +18,8 @@
 
 # Executable name.
 BINARY_NAME=flutter_desktop_example
-# The C++ code for the embedder application.
-SOURCES=main.cc
+# Any extra source files to build.
+EXTRA_SOURCES=
 # Extra flags (e.g., for library dependencies).
 SYSTEM_LIBRARIES=
 EXTRA_CXXFLAGS=
@@ -45,6 +45,7 @@ FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
+OBJ_DIR=$(OUT_DIR)/obj
 
 # Libraries
 FLUTTER_LIB_NAME=flutter_linux_glfw
@@ -71,12 +72,18 @@ FLUTTER_LIB_OUT=$(BUNDLE_LIB_DIR)/$(notdir $(FLUTTER_LIB))
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the client.
-WRAPPER_ROOT=$(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper_glfw
+# Use abspath for the wrapper root, which can contain relative paths; the
+# intermediate build files will be based on the source path, which will cause
+# issues if they start with one or more '../'s.
+WRAPPER_ROOT=$(abspath $(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper_glfw)
 WRAPPER_SOURCES= \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
 	$(WRAPPER_ROOT)/plugin_registrar.cc \
 	$(WRAPPER_ROOT)/engine_method_result.cc
-SOURCES+=$(WRAPPER_SOURCES)
+
+# Use abspath for extra sources, which may also contain relative paths (see
+# note above about WRAPPER_ROOT).
+SOURCES=main.cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
@@ -92,6 +99,10 @@ LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 	$(EXTRA_LDFLAGS) \
 	-Wl,-rpath=\$$ORIGIN/lib
 
+# Intermediate files.
+OBJ_FILES=$(SOURCES:%.cc=$(OBJ_DIR)/%.o)
+DEPENDENCY_FILES=$(OBJ_FILES:%.o=%.d)
+
 # Targets
 
 .PHONY: all
@@ -106,9 +117,9 @@ sync: flutter/generated_config
 .PHONY: bundle
 bundle: $(ICU_DATA_OUT) $(FLUTTER_LIB_OUT) bundleflutterassets
 
-$(BIN_OUT): $(SOURCES) $(FLUTTER_LIB_OUT)
+$(BIN_OUT): $(OBJ_FILES) $(FLUTTER_LIB_OUT)
 	mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(SOURCES) $(LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OBJ_FILES) $(LDFLAGS) -o $@
 
 $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE): \
 	| sync
@@ -120,6 +131,12 @@ $(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 $(ICU_DATA_OUT): $(ICU_DATA_SOURCE)
 	mkdir -p $(dir $(ICU_DATA_OUT))
 	cp $(ICU_DATA_SOURCE) $(ICU_DATA_OUT)
+
+-include $(DEPENDENCY_FILES)
+
+$(OBJ_DIR)/%.o : %.cc | sync
+	mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MMD -c $< -o $@
 
 # Fully re-copy the assets directory on each build to avoid having to keep a
 # comprehensive list of all asset files here, which would be fragile to changes
