@@ -23,8 +23,12 @@ SOURCES=flutter_embedder_example.cc
 # Extra flags (e.g., for library dependencies).
 SYSTEM_LIBRARIES=
 EXTRA_CXXFLAGS=
-EXTRA_CPPFLAGS=$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
-EXTRA_LDFLAGS=$(shell pkg-config --libs $(SYSTEM_LIBRARIES))
+EXTRA_CPPFLAGS=
+EXTRA_LDFLAGS=
+ifneq ($(strip $(SYSTEM_LIBRARIES)),)
+EXTRA_CPPFLAGS+=$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
+EXTRA_LDFLAGS+=$(shell pkg-config --libs $(SYSTEM_LIBRARIES))
+endif
 
 # Default build type. For a release build, set BUILD=release.
 # Currently this only sets NDEBUG, which is used to control the flags passed
