@@ -61,6 +61,7 @@ public class ConnectivityPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   ///   - reachability: an instance of reachability
   /// - Returns: connection type string
   private func statusFromReachability(reachability: Reachability?) -> String {
+    // checks any non-WWAN connection
     if reachability?.isReachableViaWiFi() ?? false {
       return "wifi"
     }
