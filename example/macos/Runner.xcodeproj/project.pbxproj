@@ -269,7 +269,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh\n";
+			shellScript = "touch Flutter/ephemeral/tripwire\n\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

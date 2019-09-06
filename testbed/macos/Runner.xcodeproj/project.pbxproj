@@ -289,7 +289,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh\n";
+			shellScript = "touch Flutter/ephemeral/tripwire\n\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh\n";
 		};
 		479E5632A9025A8F2712C213 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
