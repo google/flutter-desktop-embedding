@@ -55,5 +55,5 @@ are non-trivial is a known issue.
 - **Application Icon**: Prepare image data using the method of your choice
   (e.g., by loading from a file in a set location; this may require the use
   of a third-party library depending on the image format) and call `SetIcon`
-  on `flutter_controller->window()`. See the `SetIcon` comment in
+  on `flutter_controller.window()`. See the `SetIcon` comment in
   `flutter_window.h` for the required format.
