@@ -36,6 +36,8 @@ support](https://github.com/flutter/flutter/wiki/Desktop-shells), especially
 the [Flutter Application Requirements
 section](https://github.com/flutter/flutter/wiki/Desktop-shells#flutter-application-requirements).
 
+See [Application Customization](App-Customization.md) for premilinary
+documenation on modifying basic application information like name and icon.
 If you are building for macOS, you should also read about [managing macOS
 security configurations](../macOS-Security.md).
 
