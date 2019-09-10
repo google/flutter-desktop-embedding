@@ -38,11 +38,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
    * Returns the name of the application as set in the Info.plist
    */
   private func applicationName() -> String {
-    var applicationName : String? = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+    var applicationName: String? = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName")
+      as? String
     if applicationName == nil {
       applicationName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
     }
     return applicationName!
   }
 }
-

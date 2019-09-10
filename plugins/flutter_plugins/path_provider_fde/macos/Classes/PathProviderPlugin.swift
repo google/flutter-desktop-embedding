@@ -25,12 +25,12 @@ public class PathProviderPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    let method = call.method
-    if method == "getTemporaryDirectory" {
+    switch call.method {
+    case "getTemporaryDirectory":
       result(getDirectory(ofType: FileManager.SearchPathDirectory.cachesDirectory))
-    } else if method == "getApplicationDocumentsDirectory" {
+    case "getApplicationDocumentsDirectory":
       result(getDirectory(ofType: FileManager.SearchPathDirectory.documentDirectory))
-    } else if method == "getApplicationSupportDirectory" {
+    case "getApplicationSupportDirectory":
       var path = getDirectory(ofType: FileManager.SearchPathDirectory.applicationSupportDirectory)
       if let basePath = path {
         let basePathURL = URL.init(fileURLWithPath: basePath)
@@ -38,15 +38,16 @@ public class PathProviderPlugin: NSObject, FlutterPlugin {
         do {
           try FileManager.default.createDirectory(atPath: path!, withIntermediateDirectories: true)
         } catch {
-          result(FlutterError(
-            code:"directory_creation_failure",
-            message: error.localizedDescription,
-            details: "\(error)"))
+          result(
+            FlutterError(
+              code: "directory_creation_failure",
+              message: error.localizedDescription,
+              details: "\(error)"))
           return
         }
       }
       result(path)
-    } else {
+    default:
       result(FlutterMethodNotImplemented)
     }
   }

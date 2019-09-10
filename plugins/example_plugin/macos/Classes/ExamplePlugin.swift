@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import FlutterMacOS
 import Cocoa
+import FlutterMacOS
 
 public class ExamplePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -23,10 +23,11 @@ public class ExamplePlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    if call.method == "getPlatformVersion" {
+    switch call.method {
+    case "getPlatformVersion":
       result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
-    } else {
-      result(FlutterMethodNotImplemented);
+    default:
+      result(FlutterMethodNotImplemented)
     }
   }
 }
