@@ -13,12 +13,17 @@
 // limitations under the License.
 
 import Cocoa
+import FlutterMacOS
 
-@NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
-  @IBOutlet weak var window: NSWindow!
+class MainFlutterWindow: NSWindow {
+  override func awakeFromNib() {
+    let flutterViewController = FlutterViewController.init()
+    let windowFrame = self.frame
+    self.contentViewController = flutterViewController
+    self.setFrame(windowFrame, display: true)
 
-  func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-    return true
+    RegisterGeneratedPlugins(registry: flutterViewController)
+
+    super.awakeFromNib()
   }
 }
