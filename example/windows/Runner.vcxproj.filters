@@ -18,13 +18,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\engine_method_result.cc">
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\engine_method_result.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\plugin_registrar.cc">
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\plugin_registrar.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\flutter_view_controller.cc">
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\flutter_view_controller.cc">
       <Filter>Source Files\Client Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="win32_window.cc">

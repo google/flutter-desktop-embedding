@@ -39,26 +39,26 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="flutter\Generated.props" />
+    <Import Project="flutter\ephemeral\Generated.props" />
     <Import Project="AppConfiguration.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="flutter\Generated.props" />
+    <Import Project="flutter\ephemeral\Generated.props" />
     <Import Project="AppConfiguration.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)flutter;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(FLUTTER_EPHEMERAL_DIR);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)flutter\;$(ProjectDir)flutter\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)flutter;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(FLUTTER_EPHEMERAL_DIR);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -92,7 +92,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
+      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(FLUTTER_EPHEMERAL_DIR)\" "$(OutputPath)" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -137,7 +137,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(ProjectDir)flutter\" "$(OutputPath)" "$(TargetFileName)"</Command>
+      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(FLUTTER_EPHEMERAL_DIR)\" "$(OutputPath)" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -147,12 +147,12 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\engine_method_result.cc" />
-    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\plugin_registrar.cc" />
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\engine_method_result.cc" />
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\plugin_registrar.cc" />
     <ClCompile Include="plugin_registrant.cpp" />
     <ClCompile Include="window_configuration.cpp" />
     <ClCompile Include="win32_window.cc" />
-    <ClCompile Include="$(ProjectDir)flutter\cpp_client_wrapper\flutter_view_controller.cc" />
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\flutter_view_controller.cc" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
