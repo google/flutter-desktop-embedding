@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -72,6 +72,7 @@
 		33D1A10322148B71006C7A3E /* FlutterMacOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FlutterMacOS.framework; path = Flutter/ephemeral/FlutterMacOS.framework; sourceTree = SOURCE_ROOT; };
 		33E51913231747F40026EE4D /* Runner-DebugProfile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Runner-DebugProfile.entitlements"; sourceTree = "<group>"; };
 		33E51914231749380026EE4D /* Runner-Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "Runner-Release.entitlements"; sourceTree = "<group>"; };
+		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = AppInfo.xcconfig; path = Configs/AppInfo.xcconfig; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Configs/Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Configs/Debug.xcconfig; sourceTree = "<group>"; };
 		D73912EF22F37F9E000D13A0 /* App.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = App.framework; path = Flutter/ephemeral/App.framework; sourceTree = SOURCE_ROOT; };
@@ -93,6 +94,7 @@
 		33BA886A226E78AF003329D5 /* Configs */ = {
 			isa = PBXGroup;
 			children = (
+				33E5194F232828860026EE4D /* AppInfo.xcconfig */,
 				9740EEB21CF90195004384FC /* Debug.xcconfig */,
 				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
 				333000ED22D3DE5D00554162 /* Warnings.xcconfig */,
@@ -172,7 +174,7 @@
 				33CC11202044C79F0003C045 /* PBXTargetDependency */,
 			);
 			name = Runner;
-			productName = "Flutter Desktop Example";
+			productName = Runner;
 			productReference = 33CC10ED2044A3C60003C045 /* Flutter Desktop Example.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -257,19 +259,19 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"Flutter/ephemeral/FlutterInputs.xcfilelist"
+				Flutter/ephemeral/FlutterInputs.xcfilelist,
 			);
 			inputPaths = (
- 				"Flutter/ephemeral/tripwire"
+				Flutter/ephemeral/tripwire,
 			);
 			outputFileListPaths = (
-				"Flutter/ephemeral/FlutterOutputs.xcfilelist"
+				Flutter/ephemeral/FlutterOutputs.xcfilelist,
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh\ntouch Flutter/ephemeral/tripwire\n"; /* touch is a workaround for flutter/flutter#40003 */
+			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh\ntouch Flutter/ephemeral/tripwire\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -347,12 +349,14 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Profile;
 		};
 		338D0CEA231458BD00FA5F75 /* Profile */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 33E5194F232828860026EE4D /* AppInfo.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -364,9 +368,10 @@
 					"$(PROJECT_DIR)/Flutter/ephemeral",
 				);
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.FlutterEmbedderMacExample.FlutterDesktopExample;
-				PRODUCT_NAME = "Flutter Desktop Example";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
@@ -474,12 +479,14 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;
 		};
 		33CC10FC2044A3C60003C045 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 33E5194F232828860026EE4D /* AppInfo.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -491,9 +498,10 @@
 					"$(PROJECT_DIR)/Flutter/ephemeral",
 				);
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.FlutterEmbedderMacExample.FlutterDesktopExample;
-				PRODUCT_NAME = "Flutter Desktop Example";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
@@ -502,6 +510,7 @@
 		};
 		33CC10FD2044A3C60003C045 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 33E5194F232828860026EE4D /* AppInfo.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -513,9 +522,10 @@
 					"$(PROJECT_DIR)/Flutter/ephemeral",
 				);
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.FlutterEmbedderMacExample.FlutterDesktopExample;
-				PRODUCT_NAME = "Flutter Desktop Example";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
