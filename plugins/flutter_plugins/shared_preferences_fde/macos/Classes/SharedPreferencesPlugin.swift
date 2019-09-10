@@ -25,34 +25,33 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    let method = call.method
-    if method == "getAll" {
+    switch call.method {
+    case "getAll":
       result(getAllPrefs())
-    } else if method == "setBool" ||
-              method == "setInt" ||
-              method == "setInt" ||
-              method == "setDouble" ||
-              method == "setString" ||
-              method == "setStringList" {
+    case "setBool",
+         "setInt",
+         "setDouble",
+         "setString",
+         "setStringList":
       let arguments = call.arguments as! [String: Any]
       let key = arguments["key"] as! String
       UserDefaults.standard.set(arguments["value"], forKey: key)
       result(true)
-    } else if method == "commit" {
+    case "commit":
       // UserDefaults does not need to be synchronized.
       result(true)
-    } else if method == "remove" {
+    case "remove":
       let arguments = call.arguments as! [String: Any]
       let key = arguments["key"] as! String
       UserDefaults.standard.removeObject(forKey: key)
       result(true)
-    } else if method == "clear" {
+    case "clear":
       let defaults = UserDefaults.standard
       for (key, _) in getAllPrefs() {
         defaults.removeObject(forKey: key)
       }
       result(true)
-    } else {
+    default:
       result(FlutterMethodNotImplemented)
     }
   }
@@ -62,7 +61,8 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin {
 private func getAllPrefs() -> [String: Any] {
   var filteredPrefs: [String: Any] = [:]
   if let appDomain = Bundle.main.bundleIdentifier,
-     let prefs = UserDefaults.standard.persistentDomain(forName: appDomain) {
+    let prefs = UserDefaults.standard.persistentDomain(forName: appDomain)
+  {
     for (key, value) in prefs where key.hasPrefix("flutter.") {
       filteredPrefs[key] = value
     }

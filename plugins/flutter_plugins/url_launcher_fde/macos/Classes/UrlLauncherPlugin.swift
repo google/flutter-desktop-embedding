@@ -25,23 +25,25 @@ public class UrlLauncherPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    let method = call.method
-    let urlString: String? = (call.arguments as? Dictionary<String, Any>)?["url"] as? String
-    if method == "canLaunch" {
+    let urlString: String? = (call.arguments as? [String: Any])?["url"] as? String
+    switch call.method {
+    case "canLaunch":
       guard let unwrappedURLString = urlString,
-            let url = URL.init(string: unwrappedURLString) else {
+        let url = URL.init(string: unwrappedURLString)
+      else {
         result(invalidURLError(urlString))
         return
       }
       result(NSWorkspace.shared.urlForApplication(toOpen: url) != nil)
-    } else if method == "launch" {
+    case "launch":
       guard let unwrappedURLString = urlString,
-            let url = URL.init(string: unwrappedURLString) else {
+        let url = URL.init(string: unwrappedURLString)
+      else {
         result(invalidURLError(urlString))
         return
       }
       result(NSWorkspace.shared.open(url))
-    } else {
+    default:
       result(FlutterMethodNotImplemented)
     }
   }
@@ -50,7 +52,7 @@ public class UrlLauncherPlugin: NSObject, FlutterPlugin {
 /// Returns an error for the case where a URL string can't be parsed as a URL.
 private func invalidURLError(_ url: String?) -> FlutterError {
   return FlutterError(
-    code:"argument_error",
+    code: "argument_error",
     message: "Unable to parse URL",
     details: "Provided URL: \(String(describing: url))")
 }

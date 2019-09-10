@@ -18,10 +18,10 @@ import FlutterMacOS
 class FlutterWindow: NSWindow {
   override func awakeFromNib() {
     let project = FlutterDartProject.init()
-    var arguments: [String] = [];
-#if !DEBUG
-    arguments.append("--disable-dart-asserts");
-#endif
+    var arguments: [String] = []
+    #if !DEBUG
+      arguments.append("--disable-dart-asserts")
+    #endif
     project.engineSwitches = arguments
 
     let flutterViewController = FlutterViewController.init(project: project)
@@ -34,4 +34,3 @@ class FlutterWindow: NSWindow {
     super.awakeFromNib()
   }
 }
-
