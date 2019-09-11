@@ -22,9 +22,9 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
             <items>
-                <menuItem title="Flutter Desktop Example" id="1Xt-HY-uBw">
+                <menuItem title="APP_NAME" id="1Xt-HY-uBw">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Flutter Desktop Example" systemMenu="apple" id="uQy-DD-JDr">
+                    <menu key="submenu" title="APP_NAME" systemMenu="apple" id="uQy-DD-JDr">
                         <items>
                             <menuItem title="About APP_NAME" id="5kV-Vb-QxS">
                                 <modifierMask key="keyEquivalentModifierMask"/>
