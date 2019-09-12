@@ -74,8 +74,10 @@
       <AdditionalDependencies>flutter_windows.dll.lib;ExamplePlugin.lib;url_launcher_fde.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)scripts\prepare_dependencies" debug</Command>
-      <Message>Sync and build dependencies</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -119,8 +121,10 @@
       <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;ExamplePlugin.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)scripts\prepare_dependencies" release</Command>
-      <Message>Sync and build dependencies</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
