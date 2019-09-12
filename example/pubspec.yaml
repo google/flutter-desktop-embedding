@@ -8,7 +8,7 @@ environment:
   # The example interacts with build scripts on the Flutter side that are not
   # yet stable, so it requires a very recent version of Flutter.
   # This version will increase regularly as the build scripts change.
-  flutter: '>=1.9.8-pre.31'
+  flutter: '>=1.10.2-pre.54'
 
 dependencies:
   flutter:
