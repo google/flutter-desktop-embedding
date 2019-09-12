@@ -54,8 +54,14 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)scripts\prepare_dependencies" debug</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>"$(ProjectDir)scripts\prepare_dependencies" debug</Command>
+      <Message>Running Flutter backend build</Message>
+      <Outputs>force_to_run_every_time</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -71,13 +77,15 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <CustomBuildStep>
-      <Command>"$(ProjectDir)scripts\cache_flutter" "$(ProjectDir)flutter\ephemeral" release</Command>
+      <Command>"$(ProjectDir)scripts\prepare_dependencies" release</Command>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Message>Running 'flutter unpack'</Message>
+      <Message>Running Flutter backend build</Message>
+      <Outputs>force_to_run_every_time</Outputs>
     </CustomBuildStep>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)scripts\prepare_dependencies" release</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
