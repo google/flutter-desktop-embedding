@@ -29,18 +29,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup>
     <CustomBuildStep>
-      <Command>"$(ProjectDir)scripts\prepare_dependencies" debug</Command>
-      <Message>Running Flutter backend build</Message>
-      <Outputs>force_to_run_every_time</Outputs>
-    </CustomBuildStep>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <CustomBuildStep>
-      <Command>"$(ProjectDir)scripts\prepare_dependencies" release</Command>
-    </CustomBuildStep>
-    <CustomBuildStep>
+      <Command>"$(ProjectDir)scripts\prepare_dependencies" $(Configuration)</Command>
       <Message>Running Flutter backend build</Message>
       <Outputs>force_to_run_every_time</Outputs>
     </CustomBuildStep>
