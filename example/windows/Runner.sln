@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runner", "Runner.vcxproj", "{5A827760-CF8B-408A-99A3-B6C0AD2271E7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F} = {6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Flutter Build", "FlutterBuild.vcxproj", "{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Debug|x64.Build.0 = Debug|x64
 		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release|x64.ActiveCfg = Release|x64
 		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release|x64.Build.0 = Release|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Debug|x64.ActiveCfg = Debug|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Debug|x64.Build.0 = Debug|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Release|x64.ActiveCfg = Release|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

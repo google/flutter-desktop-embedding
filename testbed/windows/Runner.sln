@@ -5,32 +5,55 @@ VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runner", "Runner.vcxproj", "{5A827760-CF8B-408A-99A3-B6C0AD2271E7}"
 	ProjectSection(ProjectDependencies) = postProject
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F} = {6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}
 		{95E21B2C-C18A-4CED-8509-585CB2570FDE} = {95E21B2C-C18A-4CED-8509-585CB2570FDE}
 		{18F565CD-7BD5-459C-9FEB-2E2379E88105} = {18F565CD-7BD5-459C-9FEB-2E2379E88105}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExamplePlugin", "..\..\plugins\example_plugin\windows\ExamplePlugin.vcxproj", "{95E21B2C-C18A-4CED-8509-585CB2570FDE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F} = {6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "url_launcher_fde", "..\..\plugins\flutter_plugins\url_launcher_fde\windows\url_launcher_fde.vcxproj", "{18F565CD-7BD5-459C-9FEB-2E2379E88105}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F} = {6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Flutter Build", "FlutterBuild.vcxproj", "{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Debug|x64.ActiveCfg = Debug|x64
 		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Debug|x64.Build.0 = Debug|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Debug|x86.ActiveCfg = Debug|x64
 		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release|x64.ActiveCfg = Release|x64
 		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release|x64.Build.0 = Release|x64
+		{5A827760-CF8B-408A-99A3-B6C0AD2271E7}.Release|x86.ActiveCfg = Release|x64
 		{95E21B2C-C18A-4CED-8509-585CB2570FDE}.Debug|x64.ActiveCfg = Debug|x64
 		{95E21B2C-C18A-4CED-8509-585CB2570FDE}.Debug|x64.Build.0 = Debug|x64
+		{95E21B2C-C18A-4CED-8509-585CB2570FDE}.Debug|x86.ActiveCfg = Debug|x64
 		{95E21B2C-C18A-4CED-8509-585CB2570FDE}.Release|x64.ActiveCfg = Release|x64
 		{95E21B2C-C18A-4CED-8509-585CB2570FDE}.Release|x64.Build.0 = Release|x64
+		{95E21B2C-C18A-4CED-8509-585CB2570FDE}.Release|x86.ActiveCfg = Release|x64
 		{18F565CD-7BD5-459C-9FEB-2E2379E88105}.Debug|x64.ActiveCfg = Debug|x64
 		{18F565CD-7BD5-459C-9FEB-2E2379E88105}.Debug|x64.Build.0 = Debug|x64
+		{18F565CD-7BD5-459C-9FEB-2E2379E88105}.Debug|x86.ActiveCfg = Debug|x64
 		{18F565CD-7BD5-459C-9FEB-2E2379E88105}.Release|x64.ActiveCfg = Release|x64
 		{18F565CD-7BD5-459C-9FEB-2E2379E88105}.Release|x64.Build.0 = Release|x64
+		{18F565CD-7BD5-459C-9FEB-2E2379E88105}.Release|x86.ActiveCfg = Release|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Debug|x64.ActiveCfg = Debug|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Debug|x64.Build.0 = Debug|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Debug|x86.ActiveCfg = Debug|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Release|x64.ActiveCfg = Release|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Release|x64.Build.0 = Release|x64
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
