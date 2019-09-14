@@ -15,14 +15,12 @@ like to be able to make that aren't listed here.
 
 ## macOS
 
-- **Application Name**: Change `PRODUCT_NAME` in the Xcode project.
-- **Bundle Identifier**: Change `PRODUCT_BUNDLE_IDENTIFIER` in the Xcode
-  project.
+- **Application Name**: Change `PRODUCT_NAME` in
+  `macos/Runner/Configs/AppInfo.xcconfig`.
+- **Bundle Identifier**: Change `PRODUCT_BUNDLE_IDENTIFIER` in
+  `macos/Runner/Configs/AppInfo.xcconfig`.
 - **Application Icon**: Replace `macos/Assets.xcassets/app_icon_*` with your
   icon in the appropriate sizes.
-
-The Xcode changes will likely move to an `xcconfig` file in the future by
-default.
 
 ## Windows
 
