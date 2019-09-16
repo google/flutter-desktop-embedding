@@ -41,7 +41,7 @@ BUILD=debug
 FLUTTER_EPHEMERAL_DIR=flutter/ephemeral
 
 # Configuration provided via flutter tool.
-include $(FLUTTER_EPHEMERAL_DIR)/generated_config
+include $(FLUTTER_EPHEMERAL_DIR)/generated_config.mk
 
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
