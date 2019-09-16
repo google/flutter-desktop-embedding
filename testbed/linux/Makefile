@@ -38,11 +38,13 @@ FLUTTER_PLUGIN_NAMES=url_launcher_fde
 # (e.g., optimization level) of the C++ code.
 BUILD=debug
 
+FLUTTER_EPHEMERAL_DIR=flutter/ephemeral
+
 # Configuration provided via flutter tool.
-include flutter/generated_config
+FLUTTER_CONFIG_FILE=$(FLUTTER_EPHEMERAL_DIR)/generated_config.mk
+include $(FLUTTER_CONFIG_FILE)
 
 # Dependency locations
-FLUTTER_APP_CACHE_DIR=flutter/
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 
@@ -51,7 +53,7 @@ OBJ_DIR=$(OUT_DIR)/obj
 
 # Libraries
 FLUTTER_LIB_NAME=flutter_linux_glfw
-FLUTTER_LIB=$(FLUTTER_APP_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
+FLUTTER_LIB=$(FLUTTER_EPHEMERAL_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # Tools
 FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
@@ -59,7 +61,7 @@ LINUX_BUILD=$(FLUTTER_ROOT)/packages/flutter_tools/bin/tool_backend.sh
 
 # Resources
 ICU_DATA_NAME=icudtl.dat
-ICU_DATA_SOURCE=$(FLUTTER_APP_CACHE_DIR)/$(ICU_DATA_NAME)
+ICU_DATA_SOURCE=$(FLUTTER_EPHEMERAL_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
@@ -94,7 +96,7 @@ ALL_LIBS_OUT=$(FLUTTER_LIB_OUT) \
 # Use abspath for the wrapper root, which can contain relative paths; the
 # intermediate build files will be based on the source path, which will cause
 # issues if they start with one or more '../'s.
-WRAPPER_ROOT=$(abspath $(FLUTTER_APP_CACHE_DIR)/cpp_client_wrapper_glfw)
+WRAPPER_ROOT=$(abspath $(FLUTTER_EPHEMERAL_DIR)/cpp_client_wrapper_glfw)
 WRAPPER_SOURCES= \
 	$(WRAPPER_ROOT)/flutter_window_controller.cc \
 	$(WRAPPER_ROOT)/plugin_registrar.cc \
@@ -106,7 +108,7 @@ SOURCES=main.cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
-INCLUDE_DIRS=$(FLUTTER_APP_CACHE_DIR) $(WRAPPER_INCLUDE_DIR)
+INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
 
 # Build settings
 ifneq ($(strip $(SYSTEM_LIBRARIES)),)
@@ -134,7 +136,7 @@ all: $(BIN_OUT) bundle
 # This is a phony target because the flutter tool cannot describe
 # its inputs and outputs yet.
 .PHONY: sync
-sync: flutter/generated_config
+sync: $(FLUTTER_CONFIG_FILE)
 	$(LINUX_BUILD) linux-x64 $(BUILD)
 
 .PHONY: bundle
