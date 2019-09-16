@@ -41,7 +41,8 @@ BUILD=debug
 FLUTTER_EPHEMERAL_DIR=flutter/ephemeral
 
 # Configuration provided via flutter tool.
-include $(FLUTTER_EPHEMERAL_DIR)/generated_config.mk
+FLUTTER_CONFIG_FILE=$(FLUTTER_EPHEMERAL_DIR)/generated_config.mk
+include $(FLUTTER_CONFIG_FILE)
 
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
@@ -135,7 +136,7 @@ all: $(BIN_OUT) bundle
 # This is a phony target because the flutter tool cannot describe
 # its inputs and outputs yet.
 .PHONY: sync
-sync: flutter/generated_config
+sync: $(FLUTTER_CONFIG_FILE)
 	$(LINUX_BUILD) linux-x64 $(BUILD)
 
 .PHONY: bundle
