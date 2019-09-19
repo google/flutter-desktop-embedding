@@ -114,6 +114,11 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
         SetFocus(child_content_);
       }
       return 0;
+
+    // Messages that are directly forwarded to embedding.
+    case WM_FONTCHANGE:
+      SendMessage(child_content_, WM_FONTCHANGE, NULL, NULL);
+      return 0;
   }
 
   return DefWindowProc(window_handle_, message, wparam, lparam);
