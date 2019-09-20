@@ -37,6 +37,10 @@ dependencies:
     path: relative/path/to/plugins/example_plugin
 ```
 
+(On macOS, you can use a [git
+reference](https://dart.dev/tools/pub/dependencies#git-packages)
+instead of referencing a local copy.)
+
 Then import it in your dart code as you would any other package:
 ```dart
 import 'package:example_plugin/example_plugin.dart';
@@ -100,8 +104,7 @@ Link the library files for the plugins you want to include into your exe.
 The plugin builds in this project put the library at the top level of the
 Plugins directory in the build output, along with their public headers.
 
-Then to register the plugin, after creating your Flutter window controller
-call your plugin's registrar function. For instance:
+Then add plugin registration to `plugin_registrant.cpp`:
 
 ```cpp
   ExamplePluginRegisterWithRegistrar(
@@ -110,9 +113,11 @@ call your plugin's registrar function. For instance:
 
 ## Writing Your Own Plugins
 
-You can create local packages following the model of plugins here to
-use in your own projects. In particular, `example_plugin` is intended to
-serve as a starting point for new plugins.
+You can create local packages following the model of the Windows and Linux
+plugins here to use in your own projects; in particular, `example_plugin`
+is intended to serve as a starting point for new plugins. For macOS,
+you should instead pass `--macos` when making a plugin with
+`flutter create` to include macOS support.
 
 Keep in mind the notes about API stability on the Flutter desktop page
 linked above. On platforms where the plugin API is still unstable, or
