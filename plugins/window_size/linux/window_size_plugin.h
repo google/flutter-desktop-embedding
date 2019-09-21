@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void WindowSizeRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void WindowSizePluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)

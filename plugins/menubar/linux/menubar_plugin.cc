@@ -227,7 +227,7 @@ void MenubarPlugin::HandleMethodCall(
 
 }  // namespace plugins_menubar
 
-void MenubarRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
+void MenubarPluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.
   static auto *plugin_registrar = new flutter::PluginRegistrar(registrar);

@@ -237,7 +237,7 @@ void WindowSizePlugin::HandleMethodCall(
 
 }  // namespace plugins_window_size
 
-void WindowSizeRegisterWithRegistrar(
+void WindowSizePluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.

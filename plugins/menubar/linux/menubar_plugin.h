@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void MenubarRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void MenubarPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)

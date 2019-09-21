@@ -260,7 +260,7 @@ void FileChooserPlugin::HandleMethodCall(
 
 }  // namespace plugins_file_chooser
 
-void FileChooserRegisterWithRegistrar(
+void FileChooserPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.
