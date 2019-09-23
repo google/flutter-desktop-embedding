@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "plugin_registrant.h"
+#include "flutter/generated_plugin_registrant.h"
 #include "win32_window.h"
 #include "window_configuration.h"
 
