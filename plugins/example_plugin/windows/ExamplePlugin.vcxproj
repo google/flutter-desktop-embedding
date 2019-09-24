@@ -41,10 +41,12 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(SolutionDir)flutter\ephemeral\Generated.props" />
+    <Import Project="PluginInfo.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(SolutionDir)flutter\ephemeral\Generated.props" />
+    <Import Project="PluginInfo.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -97,7 +99,7 @@
       </Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>xcopy /q /i /s /y "$(ProjectDir)example_plugin.h" "$(OutDir)"</Command>
+      <Command>xcopy /q /i /s /y "$(ProjectDir)$(FlutterPluginName).h" "$(OutDir)"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Publishing header to output directory</Message>
@@ -139,7 +141,7 @@
       </Outputs>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>xcopy /q /i /s /y "$(ProjectDir)example_plugin.h" "$(OutDir)"</Command>
+      <Command>xcopy /q /i /s /y "$(ProjectDir)$(FlutterPluginName).h" "$(OutDir)"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Publishing header to output directory</Message>
