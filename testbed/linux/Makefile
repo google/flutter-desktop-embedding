@@ -29,7 +29,8 @@ FDE_ROOT=$(CURDIR)/../..
 # Plugins to include from the flutter-desktop-embedding plugins/ directory.
 PLUGIN_NAMES=color_panel file_chooser menubar window_size
 # Additional plugins to include from the plugins/flutter_plugins subdirectory.
-FLUTTER_PLUGIN_NAMES=url_launcher_fde
+# Do not include the _fde suffix.
+FLUTTER_PLUGIN_NAMES=url_launcher
 
 
 # Default build type. For a release build, set BUILD=release.
@@ -104,7 +105,8 @@ WRAPPER_SOURCES= \
 
 # Use abspath for extra sources, which may also contain relative paths (see
 # note above about WRAPPER_ROOT).
-SOURCES=main.cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
+SOURCES=main.cc flutter/generated_plugin_registrant.cc $(WRAPPER_SOURCES) \
+	$(abspath $(EXTRA_SOURCES))
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
@@ -155,7 +157,7 @@ $(OUT_DIR)/libcolor_panel_plugin.so: | color_panel
 $(OUT_DIR)/libfile_chooser_plugin.so: | file_chooser
 $(OUT_DIR)/libmenubar_plugin.so: | menubar
 $(OUT_DIR)/libwindow_size_plugin.so: | window_size
-$(OUT_DIR)/liburl_launcher_fde_plugin.so: | url_launcher_fde
+$(OUT_DIR)/liburl_launcher_plugin.so: | url_launcher
 
 # Compilation depends on plugin headers that are copied as part of the
 # plugin builds, so ensure those happen first.
@@ -169,7 +171,7 @@ $(PLUGIN_NAMES) example_plugin:
 
 .PHONY: $(FLUTTER_PLUGIN_NAMES)
 $(FLUTTER_PLUGIN_NAMES):
-	make -C $(FLUTTER_PLUGINS_DIR)/$@/linux \
+	make -C $(FLUTTER_PLUGINS_DIR)/$@_fde/linux \
 		OUT_DIR=$(OUT_DIR) FLUTTER_ROOT=$(FLUTTER_ROOT)
 
 # Plugin library bundling pattern.

@@ -21,14 +21,10 @@
 
 // For plugin-compatible event handling (e.g., modal windows).
 #include <X11/Xlib.h>
-#include <color_panel_plugin.h>
-#include <example_plugin.h>
-#include <file_chooser_plugin.h>
 #include <flutter/flutter_window_controller.h>
 #include <gtk/gtk.h>
-#include <menubar_plugin.h>
-#include <url_launcher_fde_plugin.h>
-#include <window_size_plugin.h>
+
+#include "flutter/generated_plugin_registrant.h"
 
 namespace {
 
@@ -80,20 +76,7 @@ int main(int argc, char **argv) {
                                        arguments)) {
     return EXIT_FAILURE;
   }
-
-  // Register any native plugins.
-  ColorPanelRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("ColorPanel"));
-  ExamplePluginRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
-  FileChooserRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("FileChooser"));
-  MenubarRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("Menubar"));
-  UrlLauncherRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("UrlLauncher"));
-  WindowSizeRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("WindowSize"));
+  RegisterPlugins(&flutter_controller);
 
   // Set up for GTK event handling, needed by the GTK-based plugins.
   gtk_init(0, nullptr);

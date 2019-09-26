@@ -205,7 +205,7 @@ void ColorPanelPlugin::HidePanel(CloseRequestSource source) {
 
 }  // namespace plugins_color_panel
 
-void ColorPanelRegisterWithRegistrar(
+void ColorPanelPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.

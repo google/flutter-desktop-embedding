@@ -33,7 +33,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_registrant.cpp">
+    <ClCompile Include="flutter\generated_plugin_registrant.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="window_configuration.cpp">
@@ -44,7 +44,7 @@
     <ClInclude Include="win32_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="plugin_registrant.h">
+    <ClInclude Include="flutter\generated_plugin_registrant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="window_configuration.h">

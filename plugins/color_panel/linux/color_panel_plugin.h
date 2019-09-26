@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void ColorPanelRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void ColorPanelPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)

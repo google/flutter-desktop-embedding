@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "url_launcher_fde.h"
+#include "url_launcher_plugin.h"
 
 #include <windows.h>
 
@@ -112,7 +112,7 @@ void UrlLauncherPlugin::HandleMethodCall(
 
 }  // namespace
 
-void UrlLauncherRegisterWithRegistrar(
+void UrlLauncherPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "url_launcher_fde_plugin.h"
+#include "url_launcher_plugin.h"
 
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
@@ -104,7 +104,7 @@ void UrlLauncherPlugin::HandleMethodCall(
 
 }  // namespace
 
-void UrlLauncherRegisterWithRegistrar(
+void UrlLauncherPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.
