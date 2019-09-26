@@ -153,7 +153,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="flutter\generated_plugin_registrant.cpp" />
+    <ClCompile Include="flutter\generated_plugin_registrant.cc" />
     <ClCompile Include="win32_window.cc" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\engine_method_result.cc" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\plugin_registrar.cc" />

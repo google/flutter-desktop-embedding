@@ -33,7 +33,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="flutter\generated_plugin_registrant.cpp">
+    <ClCompile Include="flutter\generated_plugin_registrant.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="window_configuration.cpp">
