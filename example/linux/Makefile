@@ -81,7 +81,7 @@ WRAPPER_SOURCES= \
 
 # Use abspath for extra sources, which may also contain relative paths (see
 # note above about WRAPPER_ROOT).
-SOURCES=main.cc flutter/generated_plugin_registrant.h $(WRAPPER_SOURCES) \
+SOURCES=main.cc flutter/generated_plugin_registrant.cc $(WRAPPER_SOURCES) \
 	$(abspath $(EXTRA_SOURCES))
 
 # Headers
