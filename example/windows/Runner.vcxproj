@@ -53,14 +53,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(FLUTTER_EPHEMERAL_DIR);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
+    <LibraryPath>$(FLUTTER_EPHEMERAL_DIR);$(OutDir)..\Plugins;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(FLUTTER_EPHEMERAL_DIR);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir);$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
+    <LibraryPath>$(FLUTTER_EPHEMERAL_DIR);$(OutDir)..\Plugins;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -96,7 +96,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(FLUTTER_EPHEMERAL_DIR)\" "$(OutputPath)" "$(TargetFileName)"</Command>
+      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(FLUTTER_EPHEMERAL_DIR)\" "$(OutputPath)" "$(OutputPath)..\Plugins\" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -143,7 +143,7 @@
       </Message>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(FLUTTER_EPHEMERAL_DIR)\" "$(OutputPath)" "$(TargetFileName)"</Command>
+      <Command>"$(ProjectDir)scripts\bundle_assets_and_deps" "$(FLUTTER_EPHEMERAL_DIR)\" "$(OutputPath)" "$(OutputPath)..\Plugins\" "$(TargetFileName)"</Command>
     </CustomBuildStep>
     <CustomBuildStep>
       <Message>Bundling dependencies</Message>
@@ -153,13 +153,13 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\engine_method_result.cc" />
-    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\plugin_registrar.cc" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="flutter\generated_plugin_registrant.cc" />
     <ClCompile Include="window_configuration.cpp" />
     <ClCompile Include="win32_window.cc" />
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\engine_method_result.cc" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\flutter_view_controller.cc" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\plugin_registrar.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="flutter\generated_plugin_registrant.h" />
@@ -175,7 +175,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\app_icon.ico" />
-    <Image Include="resources\exe_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
