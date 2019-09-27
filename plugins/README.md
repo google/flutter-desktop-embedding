@@ -101,19 +101,14 @@ Run `make -C linux` in the directory of the plugin you want to build.
 The `flutter` tool will generate a plugin registrant for you, so you
 won't need to change any C++ code.
 
-Adding it to the build system is currently a manual process, and `example`
-has not yet been configured with all of the settings necessary to use plugins.
-This will change soon, and these instructions will be updated
-accordingly, but for now it will be easier to start with `testbed` rather than
-`example`, and add or remove dependent projects based on the plugins you want
-to use.
-
-To add a plugin:
+Adding it to the build system is currently a manual process. To add a plugin:
 - Go to `File` > `Add` > `Existing Project...`
 - Add the `.vcxproj` for the plugin
 - Go to `Project` > `Project Dependencies...`
   - Make `Runner` depend on the plugin project
   - Make the plugin project depend on `Flutter Build`
+- Edit `FlutterPlugins.props` to list the plugin library as a dependency.
+  See [`testbed`'s copy] for an example.
 
 Note: The eventual implementation of plugin management for Windows will likely
 be entirely different from this approach.
