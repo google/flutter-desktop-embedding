@@ -32,13 +32,6 @@ PLUGIN_NAMES=color_panel file_chooser menubar window_size
 # Do not include the _fde suffix.
 FLUTTER_PLUGIN_NAMES=url_launcher
 
-
-# Default build type. For a release build, set BUILD=release.
-# Currently this only sets NDEBUG, which is used to control the flags passed
-# to the Flutter engine in the example shell, and not the complation settings
-# (e.g., optimization level) of the C++ code.
-BUILD=debug
-
 FLUTTER_EPHEMERAL_DIR=flutter/ephemeral
 
 # Configuration provided via flutter tool.
