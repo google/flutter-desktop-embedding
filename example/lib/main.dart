@@ -12,15 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+const pingChannel = const MethodChannel('pingme');
+
 void main() {
   // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
 
+  Timer.periodic(const Duration(seconds: 1), (_) async {
+    try {
+      await pingChannel.invokeMethod('ping');
+    } catch (_) {
+      print('ping failed');
+    }
+  });
   runApp(new MyApp());
 }
 
