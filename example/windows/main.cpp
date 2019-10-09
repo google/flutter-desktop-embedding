@@ -97,7 +97,8 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
     // won't return again for items left in the queue after PeekMessage.
     while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
       if (message.message == WM_QUIT) {
-        goto exit;
+        window.Destroy();
+        break;
       }
       TranslateMessage(&message);
       DispatchMessage(&message);
@@ -108,6 +109,5 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
     wait_duration = flutter_controller.ProcessMessages();
   }
 
-  exit:
   return EXIT_SUCCESS;
 }
