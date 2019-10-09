@@ -90,8 +90,9 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
   std::chrono::nanoseconds wait_duration(0);
   // Run until the window is closed.
   while (window.GetHandle() != nullptr) {
-    MsgWaitForMultipleObjects(
-        0, NULL, FALSE, static_cast<DWORD>(wait_duration.count() / 1000), QS_ALLINPUT);
+    MsgWaitForMultipleObjects(0, NULL, FALSE,
+                              static_cast<DWORD>(wait_duration.count() / 1000),
+                              QS_ALLINPUT);
     MSG message;
     // All pending Windows messages must be processed; MsgWaitForMultipleObjects
     // won't return again for items left in the queue after PeekMessage.
@@ -104,8 +105,8 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
       DispatchMessage(&message);
     }
     // Allow Flutter to process its messages.
-    // TODO: Consider interleaving processing on a per-message basis to avoid the
-    // possibility of one queue starving the other.
+    // TODO: Consider interleaving processing on a per-message basis to avoid
+    // the possibility of one queue starving the other.
     wait_duration = flutter_controller.ProcessMessages();
   }
 
