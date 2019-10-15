@@ -35,44 +35,29 @@ EXTRA_LDFLAGS=$(shell pkg-config --libs $(SYSTEM_LIBRARIES))
 # (e.g., optimization level) of the C++ code.
 BUILD=debug
 
+# Plugins must be provided a populated flutter/ephemeral/ dir. Normally this
+# would be the ephemeral directory of the application using the plugin.
+ifeq ($(strip $(FLUTTER_EPHEMERAL_DIR)),)
+$(error FLUTTER_EPHEMERAL_DIR must be provided)
+endif
+
 # Dependency locations
 # Default to building in the plugin directory.
 OUT_DIR=$(CURDIR)/../build/linux
 # Sharing an OUT_DIR will be common, so use a subdirectory for intermediates.
 PLUGIN_OUT_DIR=$(OUT_DIR)/$(PLUGIN_NAME)
-OBJ_DIR=$(PLUGIN_OUT_DIR)/obj
-FLUTTER_CACHE_DIR=$(PLUGIN_OUT_DIR)/flutter
+OBJ_DIR=$(PLUGIN_OUT_DIR)/obj/$(BUILD)
 
 # Flutter library
 FLUTTER_LIB_NAME=flutter_linux_glfw
-FLUTTER_LIB=$(FLUTTER_CACHE_DIR)/lib$(FLUTTER_LIB_NAME).so
-
-# If FLUTTER_ROOT is set, use that version of Flutter. Otherwise, assume that
-# the flutter tool is in the path.
-ifeq ($(strip $(FLUTTER_ROOT)),)
-FLUTTER_BIN=flutter
-else
-FLUTTER_BIN=$(FLUTTER_ROOT)/bin/flutter
-endif
-
-# Unpack configuration.
-# TODO: Revisit how this is managed, either by having plugins builds always use
-# an existing cache provided to the build, or moving logic into the tool.
-FLUTTER_UNPACK_ARGS=--target-platform=linux-x64 \
-	--cache-dir="$(FLUTTER_CACHE_DIR)"
-ifneq ($(strip $(LOCAL_ENGINE)),)
-FLUTTER_UNPACK_ARGS+= --local-engine="$(LOCAL_ENGINE)"
-endif
-ifneq ($(strip $(FLUTTER_ENGINE)),)
-FLUTTER_UNPACK_ARGS+= --local-engine-src-path="$(FLUTTER_ENGINE)"
-endif
+FLUTTER_LIB=$(FLUTTER_EPHEMERAL_DIR)/lib$(FLUTTER_LIB_NAME).so
 
 # Add relevant code from the wrapper library, which is intended to be statically
 # built into the plugin.
 # Use abspath for the wrapper root, which can contain relative paths; the
 # intermediate build files will be based on the source path, which will cause
 # issues if they start with one or more '../'s.
-WRAPPER_ROOT=$(abspath $(FLUTTER_CACHE_DIR)/cpp_client_wrapper_glfw)
+WRAPPER_ROOT=$(abspath $(FLUTTER_EPHEMERAL_DIR)/cpp_client_wrapper_glfw)
 # TODO: Once JSON codec files are merged, make a PLUGIN_CODEC variable in the
 # top section. For now, using JSON codec would require changes here.
 WRAPPER_SOURCES= \
@@ -86,7 +71,7 @@ SOURCES=$(PLUGIN_NAME).cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
 PUBLIC_HEADER=$(PLUGIN_NAME).h
 
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
-INCLUDE_DIRS=$(FLUTTER_CACHE_DIR) $(WRAPPER_INCLUDE_DIR)
+INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
 
 # Build settings
 CXX=clang++
@@ -94,7 +79,7 @@ CXXFLAGS.release=-DNDEBUG
 CXXFLAGS=-std=c++14 -Wall -Werror -fPIC -fvisibility=hidden \
 	-DFLUTTER_PLUGIN_IMPL $(CXXFLAGS.$(BUILD)) $(EXTRA_CXXFLAGS)
 CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) $(EXTRA_CPPFLAGS)
-LDFLAGS=-shared -L$(FLUTTER_CACHE_DIR) -l$(FLUTTER_LIB_NAME) $(EXTRA_LDFLAGS)
+LDFLAGS=-shared -L$(FLUTTER_EPHEMERAL_DIR) -l$(FLUTTER_LIB_NAME) $(EXTRA_LDFLAGS)
 
 # Final output files that will be used by applications.
 LIBRARY_OUT=$(OUT_DIR)/lib$(PLUGIN_NAME).so
@@ -120,17 +105,9 @@ $(HEADER_OUT): $(PUBLIC_HEADER)
 	mkdir -p $(@D)
 	cp $< $@
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB): | sync
-
-# This is a phony target because the flutter tool cannot describe
-# its inputs and outputs yet.
-.PHONY: sync
-sync:
-	$(FLUTTER_BIN) unpack $(FLUTTER_UNPACK_ARGS)
-
 -include $(DEPENDENCY_FILES)
 
-$(OBJ_DIR)/%.o : %.cc | sync
+$(OBJ_DIR)/%.o : %.cc
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MMD -c $< -o $@
 
