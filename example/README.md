@@ -39,7 +39,7 @@ support](https://github.com/flutter/flutter/wiki/Desktop-shells) before trying t
 run an existing project on desktop, especially the [Flutter Application Requirements
 section](https://github.com/flutter/flutter/wiki/Desktop-shells#flutter-application-requirements).
 
-### Coping the Desktop Runners
+### Copying the Desktop Runners
 
 The 'linux' and 'windows' directories are self-contained, and can be copied to
 an existing Flutter project, enabling `flutter run` for those platforms.
