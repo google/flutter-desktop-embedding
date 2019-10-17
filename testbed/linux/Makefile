@@ -50,7 +50,7 @@ FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
-OBJ_DIR=$(OUT_DIR)/obj
+OBJ_DIR=$(OUT_DIR)/obj/$(BUILD)
 
 # Libraries
 FLUTTER_LIB_NAME=flutter_linux_glfw
@@ -148,8 +148,8 @@ $(BIN_OUT): $(OBJ_FILES) $(ALL_LIBS_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OBJ_FILES) $(LDFLAGS) -o $@
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE): \
-	| sync
+$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
+	$(PLUGIN_NAMES) $(FLUTTER_PLUGIN_NAMES) example_plugin: | sync
 
 # Implicit rules won't match phony targets, so list plugin builds explicitly.
 $(OUT_DIR)/libexample_plugin.so: | example_plugin
@@ -167,12 +167,14 @@ $(OBJ_FILES) : | $(EXTRA_BUNDLED_LIBRARIES)
 .PHONY: $(PLUGIN_NAMES) example_plugin
 $(PLUGIN_NAMES) example_plugin:
 	make -C $(PLUGINS_DIR)/$@/linux \
-		OUT_DIR=$(OUT_DIR) FLUTTER_ROOT=$(FLUTTER_ROOT)
+		OUT_DIR=$(OUT_DIR) \
+		FLUTTER_EPHEMERAL_DIR="$(abspath $(FLUTTER_EPHEMERAL_DIR))"
 
 .PHONY: $(FLUTTER_PLUGIN_NAMES)
 $(FLUTTER_PLUGIN_NAMES):
 	make -C $(FLUTTER_PLUGINS_DIR)/$@_fde/linux \
-		OUT_DIR=$(OUT_DIR) FLUTTER_ROOT=$(FLUTTER_ROOT)
+		OUT_DIR=$(OUT_DIR) \
+		FLUTTER_EPHEMERAL_DIR="$(abspath $(FLUTTER_EPHEMERAL_DIR))"
 
 # Plugin library bundling pattern.
 $(BUNDLE_LIB_DIR)/%: $(OUT_DIR)/%
