@@ -9,7 +9,9 @@ flutter:
     platforms:
       macos:
         pluginClass: SharedPreferencesPlugin
-
+      windows:
+        pluginClass: SharedPreferencesPlugin
+        
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
