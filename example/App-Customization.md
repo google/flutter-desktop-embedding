@@ -48,7 +48,7 @@ are non-trivial is a known issue.
 
 - **Executable Name**: Change `BINARY_NAME` in `linux/Makefile`.
   - You will likely want to change `window_properties.title` in
-    `linux/flutter_embedder_example.cpp` to match. In the future this
+    `linux/main.cc` to match. In the future this
     will use the application name automatically by default.
 - **Application Icon**: Prepare image data using the method of your choice
   (e.g., by loading from a file in a set location; this may require the use
