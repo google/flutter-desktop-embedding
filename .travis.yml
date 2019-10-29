@@ -21,13 +21,13 @@ matrix:
         - sudo apt-get update
       install:
         - build/ci/linux/install_dependencies
-        # None of the packaged channels are new enough for the current state
-        # of FDE, so for now clone master instead.
+        # Desktop support currently requires master, so clone the latest master
+        # rather than doing a standard install.
         #- build/ci/install_flutter $TRAVIS_BUILD_DIR/..
         - git clone -b master https://github.com/flutter/flutter.git $TRAVIS_BUILD_DIR/../flutter
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/../flutter/bin
-        - export ENABLE_FLUTTER_DESKTOP=true
+        - flutter config --enable-linux-desktop
       script:
         - cd $TRAVIS_BUILD_DIR/example
         - flutter packages get
@@ -44,13 +44,13 @@ matrix:
       before_install:
         - gem install cocoapods -v '1.6.0'
       install:
-        # None of the packaged channels are new enough for the current state
-        # of FDE, so for now clone master instead.
+        # Desktop support currently requires master, so clone the latest master
+        # rather than doing a standard install.
         #- build/ci/install_flutter $TRAVIS_BUILD_DIR/..
         - git clone -b master https://github.com/flutter/flutter.git $TRAVIS_BUILD_DIR/../flutter
       before_script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/../flutter/bin
-        - export ENABLE_FLUTTER_DESKTOP=true
+        - flutter config --enable-macos-desktop
       script:
         - cd $TRAVIS_BUILD_DIR/example
         - flutter packages get

@@ -17,14 +17,14 @@ image: Visual Studio 2017
 platform: x64
 
 install:
-  # None of the packaged channels are new enough for the current state
-  # of FDE, so for now clone master instead.
+  # Desktop support currently requires master, so clone the latest master
+  # rather than doing a standard install.
   #- ps: build\ci\install_flutter.ps1 $env:APPVEYOR_BUILD_FOLDER\..
   - git clone -b master https://github.com/flutter/flutter.git %APPVEYOR_BUILD_FOLDER%\..\flutter
 
 build_script:
   - set "PATH=%APPVEYOR_BUILD_FOLDER%\..\flutter\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
-  - set "ENABLE_FLUTTER_DESKTOP=true"
+  - flutter config --enable-windows-desktop
   - ps: cd "$env:APPVEYOR_BUILD_FOLDER\example"
   - flutter packages get
   - flutter build -v windows --debug
