@@ -102,6 +102,7 @@ The `flutter` tool will generate a plugin registrant for you, so you
 won't need to change any C++ code.
 
 Adding it to the build system is currently a manual process. To add a plugin:
+- Open your application's `Runner.sln` in Visual Studio
 - Go to `File` > `Add` > `Existing Project...`
 - Add the `.vcxproj` for the plugin
 - Go to `Project` > `Project Dependencies...`
