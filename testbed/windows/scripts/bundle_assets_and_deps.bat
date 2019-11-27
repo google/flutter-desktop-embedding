@@ -43,6 +43,8 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 call xcopy /y /d /q "%FLUTTER_CACHE_DIR%flutter_windows.dll" "%BUNDLE_DIR%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-:: Copy the Plugin DLLs to the target location.
-call xcopy /y /d /q "%PLUGIN_DIR%"*.dll "%BUNDLE_DIR%"
-if %errorlevel% neq 0 exit /b %errorlevel%
+:: Copy any Plugin DLLs to the target location.
+if exist "%PLUGIN_DIR%" (
+  call xcopy /y /d /q "%PLUGIN_DIR%"*.dll "%BUNDLE_DIR%"
+  if %errorlevel% neq 0 exit /b %errorlevel%
+)

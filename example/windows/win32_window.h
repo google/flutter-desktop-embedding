@@ -48,12 +48,8 @@ class Win32Window {
   // Inserts |content| into the window tree.
   void SetChildContent(HWND content);
 
-  // Process window messages until the user closes the Window. |callback| will
-  // be called on each loop iteration.
-  void RunMessageLoop(std::function<void()> callback);
-
   // Returns the backing Window handle to enable clients to set icon and other
-  // window properties.
+  // window properties. Returns nullptr if the window has been destroyed.
   HWND GetHandle();
 
  protected:

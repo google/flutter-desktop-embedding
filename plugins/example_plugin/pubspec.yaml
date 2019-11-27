@@ -7,7 +7,11 @@ homepage:
 flutter:
   plugin:
     platforms:
+      linux:
+        pluginClass: ExamplePlugin
       macos:
+        pluginClass: ExamplePlugin
+      windows:
         pluginClass: ExamplePlugin
 
 environment:

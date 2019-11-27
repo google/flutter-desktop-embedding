@@ -37,6 +37,10 @@ dependencies:
     path: relative/path/to/plugins/example_plugin
 ```
 
+(On macOS, you can use a [git
+reference](https://dart.dev/tools/pub/dependencies#git-packages)
+instead of referencing a local copy.)
+
 Then import it in your dart code as you would any other package:
 ```dart
 import 'package:example_plugin/example_plugin.dart';
@@ -66,53 +70,71 @@ Installation example for debian-based systems:
 $ sudo apt-get install libgtk-3-dev pkg-config
 ```
 
-#### Building
+#### Adding to your Application
+
+The `flutter` tool will generate a plugin registrant for you, so you
+won't need to change any C++ code.
+
+Adding it to the build system is still entirely manual, and currently
+quite complicated. Run:
+```
+$ diff u example/linux/Makefile testbed/linux/Makefile
+```
+to see what kinds of changes are necessary to the Makefile, and adapt based
+on the plugins you are using. There may be change to simplify this process
+in the short-to-medium term while a full solution is decided on.
+
+**Note:** The eventual implementation of plugin management for Linux will
+likely be entirely different from this approach.
+
+#### Building Manually
+
+*This is relevant only if you are using the plugins without doing the above,
+for example in manual add-to-app experimentation.*
 
 Run `make -C linux` in the directory of the plugin you want to build.
 
-#### Adding to an Application
-
-Link the library files for the plugins you want to include into your binary.
-The plugin builds in this project put the library at the top level of the
-output directory (set `OUT_DIR` when calling `make` to set the location),
-and the public header you will need in the `include/` directory next to it.
-
-Then to register the plugin, after creating your Flutter window controller
-call your plugin's registrar function. For instance:
-
-```cpp
-  ExamplePluginRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
-```
-
 ### Windows
 
-#### Building
+#### Adding to your Application
+
+The `flutter` tool will generate a plugin registrant for you, so you
+won't need to change any C++ code.
+
+Adding it to the build system is currently a manual process. To add a plugin:
+- Open your application's `Runner.sln` in Visual Studio
+- Go to `File` > `Add` > `Existing Project...`
+- Add the `.vcxproj` for the plugin
+- Go to `Project` > `Project Dependencies...`
+  - Make `Runner` depend on the plugin project
+  - Make the plugin project depend on `Flutter Build`
+- Edit `FlutterPlugins.props` to list the plugin library as a dependency.
+  See [`testbed`'s copy] for an example.
+
+Note: The eventual implementation of plugin management for Windows will likely
+be entirely different from this approach.
+
+#### Building Manually
+
+*This is relevant only if you are using the plugins without doing the above,
+for example in manual add-to-app experimentation.*
 
 The plugin projects are designed to be built from within the solution of
-the application using them. Add the .vcxproj files for the plugins you want
-to build to your application's Runner.sln. (Opening a plugin project directly
+the application using them. Add the `.vcxproj` files for the plugins you want
+to build to your application's `.sln`. (Opening a plugin project directly
 and trying to build it **will not work** with the current structure.)
 
-#### Adding to an Application
-
-Link the library files for the plugins you want to include into your exe.
 The plugin builds in this project put the library at the top level of the
-Plugins directory in the build output, along with their public headers.
-
-Then to register the plugin, after creating your Flutter window controller
-call your plugin's registrar function. For instance:
-
-```cpp
-  ExamplePluginRegisterWithRegistrar(
-      flutter_controller.GetRegistrarForPlugin("ExamplePlugin"));
-```
+Plugins directory in the application's build output, along with their public
+headers.
 
 ## Writing Your Own Plugins
 
-You can create local packages following the model of plugins here to
-use in your own projects. In particular, `example_plugin` is intended to
-serve as a starting point for new plugins.
+You can create local packages following the model of the Windows and Linux
+plugins here to use in your own projects; in particular, `example_plugin`
+is intended to serve as a starting point for new plugins. For macOS,
+you should instead pass `--macos` when making a plugin with
+`flutter create` to include macOS support.
 
 Keep in mind the notes about API stability on the Flutter desktop page
 linked above. On platforms where the plugin API is still unstable, or

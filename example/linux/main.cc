@@ -20,6 +20,8 @@
 #include <memory>
 #include <vector>
 
+#include "flutter/generated_plugin_registrant.h"
+
 namespace {
 
 // Returns the path of the directory containing this executable, or an empty
@@ -67,6 +69,7 @@ int main(int argc, char **argv) {
                                        arguments)) {
     return EXIT_FAILURE;
   }
+  RegisterPlugins(&flutter_controller);
 
   // Run until the window is closed.
   while (flutter_controller.RunEventLoopWithTimeout(

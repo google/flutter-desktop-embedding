@@ -11,13 +11,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#ifndef PLUGINS_URL_LAUNCHER_PLUGIN_WINDOWS_H_
+#define PLUGINS_URL_LAUNCHER_PLUGIN_WINDOWS_H_
 
-#include "plugin_registrant.h"
+#include <flutter_plugin_registrar.h>
 
-// Add plugin headers here.
+#ifdef FLUTTER_PLUGIN_IMPL
+#define FLUTTER_PLUGIN_EXPORT __declspec(dllexport)
+#else
+#define FLUTTER_PLUGIN_EXPORT __declspec(dllimport)
+#endif
 
-void RegisterPlugins(flutter::FlutterViewController *registry) {
-  // In the future, when the Flutter tooling supports Windows plugins, this will
-  // be replaced by a generated plugin registration. For now, plugins must be
-  // added here manually.
-}
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+FLUTTER_PLUGIN_EXPORT void UrlLauncherPluginRegisterWithRegistrar(
+    FlutterDesktopPluginRegistrarRef registrar);
+
+#if defined(__cplusplus)
+}  // extern "C"
+#endif
+
+#endif  // PLUGINS_EXAMPLE_EXAMPLE_PLUGIN_WINDOWS_H_

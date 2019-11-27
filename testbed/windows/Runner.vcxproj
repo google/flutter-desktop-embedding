@@ -41,23 +41,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="flutter\ephemeral\Generated.props" />
     <Import Project="AppConfiguration.props" />
+    <Import Project="FlutterPlugins.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="flutter\ephemeral\Generated.props" />
     <Import Project="AppConfiguration.props" />
+    <Import Project="FlutterPlugins.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
     <LibraryPath>$(FLUTTER_EPHEMERAL_DIR);$(OutDir)..\Plugins;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)..\build\windows\$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(ProjectDir)..\build\windows\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\;$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(FLUTTER_EPHEMERAL_DIR)\;$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\include\;$(OutDir)..\Plugins;$(IncludePath)</IncludePath>
     <LibraryPath>$(FLUTTER_EPHEMERAL_DIR);$(OutDir)..\Plugins;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -71,7 +73,7 @@
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>flutter_windows.dll.lib;ExamplePlugin.lib;url_launcher_fde.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -118,7 +120,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;ExamplePlugin.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -151,16 +153,16 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="plugin_registrant.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="flutter\generated_plugin_registrant.cc" />
+    <ClCompile Include="window_configuration.cpp" />
     <ClCompile Include="win32_window.cc" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\engine_method_result.cc" />
-    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\plugin_registrar.cc" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\flutter_view_controller.cc" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="window_configuration.cpp" />
+    <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\plugin_registrar.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="plugin_registrant.h" />
+    <ClInclude Include="flutter\generated_plugin_registrant.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="win32_window.h" />
     <ClInclude Include="window_configuration.h" />

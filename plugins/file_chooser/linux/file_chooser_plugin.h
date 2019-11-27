@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void FileChooserRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void FileChooserPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)

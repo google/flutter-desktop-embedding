@@ -7,7 +7,11 @@ homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugin
 flutter:
   plugin:
     platforms:
+      linux:
+        pluginClass: UrlLauncherPlugin
       macos:
+        pluginClass: UrlLauncherPlugin
+      windows:
         pluginClass: UrlLauncherPlugin
 
 environment:
