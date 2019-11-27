@@ -1,8 +1,9 @@
 //
 //  Generated file. Do not edit.
 //
-import Foundation
+
 import FlutterMacOS
+import Foundation
 
 import color_panel
 import example_plugin

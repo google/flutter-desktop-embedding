@@ -1,1 +1,15 @@
 .DS_Store
+
+# Flutter/Dart/Pub related
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Flutter generated files
+.flutter-plugins-dependencies
+flutter_export_environment.sh
+Flutter-Generated.xcconfig

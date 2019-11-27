@@ -26,31 +26,60 @@ const String _windowSizeChannelName = 'flutter/windowsize';
 ///
 /// Returns a list of screen info maps; see keys below.
 const String _getScreenListMethod = 'getScreenList';
+
 /// The method name to request information about the window containing the
 /// Flutter instance.
 ///
 /// Returns a list of window info maps; see keys below.
 const String _getWindowInfoMethod = 'getWindowInfo';
+
 /// The method name to set the frame of a window.
 ///
 /// Takes a frame array, as documented for the value of _frameKey.
 const String _setWindowFrameMethod = 'setWindowFrame';
+
+/// The method name to set the minimum size of a window.
+///
+/// Takes a window size array, as documented for the value of _windowSizeKey.
+const String _setWindowMimumumSizeMethod = 'setWindowMinimumSize';
+
+/// The method name to set the maximum size of a window.
+///
+/// Takes a window size array, as documented for the value of _windowSizeKey.
+const String _setWindowMaximumSizeMethod = 'setWindowMaximumSize';
+
+/// The method name to get the minimum size of a window.
+///
+/// Returns a window size array, as documented for the value of _windowSizeKey.
+const String _getWindowMimumumSizeMethod = 'getWindowMinimumSize';
+
+/// The method name to get the maximum size of a window.
+///
+/// Returns a window size array, as documented for the value of _windowSizeKey.
+const String _getWindowMaximumSizeMethod = 'getWindowMaximumSize';
 
 // Keys for screen and window maps returned by _getScreenListMethod.
 
 /// The frame of a screen or window. The value is a list of four doubles:
 ///   [left, top, width, height]
 const String _frameKey = 'frame';
+
+/// The size of a window. The value is a list of two doubles:
+///   [width, height]
+const String _windowSizeKey = 'windowSize';
+
 /// The frame of a screen available for use by applications. The value format
 /// is the same as _frameKey's.
 ///
 /// Only used for screens.
 const String _visibleFrameKey = 'visibleFrame';
+
 /// The scale factor for a screen or window, as a double.
 ///
 /// This is the number of pixels per screen coordinate, and thus the ratio
 /// between sizes as seen by Flutter and sizes in native screen coordinates.
 const String _scaleFactorKey = 'scaleFactor';
+
 /// The screen containing this window, if any. The value is a screen map, or
 /// null if the window is not visible on a screen.
 ///
@@ -121,12 +150,64 @@ class WindowSizeChannel {
     }
   }
 
+  /// Sets the minimum size of the window containing this Flutter instance.
+  void setWindowMinSize(Size size) async {
+    try {
+      await _platformChannel
+          .invokeMethod(_setWindowMimumumSizeMethod, [size.width, size.height]);
+    } on PlatformException catch (e) {
+      print('Platform exception setting window minimum size: ${e.message}');
+    }
+  }
+
+  /// Sets the maximum size of the window containing this Flutter instance.
+  void setWindowMaxSize(Size size) async {
+    try {
+      await _platformChannel
+          .invokeMethod(_setWindowMaximumSizeMethod, [size.width, size.height]);
+    } on PlatformException catch (e) {
+      print('Platform exception setting window minimum size: ${e.message}');
+    }
+  }
+
+  /// Gets the minimum size of the window containing this Flutter instance.
+  Future<Size> getWindowMinSize() async {
+    try {
+      final response =
+          await _platformChannel.invokeMethod(_getWindowMimumumSizeMethod);
+      return _sizeFromWHList(response[_windowSizeKey].cast<double>());
+    } on PlatformException catch (e) {
+      print('Platform exception getting window info: ${e.message}');
+    }
+    return null;
+  }
+
+  /// Gets the maximum size of the window containing this Flutter instance.
+  Future<Size> getWindowMaxSize() async {
+    try {
+      final response =
+          await _platformChannel.invokeMethod(_getWindowMaximumSizeMethod);
+      return _sizeFromWHList(response[_windowSizeKey].cast<double>());
+    } on PlatformException catch (e) {
+      print('Platform exception getting window info: ${e.message}');
+    }
+    return null;
+  }
+
   /// Given an array of the form [left, top, width, height], return the
   /// corresponding [Rect].
   ///
   /// Used for frame deserialization in the platform channel.
   Rect _rectFromLTWHList(List<double> ltwh) {
     return Rect.fromLTWH(ltwh[0], ltwh[1], ltwh[2], ltwh[3]);
+  }
+
+  /// Given an array of the form [width, height], return the corresponding
+  /// [Size].
+  ///
+  /// Used for window size deserialization in the platform channel.
+  Size _sizeFromWHList(List<double> wh) {
+    return Size(wh[0], wh[1]);
   }
 
   /// Given a map of information about a screen, return the corresponding

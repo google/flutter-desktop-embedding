@@ -49,3 +49,23 @@ Future<PlatformWindow> getWindowInfo() async {
 void setWindowFrame(Rect frame) async {
   WindowSizeChannel.instance.setWindowFrame(frame);
 }
+
+/// Sets the minimum [Size] of the window containing this Flutter instance.
+void setWindowMinSize(Size size) async {
+  WindowSizeChannel.instance.setWindowMinSize(size);
+}
+
+/// Sets the maximum [Size] of the window containing this Flutter instance.
+void setWindowMaxSize(Size size) async {
+  WindowSizeChannel.instance.setWindowMaxSize(size);
+}
+
+/// Gets the minimum [Size] of the window containing this Flutter instance.
+Future<Size> getWindowMinSize() async {
+  return WindowSizeChannel.instance.getWindowMinSize();
+}
+
+/// Gets the maximum [Size] of the window containing this Flutter instance.
+Future<Size> getWindowMaxSize() async {
+  return WindowSizeChannel.instance.getWindowMaxSize();
+}
