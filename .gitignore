@@ -13,3 +13,4 @@
 .flutter-plugins-dependencies
 flutter_export_environment.sh
 Flutter-Generated.xcconfig
+GeneratedPluginRegistrant.swift
