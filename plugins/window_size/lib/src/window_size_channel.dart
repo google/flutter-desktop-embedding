@@ -41,7 +41,7 @@ const String _setWindowFrameMethod = 'setWindowFrame';
 /// The method name to set the minimum size of a window.
 ///
 /// Takes a window size array, as documented for the value of _windowSizeKey.
-const String _setWindowMimumumSizeMethod = 'setWindowMinimumSize';
+const String _setWindowMinimumSizeMethod = 'setWindowMinimumSize';
 
 /// The method name to set the maximum size of a window.
 ///
@@ -51,7 +51,7 @@ const String _setWindowMaximumSizeMethod = 'setWindowMaximumSize';
 /// The method name to get the minimum size of a window.
 ///
 /// Returns a window size array, as documented for the value of _windowSizeKey.
-const String _getWindowMimumumSizeMethod = 'getWindowMinimumSize';
+const String _getWindowMinimumSizeMethod = 'getWindowMinimumSize';
 
 /// The method name to get the maximum size of a window.
 ///
@@ -154,7 +154,7 @@ class WindowSizeChannel {
   void setWindowMinSize(Size size) async {
     try {
       await _platformChannel
-          .invokeMethod(_setWindowMimumumSizeMethod, [size.width, size.height]);
+          .invokeMethod(_setWindowMinimumSizeMethod, [size.width, size.height]);
     } on PlatformException catch (e) {
       print('Platform exception setting window minimum size: ${e.message}');
     }
@@ -174,7 +174,7 @@ class WindowSizeChannel {
   Future<Size> getWindowMinSize() async {
     try {
       final response =
-          await _platformChannel.invokeMethod(_getWindowMimumumSizeMethod);
+          await _platformChannel.invokeMethod(_getWindowMinimumSizeMethod);
       return _sizeFromWHList(response[_windowSizeKey].cast<double>());
     } on PlatformException catch (e) {
       print('Platform exception getting window info: ${e.message}');
