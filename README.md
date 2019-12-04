@@ -78,7 +78,7 @@ list](https://groups.google.com/forum/#!forum/flutter-desktop-embedding-dev).
     
 
     1 How To Switch Master Channel ?
-    =>  Launch the Command Prompt and type  `flutter channel` master
+    =>  Launch the Command Prompt and type  'flutter channel master' 
     2 How To Enable Flutter Desktop ?
     =>  In your Command Prompt type   'flutter config --enable-windows-desktop' and 'set ENABLE_FLUTTER_DESKTOP=true'
         after that you can check that how much devices are conected .
@@ -101,4 +101,5 @@ list](https://groups.google.com/forum/#!forum/flutter-desktop-embedding-dev).
 
     
     * After setup and clone the repository go the 'example' directory and run the project using the command - 'flutter run'.
+    In the process if you got any error then run "flutter doctor"
 
