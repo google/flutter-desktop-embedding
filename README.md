@@ -94,12 +94,9 @@ list](https://groups.google.com/forum/#!forum/flutter-desktop-embedding-dev).
         Open in Desktop button
         Click Choose... and, using Windows Explorer, navigate to a local path where you want to clone the repository.
         The choose button
-        
         (Note: If the repository is configured to use LFS, you will be prompted to initialize Git LFS.)
-        
         Click Clone.
-
     
-    * After setup and clone the repository go the 'example' directory and run the project using the command - 'flutter run'.
+    ##After setup and clone the repository go the 'example' directory and run the project using the command - 'flutter run'.
     In the process if you got any error then run "flutter doctor"
 
