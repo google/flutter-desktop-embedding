@@ -32,7 +32,8 @@ for more information.
 Since `flutter create` is not yet supported for Windows and Linux, the easiest
 way to try out desktop support with an existing Flutter application on those
 platforms is to copy the platform directories from this example; see below for
-details. For macOS, just run `flutter create --macos .` in your project.
+details. For macOS, just run `flutter create .` in your project, which will
+create the macOS folder (as long as you have macOS support enabled in `flutter`).
 
 Be sure to read the [Flutter page on desktop
 support](https://github.com/flutter/flutter/wiki/Desktop-shells) before trying to
