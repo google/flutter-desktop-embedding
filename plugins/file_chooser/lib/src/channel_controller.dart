@@ -132,7 +132,6 @@ class FileChooserChannelController {
         : _kShowSavePanelMethod;
     final paths = await _channel.invokeListMethod<String>(
         methodName, options.asInvokeMethodArguments());
-    final paths = response?.cast<String>();
     return FileChooserResult(paths: paths ?? [], canceled: paths == null);
   }
 }
