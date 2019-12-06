@@ -11,5 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-export 'src/result.dart';
-export 'src/utilities.dart';
+
+/// The result of a file chooser operation.
+class FileChooserResult {
+  /// Creates a new result object with the given state and paths.
+  const FileChooserResult({this.paths, this.canceled});
+
+  /// Whether or not the file chooser operation was canceled by the user.
+  final bool canceled;
+
+  /// A list of file paths chosen by the user. If [canceled] is true, the list
+  /// should always be empty.
+  final List<String> paths;
+}
