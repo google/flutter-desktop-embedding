@@ -102,35 +102,21 @@ class WindowSizeChannel {
 
   /// Returns a list of screens.
   Future<List<Screen>> getScreenList() async {
-    try {
-      final screenList = <Screen>[];
-      final response =
-          await _platformChannel.invokeMethod(_getScreenListMethod);
+    final screenList = <Screen>[];
+    final response = await _platformChannel.invokeMethod(_getScreenListMethod);
 
-      for (final screenInfo in response) {
-        screenList.add(_screenFromInfoMap(screenInfo));
-      }
-      return screenList;
-    } on PlatformException catch (e) {
-      print('Platform exception getting screen list: ${e.message}');
+    for (final screenInfo in response) {
+      screenList.add(_screenFromInfoMap(screenInfo));
     }
-    return <Screen>[];
+    return screenList;
   }
 
   /// Returns information about the window containing this Flutter instance.
   Future<PlatformWindow> getWindowInfo() async {
-    try {
-      final response =
-          await _platformChannel.invokeMethod(_getWindowInfoMethod);
+    final response = await _platformChannel.invokeMethod(_getWindowInfoMethod);
 
-      return PlatformWindow(
-          _rectFromLTWHList(response[_frameKey].cast<double>()),
-          response[_scaleFactorKey],
-          _screenFromInfoMap(response[_screenKey]));
-    } on PlatformException catch (e) {
-      print('Platform exception getting window info: ${e.message}');
-    }
-    return null;
+    return PlatformWindow(_rectFromLTWHList(response[_frameKey].cast<double>()),
+        response[_scaleFactorKey], _screenFromInfoMap(response[_screenKey]));
   }
 
   /// Sets the frame of the window containing this Flutter instance, in
@@ -142,56 +128,34 @@ class WindowSizeChannel {
   void setWindowFrame(Rect frame) async {
     assert(!frame.isEmpty, 'Cannot set window frame to an empty rect.');
     assert(frame.isFinite, 'Cannot set window frame to a non-finite rect.');
-    try {
-      await _platformChannel.invokeMethod(_setWindowFrameMethod,
-          [frame.left, frame.top, frame.width, frame.height]);
-    } on PlatformException catch (e) {
-      print('Platform exception setting window frame: ${e.message}');
-    }
+    await _platformChannel.invokeMethod(_setWindowFrameMethod,
+        [frame.left, frame.top, frame.width, frame.height]);
   }
 
   /// Sets the minimum size of the window containing this Flutter instance.
   void setWindowMinSize(Size size) async {
-    try {
-      await _platformChannel
-          .invokeMethod(_setWindowMinimumSizeMethod, [size.width, size.height]);
-    } on PlatformException catch (e) {
-      print('Platform exception setting window minimum size: ${e.message}');
-    }
+    await _platformChannel
+        .invokeMethod(_setWindowMinimumSizeMethod, [size.width, size.height]);
   }
 
   /// Sets the maximum size of the window containing this Flutter instance.
   void setWindowMaxSize(Size size) async {
-    try {
-      await _platformChannel
-          .invokeMethod(_setWindowMaximumSizeMethod, [size.width, size.height]);
-    } on PlatformException catch (e) {
-      print('Platform exception setting window minimum size: ${e.message}');
-    }
+    await _platformChannel
+        .invokeMethod(_setWindowMaximumSizeMethod, [size.width, size.height]);
   }
 
   /// Gets the minimum size of the window containing this Flutter instance.
   Future<Size> getWindowMinSize() async {
-    try {
-      final response =
-          await _platformChannel.invokeMethod(_getWindowMinimumSizeMethod);
-      return _sizeFromWHList(response[_windowSizeKey].cast<double>());
-    } on PlatformException catch (e) {
-      print('Platform exception getting window info: ${e.message}');
-    }
-    return null;
+    final response =
+        await _platformChannel.invokeMethod(_getWindowMinimumSizeMethod);
+    return _sizeFromWHList(response[_windowSizeKey].cast<double>());
   }
 
   /// Gets the maximum size of the window containing this Flutter instance.
   Future<Size> getWindowMaxSize() async {
-    try {
-      final response =
-          await _platformChannel.invokeMethod(_getWindowMaximumSizeMethod);
-      return _sizeFromWHList(response[_windowSizeKey].cast<double>());
-    } on PlatformException catch (e) {
-      print('Platform exception getting window info: ${e.message}');
-    }
-    return null;
+    final response =
+        await _platformChannel.invokeMethod(_getWindowMaximumSizeMethod);
+    return _sizeFromWHList(response[_windowSizeKey].cast<double>());
   }
 
   /// Given an array of the form [left, top, width, height], return the
