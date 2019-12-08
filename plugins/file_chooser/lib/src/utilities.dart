@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import 'callbacks.dart';
 import 'channel_controller.dart';
+import 'result.dart';
 
 /// Shows a file chooser for selecting paths to one or more existing files.
 ///
@@ -24,20 +24,21 @@ import 'channel_controller.dart';
 /// - [canSelectDirectories] allows choosing directories instead of files.
 ///   Defaults to file selection if unset.
 /// - [confirmButtonText] overrides the button that confirms selection.
-void showOpenPanel(FileChooserCallback callback,
-    {String initialDirectory,
-    List<String> allowedFileTypes,
-    bool allowsMultipleSelection,
-    bool canSelectDirectories,
-    String confirmButtonText}) {
+Future<FileChooserResult> showOpenPanel({
+  String initialDirectory,
+  List<String> allowedFileTypes,
+  bool allowsMultipleSelection,
+  bool canSelectDirectories,
+  String confirmButtonText,
+}) async {
   final options = FileChooserConfigurationOptions(
       initialDirectory: initialDirectory,
       allowedFileTypes: allowedFileTypes,
       allowsMultipleSelection: allowsMultipleSelection,
       canSelectDirectories: canSelectDirectories,
       confirmButtonText: confirmButtonText);
-  FileChooserChannelController.instance
-      .show(FileChooserType.open, options, callback);
+  return FileChooserChannelController.instance
+      .show(FileChooserType.open, options);
 }
 
 /// Shows a file chooser for selecting a save path.
@@ -47,16 +48,16 @@ void showOpenPanel(FileChooserCallback callback,
 /// - [suggestedFileName] provides an initial value for the save filename.
 /// - [allowedFileTypes] restricts selection to the given file types.
 /// - [confirmButtonText] overrides the button that confirms selection.
-void showSavePanel(FileChooserCallback callback,
+Future<FileChooserResult> showSavePanel(
     {String initialDirectory,
     String suggestedFileName,
     List<String> allowedFileTypes,
-    String confirmButtonText}) {
+    String confirmButtonText}) async {
   final options = FileChooserConfigurationOptions(
       initialDirectory: initialDirectory,
       initialFileName: suggestedFileName,
       allowedFileTypes: allowedFileTypes,
       confirmButtonText: confirmButtonText);
-  FileChooserChannelController.instance
-      .show(FileChooserType.save, options, callback);
+  return FileChooserChannelController.instance
+      .show(FileChooserType.save, options);
 }

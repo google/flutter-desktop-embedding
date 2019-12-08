@@ -316,12 +316,14 @@ class FileChooserTestWidget extends StatelessWidget {
         new FlatButton(
           child: const Text('SAVE'),
           onPressed: () {
-            file_chooser.showSavePanel((result, paths) {
+            file_chooser
+                .showSavePanel(suggestedFileName: 'save_test.txt')
+                .then((result) {
               Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
-                    _FileChooserType.save, result, paths)),
+                    _FileChooserType.save, result)),
               ));
-            }, suggestedFileName: 'save_test.txt');
+            });
           },
         ),
         new FlatButton(
@@ -332,15 +334,16 @@ class FileChooserTestWidget extends StatelessWidget {
               initialDirectory =
                   (await getApplicationDocumentsDirectory()).path;
             }
-            file_chooser.showOpenPanel(
-              (result, paths) {
+            file_chooser
+                .showOpenPanel(
+                    allowsMultipleSelection: true,
+                    initialDirectory: initialDirectory)
+                .then(
+              (result) {
                 Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(_resultTextForFileChooserOperation(
-                      _FileChooserType.open, result, paths)),
-                ));
+                    content: Text(_resultTextForFileChooserOperation(
+                        _FileChooserType.open, result))));
               },
-              allowsMultipleSelection: true,
-              initialDirectory: initialDirectory,
             );
           },
         ),
@@ -404,11 +407,10 @@ enum _FileChooserType { save, open }
 
 /// Returns display text reflecting the result of a file chooser operation.
 String _resultTextForFileChooserOperation(
-    _FileChooserType type, file_chooser.FileChooserResult result,
-    [List<String> paths]) {
-  if (result == file_chooser.FileChooserResult.cancel) {
+    _FileChooserType type, file_chooser.FileChooserResult result) {
+  if (result.canceled) {
     return '${type == _FileChooserType.open ? 'Open' : 'Save'} cancelled';
   }
-  final statusText = type == _FileChooserType.open ? 'Opened' : 'Saved';
-  return '$statusText: ${paths.join('\n')}';
+  final typeString = type == _FileChooserType.open ? 'opening' : 'saving';
+  return 'Selected for $typeString: ${result.paths.join('\n')}';
 }
