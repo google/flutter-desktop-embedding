@@ -1,9 +1,3 @@
 .packages
 .flutter-plugins
 pubspec.lock
-.flutter-plugins-dependencies
-package_config.json
-flutter_export_environment.sh
-Flutter-Generated.xcconfig
-GeneratedPluginRegistrant.*
-Generated.xcconfig
