@@ -29,13 +29,10 @@ dependencies:
   window_size:
     path: ../plugins/window_size
   # Plugins from flutter/plugins, with local desktop implementations.
-  path_provider: ^1.2.0
-  path_provider_fde:
-    path: ../plugins/flutter_plugins/path_provider_fde
-  shared_preferences: ^0.5.3
-  shared_preferences_fde:
-    path: ../plugins/flutter_plugins/shared_preferences_fde
-  url_launcher: ^5.0.0
+  path_provider: ^1.5.1
+  path_provider_macos: ^0.0.2 # This can be removed once endorsed.
+  shared_preferences: ^0.5.6
+  url_launcher: ^5.4.0
   url_launcher_fde:
     path: ../plugins/flutter_plugins/url_launcher_fde
 
