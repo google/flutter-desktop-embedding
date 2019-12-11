@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:math' as math;
 
@@ -53,14 +54,7 @@ void main() {
         window_size.setWindowFrame(frame);
 
         if (Platform.isMacOS) {
-          window_size.setWindowMinSize(Size(800,600));
-          window_size.setWindowMaxSize(Size(1600,1200));
-          window_size.getWindowMinSize().then((size){
-            print('window_size.getWindowMinSize: $size');
-          });
-          window_size.getWindowMaxSize().then((size){
-            print('window_size.getWindowMaxSize: $size');
-          });
+          _windowMinMax();
         }
       }
     });
@@ -71,6 +65,26 @@ void main() {
   });
 
   runApp(new MyApp());
+}
+
+Future<void> _windowMinMax() async {
+  await _printWindowMinMax('initial state');
+
+  window_size.setWindowMinSize(Size(0, 0));
+  window_size.setWindowMaxSize(Size(double.infinity, double.infinity));
+  await _printWindowMinMax('totally unconstrained');
+
+  window_size.setWindowMinSize(Size(800, 600));
+  window_size.setWindowMaxSize(Size(1600, 1200));
+  await _printWindowMinMax('constrained');
+}
+
+Future<void> _printWindowMinMax(String state) async {
+  print('window_size $state');
+  var size = await window_size.getWindowMinSize();
+  print('window_size.getWindowMinSize: $size');
+  size = await window_size.getWindowMaxSize();
+  print('window_size.getWindowMaxSize: $size');
 }
 
 /// Top level widget for the example application.
@@ -97,7 +111,7 @@ class _AppState extends State<MyApp> {
   int _counter = 0;
 
   static _AppState of(BuildContext context) =>
-      context.ancestorStateOfType(const TypeMatcher<_AppState>());
+      context.findAncestorStateOfType<_AppState>();
 
   /// Sets the primary color of the example app.
   void setPrimaryColor(Color color) {
@@ -334,17 +348,13 @@ class FileChooserTestWidget extends StatelessWidget {
               initialDirectory =
                   (await getApplicationDocumentsDirectory()).path;
             }
-            file_chooser
-                .showOpenPanel(
-                    allowsMultipleSelection: true,
-                    initialDirectory: initialDirectory)
-                .then(
-              (result) {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text(_resultTextForFileChooserOperation(
-                        _FileChooserType.open, result))));
-              },
-            );
+            final result = await file_chooser.showOpenPanel(
+                allowsMultipleSelection: true,
+                initialDirectory: initialDirectory);
+
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.open, result))));
           },
         ),
       ],

@@ -8,11 +8,13 @@ PODS:
   - FlutterMacOS (1.0.0)
   - menubar (0.0.2):
     - FlutterMacOS
-  - path_provider_fde (0.0.1):
+  - path_provider_macos (0.0.1):
     - FlutterMacOS
-  - shared_preferences_fde (0.0.1):
+  - shared_preferences (0.0.1)
+  - shared_preferences_macos (0.0.1):
     - FlutterMacOS
-  - url_launcher_fde (0.0.1):
+  - url_launcher (0.0.1)
+  - url_launcher_macos (0.0.1):
     - FlutterMacOS
   - window_size (0.0.2):
     - FlutterMacOS
@@ -23,9 +25,11 @@ DEPENDENCIES:
   - file_chooser (from `Flutter/ephemeral/.symlinks/plugins/file_chooser/macos`)
   - FlutterMacOS (from `Flutter/ephemeral/.symlinks/flutter/darwin-x64`)
   - menubar (from `Flutter/ephemeral/.symlinks/plugins/menubar/macos`)
-  - path_provider_fde (from `Flutter/ephemeral/.symlinks/plugins/path_provider_fde/macos`)
-  - shared_preferences_fde (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_fde/macos`)
-  - url_launcher_fde (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_fde/macos`)
+  - path_provider_macos (from `Flutter/ephemeral/.symlinks/plugins/path_provider_macos/macos`)
+  - shared_preferences (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences/macos`)
+  - shared_preferences_macos (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_macos/macos`)
+  - url_launcher (from `Flutter/ephemeral/.symlinks/plugins/url_launcher/macos`)
+  - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
   - window_size (from `Flutter/ephemeral/.symlinks/plugins/window_size/macos`)
 
 EXTERNAL SOURCES:
@@ -39,12 +43,16 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/flutter/darwin-x64
   menubar:
     :path: Flutter/ephemeral/.symlinks/plugins/menubar/macos
-  path_provider_fde:
-    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_fde/macos
-  shared_preferences_fde:
-    :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_fde/macos
-  url_launcher_fde:
-    :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_fde/macos
+  path_provider_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_macos/macos
+  shared_preferences:
+    :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences/macos
+  shared_preferences_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_macos/macos
+  url_launcher:
+    :path: Flutter/ephemeral/.symlinks/plugins/url_launcher/macos
+  url_launcher_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
   window_size:
     :path: Flutter/ephemeral/.symlinks/plugins/window_size/macos
 
@@ -54,9 +62,11 @@ SPEC CHECKSUMS:
   file_chooser: 24432cf5dc836722b05c11c2a0a30d19c3c9b996
   FlutterMacOS: 15bea8a44d2fa024068daa0140371c020b4b6ff9
   menubar: 4e3d461d62d775540277ce6639acafe2a111a231
-  path_provider_fde: ac05eee380688ce8414a9003c3ac2d3c106dcbf8
-  shared_preferences_fde: 71710025ac76ed132b9a27108b3ec0816f3a7dbb
-  url_launcher_fde: 2e3afc0d9c7c0dfe63e0ef42030ec62d56096b38
+  path_provider_macos: adb94ae6c253c45ef2aac146fbf1f4504d74b0f8
+  shared_preferences: 9fec34d1bd906196a4da48fcf6c3ad521cc00b8d
+  shared_preferences_macos: 5e5c2839894accb56b7d23328905b757f2bafaf6
+  url_launcher: af78307ef9bafff91273b34f1c6c0c86a0004fd7
+  url_launcher_macos: 77182d012b6b515c0955d24ed22b38f79b82a99d
   window_size: 339dafa0b27a95a62a843042038fa6c3c48de195
 
 PODFILE CHECKSUM: 2c44d578a2acaaed0401d0d3bb20d04d4b080703

@@ -176,9 +176,13 @@ class WindowSizeChannel {
   Future<Size> getWindowMinSize() async {
     final response =
         await _platformChannel.invokeMethod(_getWindowMinimumSizeMethod);
-    return _sizeFromWHList(response[_windowSizeKey]
-        .cast<double>()
-        .map(_getWindowMinSizeUnconstrainedCheck));
+    return _sizeFromWHList(
+      List<double>.from(
+        response[_windowSizeKey]
+            .cast<double>()
+            .map(_getWindowMinSizeUnconstrainedCheck),
+      ),
+    );
   }
 
   // Window maximum size unconstrained is passed over the channel as -1.
@@ -193,9 +197,13 @@ class WindowSizeChannel {
   Future<Size> getWindowMaxSize() async {
     final response =
         await _platformChannel.invokeMethod(_getWindowMaximumSizeMethod);
-    return _sizeFromWHList(response[_windowSizeKey]
-        .cast<double>()
-        .map(_getWindowMaxSizeUnconstrainedCheck));
+    return _sizeFromWHList(
+      List<double>.from(
+        response[_windowSizeKey]
+            .cast<double>()
+            .map(_getWindowMaxSizeUnconstrainedCheck),
+      ),
+    );
   }
 
   /// Given an array of the form [left, top, width, height], return the

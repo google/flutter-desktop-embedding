@@ -76,42 +76,45 @@ NSRect GetFlippedRect(NSRect frame) {
 
 @end
 
-// Private helper methods
-@interface FLEWindowSizePlugin ()
-
-// Window minimum size unconstrained is passed over the channel as -1.
-- (double)setWindowMinSizeUnconstrainedCheck:(double) size {
-  if (size != -1) {
-    return size;
-  }
-  return 0;
+/**
+ * Converts the channel representation for unconstrained minimum size `-1` to Cocoa's specific minimum size of `0`.
+ */
+static double _setWindowMinSizeUnconstrainedCheck(double size){
+    if (size != -1) {
+      return size;
+    }
+    return 0;
 }
 
-// Window maximum size unconstrained is passed over the channel as -1.
-- (double)setWindowMaxSizeUnconstrainedCheck:(double) size {
-  if (size != -1) {
-    return size;
-  }
-  return FLT_MAX;
+/**
+ * Converts the channel representation for unconstrained maximum size `-1` to Cocoa's specific maximum size of `FLT_MAX`.
+ */
+static double _setWindowMaxSizeUnconstrainedCheck(double size) {
+    if (size != -1) {
+      return size;
+    }
+    return FLT_MAX;
 }
 
-// Window minimum size unconstrained is passed over the channel as -1.
-- (double)getWindowMinSizeUnconstrainedCheck:(double) size {
-  if (size > 0) {
-    return size;
-  }
-  return -1;
+/**
+ * Converts the Cocoa's specific minimum size of `0` to channel representation for unconstrained minimum size `-1`.
+ */
+static double _getWindowMinSizeUnconstrainedCheck(double size) {
+    if (size > 0) {
+      return size;
+    }
+    return -1;
 }
 
-// Window maximum size unconstrained is passed over the channel as -1.
-- (double)getWindowMaxSizeUnconstrainedCheck:(double) size {
-  if (size != FLT_MAX) {
-    return size;
-  }
-  return -1;
+/**
+ * Converts the Cocoa's specific maximum size of `FLT_MAX` to channel representation for unconstrained maximum size `-1`.
+ */
+static double _getWindowMaxSizeUnconstrainedCheck(double size) {
+    if (size != FLT_MAX) {
+      return size;
+    }
+    return -1;
 }
-
-@end
 
 @implementation FLEWindowSizePlugin {
   // The channel used to communicate with Flutter.
@@ -167,18 +170,26 @@ NSRect GetFlippedRect(NSRect frame) {
     methodResult = nil;
   } else if ([call.method isEqualToString:kSetWindowMinimumSizeMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
-    self.flutterView.window.minSize = NSMakeSize(arguments[0].doubleValue, arguments[1].doubleValue);
+    self.flutterView.window.minSize =
+      NSMakeSize(_setWindowMinSizeUnconstrainedCheck(arguments[0].doubleValue),
+                 _setWindowMinSizeUnconstrainedCheck(arguments[1].doubleValue));
     methodResult = nil;
   } else if ([call.method isEqualToString:kSetWindowMaximumSizeMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
-    self.flutterView.window.maxSize = NSMakeSize(arguments[0].doubleValue, arguments[1].doubleValue);
+    self.flutterView.window.maxSize =
+      NSMakeSize(_setWindowMaxSizeUnconstrainedCheck(arguments[0].doubleValue),
+                 _setWindowMaxSizeUnconstrainedCheck(arguments[1].doubleValue));
     methodResult = nil;
   } else if ([call.method isEqualToString:kGetWindowMinimumSizeMethod]) {
     NSSize size = self.flutterView.window.minSize;
-    methodResult = @{ kWindowSizeKey: @[ @(size.width), @(size.height) ] };
+    methodResult = @{ kWindowSizeKey: @[
+                              @(_getWindowMinSizeUnconstrainedCheck(size.width)),
+                              @(_getWindowMinSizeUnconstrainedCheck(size.height)) ] };
   } else if ([call.method isEqualToString:kGetWindowMaximumSizeMethod]) {
     NSSize size = self.flutterView.window.maxSize;
-    methodResult = @{ kWindowSizeKey: @[ @(size.width), @(size.height) ] };
+    methodResult = @{ kWindowSizeKey: @[
+                              @(_getWindowMaxSizeUnconstrainedCheck(size.width)),
+                              @(_getWindowMaxSizeUnconstrainedCheck(size.height)) ] };
   } else {
     methodResult = FlutterMethodNotImplemented;
   }

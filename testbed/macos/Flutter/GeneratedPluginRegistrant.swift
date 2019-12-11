@@ -9,9 +9,9 @@ import color_panel
 import example_plugin
 import file_chooser
 import menubar
-import path_provider_fde
-import shared_preferences_fde
-import url_launcher_fde
+import path_provider_macos
+import shared_preferences_macos
+import url_launcher_macos
 import window_size
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
