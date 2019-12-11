@@ -76,6 +76,43 @@ NSRect GetFlippedRect(NSRect frame) {
 
 @end
 
+// Private helper methods
+@interface FLEWindowSizePlugin ()
+
+// Window minimum size unconstrained is passed over the channel as -1.
+- (double)setWindowMinSizeUnconstrainedCheck:(double) size {
+  if (size != -1) {
+    return size;
+  }
+  return 0;
+}
+
+// Window maximum size unconstrained is passed over the channel as -1.
+- (double)setWindowMaxSizeUnconstrainedCheck:(double) size {
+  if (size != -1) {
+    return size;
+  }
+  return FLT_MAX;
+}
+
+// Window minimum size unconstrained is passed over the channel as -1.
+- (double)getWindowMinSizeUnconstrainedCheck:(double) size {
+  if (size > 0) {
+    return size;
+  }
+  return -1;
+}
+
+// Window maximum size unconstrained is passed over the channel as -1.
+- (double)getWindowMaxSizeUnconstrainedCheck:(double) size {
+  if (size != FLT_MAX) {
+    return size;
+  }
+  return -1;
+}
+
+@end
+
 @implementation FLEWindowSizePlugin {
   // The channel used to communicate with Flutter.
   FlutterMethodChannel *_channel;
