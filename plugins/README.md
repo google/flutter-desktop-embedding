@@ -7,9 +7,9 @@ for an overview of the current state of plugin development on desktop.
 This directory contains three types of plugins:
 * `example_plugin`, which like `example/` will eventually be replaced by
   `flutter create -t plugin` support for desktop.
-* `flutter_plugins`, which contain desktop implementations of plugins
+* `flutter_plugins`, which contain Windows and Linux implementations of plugins
   from [the flutter/plugins repository](https://github.com/flutter/plugins)
-  that are expected to move to an official location once the plugin APIs are
+  that are expected to move to that repository once the plugin APIs are
   sufficiently stable.
 * Plugins that prototype functionality that will likely become part of
   Flutter itself.
@@ -133,8 +133,7 @@ headers.
 You can create local packages following the model of the Windows and Linux
 plugins here to use in your own projects; in particular, `example_plugin`
 is intended to serve as a starting point for new plugins. For macOS,
-you should instead pass `--macos` when making a plugin with
-`flutter create` to include macOS support.
+you should use `flutter create` as usual.
 
 Keep in mind the notes about API stability on the Flutter desktop page
 linked above. On platforms where the plugin API is still unstable, or
