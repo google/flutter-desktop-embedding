@@ -6,7 +6,7 @@ same name, minus the `_fde` suffix.
 
 These implementations exist here only as a temporary solution to use these
 plugins while the plugin APIs on Windows and Linux stabilize enough that
-they can move to an official location and be distributed as normal Flutter
+they can move to the official location and be distributed as normal Flutter
 plugins. macOS plugin APIs and tooling are stable, so are already hosted
 normally rather than here.
 
@@ -26,3 +26,8 @@ dependencies:
 
 Then follow [the main plugin README](../README.md) instructions for
 adding the native implementation to your build.
+
+## Contributing
+
+If you are interested in implementing a flutter/plugins plugin for Windows
+and/or Linux, please open a PR!
