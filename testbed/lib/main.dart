@@ -111,7 +111,7 @@ class _AppState extends State<MyApp> {
   int _counter = 0;
 
   static _AppState of(BuildContext context) =>
-      context.findAncestorStateOfType<_AppState>();
+      context.ancestorStateOfType(const TypeMatcher<_AppState>());
 
   /// Sets the primary color of the example app.
   void setPrimaryColor(Color color) {
@@ -348,13 +348,15 @@ class FileChooserTestWidget extends StatelessWidget {
               initialDirectory =
                   (await getApplicationDocumentsDirectory()).path;
             }
-            final result = await file_chooser.showOpenPanel(
-                allowsMultipleSelection: true,
-                initialDirectory: initialDirectory);
-
-            Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(_resultTextForFileChooserOperation(
-                    _FileChooserType.open, result))));
+            file_chooser
+                .showOpenPanel(
+                    allowsMultipleSelection: true,
+                    initialDirectory: initialDirectory)
+                .then((result) {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(_resultTextForFileChooserOperation(
+                      _FileChooserType.open, result))));
+            });
           },
         ),
       ],
