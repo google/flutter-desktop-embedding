@@ -77,16 +77,6 @@ NSRect GetFlippedRect(NSRect frame) {
 @end
 
 /**
- * Converts the channel representation for unconstrained minimum size `-1` to Cocoa's specific minimum size of `0`.
- */
-static double _setWindowMinSizeUnconstrainedCheck(double size){
-    if (size != -1) {
-      return size;
-    }
-    return 0;
-}
-
-/**
  * Converts the channel representation for unconstrained maximum size `-1` to Cocoa's specific maximum size of `FLT_MAX`.
  */
 static double _setWindowMaxSizeUnconstrainedCheck(double size) {
@@ -94,16 +84,6 @@ static double _setWindowMaxSizeUnconstrainedCheck(double size) {
       return size;
     }
     return FLT_MAX;
-}
-
-/**
- * Converts the Cocoa's specific minimum size of `0` to channel representation for unconstrained minimum size `-1`.
- */
-static double _getWindowMinSizeUnconstrainedCheck(double size) {
-    if (size > 0) {
-      return size;
-    }
-    return -1;
 }
 
 /**
@@ -171,8 +151,7 @@ static double _getWindowMaxSizeUnconstrainedCheck(double size) {
   } else if ([call.method isEqualToString:kSetWindowMinimumSizeMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
     self.flutterView.window.minSize =
-      NSMakeSize(_setWindowMinSizeUnconstrainedCheck(arguments[0].doubleValue),
-                 _setWindowMinSizeUnconstrainedCheck(arguments[1].doubleValue));
+      NSMakeSize(arguments[0].doubleValue, arguments[1].doubleValue);
     methodResult = nil;
   } else if ([call.method isEqualToString:kSetWindowMaximumSizeMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
@@ -182,9 +161,7 @@ static double _getWindowMaxSizeUnconstrainedCheck(double size) {
     methodResult = nil;
   } else if ([call.method isEqualToString:kGetWindowMinimumSizeMethod]) {
     NSSize size = self.flutterView.window.minSize;
-    methodResult = @{ kWindowSizeKey: @[
-                              @(_getWindowMinSizeUnconstrainedCheck(size.width)),
-                              @(_getWindowMinSizeUnconstrainedCheck(size.height)) ] };
+    methodResult = @{ kWindowSizeKey: @[ @(size.width), @(size.height) ] };
   } else if ([call.method isEqualToString:kGetWindowMaximumSizeMethod]) {
     NSSize size = self.flutterView.window.maxSize;
     methodResult = @{ kWindowSizeKey: @[

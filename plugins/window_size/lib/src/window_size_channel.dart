@@ -132,20 +132,10 @@ class WindowSizeChannel {
         [frame.left, frame.top, frame.width, frame.height]);
   }
 
-  // Window minimum size unconstrained is passed over the channel as -1.
-  double _setWindowMinSizeUnconstrainedCheck(double size) {
-    if (size > 0) {
-      return size;
-    }
-    return -1;
-  }
-
   /// Sets the minimum size of the window containing this Flutter instance.
   void setWindowMinSize(Size size) async {
-    await _platformChannel.invokeMethod(_setWindowMinimumSizeMethod, [
-      _setWindowMinSizeUnconstrainedCheck(size.width),
-      _setWindowMinSizeUnconstrainedCheck(size.height),
-    ]);
+    await _platformChannel
+        .invokeMethod(_setWindowMinimumSizeMethod, [size.width, size.height]);
   }
 
   // Window maximum size unconstrained is passed over the channel as -1.
@@ -164,25 +154,12 @@ class WindowSizeChannel {
     ]);
   }
 
-  // Window minimum size unconstrained is passed over the channel as -1.
-  double _getWindowMinSizeUnconstrainedCheck(double size) {
-    if (size != -1) {
-      return size;
-    }
-    return 0;
-  }
-
   /// Gets the minimum size of the window containing this Flutter instance.
   Future<Size> getWindowMinSize() async {
     final response =
         await _platformChannel.invokeMethod(_getWindowMinimumSizeMethod);
     return _sizeFromWHList(
-      List<double>.from(
-        response[_windowSizeKey]
-            .cast<double>()
-            .map(_getWindowMinSizeUnconstrainedCheck),
-      ),
-    );
+        List<double>.from(response[_windowSizeKey].cast<double>()));
   }
 
   // Window maximum size unconstrained is passed over the channel as -1.
