@@ -139,18 +139,15 @@ class WindowSizeChannel {
   }
 
   // Window maximum size unconstrained is passed over the channel as -1.
-  double _setWindowMaxSizeUnconstrainedCheck(double size) {
-    if (size != double.infinity) {
-      return size;
-    }
-    return -1;
+  double _channelRepresentationForMaxDimension(double size) {
+    return size == double.infinity ? -1 : size;
   }
 
   /// Sets the maximum size of the window containing this Flutter instance.
   void setWindowMaxSize(Size size) async {
     await _platformChannel.invokeMethod(_setWindowMaximumSizeMethod, [
-      _setWindowMaxSizeUnconstrainedCheck(size.width),
-      _setWindowMaxSizeUnconstrainedCheck(size.height),
+      _channelRepresentationForMaxDimension(size.width),
+      _channelRepresentationForMaxDimension(size.height),
     ]);
   }
 
@@ -163,11 +160,8 @@ class WindowSizeChannel {
   }
 
   // Window maximum size unconstrained is passed over the channel as -1.
-  double _getWindowMaxSizeUnconstrainedCheck(double size) {
-    if (size != -1) {
-      return size;
-    }
-    return double.infinity;
+  double _maxDimensionFromChannelRepresentation(double size) {
+    return size == -1 ? double.infinity : size;
   }
 
   /// Gets the maximum size of the window containing this Flutter instance.
@@ -178,7 +172,7 @@ class WindowSizeChannel {
       List<double>.from(
         response[_windowSizeKey]
             .cast<double>()
-            .map(_getWindowMaxSizeUnconstrainedCheck),
+            .map(_maxDimensionFromChannelRepresentation),
       ),
     );
   }
