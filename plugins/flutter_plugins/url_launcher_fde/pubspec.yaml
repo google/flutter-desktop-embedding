@@ -9,8 +9,6 @@ flutter:
     platforms:
       linux:
         pluginClass: UrlLauncherPlugin
-      macos:
-        pluginClass: UrlLauncherPlugin
       windows:
         pluginClass: UrlLauncherPlugin
 

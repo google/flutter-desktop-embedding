@@ -9,6 +9,7 @@ build/
 ios/
 packages
 .flutter-plugins
+.flutter-plugins-dependencies
 # Since the current expectation is that clients are using Flutter head,
 # and Dart SDK changes unlock dependencies, pubspec.lock isn't useful.
 # Ignore it since it just creates noise. When there's a system in place

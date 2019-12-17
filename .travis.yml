@@ -38,6 +38,7 @@ matrix:
         - flutter build -v linux --debug
 
     - os: osx
+      osx_image: xcode11.2
       language: objective-c
       xcode_project: example/macos/Runner.xcodeproj
       xcode_scheme: Runner
