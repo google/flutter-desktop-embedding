@@ -79,21 +79,15 @@ NSRect GetFlippedRect(NSRect frame) {
 /**
  * Converts the channel representation for unconstrained maximum size `-1` to Cocoa's specific maximum size of `FLT_MAX`.
  */
-static double _setWindowMaxSizeUnconstrainedCheck(double size) {
-    if (size != -1) {
-      return size;
-    }
-    return FLT_MAX;
+static double MaxDimensionFromChannelRepresentation(double size) {
+    return size == -1.0 ? FLT_MAX : size;
 }
 
 /**
- * Converts the Cocoa's specific maximum size of `FLT_MAX` to channel representation for unconstrained maximum size `-1`.
+ * Converts Cocoa's specific maximum size of `FLT_MAX` to channel representation for unconstrained maximum size `-1`.
  */
-static double _getWindowMaxSizeUnconstrainedCheck(double size) {
-    if (size != FLT_MAX) {
-      return size;
-    }
-    return -1;
+static double ChannelRepresentationForMaxDimension(double size) {
+    return size == FLT_MAX ? -1 : size;
 }
 
 @implementation FLEWindowSizePlugin {
@@ -156,8 +150,8 @@ static double _getWindowMaxSizeUnconstrainedCheck(double size) {
   } else if ([call.method isEqualToString:kSetWindowMaximumSizeMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
     self.flutterView.window.maxSize =
-      NSMakeSize(_setWindowMaxSizeUnconstrainedCheck(arguments[0].doubleValue),
-                 _setWindowMaxSizeUnconstrainedCheck(arguments[1].doubleValue));
+      NSMakeSize(MaxDimensionFromChannelRepresentation(arguments[0].doubleValue),
+                 MaxDimensionFromChannelRepresentation(arguments[1].doubleValue));
     methodResult = nil;
   } else if ([call.method isEqualToString:kGetWindowMinimumSizeMethod]) {
     NSSize size = self.flutterView.window.minSize;
@@ -165,8 +159,8 @@ static double _getWindowMaxSizeUnconstrainedCheck(double size) {
   } else if ([call.method isEqualToString:kGetWindowMaximumSizeMethod]) {
     NSSize size = self.flutterView.window.maxSize;
     methodResult = @{ kWindowSizeKey: @[
-                              @(_getWindowMaxSizeUnconstrainedCheck(size.width)),
-                              @(_getWindowMaxSizeUnconstrainedCheck(size.height)) ] };
+                              @(ChannelRepresentationForMaxDimension(size.width)),
+                              @(ChannelRepresentationForMaxDimension(size.height)) ] };
   } else {
     methodResult = FlutterMethodNotImplemented;
   }
