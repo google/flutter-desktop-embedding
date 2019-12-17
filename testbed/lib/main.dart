@@ -352,11 +352,13 @@ class FileChooserTestWidget extends StatelessWidget {
                 .showOpenPanel(
                     allowsMultipleSelection: true,
                     initialDirectory: initialDirectory)
-                .then((result) {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(_resultTextForFileChooserOperation(
-                      _FileChooserType.open, result))));
-            });
+                .then(
+              (result) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text(_resultTextForFileChooserOperation(
+                        _FileChooserType.open, result))));
+              },
+            );
           },
         ),
       ],
