@@ -54,7 +54,8 @@ void main() {
         window_size.setWindowFrame(frame);
 
         if (Platform.isMacOS) {
-          _windowMinMax();
+          window_size.setWindowMinSize(Size(800, 600));
+          window_size.setWindowMaxSize(Size(1600, 1200));
         }
       }
     });
@@ -65,26 +66,6 @@ void main() {
   });
 
   runApp(new MyApp());
-}
-
-Future<void> _windowMinMax() async {
-  await _printWindowMinMax('initial state');
-
-  window_size.setWindowMinSize(Size(0, 0));
-  window_size.setWindowMaxSize(Size(double.infinity, double.infinity));
-  await _printWindowMinMax('totally unconstrained');
-
-  window_size.setWindowMinSize(Size(800, 600));
-  window_size.setWindowMaxSize(Size(1600, 1200));
-  await _printWindowMinMax('constrained');
-}
-
-Future<void> _printWindowMinMax(String state) async {
-  print('window_size $state');
-  var size = await window_size.getWindowMinSize();
-  print('window_size.getWindowMinSize: $size');
-  size = await window_size.getWindowMaxSize();
-  print('window_size.getWindowMaxSize: $size');
 }
 
 /// Top level widget for the example application.
