@@ -4,7 +4,7 @@ macOS builds are now configured by default to be signed, and sandboxed with
 App Sandbox.
 
 Managing the sandbox settings is done via the
-`macos/Runner-*.entitlements` files. When editing these files, you should not
+`macos/Runner/*.entitlements` files. When editing these files, you should not
 remove the original `Runner-DebugProfile.entitlements` exceptions (incoming
 network connections and JIT), as they are necessary for debug and profile mode
 to function correctly.
@@ -24,6 +24,8 @@ for your application if you add certain plugins or other native functionality.
 For instance, using the file\_chooser plugin requires adding either the
 `com.apple.security.files.user-selected.read-only` or
 `com.apple.security.files.user-selected.read-write` entitlement.
+Another common entitlement is `com.apple.security.network.client`, which you
+will need to add if you make any network requests.
 
 Using App Sandbox is required if you plan to distribute your application in the
 App Store.
@@ -53,11 +55,3 @@ If you have both App Sandbox and Hardened Runtime enabled, you may need to
 add multiple entitlements for the same resource. For instance, microphone access
 would require *both* `com.apple.security.device.audio-input` (for Hardened
 Runtime) and `com.apple.security.device.microphone` (for App Sandbox).
-
-## Feedback
-
-Please file issues or [email the mailing
-list](https://groups.google.com/forum/#!forum/flutter-desktop-embedding-dev)
-if you have feedback about the process of using App Sandbox and/or Hardened
-Runtime, as we would like to understand as much as possible about issues or
-pain points in using them with Flutter applications.
