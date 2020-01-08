@@ -109,7 +109,8 @@ Adding it to the build system is currently a manual process. To add a plugin:
   - Make `Runner` depend on the plugin project
   - Make the plugin project depend on `Flutter Build`
 - Edit `FlutterPlugins.props` to list the plugin library as a dependency.
-  See [`testbed`'s copy] for an example.
+  See [`testbed`'s copy](https://github.com/google/flutter-desktop-embedding/blob/master/testbed/windows/FlutterPlugins.props)
+  for an example.
 
 Note: The eventual implementation of plugin management for Windows will likely
 be entirely different from this approach.
