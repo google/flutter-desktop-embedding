@@ -26,7 +26,6 @@ static NSString *const kSetWindowMaximumSizeMethod = @"setWindowMaximumSize";
 static NSString *const kGetWindowMinimumSizeMethod = @"getWindowMinimumSize";
 static NSString *const kGetWindowMaximumSizeMethod = @"getWindowMaximumSize";
 static NSString *const kFrameKey = @"frame";
-static NSString *const kWindowSizeKey = @"windowSize";
 static NSString *const kVisibleFrameKey = @"visibleFrame";
 static NSString *const kScaleFactorKey = @"scaleFactor";
 static NSString *const kScreenKey = @"screen";
@@ -155,12 +154,12 @@ static double ChannelRepresentationForMaxDimension(double size) {
     methodResult = nil;
   } else if ([call.method isEqualToString:kGetWindowMinimumSizeMethod]) {
     NSSize size = self.flutterView.window.minSize;
-    methodResult = @{ kWindowSizeKey: @[ @(size.width), @(size.height) ] };
+    methodResult = @[ @(size.width), @(size.height) ];
   } else if ([call.method isEqualToString:kGetWindowMaximumSizeMethod]) {
     NSSize size = self.flutterView.window.maxSize;
-    methodResult = @{ kWindowSizeKey: @[
+    methodResult =  @[
                               @(ChannelRepresentationForMaxDimension(size.width)),
-                              @(ChannelRepresentationForMaxDimension(size.height)) ] };
+                              @(ChannelRepresentationForMaxDimension(size.height)) ];
   } else {
     methodResult = FlutterMethodNotImplemented;
   }

@@ -40,22 +40,38 @@ const String _setWindowFrameMethod = 'setWindowFrame';
 
 /// The method name to set the minimum size of a window.
 ///
-/// Takes a window size array, as documented for the value of _windowSizeKey.
+/// Takes a window size array, with the value is a list of two doubles:
+///   [width, height].
+/// 
+/// A value of zero for width or height is to be interpreted as
+/// unconstrained in that dimension.
 const String _setWindowMinimumSizeMethod = 'setWindowMinimumSize';
 
 /// The method name to set the maximum size of a window.
 ///
-/// Takes a window size array, as documented for the value of _windowSizeKey.
+/// Takes a window size array, with the value is a list of two doubles:
+///   [width, height].
+/// 
+/// A value of `-1` for width or height is to be interpreted as
+/// unconstrained in that dimension.
 const String _setWindowMaximumSizeMethod = 'setWindowMaximumSize';
 
 /// The method name to get the minimum size of a window.
 ///
-/// Returns a window size array, as documented for the value of _windowSizeKey.
+/// Returns a window size array, with the value is a list of two doubles:
+///   [width, height].
+/// 
+/// A value of zero for width or height is to be interpreted as
+/// unconstrained in that dimension.
 const String _getWindowMinimumSizeMethod = 'getWindowMinimumSize';
 
 /// The method name to get the maximum size of a window.
 ///
-/// Returns a window size array, as documented for the value of _windowSizeKey.
+/// Returns a window size array, with the value is a list of two doubles:
+///   [width, height].
+/// 
+/// A value of `-1` for width or height is to be interpreted as
+/// unconstrained in that dimension.
 const String _getWindowMaximumSizeMethod = 'getWindowMaximumSize';
 
 // Keys for screen and window maps returned by _getScreenListMethod.
@@ -63,10 +79,6 @@ const String _getWindowMaximumSizeMethod = 'getWindowMaximumSize';
 /// The frame of a screen or window. The value is a list of four doubles:
 ///   [left, top, width, height]
 const String _frameKey = 'frame';
-
-/// The size of a window. The value is a list of two doubles:
-///   [width, height]
-const String _windowSizeKey = 'windowSize';
 
 /// The frame of a screen available for use by applications. The value format
 /// is the same as _frameKey's.
@@ -155,8 +167,7 @@ class WindowSizeChannel {
   Future<Size> getWindowMinSize() async {
     final response =
         await _platformChannel.invokeMethod(_getWindowMinimumSizeMethod);
-    return _sizeFromWHList(
-        List<double>.from(response[_windowSizeKey].cast<double>()));
+    return _sizeFromWHList(List<double>.from(response.cast<double>()));
   }
 
   // Window maximum size unconstrained is passed over the channel as -1.
@@ -170,9 +181,7 @@ class WindowSizeChannel {
         await _platformChannel.invokeMethod(_getWindowMaximumSizeMethod);
     return _sizeFromWHList(
       List<double>.from(
-        response[_windowSizeKey]
-            .cast<double>()
-            .map(_maxDimensionFromChannelRepresentation),
+        response.cast<double>().map(_maxDimensionFromChannelRepresentation),
       ),
     );
   }

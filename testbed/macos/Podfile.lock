@@ -66,7 +66,7 @@ SPEC CHECKSUMS:
   shared_preferences: 9fec34d1bd906196a4da48fcf6c3ad521cc00b8d
   shared_preferences_macos: 5e5c2839894accb56b7d23328905b757f2bafaf6
   url_launcher: af78307ef9bafff91273b34f1c6c0c86a0004fd7
-  url_launcher_macos: 77182d012b6b515c0955d24ed22b38f79b82a99d
+  url_launcher_macos: 76867a28e24e0b6b98bfd65f157b64108e6d477a
   window_size: 339dafa0b27a95a62a843042038fa6c3c48de195
 
 PODFILE CHECKSUM: 2c44d578a2acaaed0401d0d3bb20d04d4b080703
