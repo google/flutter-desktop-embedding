@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:math' as math;
 
@@ -50,6 +51,11 @@ void main() {
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
       window_size.setWindowFrame(frame);
+
+      if (Platform.isMacOS) {
+        window_size.setWindowMinSize(Size(800, 600));
+        window_size.setWindowMaxSize(Size(1600, 1200));
+      }
     }
   });
 
