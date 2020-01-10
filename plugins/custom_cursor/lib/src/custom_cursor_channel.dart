@@ -59,66 +59,62 @@ class CustomCursor {
   static String _getCursor(
       CursorType cursor, MacOSCursorType macOS, WindowsCursorType windows) {
     if (Platform.isMacOS) {
-      if (macOS == null) {
-        switch (cursor) {
-          case CursorType.arrow:
-            macOS = MacOSCursorType.arrow;
-            break;
-          case CursorType.cross:
-            macOS = MacOSCursorType.crossHair;
-            break;
-          case CursorType.hand:
-            macOS = MacOSCursorType.openHand;
-            break;
-          case CursorType.resizeLeft:
-            macOS = MacOSCursorType.resizeLeft;
-            break;
-          case CursorType.resizeRight:
-            macOS = MacOSCursorType.resizeRight;
-            break;
-          case CursorType.resizeDown:
-            macOS = MacOSCursorType.resizeDown;
-            break;
-          case CursorType.resizeUp:
-            macOS = MacOSCursorType.resizeUp;
-            break;
-          case CursorType.resizeLeftRight:
-            macOS = MacOSCursorType.resizeLeftRight;
-            break;
-          case CursorType.resizeUpDown:
-            macOS = MacOSCursorType.resizeUpDown;
-            break;
-        }
-      }
-      return describeEnum(macOS);
+      return describeEnum(_setMacCursor(macOS, cursor));
     }
     if (Platform.isWindows) {
-      if (windows == null) {
-        switch (cursor) {
-          case CursorType.arrow:
-            windows = WindowsCursorType.arrow;
-            break;
-          case CursorType.cross:
-            windows = WindowsCursorType.cross;
-            break;
-          case CursorType.hand:
-            windows = WindowsCursorType.hand;
-            break;
-          case CursorType.resizeLeftRight:
-          case CursorType.resizeLeft:
-          case CursorType.resizeRight:
-            windows = WindowsCursorType.resizeWE;
-            break;
-          case CursorType.resizeUpDown:
-          case CursorType.resizeDown:
-          case CursorType.resizeUp:
-            windows = WindowsCursorType.resizeNS;
-            break;
-        }
-      }
-      return describeEnum(windows);
+      return describeEnum(_setWindowsCursor(windows, cursor));
     }
     return "none";
+  }
+
+  static WindowsCursorType _setWindowsCursor(
+      WindowsCursorType windows, CursorType cursor) {
+    if (windows == null) {
+      switch (cursor) {
+        case CursorType.arrow:
+          return WindowsCursorType.arrow;
+        case CursorType.cross:
+          return WindowsCursorType.cross;
+        case CursorType.hand:
+          return WindowsCursorType.hand;
+        case CursorType.resizeLeftRight:
+        case CursorType.resizeLeft:
+        case CursorType.resizeRight:
+          return WindowsCursorType.resizeWE;
+        case CursorType.resizeUpDown:
+        case CursorType.resizeDown:
+        case CursorType.resizeUp:
+          return WindowsCursorType.resizeNS;
+      }
+    }
+    return windows;
+  }
+
+  static MacOSCursorType _setMacCursor(
+      MacOSCursorType macOS, CursorType cursor) {
+    if (macOS == null) {
+      switch (cursor) {
+        case CursorType.arrow:
+          return MacOSCursorType.arrow;
+        case CursorType.cross:
+          return MacOSCursorType.crossHair;
+        case CursorType.hand:
+          return MacOSCursorType.openHand;
+        case CursorType.resizeLeft:
+          return MacOSCursorType.resizeLeft;
+        case CursorType.resizeRight:
+          return MacOSCursorType.resizeRight;
+        case CursorType.resizeDown:
+          return MacOSCursorType.resizeDown;
+        case CursorType.resizeUp:
+          return MacOSCursorType.resizeUp;
+        case CursorType.resizeLeftRight:
+          return MacOSCursorType.resizeLeftRight;
+        case CursorType.resizeUpDown:
+          return MacOSCursorType.resizeUpDown;
+      }
+    }
+    return macOS;
   }
 }
 
