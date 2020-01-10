@@ -71,18 +71,61 @@ CustomCursor::~CustomCursor(){};
 void CustomCursor::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  if (method_call.method_name().compare("getPlatformVersion") == 0) {
-    std::ostringstream version_stream;
-    version_stream << "Windows ";
-	// The result returned here will depend on the app manifest of the runner.
-    if (IsWindows10OrGreater()) {
-      version_stream << "10+";
-    } else if (IsWindows8OrGreater()) {
-      version_stream << "8";
-    } else if (IsWindows7OrGreater()) {
-      version_stream << "7";
+      std::string method = method_call.method_name();
+  if (method.compare("hideCursor") == 0) {
+    while (ShowCursor(false) >= 0) {
     }
-    flutter::EncodableValue response(version_stream.str());
+    flutter::EncodableValue response(true);
+    result->Success(&response);
+  } else if (method.compare("showCursor") == 0) {
+    while (ShowCursor(true) >= 0) {
+    }
+    flutter::EncodableValue response(true);
+    result->Success(&response);
+  } else if (method.compare("resetCursor") == 0) {
+    HCURSOR cursor = LoadCursor(0, IDC_ARROW);
+    SetCursor(cursor);
+    flutter::EncodableValue response(true);
+    result->Success(&response);
+  } else if (method.compare("setCursor") == 0) {
+    const flutter::EncodableValue *args = method_call.arguments();
+    const flutter::EncodableMap &map = args->MapValue();
+    bool update = map.at(flutter::EncodableValue("update")).BoolValue();
+    std::string type = map.at(flutter::EncodableValue("type")).StringValue();
+    HCURSOR cursor;
+    if (type.compare("appStart") == 0) {
+      cursor = LoadCursor(0, IDC_APPSTARTING);
+    } else if (type.compare("arrow") == 0) {
+      cursor = LoadCursor(0, IDC_ARROW);
+    } else if (type.compare("cross") == 0) {
+      cursor = LoadCursor(0, IDC_CROSS);
+    } else if (type.compare("hand") == 0) {
+      cursor = LoadCursor(0, IDC_HAND);
+    } else if (type.compare("help") == 0) {
+      cursor = LoadCursor(0, IDC_HELP);
+    } else if (type.compare("iBeam") == 0) {
+      cursor = LoadCursor(0, IDC_IBEAM);
+    } else if (type.compare("no") == 0) {
+      cursor = LoadCursor(0, IDC_NO);
+    } else if (type.compare("resizeAll") == 0) {
+      cursor = LoadCursor(0, IDC_SIZEALL);
+    } else if (type.compare("resizeNESW") == 0) {
+      cursor = LoadCursor(0, IDC_SIZENESW);
+    } else if (type.compare("resizeNS") == 0) {
+      cursor = LoadCursor(0, IDC_SIZENS);
+    } else if (type.compare("resizeNWSE") == 0) {
+      cursor = LoadCursor(0, IDC_SIZENWSE);
+    } else if (type.compare("resizeWE") == 0) {
+      cursor = LoadCursor(0, IDC_SIZEWE);
+    } else if (type.compare("upArrow") == 0) {
+      cursor = LoadCursor(0, IDC_UPARROW);
+    } else if (type.compare("wait") == 0) {
+      cursor = LoadCursor(0, IDC_WAIT);
+    } else {
+      cursor = LoadCursor(0, IDC_ARROW);
+    }
+    SetCursor(cursor);
+    flutter::EncodableValue response(true);
     result->Success(&response);
   } else {
     result->NotImplemented();
