@@ -2,15 +2,71 @@
 
 A new Flutter project.
 
-## Getting Started
+## Example
 
-This project is a starting point for a Flutter application.
+```dart
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:custom_cursor/custom_cursor.dart';
 
-A few resources to get you started if this is your first Flutter project:
+void main() {
+  if (!kIsWeb && debugDefaultTargetPlatformOverride == null) {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+  }
+  runApp(MyApp());
+}
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        CustomCursor.setCursor(CursorType.arrow);
+      },
+    );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Custom Cursor Example'),
+        ),
+        body: ListView(
+          children: <Widget>[
+            ListTile(
+              title: const Text('Change Cursor'),
+              subtitle: DropdownButton<CursorType>(
+                value: CursorType.arrow,
+                items: CursorType.values
+                    .map((t) => DropdownMenuItem(
+                          value: t,
+                          child: Text(describeEnum(t)),
+                        ))
+                    .toList(),
+                onChanged: CustomCursor.setCursor,
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.close),
+                onPressed: CustomCursor.resetCursor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+```
