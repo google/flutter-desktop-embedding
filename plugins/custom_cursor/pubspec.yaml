@@ -1,6 +1,6 @@
-name: example_plugin
-description: A minimal example plugin for desktop, in the style of the 'flutter create' plugin template.
-version: 0.0.1
+name: custom_cursor
+description: An implementation of how to change the cursor at runtime on desktop
+version: 1.0.0
 author:
 homepage:
 
@@ -8,11 +8,11 @@ flutter:
   plugin:
     platforms:
       linux:
-        pluginClass: ExamplePlugin
+        pluginClass: CustomCursor
       macos:
-        pluginClass: ExamplePlugin
+        pluginClass: CustomCursor
       windows:
-        pluginClass: ExamplePlugin
+        pluginClass: CustomCursor
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
