@@ -95,6 +95,9 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
   }
 
   switch (message) {
+    case WM_SETCURSOR:
+      return TRUE;
+      
     case WM_DESTROY:
       window_handle_ = nullptr;
       Destroy();
