@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 platform: x64
 
@@ -23,7 +23,7 @@ install:
   - git clone -b master https://github.com/flutter/flutter.git %APPVEYOR_BUILD_FOLDER%\..\flutter
 
 build_script:
-  - set "PATH=%APPVEYOR_BUILD_FOLDER%\..\flutter\bin;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\;%PATH%"
+  - set "PATH=%APPVEYOR_BUILD_FOLDER%\..\flutter\bin;%PATH%"
   - flutter config --enable-windows-desktop
   - ps: cd "$env:APPVEYOR_BUILD_FOLDER\example"
   - flutter packages get
