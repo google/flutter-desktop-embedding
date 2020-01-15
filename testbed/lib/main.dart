@@ -41,25 +41,23 @@ void main() {
   // Try to resize and reposition the window to be half the width and height
   // of its screen, centered horizontally and shifted up from center.
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isMacOS || Platform.isLinux) {
-    window_size.getWindowInfo().then((window) {
-      if (window.screen != null) {
-        final screenFrame = window.screen.visibleFrame;
-        final width = math.max((screenFrame.width / 2).roundToDouble(), 800.0);
-        final height =
-            math.max((screenFrame.height / 2).roundToDouble(), 600.0);
-        final left = ((screenFrame.width - width) / 2).roundToDouble();
-        final top = ((screenFrame.height - height) / 3).roundToDouble();
-        final frame = Rect.fromLTWH(left, top, width, height);
-        window_size.setWindowFrame(frame);
+  window_size.getWindowInfo().then((window) {
+    if (window.screen != null) {
+      final screenFrame = window.screen.visibleFrame;
+      final width = math.max((screenFrame.width / 2).roundToDouble(), 800.0);
+      final height =
+          math.max((screenFrame.height / 2).roundToDouble(), 600.0);
+      final left = ((screenFrame.width - width) / 2).roundToDouble();
+      final top = ((screenFrame.height - height) / 3).roundToDouble();
+      final frame = Rect.fromLTWH(left, top, width, height);
+      window_size.setWindowFrame(frame);
 
-        if (Platform.isMacOS) {
-          window_size.setWindowMinSize(Size(800, 600));
-          window_size.setWindowMaxSize(Size(1600, 1200));
-        }
+      if (Platform.isMacOS) {
+        window_size.setWindowMinSize(Size(800, 600));
+        window_size.setWindowMaxSize(Size(1600, 1200));
       }
-    });
-  }
+    }
+  });
 
   example_plugin.ExamplePlugin.platformVersion.then((versionInfo) {
     print('Example plugin returned $versionInfo');
