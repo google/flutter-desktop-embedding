@@ -1,0 +1,6 @@
+flutter/
+
+# Visual Studio files
+*.user
+*.suo
+.vs
