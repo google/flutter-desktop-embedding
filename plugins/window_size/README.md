@@ -13,7 +13,7 @@ of that kind to any or all platforms.
 ## Supported Platforms
 
 - [x] macOS
-- [x] [Windows](https://github.com/google/flutter-desktop-embedding/issues/105)
+- [x] Windows
 - [x] Linux
 
 Not all operations have been implemented on all platforms, but the core functionality
