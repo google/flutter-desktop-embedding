@@ -3,7 +3,7 @@
 Prototype desktop implementations of
 [path_provider](https://pub.dev/packages/path_provider)
 
-See [the main flutter_plugins README] for general information about what
+See [the main flutter_plugins README](../README.md) for general information about what
 this plugin is and how to use it.
 
 ## Supported Platforms
