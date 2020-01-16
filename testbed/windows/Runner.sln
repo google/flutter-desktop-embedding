@@ -9,6 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runner", "Runner.vcxproj", 
 		{95E21B2C-C18A-4CED-8509-585CB2570FDE} = {95E21B2C-C18A-4CED-8509-585CB2570FDE}
 		{FE855771-7D30-42F7-938E-C57B2AEA68D8} = {FE855771-7D30-42F7-938E-C57B2AEA68D8}
 		{18F565CD-7BD5-459C-9FEB-2E2379E88105} = {18F565CD-7BD5-459C-9FEB-2E2379E88105}
+		{9FDE4FCF-34A0-48B0-818B-877485F2AFEB} = {9FDE4FCF-34A0-48B0-818B-877485F2AFEB}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_plugin", "..\..\plugins\example_plugin\windows\example_plugin.vcxproj", "{95E21B2C-C18A-4CED-8509-585CB2570FDE}"
@@ -24,6 +25,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Flutter Build", "FlutterBuild.vcxproj", "{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "path_provider_fde", "..\..\plugins\flutter_plugins\path_provider_fde\windows\path_provider_fde.vcxproj", "{FE855771-7D30-42F7-938E-C57B2AEA68D8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F} = {6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "window_size", "..\..\plugins\window_size\windows\window_size.vcxproj", "{9FDE4FCF-34A0-48B0-818B-877485F2AFEB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F} = {6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}
 	EndProjectSection
@@ -54,6 +60,10 @@ Global
 		{FE855771-7D30-42F7-938E-C57B2AEA68D8}.Debug|x64.Build.0 = Debug|x64
 		{FE855771-7D30-42F7-938E-C57B2AEA68D8}.Release|x64.ActiveCfg = Release|x64
 		{FE855771-7D30-42F7-938E-C57B2AEA68D8}.Release|x64.Build.0 = Release|x64
+		{9FDE4FCF-34A0-48B0-818B-877485F2AFEB}.Debug|x64.ActiveCfg = Debug|x64
+		{9FDE4FCF-34A0-48B0-818B-877485F2AFEB}.Debug|x64.Build.0 = Debug|x64
+		{9FDE4FCF-34A0-48B0-818B-877485F2AFEB}.Release|x64.ActiveCfg = Release|x64
+		{9FDE4FCF-34A0-48B0-818B-877485F2AFEB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
