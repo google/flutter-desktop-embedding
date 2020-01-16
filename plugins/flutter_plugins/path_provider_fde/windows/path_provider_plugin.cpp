@@ -64,8 +64,10 @@ std::string GetExecutableName() {
   }
   // Strip the .exe extension, if present.
   std::string extension = ".exe";
-  if (executable_name.compare(executable_name.size() - extension.size(), extension.size(), extension) == 0) {
-    executable_name = executable_name.substr(0, executable_name.size() - extension.size());
+  if (executable_name.compare(executable_name.size() - extension.size(),
+                              extension.size(), extension) == 0) {
+    executable_name =
+        executable_name.substr(0, executable_name.size() - extension.size());
   }
   return executable_name;
 }
