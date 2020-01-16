@@ -131,9 +131,10 @@ headers.
 
 ## Writing Your Own Plugins
 
-You can create local packages following the model of the Windows and Linux
-plugins here to use in your own projects; in particular, `example_plugin`
-is intended to serve as a starting point for new plugins. For macOS,
+You can create plugin packages following the model of the Windows and Linux
+plugins here to use in your own projects. In particular, `example_plugin`
+is intended to serve as a starting point for new plugins; see
+[its README](example_plugin/README.md) for details. For macOS,
 you should use `flutter create` as usual.
 
 Keep in mind the notes about API stability on the Flutter desktop page
