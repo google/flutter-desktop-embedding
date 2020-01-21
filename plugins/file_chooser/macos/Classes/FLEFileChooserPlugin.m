@@ -28,14 +28,14 @@ static NSString *const kAllowsMultipleSelectionKey = @"allowsMultipleSelection";
 static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
 
 @implementation FLEFileChooserPlugin {
-  // The view displaying Flutter content.
-  NSView *_flutterView;
+  // The plugin registrar, for obtaining the view.
+  NSObject<FlutterPluginRegistrar> *_registrar;
 }
 
-- (instancetype)initWithView:(NSView *)view {
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self != nil) {
-    _flutterView = view;
+    _registrar = registrar;
   }
   return self;
 }
@@ -87,7 +87,7 @@ static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
   FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:kChannelName
                                                               binaryMessenger:registrar.messenger];
-  FLEFileChooserPlugin *instance = [[FLEFileChooserPlugin alloc] initWithView:registrar.view];
+  FLEFileChooserPlugin *instance = [[FLEFileChooserPlugin alloc] initWithRegistrar:registrar];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
@@ -98,7 +98,7 @@ static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
     NSSavePanel *savePanel = [NSSavePanel savePanel];
     savePanel.canCreateDirectories = YES;
     [self configureSavePanel:savePanel withArguments:arguments];
-    [savePanel beginSheetModalForWindow:_flutterView.window
+    [savePanel beginSheetModalForWindow:_registrar.view.window
                       completionHandler:^(NSModalResponse panelResult) {
                         NSArray<NSURL *> *URLs =
                             (panelResult == NSModalResponseOK) ? @[ savePanel.URL ] : nil;
@@ -109,7 +109,7 @@ static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [self configureSavePanel:openPanel withArguments:arguments];
     [self configureOpenPanel:openPanel withArguments:arguments];
-    [openPanel beginSheetModalForWindow:_flutterView.window
+    [openPanel beginSheetModalForWindow:_registrar.view.window
                       completionHandler:^(NSModalResponse panelResult) {
                         NSArray<NSURL *> *URLs =
                             (panelResult == NSModalResponseOK) ? openPanel.URLs : nil;
