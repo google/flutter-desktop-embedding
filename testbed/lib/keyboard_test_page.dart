@@ -100,8 +100,9 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
         throw new Exception('Unsupported platform ${event.data.runtimeType}');
     }
 
-    _addMessage('${isKeyDown ? 'KeyDown' : 'KeyUp'}: $keyCode \nLogical key: ${logicalKey}\n'
-      'Physical key: ${physicalKey}');
+    _addMessage(
+        '${isKeyDown ? 'KeyDown' : 'KeyUp'}: $keyCode \nLogical key: $logicalKey\n'
+        'Physical key: $physicalKey');
   }
 
   void _addMessage(String message) {
