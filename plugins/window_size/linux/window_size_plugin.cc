@@ -37,7 +37,6 @@ const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
-const char kSetWindowTitleRepresentedUrlMethod[] = "setWindowTitleRepresentedUrl";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
@@ -240,8 +239,6 @@ void WindowSizePlugin::HandleMethodCall(
     const auto &title = method_call.arguments()->StringValue();
     window_->SetTitle(title);
     result->Success();
-  } else if (method_call.method_name().compare(kSetWindowTitleRepresentedUrlMethod) == 0) {
-    result->NotImplemented();
   } else {
     result->NotImplemented();
   }
