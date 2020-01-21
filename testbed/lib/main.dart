@@ -49,15 +49,12 @@ void main() {
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
       window_size.setWindowFrame(frame);
+      window_size
+          .setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
 
       if (Platform.isMacOS) {
         window_size.setWindowMinSize(Size(800, 600));
         window_size.setWindowMaxSize(Size(1600, 1200));
-        window_size
-            .setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
-        window_size
-            .getWindowTitle()
-            .then((title) => print('Window title: $title'));
       }
     }
   });

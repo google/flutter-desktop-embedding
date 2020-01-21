@@ -79,13 +79,3 @@ Future<Size> getWindowMinSize() async {
 Future<Size> getWindowMaxSize() async {
   return WindowSizeChannel.instance.getWindowMaxSize();
 }
-
-/// Gets the window title, as a [String], of the window containing this Flutter instance.
-Future<String> getWindowTitle() async {
-    return WindowSizeChannel.instance.getWindowTitle();
-}
-
-/// Gets the window title's represented [Uri], of the window containing this Flutter instance.
-Future<Uri> getWindowTitleRepresentedUrl() async {
-    return WindowSizeChannel.instance.getWindowTitleRepresentedUrl();
-}

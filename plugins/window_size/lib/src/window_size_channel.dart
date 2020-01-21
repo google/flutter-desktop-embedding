@@ -82,12 +82,6 @@ const String _getWindowMinimumSizeMethod = 'getWindowMinimumSize';
 /// unconstrained in that dimension.
 const String _getWindowMaximumSizeMethod = 'getWindowMaximumSize';
 
-/// The method name to get the window title of a window.
-const String _getWindowTitleMethod = 'getWindowTitle';
-
-/// The method name to get the window title's represented URL.
-const String _getWindowTitleRepresentedUrlMethod = 'getWindowTitleRepresentedUrl';
-
 // Keys for screen and window maps returned by _getScreenListMethod.
 
 /// The frame of a screen or window. The value is a list of four doubles:
@@ -208,17 +202,6 @@ class WindowSizeChannel {
         response.cast<double>().map(_maxDimensionFromChannelRepresentation),
       ),
     );
-  }
-
-  /// Gets the title of the window containing this Flutter instance.
-  Future<String> getWindowTitle() async {
-    return _platformChannel.invokeMethod<String>(_getWindowTitleMethod);
-  }
-
-  /// Gets the title's represented URL of the window containing this Flutter instance.
-  Future<Uri> getWindowTitleRepresentedUrl() async {
-    final response = await _platformChannel.invokeMethod<String>(_getWindowTitleRepresentedUrlMethod);
-    return Uri.parse(response);
   }
 
   /// Given an array of the form [left, top, width, height], return the

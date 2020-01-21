@@ -36,6 +36,8 @@ const char kChannelName[] = "flutter/windowsize";
 const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
+const char kSetWindowTitleMethod[] = "setWindowTitle";
+const char kSetWindowTitleRepresentedUrlMethod[] = "setWindowTitleRepresentedUrl";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
@@ -230,6 +232,16 @@ void WindowSizePlugin::HandleMethodCall(
     frame.height = static_cast<int>(frame_list[3].DoubleValue());
     window_->SetFrame(frame);
     result->Success();
+  } else if (method_call.method_name().compare(kSetWindowTitleMethod) == 0) {
+    if (!method_call.arguments() || !method_call.arguments()->IsString()) {
+      result->Error("Bad arguments", "Expected string");
+      return;
+    }
+    const auto &title = method_call.arguments()->StringValue();
+    window_->SetTitle(title);
+    result->Success();
+  } else if (method_call.method_name().compare(kSetWindowTitleRepresentedUrlMethod) == 0) {
+    result->NotImplemented();
   } else {
     result->NotImplemented();
   }
