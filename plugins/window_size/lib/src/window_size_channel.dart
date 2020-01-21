@@ -56,6 +56,14 @@ const String _setWindowMinimumSizeMethod = 'setWindowMinimumSize';
 /// unconstrained in that dimension.
 const String _setWindowMaximumSizeMethod = 'setWindowMaximumSize';
 
+/// The method name to set the window title of a window.
+const String _setWindowTitleMethod = 'setWindowTitle';
+
+/// The method name to set the window title's represented URL.
+/// 
+/// On macOS, if the URL is a file URL, the window shows an icon in its title bar. 
+const String _setWindowTitleRepresentedUrlMethod = 'setWindowTitleRepresentedUrl';
+
 /// The method name to get the minimum size of a window.
 ///
 /// Returns a window size array, with the value is a list of two doubles:
@@ -73,6 +81,12 @@ const String _getWindowMinimumSizeMethod = 'getWindowMinimumSize';
 /// A value of `-1` for width or height is to be interpreted as
 /// unconstrained in that dimension.
 const String _getWindowMaximumSizeMethod = 'getWindowMaximumSize';
+
+/// The method name to get the window title of a window.
+const String _getWindowTitleMethod = 'getWindowTitle';
+
+/// The method name to get the window title's represented URL.
+const String _getWindowTitleRepresentedUrlMethod = 'getWindowTitleRepresentedUrl';
 
 // Keys for screen and window maps returned by _getScreenListMethod.
 
@@ -163,6 +177,16 @@ class WindowSizeChannel {
     ]);
   }
 
+  /// Sets the title of the window containing this Flutter instance.
+  void setWindowTitle(String title) async {
+    await _platformChannel.invokeMapMethod(_setWindowTitleMethod,title);
+  }
+
+  /// Sets the title's represented URL of the window containing this Flutter instance.
+  void setWindowTitleRepresentedUrl(Uri file) async {
+    await _platformChannel.invokeMapMethod(_setWindowTitleRepresentedUrlMethod,file.toString());
+  }
+
   /// Gets the minimum size of the window containing this Flutter instance.
   Future<Size> getWindowMinSize() async {
     final response =
@@ -184,6 +208,17 @@ class WindowSizeChannel {
         response.cast<double>().map(_maxDimensionFromChannelRepresentation),
       ),
     );
+  }
+
+  /// Gets the title of the window containing this Flutter instance.
+  Future<String> getWindowTitle() async {
+    return _platformChannel.invokeMethod<String>(_getWindowTitleMethod);
+  }
+
+  /// Gets the title's represented URL of the window containing this Flutter instance.
+  Future<Uri> getWindowTitleRepresentedUrl() async {
+    final response = await _platformChannel.invokeMethod<String>(_getWindowTitleRepresentedUrlMethod);
+    return Uri.parse(response);
   }
 
   /// Given an array of the form [left, top, width, height], return the

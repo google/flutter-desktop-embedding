@@ -23,8 +23,12 @@ static NSString *const kGetWindowInfoMethod = @"getWindowInfo";
 static NSString *const kSetWindowFrameMethod = @"setWindowFrame";
 static NSString *const kSetWindowMinimumSizeMethod = @"setWindowMinimumSize";
 static NSString *const kSetWindowMaximumSizeMethod = @"setWindowMaximumSize";
+static NSString *const kSetWindowTitleMethod = @"setWindowTitle";
+static NSString *const kSetWindowTitleRepresentedUrlMethod = @"setWindowTitleRepresentedUrl";
 static NSString *const kGetWindowMinimumSizeMethod = @"getWindowMinimumSize";
 static NSString *const kGetWindowMaximumSizeMethod = @"getWindowMaximumSize";
+static NSString *const kGetWindowTitleMethod = @"getWindowTitle";
+static NSString *const kGetWindowTitleRepresentedUrlMethod = @"getWindowTitleRepresentedUrl";
 static NSString *const kFrameKey = @"frame";
 static NSString *const kVisibleFrameKey = @"visibleFrame";
 static NSString *const kScaleFactorKey = @"scaleFactor";
@@ -160,6 +164,17 @@ static double ChannelRepresentationForMaxDimension(double size) {
     methodResult =  @[
                               @(ChannelRepresentationForMaxDimension(size.width)),
                               @(ChannelRepresentationForMaxDimension(size.height)) ];
+  } else if ([call.method isEqualToString:kSetWindowTitleMethod]) {
+    NSString *title = call.arguments;
+    self.flutterView.window.title = title;
+    methodResult = nil;
+  } else if ([call.method isEqualToString:kSetWindowTitleRepresentedUrlMethod]) {
+    NSURL *representedURL = [NSURL URLWithString:call.arguments];
+    self.flutterView.window.representedURL = representedURL;
+  } else if ([call.method isEqualToString:kGetWindowTitleMethod]) {
+    methodResult = self.flutterView.window.title;
+  } else if ([call.method isEqualToString:kGetWindowTitleRepresentedUrlMethod]) {
+    methodResult = [self.flutterView.window.representedURL absoluteString];
   } else {
     methodResult = FlutterMethodNotImplemented;
   }

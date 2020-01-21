@@ -55,6 +55,11 @@ void main() {
       if (Platform.isMacOS) {
         window_size.setWindowMinSize(Size(800, 600));
         window_size.setWindowMaxSize(Size(1600, 1200));
+        window_size
+            .setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
+        window_size
+            .getWindowTitle()
+            .then((title) => print('Window title: $title'));
       }
     }
   });
