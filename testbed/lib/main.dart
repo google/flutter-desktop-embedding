@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:math' as math;
 
@@ -45,8 +44,7 @@ void main() {
     if (window.screen != null) {
       final screenFrame = window.screen.visibleFrame;
       final width = math.max((screenFrame.width / 2).roundToDouble(), 800.0);
-      final height =
-          math.max((screenFrame.height / 2).roundToDouble(), 600.0);
+      final height = math.max((screenFrame.height / 2).roundToDouble(), 600.0);
       final left = ((screenFrame.width - width) / 2).roundToDouble();
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
@@ -90,7 +88,7 @@ class _AppState extends State<MyApp> {
   int _counter = 0;
 
   static _AppState of(BuildContext context) =>
-      context.ancestorStateOfType(const TypeMatcher<_AppState>());
+      context.findAncestorStateOfType<_AppState>();
 
   /// Sets the primary color of the example app.
   void setPrimaryColor(Color color) {
@@ -327,17 +325,12 @@ class FileChooserTestWidget extends StatelessWidget {
               initialDirectory =
                   (await getApplicationDocumentsDirectory()).path;
             }
-            file_chooser
-                .showOpenPanel(
-                    allowsMultipleSelection: true,
-                    initialDirectory: initialDirectory)
-                .then(
-              (result) {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text(_resultTextForFileChooserOperation(
-                        _FileChooserType.open, result))));
-              },
-            );
+            final result = await file_chooser.showOpenPanel(
+                allowsMultipleSelection: true,
+                initialDirectory: initialDirectory);
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.open, result))));
           },
         ),
       ],
