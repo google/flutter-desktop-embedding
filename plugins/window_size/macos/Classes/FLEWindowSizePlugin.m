@@ -169,6 +169,7 @@ static double ChannelRepresentationForMaxDimension(double size) {
   } else if ([call.method isEqualToString:kSetWindowTitleRepresentedUrlMethod]) {
     NSURL *representedURL = [NSURL URLWithString:call.arguments];
     self.flutterView.window.representedURL = representedURL;
+    methodResult = nil;
   } else {
     methodResult = FlutterMethodNotImplemented;
   }

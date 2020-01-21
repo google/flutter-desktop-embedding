@@ -61,7 +61,8 @@ const String _setWindowTitleMethod = 'setWindowTitle';
 
 /// The method name to set the window title's represented URL.
 /// 
-/// On macOS, if the URL is a file URL, the window shows an icon in its title bar. 
+/// Only implemented for macOS. If the URL is a file URL, the 
+/// window shows an icon in its title bar.
 const String _setWindowTitleRepresentedUrlMethod = 'setWindowTitleRepresentedUrl';
 
 /// The method name to get the minimum size of a window.
