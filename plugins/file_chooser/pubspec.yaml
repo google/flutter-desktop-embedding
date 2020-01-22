@@ -11,6 +11,8 @@ flutter:
         pluginClass: FileChooserPlugin
       macos:
         pluginClass: FileChooserPlugin
+      windows:
+        pluginClass: FileChooserPlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

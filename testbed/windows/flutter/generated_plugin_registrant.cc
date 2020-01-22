@@ -5,6 +5,7 @@
 #include "generated_plugin_registrant.h"
 
 #include <example_plugin.h>
+#include <file_chooser_plugin.h>
 #include <path_provider_plugin.h>
 #include <url_launcher_plugin.h>
 #include <window_size_plugin.h>
@@ -12,6 +13,8 @@
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   ExamplePluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ExamplePlugin"));
+  FileChooserPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FileChooserPlugin"));
   PathProviderPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PathProviderPlugin"));
   UrlLauncherPluginRegisterWithRegistrar(
