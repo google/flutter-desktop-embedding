@@ -185,7 +185,7 @@ void WindowSizePlugin::HandleMethodCall(
     }
     const auto &title = method_call.arguments()->StringValue();
     std::wstring stemp = std::wstring(title.begin(), title.end());
-    SetWindowTextW(GetRootWindow(registrar_->GetView()), stemp.c_str());
+    SetWindowText(GetRootWindow(registrar_->GetView()), stemp.c_str());
     result->Success();
   } else {
     result->NotImplemented();

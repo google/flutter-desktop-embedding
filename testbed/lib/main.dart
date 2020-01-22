@@ -49,8 +49,9 @@ void main() {
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
       window_size.setWindowFrame(frame);
-      window_size
-          .setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
+      final title = 'Flutter Testbed on ${Platform.operatingSystem}, こんにちは世界';
+      print(title);
+      window_size.setWindowTitle(title);
 
       if (Platform.isMacOS) {
         window_size.setWindowMinSize(Size(800, 600));
