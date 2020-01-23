@@ -42,7 +42,7 @@ const String _setWindowFrameMethod = 'setWindowFrame';
 ///
 /// Takes a window size array, with the value is a list of two doubles:
 ///   [width, height].
-/// 
+///
 /// A value of zero for width or height is to be interpreted as
 /// unconstrained in that dimension.
 const String _setWindowMinimumSizeMethod = 'setWindowMinimumSize';
@@ -51,16 +51,26 @@ const String _setWindowMinimumSizeMethod = 'setWindowMinimumSize';
 ///
 /// Takes a window size array, with the value is a list of two doubles:
 ///   [width, height].
-/// 
+///
 /// A value of `-1` for width or height is to be interpreted as
 /// unconstrained in that dimension.
 const String _setWindowMaximumSizeMethod = 'setWindowMaximumSize';
+
+/// The method name to set the window title of a window.
+const String _setWindowTitleMethod = 'setWindowTitle';
+
+/// The method name to set the window title's represented URL.
+///
+/// Only implemented for macOS. If the URL is a file URL, the
+/// window shows an icon in its title bar.
+const String _setWindowTitleRepresentedUrlMethod =
+    'setWindowTitleRepresentedUrl';
 
 /// The method name to get the minimum size of a window.
 ///
 /// Returns a window size array, with the value is a list of two doubles:
 ///   [width, height].
-/// 
+///
 /// A value of zero for width or height is to be interpreted as
 /// unconstrained in that dimension.
 const String _getWindowMinimumSizeMethod = 'getWindowMinimumSize';
@@ -69,7 +79,7 @@ const String _getWindowMinimumSizeMethod = 'getWindowMinimumSize';
 ///
 /// Returns a window size array, with the value is a list of two doubles:
 ///   [width, height].
-/// 
+///
 /// A value of `-1` for width or height is to be interpreted as
 /// unconstrained in that dimension.
 const String _getWindowMaximumSizeMethod = 'getWindowMaximumSize';
@@ -161,6 +171,17 @@ class WindowSizeChannel {
       _channelRepresentationForMaxDimension(size.width),
       _channelRepresentationForMaxDimension(size.height),
     ]);
+  }
+
+  /// Sets the title of the window containing this Flutter instance.
+  void setWindowTitle(String title) async {
+    await _platformChannel.invokeMapMethod(_setWindowTitleMethod, title);
+  }
+
+  /// Sets the title's represented URL of the window containing this Flutter instance.
+  void setWindowTitleRepresentedUrl(Uri file) async {
+    await _platformChannel.invokeMapMethod(
+        _setWindowTitleRepresentedUrlMethod, file.toString());
   }
 
   /// Gets the minimum size of the window containing this Flutter instance.
