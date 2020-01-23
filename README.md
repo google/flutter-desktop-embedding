@@ -3,12 +3,14 @@
 This project was originally created to develop Windows, macOS, and Linux
 embeddings of [Flutter](https://github.com/flutter/flutter). That work has
 since [become part of
-Flutter](https://github.com/flutter/flutter/wiki/Desktop-shells), and this
-project is now just an example of, and test environment for, building
-applications using those libraries in their current state. It also
-includes some experimental, early stage desktop plugins.
+Flutter](https://github.com/flutter/flutter/wiki/Desktop-shells); what
+is left here are the parts that have not yet stabilized enough to merge
+into the Flutter project, including:
+- Preliminary runners for Windows and Linux (via the example).
+- Experimental, early-stage desktop plugins.
+- A starting point and preliminary instructions for
+  using and/or writing plugins on Windows and Linux.
 
-As explained in the link above, desktop libraries are still in early stages.
 **The code here is not stable, nor intended for production use.**
 
 ## Setting Up
