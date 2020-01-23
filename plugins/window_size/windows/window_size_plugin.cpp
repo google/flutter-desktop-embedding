@@ -23,6 +23,7 @@
 #include <flutter/standard_method_codec.h>
 #include <memory>
 #include <sstream>
+#include <codecvt>
 
 namespace {
 
@@ -184,8 +185,9 @@ void WindowSizePlugin::HandleMethodCall(
       return;
     }
     const auto &title = method_call.arguments()->StringValue();
-    std::wstring stemp = std::wstring(title.begin(), title.end());
-    SetWindowText(GetRootWindow(registrar_->GetView()), stemp.c_str());
+    std::wstring wstr = std::wstring_convert<
+        std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(title);
+    SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
     result->Success();
   } else {
     result->NotImplemented();

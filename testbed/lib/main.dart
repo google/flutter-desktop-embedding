@@ -49,7 +49,7 @@ void main() {
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
       window_size.setWindowFrame(frame);
-      final title = 'Flutter Testbed on ${Platform.operatingSystem}, こんにちは世界';
+      final title = 'Flutter Testbed on ${Platform.operatingSystem}';
       print(title);
       window_size.setWindowTitle(title);
 
