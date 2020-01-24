@@ -137,7 +137,7 @@ class DialogWrapper {
     }
     // TODO: Make a meaningful filterspec array instead of one mega-filter.
     // See issue #650.
-    COMDLG_FILTERSPEC spec = { filter_name.c_str(), filter.c_str() };
+    COMDLG_FILTERSPEC spec = {filter_name.c_str(), filter.c_str()};
     last_result_ = dialog_->SetFileTypes(1, &spec);
   }
 
@@ -152,40 +152,40 @@ class DialogWrapper {
       return EncodableValue();
     }
     EncodableList files;
-      if (is_open_dialog_) {
-        IFileOpenDialog *open_dialog;
-        last_result_ = dialog_->QueryInterface(IID_PPV_ARGS(&open_dialog));
-        if (!SUCCEEDED(last_result_)) {
-          return EncodableValue();
-        }
-        IShellItemArray *shell_items;
-        last_result_ = open_dialog->GetResults(&shell_items);
-        open_dialog->Release();
-        if (!SUCCEEDED(last_result_)) {
-          return EncodableValue();
-        }
-        IEnumShellItems *item_enumerator;
-        last_result_ = shell_items->EnumItems(&item_enumerator);
-        if (!SUCCEEDED(last_result_)) {
-          shell_items->Release();
-          return EncodableValue();
-        }
-        IShellItem *shell_item;
-        while (item_enumerator->Next(1, &shell_item, nullptr) == S_OK) {
-          files.push_back(EncodableValue(GetPathForShellItem(shell_item)));
-          shell_item->Release();
-        }
-        item_enumerator->Release();
+    if (is_open_dialog_) {
+      IFileOpenDialog *open_dialog;
+      last_result_ = dialog_->QueryInterface(IID_PPV_ARGS(&open_dialog));
+      if (!SUCCEEDED(last_result_)) {
+        return EncodableValue();
+      }
+      IShellItemArray *shell_items;
+      last_result_ = open_dialog->GetResults(&shell_items);
+      open_dialog->Release();
+      if (!SUCCEEDED(last_result_)) {
+        return EncodableValue();
+      }
+      IEnumShellItems *item_enumerator;
+      last_result_ = shell_items->EnumItems(&item_enumerator);
+      if (!SUCCEEDED(last_result_)) {
         shell_items->Release();
-      } else {
-        IShellItem *shell_item;
-        last_result_ = dialog_->GetResult(&shell_item);
-        if (!SUCCEEDED(last_result_)) {
-          return EncodableValue();
-        }
+        return EncodableValue();
+      }
+      IShellItem *shell_item;
+      while (item_enumerator->Next(1, &shell_item, nullptr) == S_OK) {
         files.push_back(EncodableValue(GetPathForShellItem(shell_item)));
         shell_item->Release();
       }
+      item_enumerator->Release();
+      shell_items->Release();
+    } else {
+      IShellItem *shell_item;
+      last_result_ = dialog_->GetResult(&shell_item);
+      if (!SUCCEEDED(last_result_)) {
+        return EncodableValue();
+      }
+      files.push_back(EncodableValue(GetPathForShellItem(shell_item)));
+      shell_item->Release();
+    }
     return EncodableValue(std::move(files));
   }
 
@@ -257,7 +257,8 @@ void ShowDialog(
   }
 
   EncodableValue files = dialog.Show(parent_window);
-  if (files.IsNull() && dialog.last_result() != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+  if (files.IsNull() &&
+      dialog.last_result() != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
     EncodableValue error_code(dialog.last_result());
     result->Error("System error", "Could not show dialog", &error_code);
   }
