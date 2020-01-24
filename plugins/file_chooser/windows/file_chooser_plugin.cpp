@@ -41,6 +41,19 @@ const char kConfirmButtonTextKey[] = "confirmButtonText";
 const char kAllowsMultipleSelectionKey[] = "allowsMultipleSelection";
 const char kCanChooseDirectoriesKey[] = "canChooseDirectories";
 
+// Converts an null-terminated array of Windows wchar_t's (UTF-16)
+// to a std::string.
+std::string StdStringFromWideChars(const wchar_t *wide_chars) {
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wide_to_utf8;
+  return wide_to_utf8.to_bytes(wide_chars);
+}
+
+// Converts a UTF-8 character array to a Windows std::wstring (UTF-16).
+std::wstring WideStringFromChars(const char *chars) {
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wide_to_utf8;
+  return wide_to_utf8.from_bytes(chars);
+}
+
 // Returns the path for |shell_item| as a UTF-8 string, or an
 // empty string on failure.
 std::string GetPathForShellItem(IShellItem *shell_item) {
@@ -48,8 +61,7 @@ std::string GetPathForShellItem(IShellItem *shell_item) {
   if (!SUCCEEDED(shell_item->GetDisplayName(SIGDN_FILESYSPATH, &wide_path))) {
     return "";
   }
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> wide_to_utf8;
-  std::string path = wide_to_utf8.to_bytes(wide_path);
+  std::string path = StdStringFromWideChars(wide_path);
   CoTaskMemFree(wide_path);
   return path;
 }
@@ -60,7 +72,7 @@ class DialogWrapper {
  public:
   DialogWrapper(IID type) {
     is_open_dialog_ = type == CLSID_FileOpenDialog;
-    last_result_ = CoCreateInstance(type, NULL, CLSCTX_INPROC_SERVER,
+    last_result_ = CoCreateInstance(type, nullptr, CLSCTX_INPROC_SERVER,
                                     IID_PPV_ARGS(&dialog_));
   }
 
@@ -70,21 +82,79 @@ class DialogWrapper {
     }
   }
 
+  // Attempts to set the default folder for the dialog to |path|,
+  // if it exists.
+  void SetDefaultFolder(const std::string &path) {
+    std::wstring wide_path = WideStringFromChars(path.c_str());
+    IShellItem *item;
+    last_result_ = SHCreateItemFromParsingName(wide_path.c_str(), nullptr,
+                                               IID_PPV_ARGS(&item));
+    if (!SUCCEEDED(last_result_)) {
+      return;
+    }
+    dialog_->SetDefaultFolder(item);
+    item->Release();
+  }
+
+  // Sets the file name that is initially shown in the dialog.
+  void SetFileName(const std::string &name) {
+    std::wstring wide_name = WideStringFromChars(name.c_str());
+    last_result_ = dialog_->SetFileName(wide_name.c_str());
+  }
+
+  // Sets the label of the confirmation button.
+  void SetOkButtonLabel(const std::string &label) {
+    std::wstring wide_label = WideStringFromChars(label.c_str());
+    last_result_ = dialog_->SetOkButtonLabel(wide_label.c_str());
+  }
+
+  // Adds the given options to the dialog's current option set.
+  void AddOptions(FILEOPENDIALOGOPTIONS new_options) {
+    FILEOPENDIALOGOPTIONS options;
+    last_result_ = dialog_->GetOptions(&options);
+    if (!SUCCEEDED(last_result_)) {
+      return;
+    }
+    options |= new_options;
+    last_result_ = dialog_->SetOptions(options);
+  }
+
+  void SetAllowedExtensions(const EncodableList &extensions) {
+    const std::wstring name_delimiter = L", ";
+    const std::wstring spec_delimiter = L";";
+    const std::wstring file_wildcard = L"*.";
+    std::wstring filter_name;
+    std::wstring filter;
+    for (const EncodableValue &extension_value : extensions) {
+      if (!filter_name.empty()) {
+        filter_name += name_delimiter;
+        filter += spec_delimiter;
+      }
+      std::wstring extension =
+          WideStringFromChars(extension_value.StringValue().c_str());
+      filter_name += extension;
+      filter += file_wildcard + extension;
+    }
+    // TODO: Make a meaningful filterspec array instead of one mega-filter.
+    // See issue #650.
+    COMDLG_FILTERSPEC spec = { filter_name.c_str(), filter.c_str() };
+    last_result_ = dialog_->SetFileTypes(1, &spec);
+  }
+
   // Displays the dialog, and returns the selected file or files as an
-  // EncodableValue of type List, or a null EncodableValue on error.
+  // EncodableValue of type List, or a null EncodableValue on cancel or
+  // error.
   EncodableValue Show(HWND parent_window) {
     assert(dialog_);
     last_result_ = dialog_->Show(parent_window);
-    bool cancelled = last_result_ == HRESULT_FROM_WIN32(ERROR_CANCELLED);
-    if (!cancelled && !SUCCEEDED(last_result_)) {
+    last_result_ == HRESULT_FROM_WIN32(ERROR_CANCELLED);
+    if (!SUCCEEDED(last_result_)) {
       return EncodableValue();
     }
     EncodableList files;
-    if (!cancelled) {
       if (is_open_dialog_) {
         IFileOpenDialog *open_dialog;
-        last_result_ = dialog_->QueryInterface(
-            IID_IFileOpenDialog, reinterpret_cast<void **>(&open_dialog));
+        last_result_ = dialog_->QueryInterface(IID_PPV_ARGS(&open_dialog));
         if (!SUCCEEDED(last_result_)) {
           return EncodableValue();
         }
@@ -101,7 +171,7 @@ class DialogWrapper {
           return EncodableValue();
         }
         IShellItem *shell_item;
-        while (item_enumerator->Next(1, &shell_item, NULL) == S_OK) {
+        while (item_enumerator->Next(1, &shell_item, nullptr) == S_OK) {
           files.push_back(EncodableValue(GetPathForShellItem(shell_item)));
           shell_item->Release();
         }
@@ -116,7 +186,6 @@ class DialogWrapper {
         files.push_back(EncodableValue(GetPathForShellItem(shell_item)));
         shell_item->Release();
       }
-    }
     return EncodableValue(std::move(files));
   }
 
@@ -146,7 +215,7 @@ const EncodableValue &ValueOrNull(const EncodableMap &map, const char *key) {
 //
 // |result| is guaranteed to be resolved by this function.
 void ShowDialog(
-    IID type, HWND parent_window,
+    IID type, HWND parent_window, const EncodableMap &args,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   DialogWrapper dialog(type);
   if (!SUCCEEDED(dialog.last_result())) {
@@ -154,8 +223,41 @@ void ShowDialog(
     result->Error("System error", "Could not create dialog", &error_code);
     return;
   }
+
+  FILEOPENDIALOGOPTIONS dialog_options = 0;
+  EncodableValue allow_multiple_selection =
+      ValueOrNull(args, kAllowsMultipleSelectionKey);
+  if (!allow_multiple_selection.IsNull() &&
+      allow_multiple_selection.BoolValue()) {
+    dialog_options |= FOS_ALLOWMULTISELECT;
+  }
+  EncodableValue choose_dirs = ValueOrNull(args, kCanChooseDirectoriesKey);
+  if (!choose_dirs.IsNull() && choose_dirs.BoolValue()) {
+    dialog_options |= FOS_PICKFOLDERS;
+  }
+  if (dialog_options != 0) {
+    dialog.AddOptions(dialog_options);
+  }
+
+  EncodableValue start_dir = ValueOrNull(args, kInitialDirectoryKey);
+  if (!start_dir.IsNull()) {
+    dialog.SetDefaultFolder(start_dir.StringValue());
+  }
+  EncodableValue initial_file_name = ValueOrNull(args, kInitialFileNameKey);
+  if (!initial_file_name.IsNull()) {
+    dialog.SetFileName(initial_file_name.StringValue());
+  }
+  EncodableValue confirm_label = ValueOrNull(args, kConfirmButtonTextKey);
+  if (!confirm_label.IsNull()) {
+    dialog.SetOkButtonLabel(confirm_label.StringValue());
+  }
+  EncodableValue allowed_types = ValueOrNull(args, kAllowedFileTypesKey);
+  if (!allowed_types.IsNull() && !allowed_types.ListValue().empty()) {
+    dialog.SetAllowedExtensions(allowed_types.ListValue());
+  }
+
   EncodableValue files = dialog.Show(parent_window);
-  if (files.IsNull()) {
+  if (files.IsNull() && dialog.last_result() != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
     EncodableValue error_code(dialog.last_result());
     result->Error("System error", "Could not show dialog", &error_code);
   }
@@ -213,11 +315,18 @@ FileChooserPlugin::~FileChooserPlugin(){};
 void FileChooserPlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  HWND window = GetRootWindow(registrar_->GetView());
-  if (method_call.method_name().compare(kShowOpenPanelMethod) == 0) {
-    ShowDialog(CLSID_FileOpenDialog, window, std::move(result));
-  } else if (method_call.method_name().compare(kShowSavePanelMethod) == 0) {
-    ShowDialog(CLSID_FileSaveDialog, window, std::move(result));
+  if (method_call.method_name().compare(kShowOpenPanelMethod) == 0 ||
+      method_call.method_name().compare(kShowSavePanelMethod) == 0) {
+    if (!method_call.arguments() || !method_call.arguments()->IsMap()) {
+      result->Error("Bad Arguments", "Argument map missing or malformed");
+      return;
+    }
+    IID dialog_type =
+        method_call.method_name().compare(kShowOpenPanelMethod) == 0
+            ? CLSID_FileOpenDialog
+            : CLSID_FileSaveDialog;
+    ShowDialog(dialog_type, GetRootWindow(registrar_->GetView()),
+               method_call.arguments()->MapValue(), std::move(result));
   } else {
     result->NotImplemented();
   }
