@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -119,6 +119,7 @@ class DialogWrapper {
     last_result_ = dialog_->SetOptions(options);
   }
 
+  // Sets the filter for allowed file types to select.
   void SetAllowedExtensions(const EncodableList &extensions) {
     const std::wstring name_delimiter = L", ";
     const std::wstring spec_delimiter = L";";
