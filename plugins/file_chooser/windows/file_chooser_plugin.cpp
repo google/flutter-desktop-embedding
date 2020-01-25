@@ -121,6 +121,14 @@ class DialogWrapper {
 
   // Sets the filter for allowed file types to select.
   void SetAllowedExtensions(const EncodableList &extensions) {
+    // Since the current information from the Dart side is just a flat list
+    // of extensions with no label, build a single filter spec whose name
+    // is a comma-separated list of the extensions. E.g., ['jpeg','jpg','png']
+    // would become:
+    //   pszName: "jpeg, jpg, png"
+    //   pszSpec: "*.jpeg;*.jpg;*.png"
+    // TODO: Make a meaningful filterspec array instead of one mega-filter.
+    // See issue #650.
     const std::wstring name_delimiter = L", ";
     const std::wstring spec_delimiter = L";";
     const std::wstring file_wildcard = L"*.";
@@ -136,8 +144,6 @@ class DialogWrapper {
       filter_name += extension;
       filter += file_wildcard + extension;
     }
-    // TODO: Make a meaningful filterspec array instead of one mega-filter.
-    // See issue #650.
     COMDLG_FILTERSPEC spec = {filter_name.c_str(), filter.c_str()};
     last_result_ = dialog_->SetFileTypes(1, &spec);
   }
@@ -148,7 +154,6 @@ class DialogWrapper {
   EncodableValue Show(HWND parent_window) {
     assert(dialog_);
     last_result_ = dialog_->Show(parent_window);
-    last_result_ == HRESULT_FROM_WIN32(ERROR_CANCELLED);
     if (!SUCCEEDED(last_result_)) {
       return EncodableValue();
     }
