@@ -30,7 +30,7 @@ using flutter::EncodableValue;
 
 // Converts an null-terminated array of wchar_t's to a std::string.
 std::string StdStringFromWideChars(wchar_t *wide_chars) {
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> wide_to_utf8;
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wide_to_utf8;
   return wide_to_utf8.to_bytes(wide_chars);
 }
 
@@ -119,8 +119,7 @@ void PathProviderPlugin::HandleMethodCall(
       result->Error("Unable to get temporary path");
       return;
     }
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> wide_to_utf8;
-    std::string result_path = wide_to_utf8.to_bytes(path_buffer);
+    std::string result_path = StdStringFromWideChars(path_buffer);
     flutter::EncodableValue response(result_path);
     result->Success(&response);
   } else if (method_call.method_name().compare(
