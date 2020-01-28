@@ -21,10 +21,10 @@ import 'package:flutter/services.dart';
 
 import 'package:color_panel/color_panel.dart';
 import 'package:example_flutter/keyboard_test_page.dart';
-import 'package:example_plugin/example_plugin.dart' as example_plugin;
 import 'package:file_chooser/file_chooser.dart' as file_chooser;
 import 'package:menubar/menubar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sample/sample.dart' as sample_plugin;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
@@ -59,8 +59,8 @@ void main() {
     }
   });
 
-  example_plugin.ExamplePlugin.platformVersion.then((versionInfo) {
-    print('Example plugin returned $versionInfo');
+  sample_plugin.Sample.platformVersion.then((versionInfo) {
+    print('Sample plugin returned $versionInfo');
   });
 
   runApp(new MyApp());

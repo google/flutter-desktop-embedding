@@ -1,4 +1,4 @@
-# example_plugin
+# sample_plugin
 
 This is intended to serve as a starting point for writing your own Windows
 and/or Linux plugin, since `flutter create` does not yet support Windows
@@ -9,7 +9,7 @@ Before continuing, read [the main plugins README](../README.md) if you haven't a
 ## Use
 
 - To create an entirely new plugin, or a federated Windows/Linux implementation
-  of an existing plugin, copy the entire `example_plugin` folder.
+  of an existing plugin, copy the entire `sample_plugin` folder.
   - Update the `pubspec.yaml` as normal for a plugin. Be sure to remove
     `platforms` entries for platforms you aren't supporting.
   - Delete the directories for any platforms you aren't supporting.
@@ -29,17 +29,17 @@ almost certainly not work with the final Flutter Windows and Linux support.
 ### Windows
 
 Basic setup:
-- Rename all the `example_plugin.*` files to match your plugin's name.
+- Rename all the `sample*` files to match your plugin's name.
 - Change the `FlutterPluginName` in `PluginInfo.props` to your plugin's name.
-- Update the header guard (`PLUGINS_EXAMPLE_EXAMPLE_PLUGIN_WINDOWS_H_`) to
+- Update the header guard (`PLUGINS_SAMPLE_WINDOWS_SAMPLE_PLUGIN_H_`) to
   use your plugin's name.
-- Replace all instances of `ExamplePlugin` in the `.cpp` and `.h` with your
+- Replace all instances of `SamplePlugin` in the `.cpp` and `.h` with your
   plugin's class name. This must match the `windows` entry in your `pubspec.yaml`.
-- Replace `example_plugin` with your plugin's channel name in this call:
+- Replace `sample_plugin` with your plugin's channel name in this call:
   ```
   auto channel =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-          registrar->messenger(), "example_plugin",
+          registrar->messenger(), "sample_plugin",
           &flutter::StandardMethodCodec::GetInstance());
   ```
 
@@ -53,17 +53,17 @@ and
 ### Linux
 
 Basic setup:
-- Rename all the `example_plugin.*` files to match your plugin's name.
+- Rename all the `sample_plugin.*` files to match your plugin's name.
 - Change the `PLUGIN_NAME` in the `Makefile` to your plugin's name.
-- Update the header guard (`PLUGINS_EXAMPLE_LINUX_EXAMPLE_PLUGIN_H_`) to
+- Update the header guard (`PLUGINS_SAMPLE_LINUX_SAMPLE_PLUGIN_H_`) to
   use your plugin's name.
-- Replace all instances of `ExamplePlugin` in the `.cc` and `.h` with your
+- Replace all instances of `SamplePlugin` in the `.cc` and `.h` with your
   plugin's class name. This must match the `linux` entry in your `pubspec.yaml`.
-- Replace `example_plugin` with your plugin's channel name in this call:
+- Replace `sample_plugin` with your plugin's channel name in this call:
   ```
   auto channel =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-          registrar->messenger(), "example_plugin",
+          registrar->messenger(), "sample_plugin",
           &flutter::StandardMethodCodec::GetInstance());
   ```
 

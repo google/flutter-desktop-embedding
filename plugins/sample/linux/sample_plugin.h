@@ -11,26 +11,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef PLUGINS_EXAMPLE_EXAMPLE_PLUGIN_WINDOWS_H_
-#define PLUGINS_EXAMPLE_EXAMPLE_PLUGIN_WINDOWS_H_
+#ifndef PLUGINS_SAMPLE_LINUX_SAMPLE_PLUGIN_H_
+#define PLUGINS_SAMPLE_LINUX_SAMPLE_PLUGIN_H_
 
 #include <flutter_plugin_registrar.h>
 
 #ifdef FLUTTER_PLUGIN_IMPL
-#define FLUTTER_PLUGIN_EXPORT __declspec(dllexport)
+#define FLUTTER_PLUGIN_EXPORT __attribute__((visibility("default")))
 #else
-#define FLUTTER_PLUGIN_EXPORT __declspec(dllimport)
+#define FLUTTER_PLUGIN_EXPORT
 #endif
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void ExamplePluginRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void SamplePluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)
 }  // extern "C"
 #endif
 
-#endif  // PLUGINS_EXAMPLE_EXAMPLE_PLUGIN_WINDOWS_H_
+#endif  // PLUGINS_SAMPLE_LINUX_SAMPLE_PLUGIN_H_

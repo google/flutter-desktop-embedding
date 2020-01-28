@@ -20,12 +20,12 @@ dependencies:
   # checkout.
   color_panel:
     path: ../plugins/color_panel
-  example_plugin:
-    path: ../plugins/example_plugin
   file_chooser:
     path: ../plugins/file_chooser
   menubar:
     path: ../plugins/menubar
+  sample:
+    path: ../plugins/sample
   window_size:
     path: ../plugins/window_size
   # Plugins from flutter/plugins, with local desktop implementations.

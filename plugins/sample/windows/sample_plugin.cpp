@@ -11,28 +11,28 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "example_plugin.h"
-
-#include <windows.h>
+#include "sample_plugin.h"
 
 #include <VersionHelpers.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
+#include <windows.h>
+
 #include <memory>
 #include <sstream>
 
 namespace {
 
-class ExamplePlugin : public flutter::Plugin {
+class SamplePlugin : public flutter::Plugin {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
 
   // Creates a plugin that communicates on the given channel.
-  ExamplePlugin(
+  SamplePlugin(
       std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel);
 
-  virtual ~ExamplePlugin();
+  virtual ~SamplePlugin();
 
  private:
   // Called when a method is called on |channel_|;
@@ -45,14 +45,14 @@ class ExamplePlugin : public flutter::Plugin {
 };
 
 // static
-void ExamplePlugin::RegisterWithRegistrar(flutter::PluginRegistrar *registrar) {
+void SamplePlugin::RegisterWithRegistrar(flutter::PluginRegistrar *registrar) {
   auto channel =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-          registrar->messenger(), "example_plugin",
+          registrar->messenger(), "sample_plugin",
           &flutter::StandardMethodCodec::GetInstance());
   auto *channel_pointer = channel.get();
 
-  auto plugin = std::make_unique<ExamplePlugin>(std::move(channel));
+  auto plugin = std::make_unique<SamplePlugin>(std::move(channel));
 
   channel_pointer->SetMethodCallHandler(
       [plugin_pointer = plugin.get()](const auto &call, auto result) {
@@ -62,19 +62,19 @@ void ExamplePlugin::RegisterWithRegistrar(flutter::PluginRegistrar *registrar) {
   registrar->AddPlugin(std::move(plugin));
 }
 
-ExamplePlugin::ExamplePlugin(
+SamplePlugin::SamplePlugin(
     std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel)
     : channel_(std::move(channel)) {}
 
-ExamplePlugin::~ExamplePlugin(){};
+SamplePlugin::~SamplePlugin(){};
 
-void ExamplePlugin::HandleMethodCall(
+void SamplePlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare("getPlatformVersion") == 0) {
     std::ostringstream version_stream;
     version_stream << "Windows ";
-	// The result returned here will depend on the app manifest of the runner.
+    // The result returned here will depend on the app manifest of the runner.
     if (IsWindows10OrGreater()) {
       version_stream << "10+";
     } else if (IsWindows8OrGreater()) {
@@ -91,11 +91,11 @@ void ExamplePlugin::HandleMethodCall(
 
 }  // namespace
 
-void ExamplePluginRegisterWithRegistrar(
+void SamplePluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.
   static auto *plugin_registrar = new flutter::PluginRegistrar(registrar);
 
-  ExamplePlugin::RegisterWithRegistrar(plugin_registrar);
+  SamplePlugin::RegisterWithRegistrar(plugin_registrar);
 }

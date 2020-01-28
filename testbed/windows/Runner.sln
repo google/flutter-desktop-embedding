@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runner", "Runner.vcxproj", 
 		{D9433AE2-FB49-48D8-A6F9-3C71021E73E4} = {D9433AE2-FB49-48D8-A6F9-3C71021E73E4}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_plugin", "..\..\plugins\example_plugin\windows\example_plugin.vcxproj", "{95E21B2C-C18A-4CED-8509-585CB2570FDE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample", "..\..\plugins\sample\windows\sample.vcxproj", "{95E21B2C-C18A-4CED-8509-585CB2570FDE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6419BF13-6ECD-4CD2-9E85-E566A1F03F8F} = {6419BF13-6ECD-4CD2-9E85-E566A1F03F8F}
 	EndProjectSection

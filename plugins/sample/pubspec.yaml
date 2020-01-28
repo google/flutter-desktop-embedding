@@ -1,4 +1,4 @@
-name: example_plugin
+name: sample
 description: A minimal example plugin for desktop, in the style of the 'flutter create' plugin template.
 version: 0.0.1
 author:
@@ -8,11 +8,11 @@ flutter:
   plugin:
     platforms:
       linux:
-        pluginClass: ExamplePlugin
+        pluginClass: SamplePlugin
       macos:
-        pluginClass: ExamplePlugin
+        pluginClass: SamplePlugin
       windows:
-        pluginClass: ExamplePlugin
+        pluginClass: SamplePlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
