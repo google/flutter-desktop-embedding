@@ -17,7 +17,7 @@
 
 #include <VersionHelpers.h>
 #include <flutter/method_channel.h>
-#include <flutter/plugin_registrar.h>
+#include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 
 #include <memory>
@@ -27,7 +27,7 @@ namespace {
 
 class SamplePlugin : public flutter::Plugin {
  public:
-  static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
+  static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
 
   // Creates a plugin that communicates on the given channel.
   SamplePlugin(
@@ -46,7 +46,8 @@ class SamplePlugin : public flutter::Plugin {
 };
 
 // static
-void SamplePlugin::RegisterWithRegistrar(flutter::PluginRegistrar *registrar) {
+void SamplePlugin::RegisterWithRegistrar(
+    flutter::PluginRegistrarWindows *registrar) {
   auto channel =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
           registrar->messenger(), "sample_plugin",
@@ -96,7 +97,8 @@ void SamplePluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
   // The plugin registrar owns the plugin, registered callbacks, etc., so must
   // remain valid for the life of the application.
-  static auto *plugin_registrar = new flutter::PluginRegistrar(registrar);
+  static auto *plugin_registrar =
+      new flutter::flutter::PluginRegistrarWindows(registrar);
 
   SamplePlugin::RegisterWithRegistrar(plugin_registrar);
 }
