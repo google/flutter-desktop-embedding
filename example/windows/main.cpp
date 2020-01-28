@@ -35,7 +35,7 @@ std::string GetExecutableDirectory() {
     std::cerr << "Couldn't locate executable" << std::endl;
     return "";
   }
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> wide_to_utf8;
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wide_to_utf8;
   std::string executable_path = wide_to_utf8.to_bytes(buffer);
   size_t last_separator_position = executable_path.find_last_of('\\');
   if (last_separator_position == std::string::npos) {
