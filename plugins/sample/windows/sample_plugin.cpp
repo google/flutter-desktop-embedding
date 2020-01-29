@@ -25,38 +25,34 @@
 
 namespace {
 
+// *** Rename this class to match the linux pluginClass in your pubspec.yaml.
 class SamplePlugin : public flutter::Plugin {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
 
-  // Creates a plugin that communicates on the given channel.
-  SamplePlugin(
-      std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel);
+  SamplePlugin();
 
   virtual ~SamplePlugin();
 
  private:
-  // Called when a method is called on |channel_|;
+  // Called when a method is called on this plugin's channel from Dart.
   void HandleMethodCall(
       const flutter::MethodCall<flutter::EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-
-  // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
 };
 
 // static
 void SamplePlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows *registrar) {
+  // *** Replace "sample_plugin" with your plugin's channel name in this call.
   auto channel =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
           registrar->messenger(), "sample_plugin",
           &flutter::StandardMethodCodec::GetInstance());
-  auto *channel_pointer = channel.get();
 
-  auto plugin = std::make_unique<SamplePlugin>(std::move(channel));
+  auto plugin = std::make_unique<SamplePlugin>();
 
-  channel_pointer->SetMethodCallHandler(
+  channel->SetMethodCallHandler(
       [plugin_pointer = plugin.get()](const auto &call, auto result) {
         plugin_pointer->HandleMethodCall(call, std::move(result));
       });
@@ -64,15 +60,19 @@ void SamplePlugin::RegisterWithRegistrar(
   registrar->AddPlugin(std::move(plugin));
 }
 
-SamplePlugin::SamplePlugin(
-    std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel)
-    : channel_(std::move(channel)) {}
+SamplePlugin::SamplePlugin() {}
 
-SamplePlugin::~SamplePlugin(){};
+SamplePlugin::~SamplePlugin() {}
 
 void SamplePlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+  // *** Replace the "getPlatformVersion" check with your plugin's method names.
+  // See:
+  // https://github.com/flutter/engine/tree/master/shell/platform/common/cpp/client_wrapper/include/flutter
+  // and
+  // https://github.com/flutter/engine/tree/master/shell/platform/windows/client_wrapper/include/flutter
+  // for the relevant Flutter APIs.
   if (method_call.method_name().compare("getPlatformVersion") == 0) {
     std::ostringstream version_stream;
     version_stream << "Windows ";
