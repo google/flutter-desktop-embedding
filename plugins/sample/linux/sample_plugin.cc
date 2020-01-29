@@ -18,6 +18,7 @@
 #include <flutter/standard_method_codec.h>
 #include <sys/utsname.h>
 
+#include <map>
 #include <memory>
 #include <sstream>
 
@@ -86,9 +87,13 @@ void SamplePlugin::HandleMethodCall(
 
 void SamplePluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
-  // The plugin registrar owns the plugin, registered callbacks, etc., so must
-  // remain valid for the life of the application.
-  static auto *plugin_registrar = new flutter::PluginRegistrarGlfw(registrar);
+  // The plugin registrar wrappers owns the plugins, registered callbacks, etc.,
+  // so must remain valid for the life of the application.
+  static auto *plugin_registrars =
+      new std::map<FlutterDesktopPluginRegistrarRef,
+                   std::unique_ptr<flutter::PluginRegistrarGlfw>>;
+  auto insert_result = plugin_registrars->insert(
+      {registrar, std::make_unique<flutter::PluginRegistrarGlfw>(registrar)});
 
-  SamplePlugin::RegisterWithRegistrar(plugin_registrar);
+  SamplePlugin::RegisterWithRegistrar(insert_result.first->second.get());
 }
