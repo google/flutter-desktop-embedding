@@ -92,8 +92,8 @@ void SamplePluginRegisterWithRegistrar(
   static auto *plugin_registrars =
       new std::map<FlutterDesktopPluginRegistrarRef,
                    std::unique_ptr<flutter::PluginRegistrarGlfw>>;
-  auto insert_result = plugin_registrars->insert(
-      {registrar, std::make_unique<flutter::PluginRegistrarGlfw>(registrar)});
+  auto insert_result = plugin_registrars->emplace(
+      registrar, std::make_unique<flutter::PluginRegistrarGlfw>(registrar));
 
   SamplePlugin::RegisterWithRegistrar(insert_result.first->second.get());
 }
