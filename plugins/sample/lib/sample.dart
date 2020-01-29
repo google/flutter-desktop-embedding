@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-class ExamplePlugin {
+class Sample {
   static const MethodChannel _channel =
-      const MethodChannel('example_plugin');
+      const MethodChannel('sample_plugin');
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');

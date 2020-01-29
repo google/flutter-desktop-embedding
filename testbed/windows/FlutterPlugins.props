@@ -4,7 +4,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>example_plugin.lib;file_chooser.lib;path_provider_fde.lib;url_launcher_fde.lib;window_size.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sample.lib;file_chooser.lib;path_provider_fde.lib;url_launcher_fde.lib;window_size.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 </Project>

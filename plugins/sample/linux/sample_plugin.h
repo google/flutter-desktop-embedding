@@ -11,8 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef PLUGINS_EXAMPLE_LINUX_EXAMPLE_PLUGIN_H_
-#define PLUGINS_EXAMPLE_LINUX_EXAMPLE_PLUGIN_H_
+
+// *** Replace SAMPLE with your plugin's name here.
+#ifndef FLUTTER_PLUGIN_SAMPLE_H_
+#define FLUTTER_PLUGIN_SAMPLE_H_
 
 #include <flutter_plugin_registrar.h>
 
@@ -26,11 +28,12 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void ExamplePluginRegisterWithRegistrar(
+// *** Replace Sample with your plugin's name here.
+FLUTTER_PLUGIN_EXPORT void SamplePluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)
 }  // extern "C"
 #endif
 
-#endif  // PLUGINS_EXAMPLE_LINUX_EXAMPLE_PLUGIN_H_
+#endif  // FLUTTER_PLUGIN_SAMPLE_H_

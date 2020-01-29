@@ -5,7 +5,7 @@ page](https://github.com/flutter/flutter/wiki/Desktop-shells#plugins)
 for an overview of the current state of plugin development on desktop.
 
 This directory contains three types of plugins:
-* `example_plugin`, which like `example/` will eventually be replaced by
+* `sample`, which like `example/` will eventually be replaced by
   `flutter create -t plugin` support for desktop.
 * `flutter_plugins`, which contain Windows and Linux implementations of plugins
   from [the flutter/plugins repository](https://github.com/flutter/plugins)
@@ -33,8 +33,8 @@ pubspec.yaml. For example:
 ```
 dependencies:
   ...
-  example_plugin:
-    path: relative/path/to/plugins/example_plugin
+  sample:
+    path: relative/path/to/plugins/sample
 ```
 
 (On macOS, you can use a [git
@@ -43,7 +43,7 @@ instead of referencing a local copy.)
 
 Then import it in your dart code as you would any other package:
 ```dart
-import 'package:example_plugin/example_plugin.dart';
+import 'package:sample/sample.dart';
 ```
 
 This step does not apply to `flutter_plugins` plugins, as the
@@ -132,9 +132,9 @@ headers.
 ## Writing Your Own Plugins
 
 You can create plugin packages following the model of the Windows and Linux
-plugins here to use in your own projects. In particular, `example_plugin`
+plugins here to use in your own projects. In particular, `sample`
 is intended to serve as a starting point for new plugins; see
-[its README](example_plugin/README.md) for details. For macOS,
+[its README](sample/README.md) for details. For macOS,
 you should use `flutter create` as usual.
 
 Keep in mind the notes about API stability on the Flutter desktop page

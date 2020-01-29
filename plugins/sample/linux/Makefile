@@ -17,9 +17,10 @@
 # the values that are mostly likely to need to be changed.
 
 # The name of the plugin.
-# The primary source file is assumed to be $(PLUGIN_NAME).cc, with
-# $(PLUGIN_NAME).h as the public header meant for inclusion by the application.
-PLUGIN_NAME=example_plugin
+# The primary source file is assumed to be $(PLUGIN_NAME)_plugin.cc, with
+# $(PLUGIN_NAME)_plugin.h as the public header meant for inclusion by the
+# application.
+PLUGIN_NAME=sample
 # Any files other than the plugin class files that need to be compiled.
 EXTRA_SOURCES=
 # Extra flags (e.g., for library dependencies).
@@ -66,8 +67,8 @@ WRAPPER_SOURCES= \
 
 # Use abspath for extra sources, which may also contain relative paths (see
 # note above about WRAPPER_ROOT).
-SOURCES=$(PLUGIN_NAME).cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
-PUBLIC_HEADER=$(PLUGIN_NAME).h
+SOURCES=$(PLUGIN_NAME)_plugin.cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
+PUBLIC_HEADER=$(PLUGIN_NAME)_plugin.h
 
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
@@ -81,7 +82,7 @@ CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) $(EXTRA_CPPFLAGS)
 LDFLAGS=-shared -L$(FLUTTER_EPHEMERAL_DIR) -l$(FLUTTER_LIB_NAME) $(EXTRA_LDFLAGS)
 
 # Final output files that will be used by applications.
-LIBRARY_OUT=$(OUT_DIR)/lib$(PLUGIN_NAME).so
+LIBRARY_OUT=$(OUT_DIR)/lib$(PLUGIN_NAME)_plugin.so
 HEADER_OUT=$(OUT_DIR)/include/$(PUBLIC_HEADER)
 
 # Intermediate files.

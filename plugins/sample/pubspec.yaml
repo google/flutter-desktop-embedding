@@ -1,0 +1,25 @@
+# *** Change name and description for your plugin.
+name: sample
+description: A minimal example plugin for desktop, in the style of the 'flutter create' plugin template.
+version: 0.0.1
+author:
+homepage:
+
+flutter:
+  plugin:
+    platforms:
+      # *** Remove any platforms you don't intend to support from this list,
+      # and update the pluginClass for those that remain.
+      linux:
+        pluginClass: SamplePlugin
+      macos:
+        pluginClass: SamplePlugin
+      windows:
+        pluginClass: SamplePlugin
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter

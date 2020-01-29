@@ -15,10 +15,10 @@
 import Cocoa
 import FlutterMacOS
 
-public class ExamplePlugin: NSObject, FlutterPlugin {
+public class SamplePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "example_plugin", binaryMessenger: registrar.messenger)
-    let instance = ExamplePlugin()
+    let channel = FlutterMethodChannel(name: "sample_plugin", binaryMessenger: registrar.messenger)
+    let instance = SamplePlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
