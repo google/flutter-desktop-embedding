@@ -14,6 +14,7 @@
 
 #include <flutter/flutter_view_controller.h>
 #include <windows.h>
+#include <flutter_windows.h>
 
 #include <chrono>
 #include <codecvt>
@@ -78,7 +79,12 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
-  if (!window.CreateAndShow(kFlutterWindowTitle, origin, size)) {
+  INT dpi = FlutterDesktopViewGetDpiForView(nullptr);
+  std::cerr << "App dpi\n";
+  std::cerr << dpi << std::endl;
+  double scale_factor = static_cast<double>(dpi) / 96;
+
+  if (!window.CreateAndShow(kFlutterWindowTitle, origin, size, scale_factor)) {
     return EXIT_FAILURE;
   }
 

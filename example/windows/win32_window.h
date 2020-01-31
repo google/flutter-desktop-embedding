@@ -40,7 +40,7 @@ class Win32Window {
   // as logical pixels and scale to appropriate for the default monitor. Returns
   // true if the window was created successfully.
   bool CreateAndShow(const std::wstring &title, const Point &origin,
-                     const Size &size);
+                     const Size &size, double scale_factor);
 
   // Release OS resources asociated with window.
   void Destroy();

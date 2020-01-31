@@ -4,8 +4,10 @@
 
 #include "win32_window.h"
 
+
 #include "resource.h"
 #include "shellscalingapi.h"
+#include <iostream>
 
 namespace {
 
@@ -28,17 +30,11 @@ Win32Window::Win32Window() {}
 Win32Window::~Win32Window() { Destroy(); }
 
 bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
-                                const Size &size) {
+                                const Size &size, double scale_factor) {
   Destroy();
 
   WNDCLASS window_class = RegisterWindowClass();
 
-  HMONITOR defaut_monitor =
-      MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
-  UINT dpi_x = 0, dpi_y = 0;
-  GetDpiForMonitor(defaut_monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
-
-  double scale_factor = static_cast<double>(dpi_x) / kBaseDpi;
 
   HWND window = CreateWindow(
       window_class.lpszClassName, title.c_str(),
@@ -100,6 +96,19 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
       Destroy();
       return 0;
 
+  case WM_DPICHANGED: {
+    std::cerr << "Resizing\n";
+      // Resize the window only for toplevel windows which have a suggested
+      // size.
+      auto lprcNewScale = reinterpret_cast<RECT*>(lparam);
+      LONG newWidth = lprcNewScale->right - lprcNewScale->left;
+      LONG newHeight = lprcNewScale->bottom - lprcNewScale->top;
+
+      SetWindowPos(hwnd, nullptr, lprcNewScale->left, lprcNewScale->top,
+                   newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+
+      return 0;
+  }
     case WM_SIZE:
       RECT rect;
       GetClientRect(hwnd, &rect);
