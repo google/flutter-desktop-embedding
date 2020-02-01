@@ -4,16 +4,12 @@
 
 #include "win32_window.h"
 
+#include <flutter_windows.h>
 
 #include "resource.h"
 #include "shellscalingapi.h"
-#include <iostream>
 
 namespace {
-
-// the Windows DPI system is based on this
-// constant for machines running at 100% scaling.
-constexpr int kBaseDpi = 96;
 
 constexpr LPCWSTR kClassName = L"CLASSNAME";
 
@@ -34,7 +30,6 @@ bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
   Destroy();
 
   WNDCLASS window_class = RegisterWindowClass();
-
 
   HWND window = CreateWindow(
       window_class.lpszClassName, title.c_str(),
@@ -71,7 +66,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
                      reinterpret_cast<LONG_PTR>(cs->lpCreateParams));
 
     auto that = static_cast<Win32Window *>(cs->lpCreateParams);
-
+    FlutterDesktopEnableNonClientDpiScaling(window);
     that->window_handle_ = window;
   } else if (Win32Window *that = GetThisFromHandle(window)) {
     return that->MessageHandler(window, message, wparam, lparam);
@@ -96,11 +91,10 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
       Destroy();
       return 0;
 
-  case WM_DPICHANGED: {
-    std::cerr << "Resizing\n";
+    case WM_DPICHANGED: {
       // Resize the window only for toplevel windows which have a suggested
       // size.
-      auto lprcNewScale = reinterpret_cast<RECT*>(lparam);
+      auto lprcNewScale = reinterpret_cast<RECT *>(lparam);
       LONG newWidth = lprcNewScale->right - lprcNewScale->left;
       LONG newHeight = lprcNewScale->bottom - lprcNewScale->top;
 
@@ -108,7 +102,7 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
                    newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 
       return 0;
-  }
+    }
     case WM_SIZE:
       RECT rect;
       GetClientRect(hwnd, &rect);

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #include <flutter/flutter_view_controller.h>
-#include <windows.h>
 #include <flutter_windows.h>
+#include <windows.h>
 
 #include <chrono>
 #include <codecvt>
@@ -27,6 +27,10 @@
 #include "window_configuration.h"
 
 namespace {
+
+// the Windows DPI system is based on this
+// constant for machines running at 100% scaling.
+constexpr int kBaseDpi = 96;
 
 // Returns the path of the directory containing this executable, or an empty
 // string if the directory cannot be found.
@@ -79,10 +83,10 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
 
   // Create a top-level win32 window to host the Flutter view.
   Win32Window window;
-  INT dpi = FlutterDesktopViewGetDpiForView(nullptr);
-  std::cerr << "App dpi\n";
-  std::cerr << dpi << std::endl;
-  double scale_factor = static_cast<double>(dpi) / 96;
+  // Send a nullptr since the top-level window hasn't been created. This will
+  // get the neares monitor's DPI.
+  INT dpi = FlutterDesktopViewGetDpiForHWND(nullptr);
+  double scale_factor = static_cast<double>(dpi) / kBaseDpi;
 
   if (!window.CreateAndShow(kFlutterWindowTitle, origin, size, scale_factor)) {
     return EXIT_FAILURE;
