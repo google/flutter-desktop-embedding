@@ -11,6 +11,10 @@
 
 namespace {
 
+// The Windows DPI system is based on this
+// constant for machines running at 100% scaling.
+constexpr int kBaseDpi = 96;
+
 constexpr LPCWSTR kClassName = L"CLASSNAME";
 
 // Scale helper to convert logical scaler values to physical using passed in
@@ -26,10 +30,14 @@ Win32Window::Win32Window() {}
 Win32Window::~Win32Window() { Destroy(); }
 
 bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
-                                const Size &size, double scale_factor) {
+                                const Size &size) {
   Destroy();
 
   WNDCLASS window_class = RegisterWindowClass();
+  // Send a nullptr since the top-level window hasn't been created. This will
+  // get the neares monitor's DPI.
+  INT dpi = FlutterDesktopViewGetDpiForHWND(nullptr);
+  double scale_factor = static_cast<double>(dpi) / kBaseDpi;
 
   HWND window = CreateWindow(
       window_class.lpszClassName, title.c_str(),
