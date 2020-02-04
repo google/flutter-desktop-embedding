@@ -9,7 +9,7 @@ flutter/plugins). Either way, the API may change significantly.
 ## Supported Platforms
 
 - [x] macOS
-- [ ] [Windows](https://github.com/google/flutter-desktop-embedding/issues/105)
+- [x] Windows
 - [x] Linux
 
 ## Use
