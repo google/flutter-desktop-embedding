@@ -7,7 +7,6 @@
 #include <flutter_windows.h>
 
 #include "resource.h"
-#include "shellscalingapi.h"
 
 namespace {
 
@@ -17,12 +16,26 @@ constexpr int kBaseDpi = 96;
 
 constexpr LPCWSTR kClassName = L"CLASSNAME";
 
+using EnableNonClientDpiScaling_ = BOOL __stdcall(HWND hwnd);
+
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
 int Scale(int source, double scale_factor) {
   return static_cast<int>(source * scale_factor);
 }
 
+// Dynamically loads the |EnableNonClientDpiScaling| from the User32 module.
+// Appended with FDE to differentiate from the win32 API.
+bool FDEEnableNonClientDpiScaling(HWND hwnd) {
+  HMODULE user32_module_ = LoadLibraryA("User32.dll");
+  if (user32_module_) {
+    return false;
+  }
+  auto enable_non_client_dpi_scaling_ =
+      reinterpret_cast<EnableNonClientDpiScaling_ *>(
+          GetProcAddress(user32_module_, "EnableNonClientDpiScaling"));
+  return enable_non_client_dpi_scaling_(hwnd);
+}
 }  // namespace
 
 Win32Window::Win32Window() {}
@@ -74,7 +87,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
                      reinterpret_cast<LONG_PTR>(cs->lpCreateParams));
 
     auto that = static_cast<Win32Window *>(cs->lpCreateParams);
-    FlutterDesktopEnableNonClientDpiScaling(window);
+    FDEEnableNonClientDpiScaling(window);
     that->window_handle_ = window;
   } else if (Win32Window *that = GetThisFromHandle(window)) {
     return that->MessageHandler(window, message, wparam, lparam);
@@ -109,7 +122,7 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
       SetWindowPos(hwnd, nullptr, lprcNewScale->left, lprcNewScale->top,
                    newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 
-      return 0;
+      break;
     }
     case WM_SIZE:
       RECT rect;
