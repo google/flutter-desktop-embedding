@@ -27,7 +27,7 @@
 
 namespace {
 
-// *** Rename this class to match the linux pluginClass in your pubspec.yaml.
+// *** Rename this class to match the windows pluginClass in your pubspec.yaml.
 class SamplePlugin : public flutter::Plugin {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
