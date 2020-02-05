@@ -13,14 +13,14 @@
 // limitations under the License.
 #include "plugins/file_chooser/linux/file_chooser_plugin.h"
 
-#include <gtk/gtk.h>
-#include <iostream>
-#include <memory>
-#include <vector>
-
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
+#include <gtk/gtk.h>
+
+#include <iostream>
+#include <memory>
+#include <vector>
 
 namespace plugins_file_chooser {
 
@@ -83,20 +83,22 @@ static void ProcessFilters(const EncodableMap &method_args,
   const EncodableValue &allowed_file_types =
       ValueOrNull(method_args, kAllowedFileTypesKey);
   if (allowed_file_types.IsList() && !allowed_file_types.ListValue().empty()) {
-    GtkFileFilter *filter = gtk_file_filter_new();
-    const std::string comma_delimiter = ", ";
     const std::string file_wildcard = "*.";
-    std::string filter_name = "";
-    for (const EncodableValue &element : allowed_file_types.ListValue()) {
-      std::string pattern = file_wildcard + element.StringValue();
-      filter_name.append(pattern + comma_delimiter);
-      gtk_file_filter_add_pattern(filter, pattern.c_str());
+    for (const EncodableValue &filter_info : allowed_file_types.ListValue()) {
+      GtkFileFilter *filter = gtk_file_filter_new();
+      gtk_file_filter_set_name(
+          filter, filter_info.ListValue()[0].StringValue().c_str());
+      EncodableList extensions = filter_info.ListValue()[1].ListValue();
+      if (extensions.empty()) {
+        gtk_file_filter_add_pattern(filter, "*");
+      } else {
+        for (const EncodableValue &extension : extensions) {
+          std::string pattern = file_wildcard + extension.StringValue();
+          gtk_file_filter_add_pattern(filter, pattern.c_str());
+        }
+      }
+      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
     }
-    // Deletes trailing comma and space.
-    filter_name.erase(filter_name.end() - comma_delimiter.size(),
-                      filter_name.end());
-    gtk_file_filter_set_name(filter, filter_name.c_str());
-    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
   }
 }
 

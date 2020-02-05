@@ -53,7 +53,18 @@ static NSString *const kCanChooseDirectoriesKey = @"canChooseDirectories";
     panel.directoryURL = [NSURL URLWithString:arguments[kInitialDirectoryKey]];
   }
   if ([argKeys containsObject:kAllowedFileTypesKey]) {
-    panel.allowedFileTypes = arguments[kAllowedFileTypesKey];
+    // macOS doesn't support filter groups, so combine all allowed types into a flat list.
+    NSMutableArray<NSString*> *allowedTypes = [NSMutableArray array];
+    for (NSArray *filter in arguments[kAllowedFileTypesKey]) {
+      NSArray<NSString*> *extensions = filter[1];
+      // If any group allows all extensions, don't do any filtering.
+      if (extensions.count == 0) {
+        allowedTypes = nil;
+        break;
+      }
+      [allowedTypes addObjectsFromArray:extensions];
+    }
+    panel.allowedFileTypes = allowedTypes;
   }
   if ([argKeys containsObject:kInitialFileNameKey]) {
     panel.nameFieldStringValue = arguments[kInitialFileNameKey];

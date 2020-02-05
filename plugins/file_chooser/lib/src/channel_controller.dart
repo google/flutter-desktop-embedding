@@ -13,6 +13,7 @@
 // limitations under the License.
 import 'package:flutter/services.dart';
 
+import 'filter_group.dart';
 import 'result.dart';
 
 /// The name of the plugin's platform channel.
@@ -34,7 +35,19 @@ const String _kInitialDirectoryKey = 'initialDirectory';
 /// an empty string if not provided.
 const String _kInitialFileNameKey = 'initialFileName';
 
-/// An array of UTI or file extension strings a panel is allowed to choose.
+/// An array of UTI or file extension groups a user should be able to select.
+///
+/// The format is:
+/// [
+///   [ label, [extension, extension, ...] ],
+///   [ label, [extension, extension, ...] ],
+///   ...
+/// ]
+///
+/// On platforms that don't support selectable groups (e.g., macOS), the
+/// extension lists can be merged. An empty extension array indicates that any
+/// type is allowed; when merging, this should cause all other arrays to be
+/// ignored.
 const String _kAllowedFileTypesKey = 'allowedFileTypes';
 
 /// The text that appears on the panel's confirmation button. If not provided,
@@ -75,7 +88,8 @@ class FileChooserConfigurationOptions {
   // the configuration parameters defined in the channel protocol.
   final String initialDirectory; // ignore: public_member_api_docs
   final String initialFileName; // ignore: public_member_api_docs
-  final List<String> allowedFileTypes; // ignore: public_member_api_docs
+  final List<FileTypeFilterGroup>
+      allowedFileTypes; // ignore: public_member_api_docs
   final bool allowsMultipleSelection; // ignore: public_member_api_docs
   final bool canSelectDirectories; // ignore: public_member_api_docs
   final String confirmButtonText; // ignore: public_member_api_docs
@@ -95,7 +109,8 @@ class FileChooserConfigurationOptions {
       args[_kCanChooseDirectoriesKey] = canSelectDirectories;
     }
     if (allowedFileTypes != null && allowedFileTypes.isNotEmpty) {
-      args[_kAllowedFileTypesKey] = allowedFileTypes;
+      args[_kAllowedFileTypesKey] = allowedFileTypes
+          .map((filter) => [filter.label ?? '', filter.fileExtensions ?? []]);
     }
     if (confirmButtonText != null && confirmButtonText.isNotEmpty) {
       args[_kConfirmButtonTextKey] = confirmButtonText;

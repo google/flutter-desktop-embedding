@@ -21,7 +21,7 @@ import 'package:flutter/services.dart';
 
 import 'package:color_panel/color_panel.dart';
 import 'package:example_flutter/keyboard_test_page.dart';
-import 'package:file_chooser/file_chooser.dart' as file_chooser;
+import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sample/sample.dart' as sample_plugin;
@@ -309,9 +309,7 @@ class FileChooserTestWidget extends StatelessWidget {
         new FlatButton(
           child: const Text('SAVE'),
           onPressed: () {
-            file_chooser
-                .showSavePanel(suggestedFileName: 'save_test.txt')
-                .then((result) {
+            showSavePanel(suggestedFileName: 'save_test.txt').then((result) {
               Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.save, result)),
@@ -323,13 +321,40 @@ class FileChooserTestWidget extends StatelessWidget {
           child: const Text('OPEN'),
           onPressed: () async {
             String initialDirectory;
-            if (Platform.isMacOS) {
+            if (Platform.isMacOS || Platform.isWindows) {
               initialDirectory =
                   (await getApplicationDocumentsDirectory()).path;
             }
-            final result = await file_chooser.showOpenPanel(
+            final result = await showOpenPanel(
                 allowsMultipleSelection: true,
                 initialDirectory: initialDirectory);
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.open, result))));
+          },
+        ),
+        new FlatButton(
+          child: const Text('OPEN MEDIA'),
+          onPressed: () async {
+            final result =
+                await showOpenPanel(allowedFileTypes: <FileTypeFilterGroup>[
+              FileTypeFilterGroup(label: 'Images', fileExtensions: <String>[
+                'bmp',
+                'gif',
+                'jpeg',
+                'jpg',
+                'png',
+                'tiff',
+                'webp',
+              ]),
+              FileTypeFilterGroup(label: 'Video', fileExtensions: <String>[
+                'avi',
+                'mov',
+                'mpeg',
+                'mpg',
+                'webm',
+              ]),
+            ]);
             Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
@@ -395,7 +420,7 @@ enum _FileChooserType { save, open }
 
 /// Returns display text reflecting the result of a file chooser operation.
 String _resultTextForFileChooserOperation(
-    _FileChooserType type, file_chooser.FileChooserResult result) {
+    _FileChooserType type, FileChooserResult result) {
   if (result.canceled) {
     return '${type == _FileChooserType.open ? 'Open' : 'Save'} cancelled';
   }

@@ -119,33 +119,36 @@ class DialogWrapper {
     last_result_ = dialog_->SetOptions(options);
   }
 
-  // Sets the filter for allowed file types to select.
-  void SetAllowedExtensions(const EncodableList &extensions) {
-    // Since the current information from the Dart side is just a flat list
-    // of extensions with no label, build a single filter spec whose name
-    // is a comma-separated list of the extensions. E.g., ['jpeg','jpg','png']
-    // would become:
-    //   pszName: "jpeg, jpg, png"
-    //   pszSpec: "*.jpeg;*.jpg;*.png"
-    // TODO: Make a meaningful filterspec array instead of one mega-filter.
-    // See issue #650.
-    const std::wstring name_delimiter = L", ";
+  // Sets the filters for allowed file types to select.
+  void SetFileTypeFilters(const EncodableList &filters) {
     const std::wstring spec_delimiter = L";";
     const std::wstring file_wildcard = L"*.";
-    std::wstring filter_name;
-    std::wstring filter;
-    for (const EncodableValue &extension_value : extensions) {
-      if (!filter_name.empty()) {
-        filter_name += name_delimiter;
-        filter += spec_delimiter;
+    std::vector<COMDLG_FILTERSPEC> filter_specs;
+    // Temporary ownership of the constructed strings whose data is used in
+    // filter_specs, so that they live until the call to SetFileTypes is done.
+    std::vector<std::wstring> filter_names;
+    std::vector<std::wstring> filter_extensions;
+    for (const EncodableValue &filter_info : allowed_file_types.ListValue()) {
+      filter_names.push_back(WideStringFromChars(
+          filter_info.ListValue()[0].StringValue().c_str()));
+      filter_extensions.push_back(L"");
+      EncodableList extensions = filter_info.ListValue()[1].ListValue();
+      std::wstring &spec = filter_extensions.back();
+      if (extensions.empty()) {
+        spec += "*.*"
+      } else {
+        for (const EncodableValue &extension : extensions) {
+          if (!spec.empty()) {
+            spec += spec_delimiter;
+          }
+          spec += file_wildcard +
+                  WideStringFromChars(extension_value.StringValue().c_str());
+        }
       }
-      std::wstring extension =
-          WideStringFromChars(extension_value.StringValue().c_str());
-      filter_name += extension;
-      filter += file_wildcard + extension;
+      filter_specs.emplace_back({filter_names.back().c_str(), spec.c_str()});
     }
-    COMDLG_FILTERSPEC spec = {filter_name.c_str(), filter.c_str()};
-    last_result_ = dialog_->SetFileTypes(1, &spec);
+    last_result_ =
+        dialog_->SetFileTypes(filter_specs.size(), filter_specs.data());
   }
 
   // Displays the dialog, and returns the selected file or files as an
