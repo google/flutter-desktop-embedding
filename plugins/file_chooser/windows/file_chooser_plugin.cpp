@@ -128,24 +128,27 @@ class DialogWrapper {
     // filter_specs, so that they live until the call to SetFileTypes is done.
     std::vector<std::wstring> filter_names;
     std::vector<std::wstring> filter_extensions;
-    for (const EncodableValue &filter_info : allowed_file_types.ListValue()) {
+    filter_extensions.reserve(filters.size());
+    filter_names.reserve(filters.size());
+
+    for (const EncodableValue &filter_info : filters) {
       filter_names.push_back(WideStringFromChars(
           filter_info.ListValue()[0].StringValue().c_str()));
       filter_extensions.push_back(L"");
       EncodableList extensions = filter_info.ListValue()[1].ListValue();
       std::wstring &spec = filter_extensions.back();
       if (extensions.empty()) {
-        spec += "*.*"
+        spec += L"*.*";
       } else {
         for (const EncodableValue &extension : extensions) {
           if (!spec.empty()) {
             spec += spec_delimiter;
           }
           spec += file_wildcard +
-                  WideStringFromChars(extension_value.StringValue().c_str());
+                  WideStringFromChars(extension.StringValue().c_str());
         }
       }
-      filter_specs.emplace_back({filter_names.back().c_str(), spec.c_str()});
+      filter_specs.push_back({filter_names.back().c_str(), spec.c_str()});
     }
     last_result_ =
         dialog_->SetFileTypes(filter_specs.size(), filter_specs.data());
@@ -262,7 +265,7 @@ void ShowDialog(
   }
   EncodableValue allowed_types = ValueOrNull(args, kAllowedFileTypesKey);
   if (!allowed_types.IsNull() && !allowed_types.ListValue().empty()) {
-    dialog.SetAllowedExtensions(allowed_types.ListValue());
+    dialog.SetFileTypeFilters(allowed_types.ListValue());
   }
 
   EncodableValue files = dialog.Show(parent_window);

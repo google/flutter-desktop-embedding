@@ -110,7 +110,8 @@ class FileChooserConfigurationOptions {
     }
     if (allowedFileTypes != null && allowedFileTypes.isNotEmpty) {
       args[_kAllowedFileTypesKey] = allowedFileTypes
-          .map((filter) => [filter.label ?? '', filter.fileExtensions ?? []]);
+          .map((filter) => [filter.label ?? '', filter.fileExtensions ?? []])
+          .toList();
     }
     if (confirmButtonText != null && confirmButtonText.isNotEmpty) {
       args[_kConfirmButtonTextKey] = confirmButtonText;
