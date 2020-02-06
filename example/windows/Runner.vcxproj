@@ -73,7 +73,7 @@
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows.dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -120,7 +120,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows.dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>

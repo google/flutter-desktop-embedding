@@ -82,7 +82,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows.dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -124,7 +124,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>flutter_windows.dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
