@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import 'channel_controller.dart';
+import 'filter_group.dart';
 import 'result.dart';
 
 /// Shows a file chooser for selecting paths to one or more existing files.
@@ -26,7 +27,7 @@ import 'result.dart';
 /// - [confirmButtonText] overrides the button that confirms selection.
 Future<FileChooserResult> showOpenPanel({
   String initialDirectory,
-  List<String> allowedFileTypes,
+  List<FileTypeFilterGroup> allowedFileTypes,
   bool allowsMultipleSelection,
   bool canSelectDirectories,
   String confirmButtonText,
@@ -51,7 +52,7 @@ Future<FileChooserResult> showOpenPanel({
 Future<FileChooserResult> showSavePanel(
     {String initialDirectory,
     String suggestedFileName,
-    List<String> allowedFileTypes,
+    List<FileTypeFilterGroup> allowedFileTypes,
     String confirmButtonText}) async {
   final options = FileChooserConfigurationOptions(
       initialDirectory: initialDirectory,
