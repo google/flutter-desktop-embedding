@@ -25,19 +25,19 @@ int Scale(int source, double scale_factor) {
 }
 
 // Dynamically loads the |EnableNonClientDpiScaling| from the User32 module.
-// Appended with FDE to differentiate from the win32 API.
+// This API is only needed for PerMonitor V1 awareness mode.
 void EnableFullDpiSupportIfAvailable(HWND hwnd) {
-  HMODULE user32_module_ = LoadLibraryA("User32.dll");
-  if (user32_module_) {
+  HMODULE user32_module = LoadLibraryA("User32.dll");
+  if (!user32_module) {
     return;
   }
-  auto enable_non_client_dpi_scaling_ =
+  auto enable_non_client_dpi_scaling =
       reinterpret_cast<EnableNonClientDpiScaling_ *>(
-          GetProcAddress(user32_module_, "EnableNonClientDpiScaling"));
+          GetProcAddress(user32_module, "EnableNonClientDpiScaling"));
 
-  FreeLibrary(user32_module_);
+  enable_non_client_dpi_scaling(hwnd);
 
-  enable_non_client_dpi_scaling_(hwnd);
+  FreeLibrary(user32_module);
 }
 }  // namespace
 
@@ -51,7 +51,7 @@ bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
 
   WNDCLASS window_class = RegisterWindowClass();
   // Send a nullptr since the top-level window hasn't been created. This will
-  // get the neares monitor's DPI.
+  // get the primary monitor's DPI.
   INT dpi = FlutterDesktopGetDpiForHWND(nullptr);
   double scale_factor = static_cast<double>(dpi) / kBaseDpi;
 

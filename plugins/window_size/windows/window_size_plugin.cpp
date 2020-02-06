@@ -13,13 +13,16 @@
 // limitations under the License.
 #include "window_size_plugin.h"
 
+// windows.h must be imported before VersionHelpers.h or it will break
+// compilation.
+#include <windows.h>
+
 #include <VersionHelpers.h>
 #include <flutter/flutter_view.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 #include <flutter_windows.h>
-#include <windows.h>
 
 #include <codecvt>
 #include <memory>
@@ -64,9 +67,7 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
   MONITORINFO info;
   info.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(monitor, &info);
-  // Send a nullptr since the top-level window hasn't been created. This will
-  // get the neares monitor's DPI.
-  INT dpi = FlutterDesktopGetDpiForHWND(nullptr);
+  INT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   double scale_factor = static_cast<double>(dpi) / kBaseDpi;
   return EncodableValue(EncodableMap{
       {EncodableValue(kFrameKey),
@@ -94,7 +95,6 @@ EncodableValue GetPlatformChannelRepresentationForWindow(HWND window) {
   RECT frame;
   GetWindowRect(window, &frame);
   HMONITOR window_monitor = MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
-  // TODO: Support fallback for systems older than Windows 10(1607).
   double scale_factor = FlutterDesktopGetDpiForHWND(window) / kBaseDpi;
 
   return EncodableValue(EncodableMap{
