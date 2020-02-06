@@ -13,11 +13,13 @@
 // limitations under the License.
 #include "url_launcher_plugin.h"
 
+// Must be before VersionHelpers.h
+#include <windows.h>
+
 #include <VersionHelpers.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
-#include <windows.h>
 
 #include <memory>
 #include <sstream>
