@@ -4,8 +4,9 @@
 
 #include "win32_window.h"
 
+#include <flutter_windows.h>
+
 #include "resource.h"
-#include "shellscalingapi.h"
 
 namespace {
 
@@ -15,10 +16,28 @@ constexpr int kBaseDpi = 96;
 
 constexpr LPCWSTR kClassName = L"CLASSNAME";
 
+using EnableNonClientDpiScaling_ = BOOL __stdcall(HWND hwnd);
+
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
 int Scale(int source, double scale_factor) {
   return static_cast<int>(source * scale_factor);
+}
+
+// Dynamically loads the |EnableNonClientDpiScaling| from the User32 module.
+// Appended with FDE to differentiate from the win32 API.
+void EnableFullDpiSupportIfAvailable (HWND hwnd) {
+  HMODULE user32_module_ = LoadLibraryA("User32.dll");
+  if (user32_module_) {
+    return;
+  }
+  auto enable_non_client_dpi_scaling_ =
+      reinterpret_cast<EnableNonClientDpiScaling_ *>(
+          GetProcAddress(user32_module_, "EnableNonClientDpiScaling"));
+
+  FreeLibrary(user32_module_);
+
+  enable_non_client_dpi_scaling_(hwnd);
 }
 
 }  // namespace
@@ -32,13 +51,10 @@ bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
   Destroy();
 
   WNDCLASS window_class = RegisterWindowClass();
-
-  HMONITOR defaut_monitor =
-      MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
-  UINT dpi_x = 0, dpi_y = 0;
-  GetDpiForMonitor(defaut_monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
-
-  double scale_factor = static_cast<double>(dpi_x) / kBaseDpi;
+  // Send a nullptr since the top-level window hasn't been created. This will
+  // get the neares monitor's DPI.
+  INT dpi = FlutterDesktopGetDpiForHWND(nullptr);
+  double scale_factor = static_cast<double>(dpi) / kBaseDpi;
 
   HWND window = CreateWindow(
       window_class.lpszClassName, title.c_str(),
@@ -75,7 +91,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
                      reinterpret_cast<LONG_PTR>(cs->lpCreateParams));
 
     auto that = static_cast<Win32Window *>(cs->lpCreateParams);
-
+    EnableFullDpiSupportIfAvailable(window);
     that->window_handle_ = window;
   } else if (Win32Window *that = GetThisFromHandle(window)) {
     return that->MessageHandler(window, message, wparam, lparam);
@@ -100,6 +116,16 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
       Destroy();
       return 0;
 
+    case WM_DPICHANGED: {
+      auto newRectSize = reinterpret_cast<RECT *>(lparam);
+      LONG newWidth = newRectSize->right - newRectSize->left;
+      LONG newHeight = newRectSize->bottom - newRectSize->top;
+
+      SetWindowPos(hwnd, nullptr, newRectSize->left, newRectSize->top,
+                   newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+
+      break;
+    }
     case WM_SIZE:
       RECT rect;
       GetClientRect(hwnd, &rect);
