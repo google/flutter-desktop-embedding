@@ -82,23 +82,24 @@ static void ProcessFilters(const EncodableMap &method_args,
                            GtkFileChooser *chooser) {
   const EncodableValue &allowed_file_types =
       ValueOrNull(method_args, kAllowedFileTypesKey);
-  if (allowed_file_types.IsList() && !allowed_file_types.ListValue().empty()) {
-    const std::string file_wildcard = "*.";
-    for (const EncodableValue &filter_info : allowed_file_types.ListValue()) {
-      GtkFileFilter *filter = gtk_file_filter_new();
-      gtk_file_filter_set_name(
-          filter, filter_info.ListValue()[0].StringValue().c_str());
-      EncodableList extensions = filter_info.ListValue()[1].ListValue();
-      if (extensions.empty()) {
-        gtk_file_filter_add_pattern(filter, "*");
-      } else {
-        for (const EncodableValue &extension : extensions) {
-          std::string pattern = file_wildcard + extension.StringValue();
-          gtk_file_filter_add_pattern(filter, pattern.c_str());
-        }
+  if (!allowed_file_types.IsList() || allowed_file_types.ListValue().empty()) {
+    return;
+  }
+  const std::string file_wildcard = "*.";
+  for (const EncodableValue &filter_info : allowed_file_types.ListValue()) {
+    GtkFileFilter *filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter,
+                             filter_info.ListValue()[0].StringValue().c_str());
+    EncodableList extensions = filter_info.ListValue()[1].ListValue();
+    if (extensions.empty()) {
+      gtk_file_filter_add_pattern(filter, "*");
+    } else {
+      for (const EncodableValue &extension : extensions) {
+        std::string pattern = file_wildcard + extension.StringValue();
+        gtk_file_filter_add_pattern(filter, pattern.c_str());
       }
-      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
     }
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
   }
 }
 
