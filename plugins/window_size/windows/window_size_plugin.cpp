@@ -13,17 +13,17 @@
 // limitations under the License.
 #include "window_size_plugin.h"
 
-#include <ShellScalingApi.h>
-#include <windows.h>
-
 #include <VersionHelpers.h>
 #include <flutter/flutter_view.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
+#include <flutter_windows.h>
+#include <windows.h>
+
+#include <codecvt>
 #include <memory>
 #include <sstream>
-#include <codecvt>
 
 namespace {
 
@@ -64,9 +64,10 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
   MONITORINFO info;
   info.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(monitor, &info);
-  UINT dpi_x, dpi_y;
-  GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
-  double scale_factor = dpi_x / kBaseDpi;
+  // Send a nullptr since the top-level window hasn't been created. This will
+  // get the neares monitor's DPI.
+  INT dpi = FlutterDesktopGetDpiForHWND(nullptr);
+  double scale_factor = static_cast<double>(dpi) / kBaseDpi;
   return EncodableValue(EncodableMap{
       {EncodableValue(kFrameKey),
        GetPlatformChannelRepresentationForRect(info.rcMonitor)},
@@ -94,7 +95,7 @@ EncodableValue GetPlatformChannelRepresentationForWindow(HWND window) {
   GetWindowRect(window, &frame);
   HMONITOR window_monitor = MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
   // TODO: Support fallback for systems older than Windows 10(1607).
-  double scale_factor = GetDpiForWindow(window) / kBaseDpi;
+  double scale_factor = FlutterDesktopGetDpiForHWND(window) / kBaseDpi;
 
   return EncodableValue(EncodableMap{
       {EncodableValue(kFrameKey),
@@ -185,8 +186,9 @@ void WindowSizePlugin::HandleMethodCall(
       return;
     }
     const auto &title = method_call.arguments()->StringValue();
-    std::wstring wstr = std::wstring_convert<
-        std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(title);
+    std::wstring wstr =
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
+            .from_bytes(title);
     SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
     result->Success();
   } else {

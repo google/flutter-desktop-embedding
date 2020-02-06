@@ -26,7 +26,7 @@ int Scale(int source, double scale_factor) {
 
 // Dynamically loads the |EnableNonClientDpiScaling| from the User32 module.
 // Appended with FDE to differentiate from the win32 API.
-void EnableFullDpiSupportIfAvailable (HWND hwnd) {
+void EnableFullDpiSupportIfAvailable(HWND hwnd) {
   HMODULE user32_module_ = LoadLibraryA("User32.dll");
   if (user32_module_) {
     return;
@@ -120,8 +120,8 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
       LONG newWidth = newRectSize->right - newRectSize->left;
       LONG newHeight = newRectSize->bottom - newRectSize->top;
 
-      SetWindowPos(hwnd, nullptr, newRectSize->left, newRectSize->top,
-                   newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+      SetWindowPos(hwnd, nullptr, newRectSize->left, newRectSize->top, newWidth,
+                   newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 
       break;
     }
