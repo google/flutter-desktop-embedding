@@ -70,7 +70,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>flutter_windows.dll.lib;Shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -115,7 +115,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
