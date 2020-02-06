@@ -77,8 +77,8 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
   });
 }
 
-BOOL CALLBACK MonitorRepresentationEnumProc(HMONITOR monitor, HDC, RECT *,
-                                            LPARAM list_ref) {
+BOOL CALLBACK MonitorRepresentationEnumProc(HMONITOR monitor, HDC hdc,
+                                            LPRECT clip, LPARAM list_ref) {
   EncodableValue *monitors = reinterpret_cast<EncodableValue *>(list_ref);
   monitors->ListValue().push_back(
       GetPlatformChannelRepresentationForMonitor(monitor));
