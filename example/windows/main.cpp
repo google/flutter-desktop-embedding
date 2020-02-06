@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <flutter/flutter_view_controller.h>
-#include <flutter_windows.h>
 #include <windows.h>
 
 #include <chrono>
