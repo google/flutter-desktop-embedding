@@ -57,7 +57,7 @@ std::wstring WideStringFromChars(const char *chars) {
 // Returns the path for |shell_item| as a UTF-8 string, or an
 // empty string on failure.
 std::string GetPathForShellItem(IShellItem *shell_item) {
-  PWSTR wide_path = nullptr;
+  wchar_t *wide_path = nullptr;
   if (!SUCCEEDED(shell_item->GetDisplayName(SIGDN_FILESYSPATH, &wide_path))) {
     return "";
   }

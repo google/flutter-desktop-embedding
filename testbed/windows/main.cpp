@@ -93,7 +93,7 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
   std::chrono::nanoseconds wait_duration(0);
   // Run until the window is closed.
   while (window.GetHandle() != nullptr) {
-    MsgWaitForMultipleObjects(0, NULL, FALSE,
+    MsgWaitForMultipleObjects(0, nullptr, FALSE,
                               static_cast<DWORD>(wait_duration.count() / 1000),
                               QS_ALLINPUT);
     MSG message;

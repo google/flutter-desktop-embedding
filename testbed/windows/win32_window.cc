@@ -13,7 +13,7 @@ namespace {
 // constant for machines running at 100% scaling.
 constexpr int kBaseDpi = 96;
 
-constexpr LPCWSTR kClassName = L"CLASSNAME";
+constexpr const wchar_t kClassName[] = L"CLASSNAME";
 
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
@@ -70,12 +70,11 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
                                       WPARAM const wparam,
                                       LPARAM const lparam) noexcept {
   if (message == WM_NCCREATE) {
-    auto cs = reinterpret_cast<CREATESTRUCT *>(lparam);
+    auto window_struct = reinterpret_cast<CREATESTRUCT *>(lparam);
     SetWindowLongPtr(window, GWLP_USERDATA,
-                     reinterpret_cast<LONG_PTR>(cs->lpCreateParams));
+                     reinterpret_cast<LONG_PTR>(window_struct->lpCreateParams));
 
-    auto that = static_cast<Win32Window *>(cs->lpCreateParams);
-
+    auto that = static_cast<Win32Window *>(window_struct->lpCreateParams);
     that->window_handle_ = window;
   } else if (Win32Window *that = GetThisFromHandle(window)) {
     return that->MessageHandler(window, message, wparam, lparam);
@@ -118,7 +117,7 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
 
     // Messages that are directly forwarded to embedding.
     case WM_FONTCHANGE:
-      SendMessage(child_content_, WM_FONTCHANGE, NULL, NULL);
+      SendMessage(child_content_, WM_FONTCHANGE, nullptr, nullptr);
       return 0;
   }
 

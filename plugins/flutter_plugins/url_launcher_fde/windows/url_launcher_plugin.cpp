@@ -13,12 +13,12 @@
 // limitations under the License.
 #include "url_launcher_plugin.h"
 
-#include <windows.h>
-
 #include <VersionHelpers.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
+#include <windows.h>
+
 #include <memory>
 #include <sstream>
 
@@ -93,8 +93,8 @@ void UrlLauncherPlugin::HandleMethodCall(
                                  // truncation from 'HINSTANCE' to 'int'
 #pragma warning(disable : 4302)  // warning C4302: 'type cast': truncation from
                                  // 'HINSTANCE' to 'int'
-    int status =
-        reinterpret_cast<int>(ShellExecute(NULL, TEXT("open"), wurl.c_str(), NULL, NULL, SW_SHOWNORMAL));
+    int status = reinterpret_cast<int>(ShellExecute(
+        nullptr, TEXT("open"), wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL));
 #pragma warning(pop)
 
     if (status <= 32) {
