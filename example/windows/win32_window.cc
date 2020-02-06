@@ -123,7 +123,7 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
       SetWindowPos(hwnd, nullptr, newRectSize->left, newRectSize->top, newWidth,
                    newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 
-      break;
+      return 0;
     }
     case WM_SIZE:
       RECT rect;
