@@ -14,7 +14,6 @@
 #include "window_size_plugin.h"
 
 #include <ShellScalingApi.h>
-#include <VersionHelpers.h>
 #include <flutter/flutter_view.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
