@@ -146,7 +146,7 @@ Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
 
 void Win32Window::SetChildContent(HWND content) {
   child_content_ = content;
-  auto res = SetParent(content, window_handle_);
+  SetParent(content, window_handle_);
   RECT frame;
   GetClientRect(window_handle_, &frame);
 

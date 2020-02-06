@@ -90,14 +90,8 @@ void UrlLauncherPlugin::HandleMethodCall(
     size_t outSize;
     mbstowcs_s(&outSize, &wurl[0], size, url.c_str(), size - 1);
 
-#pragma warning(push)
-#pragma warning(disable : 4311)  // warning C4311: 'type cast': pointer
-                                 // truncation from 'HINSTANCE' to 'int'
-#pragma warning(disable : 4302)  // warning C4302: 'type cast': truncation from
-                                 // 'HINSTANCE' to 'int'
-    int status = reinterpret_cast<int>(ShellExecute(
-        nullptr, TEXT("open"), wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL));
-#pragma warning(pop)
+    int status = static_cast<int>(reinterpret_cast<INT_PTR>(ShellExecute(
+        nullptr, TEXT("open"), wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL)));
 
     if (status <= 32) {
       std::ostringstream error_message;

@@ -35,7 +35,7 @@ std::string GetExecutableDirectory() {
     std::cerr << "Couldn't locate executable" << std::endl;
     return "";
   }
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> wide_to_utf8;
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wide_to_utf8;
   std::string executable_path = wide_to_utf8.to_bytes(buffer);
   size_t last_separator_position = executable_path.find_last_of('\\');
   if (last_separator_position == std::string::npos) {
@@ -48,8 +48,8 @@ std::string GetExecutableDirectory() {
 
 }  // namespace
 
-int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
-                      int show_command) {
+int APIENTRY wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPWSTR,
+                      _In_ int) {
   // Attach to console when present (e.g., 'flutter run') or create a
   // new console when running with a debugger.
   if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {

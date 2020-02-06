@@ -49,8 +49,10 @@ EncodableValue GetPlatformChannelRepresentationForRect(const RECT &rect) {
   return EncodableValue(EncodableList{
       EncodableValue(static_cast<double>(rect.left)),
       EncodableValue(static_cast<double>(rect.top)),
-      EncodableValue(static_cast<double>(rect.right - rect.left)),
-      EncodableValue(static_cast<double>(rect.bottom - rect.top)),
+      EncodableValue(static_cast<double>(rect.right) -
+                     static_cast<double>(rect.left)),
+      EncodableValue(static_cast<double>(rect.bottom) -
+                     static_cast<double>(rect.top)),
   });
 }
 
@@ -76,8 +78,8 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
   });
 }
 
-BOOL CALLBACK MonitorRepresentationEnumProc(HMONITOR monitor, HDC hdc,
-                                            RECT *clip, LPARAM list_ref) {
+BOOL CALLBACK MonitorRepresentationEnumProc(HMONITOR monitor, HDC, RECT *,
+                                            LPARAM list_ref) {
   EncodableValue *monitors = reinterpret_cast<EncodableValue *>(list_ref);
   monitors->ListValue().push_back(
       GetPlatformChannelRepresentationForMonitor(monitor));
