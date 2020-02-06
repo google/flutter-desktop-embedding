@@ -150,8 +150,8 @@ class DialogWrapper {
       }
       filter_specs.push_back({filter_names.back().c_str(), spec.c_str()});
     }
-    last_result_ =
-        dialog_->SetFileTypes(filter_specs.size(), filter_specs.data());
+    last_result_ = dialog_->SetFileTypes(static_cast<UINT>(filter_specs.size()),
+                                         filter_specs.data());
   }
 
   // Displays the dialog, and returns the selected file or files as an
