@@ -50,9 +50,11 @@ bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
   Destroy();
 
   WNDCLASS window_class = RegisterWindowClass();
-  // Send a nullptr since the top-level window hasn't been created. This will
-  // get the primary monitor's DPI.
-  INT dpi = FlutterDesktopGetDpiForHWND(nullptr);
+
+  const POINT target_point = {static_cast<LONG>(origin.x),
+                              static_cast<LONG>(origin.y)};
+  HMONITOR monitor = MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
+  UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   double scale_factor = static_cast<double>(dpi) / kBaseDpi;
 
   HWND window = CreateWindow(
