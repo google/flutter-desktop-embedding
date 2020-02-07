@@ -16,7 +16,7 @@ constexpr int kBaseDpi = 96;
 
 constexpr LPCWSTR kClassName = L"CLASSNAME";
 
-using EnableNonClientDpiScaling_ = BOOL __stdcall(HWND hwnd);
+using EnableNonClientDpiScaling = BOOL __stdcall(HWND hwnd);
 
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
@@ -32,7 +32,7 @@ void EnableFullDpiSupportIfAvailable(HWND hwnd) {
     return;
   }
   auto enable_non_client_dpi_scaling =
-      reinterpret_cast<EnableNonClientDpiScaling_ *>(
+      reinterpret_cast<EnableNonClientDpiScaling *>(
           GetProcAddress(user32_module, "EnableNonClientDpiScaling"));
 
   enable_non_client_dpi_scaling(hwnd);
