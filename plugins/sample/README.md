@@ -29,7 +29,6 @@ almost certainly not work with the final Flutter Windows and Linux support.
 ### Windows
 
 - Change `sample` in all the filenames to your plugin's name.
-- Change the `ProjectName` in plugin.vcxproj to your plugin's name.
 - Change the `FlutterPluginName` in `PluginInfo.props` to your plugin's name.
 - Look for comments containing `***` in the `.h` and `.cpp` file, and update
   the code as described in the comment.
