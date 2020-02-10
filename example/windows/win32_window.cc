@@ -13,12 +13,22 @@ namespace {
 // constant for machines running at 100% scaling.
 constexpr int kBaseDpi = 96;
 
-constexpr LPCWSTR kClassName = L"CLASSNAME";
+constexpr const wchar_t kClassName[] = L"CLASSNAME";
 
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
 int Scale(int source, double scale_factor) {
   return static_cast<int>(source * scale_factor);
+}
+
+// Returns the DPI for the monitor containing, or closest to, |point|.
+UINT GetDpiForMonitorAtPoint(const Win32Window::Point &point) {
+  const POINT target_point = {static_cast<LONG>(point.x),
+                              static_cast<LONG>(point.y)};
+  HMONITOR monitor = MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
+  UINT dpi_x = 0, dpi_y = 0;
+  GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
+  return dpi_x;
 }
 
 }  // namespace
@@ -33,12 +43,8 @@ bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
 
   WNDCLASS window_class = RegisterWindowClass();
 
-  HMONITOR defaut_monitor =
-      MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY);
-  UINT dpi_x = 0, dpi_y = 0;
-  GetDpiForMonitor(defaut_monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
-
-  double scale_factor = static_cast<double>(dpi_x) / kBaseDpi;
+  double scale_factor =
+      static_cast<double>(GetDpiForMonitorAtPoint(origin)) / kBaseDpi;
 
   HWND window = CreateWindow(
       window_class.lpszClassName, title.c_str(),
@@ -70,12 +76,11 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
                                       WPARAM const wparam,
                                       LPARAM const lparam) noexcept {
   if (message == WM_NCCREATE) {
-    auto cs = reinterpret_cast<CREATESTRUCT *>(lparam);
+    auto window_struct = reinterpret_cast<CREATESTRUCT *>(lparam);
     SetWindowLongPtr(window, GWLP_USERDATA,
-                     reinterpret_cast<LONG_PTR>(cs->lpCreateParams));
+                     reinterpret_cast<LONG_PTR>(window_struct->lpCreateParams));
 
-    auto that = static_cast<Win32Window *>(cs->lpCreateParams);
-
+    auto that = static_cast<Win32Window *>(window_struct->lpCreateParams);
     that->window_handle_ = window;
   } else if (Win32Window *that = GetThisFromHandle(window)) {
     return that->MessageHandler(window, message, wparam, lparam);
@@ -141,7 +146,7 @@ Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
 
 void Win32Window::SetChildContent(HWND content) {
   child_content_ = content;
-  auto res = SetParent(content, window_handle_);
+  SetParent(content, window_handle_);
   RECT frame;
   GetClientRect(window_handle_, &frame);
 

@@ -31,7 +31,7 @@ class Win32Window {
   };
 
   Win32Window();
-  ~Win32Window();
+  virtual ~Win32Window();
 
   // Creates and shows a win32 window with |title| and position and size using
   // |origin| and |size|. New windows are created on the default monitor. Window

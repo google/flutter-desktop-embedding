@@ -13,12 +13,14 @@
 // limitations under the License.
 #include "url_launcher_plugin.h"
 
+// Must be before VersionHelpers.h
 #include <windows.h>
 
 #include <VersionHelpers.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_method_codec.h>
+
 #include <memory>
 #include <sstream>
 
@@ -88,14 +90,8 @@ void UrlLauncherPlugin::HandleMethodCall(
     size_t outSize;
     mbstowcs_s(&outSize, &wurl[0], size, url.c_str(), size - 1);
 
-#pragma warning(push)
-#pragma warning(disable : 4311)  // warning C4311: 'type cast': pointer
-                                 // truncation from 'HINSTANCE' to 'int'
-#pragma warning(disable : 4302)  // warning C4302: 'type cast': truncation from
-                                 // 'HINSTANCE' to 'int'
-    int status =
-        reinterpret_cast<int>(ShellExecute(NULL, TEXT("open"), wurl.c_str(), NULL, NULL, SW_SHOWNORMAL));
-#pragma warning(pop)
+    int status = static_cast<int>(reinterpret_cast<INT_PTR>(ShellExecute(
+        nullptr, TEXT("open"), wurl.c_str(), nullptr, nullptr, SW_SHOWNORMAL)));
 
     if (status <= 32) {
       std::ostringstream error_message;

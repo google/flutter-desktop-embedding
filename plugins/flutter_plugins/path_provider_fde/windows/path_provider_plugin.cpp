@@ -37,7 +37,7 @@ std::string StdStringFromWideChars(wchar_t *wide_chars) {
 // Gets the path to the given folder ID, without verifying that it exists,
 // or an empty string on failure.
 std::string GetFolderPath(REFKNOWNFOLDERID folder_id) {
-  PWSTR wide_path = nullptr;
+  wchar_t *wide_path = nullptr;
   if (!SUCCEEDED(SHGetKnownFolderPath(folder_id, KF_FLAG_DONT_VERIFY, nullptr,
                                       &wide_path))) {
     return "";
@@ -113,8 +113,8 @@ void PathProviderPlugin::HandleMethodCall(
     const flutter::MethodCall<EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
   if (method_call.method_name().compare("getTemporaryDirectory") == 0) {
-    TCHAR path_buffer[MAX_PATH];
-    UINT length = GetTempPath(MAX_PATH, path_buffer);
+    wchar_t path_buffer[MAX_PATH];
+    DWORD length = GetTempPath(MAX_PATH, path_buffer);
     if (length == 0 || length > MAX_PATH) {
       result->Error("Unable to get temporary path");
       return;

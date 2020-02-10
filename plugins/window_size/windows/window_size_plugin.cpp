@@ -14,16 +14,15 @@
 #include "window_size_plugin.h"
 
 #include <ShellScalingApi.h>
-#include <windows.h>
-
-#include <VersionHelpers.h>
 #include <flutter/flutter_view.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
+#include <windows.h>
+
+#include <codecvt>
 #include <memory>
 #include <sstream>
-#include <codecvt>
 
 namespace {
 
@@ -49,8 +48,10 @@ EncodableValue GetPlatformChannelRepresentationForRect(const RECT &rect) {
   return EncodableValue(EncodableList{
       EncodableValue(static_cast<double>(rect.left)),
       EncodableValue(static_cast<double>(rect.top)),
-      EncodableValue(static_cast<double>(rect.right - rect.left)),
-      EncodableValue(static_cast<double>(rect.bottom - rect.top)),
+      EncodableValue(static_cast<double>(rect.right) -
+                     static_cast<double>(rect.left)),
+      EncodableValue(static_cast<double>(rect.bottom) -
+                     static_cast<double>(rect.top)),
   });
 }
 
@@ -156,7 +157,7 @@ void WindowSizePlugin::HandleMethodCall(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare(kGetScreenListMethod) == 0) {
     EncodableValue screens(EncodableValue::Type::kList);
-    EnumDisplayMonitors(NULL, NULL, MonitorRepresentationEnumProc,
+    EnumDisplayMonitors(nullptr, nullptr, MonitorRepresentationEnumProc,
                         reinterpret_cast<LPARAM>(&screens));
     result->Success(&screens);
   } else if (method_call.method_name().compare(kGetWindowInfoMethod) == 0) {
@@ -176,7 +177,7 @@ void WindowSizePlugin::HandleMethodCall(
     int y = static_cast<int>(frame_list[1].DoubleValue());
     int width = static_cast<int>(frame_list[2].DoubleValue());
     int height = static_cast<int>(frame_list[3].DoubleValue());
-    SetWindowPos(GetRootWindow(registrar_->GetView()), NULL, x, y, width,
+    SetWindowPos(GetRootWindow(registrar_->GetView()), nullptr, x, y, width,
                  height, SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     result->Success();
   } else if (method_call.method_name().compare(kSetWindowTitleMethod) == 0) {
@@ -185,8 +186,9 @@ void WindowSizePlugin::HandleMethodCall(
       return;
     }
     const auto &title = method_call.arguments()->StringValue();
-    std::wstring wstr = std::wstring_convert<
-        std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(title);
+    std::wstring wstr =
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
+            .from_bytes(title);
     SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
     result->Success();
   } else {
