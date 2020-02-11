@@ -35,7 +35,7 @@ std::string GetExecutableDirectory() {
     std::cerr << "Couldn't locate executable" << std::endl;
     return "";
   }
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> wide_to_utf8;
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wide_to_utf8;
   std::string executable_path = wide_to_utf8.to_bytes(buffer);
   size_t last_separator_position = executable_path.find_last_of('\\');
   if (last_separator_position == std::string::npos) {
@@ -48,8 +48,8 @@ std::string GetExecutableDirectory() {
 
 }  // namespace
 
-int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
-                      int show_command) {
+int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
+                      _In_ wchar_t *command_line, _In_ int show_command) {
   // Attach to console when present (e.g., 'flutter run') or create a
   // new console when running with a debugger.
   if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
@@ -93,7 +93,7 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t *command_line,
   std::chrono::nanoseconds wait_duration(0);
   // Run until the window is closed.
   while (window.GetHandle() != nullptr) {
-    MsgWaitForMultipleObjects(0, NULL, FALSE,
+    MsgWaitForMultipleObjects(0, nullptr, FALSE,
                               static_cast<DWORD>(wait_duration.count() / 1000),
                               QS_ALLINPUT);
     MSG message;

@@ -52,8 +52,10 @@ EncodableValue GetPlatformChannelRepresentationForRect(const RECT &rect) {
   return EncodableValue(EncodableList{
       EncodableValue(static_cast<double>(rect.left)),
       EncodableValue(static_cast<double>(rect.top)),
-      EncodableValue(static_cast<double>(rect.right - rect.left)),
-      EncodableValue(static_cast<double>(rect.bottom - rect.top)),
+      EncodableValue(static_cast<double>(rect.right) -
+                     static_cast<double>(rect.left)),
+      EncodableValue(static_cast<double>(rect.bottom) -
+                     static_cast<double>(rect.top)),
   });
 }
 
@@ -157,7 +159,7 @@ void WindowSizePlugin::HandleMethodCall(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare(kGetScreenListMethod) == 0) {
     EncodableValue screens(EncodableValue::Type::kList);
-    EnumDisplayMonitors(NULL, NULL, MonitorRepresentationEnumProc,
+    EnumDisplayMonitors(nullptr, nullptr, MonitorRepresentationEnumProc,
                         reinterpret_cast<LPARAM>(&screens));
     result->Success(&screens);
   } else if (method_call.method_name().compare(kGetWindowInfoMethod) == 0) {
@@ -177,7 +179,7 @@ void WindowSizePlugin::HandleMethodCall(
     int y = static_cast<int>(frame_list[1].DoubleValue());
     int width = static_cast<int>(frame_list[2].DoubleValue());
     int height = static_cast<int>(frame_list[3].DoubleValue());
-    SetWindowPos(GetRootWindow(registrar_->GetView()), NULL, x, y, width,
+    SetWindowPos(GetRootWindow(registrar_->GetView()), nullptr, x, y, width,
                  height, SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     result->Success();
   } else if (method_call.method_name().compare(kSetWindowTitleMethod) == 0) {

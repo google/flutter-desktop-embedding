@@ -14,7 +14,7 @@ namespace {
 // constant for machines running at 100% scaling.
 constexpr int kBaseDpi = 96;
 
-constexpr LPCWSTR kClassName = L"CLASSNAME";
+constexpr const wchar_t kClassName[] = L"CLASSNAME";
 
 using EnableNonClientDpiScaling = BOOL __stdcall(HWND hwnd);
 
@@ -87,11 +87,11 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
                                       WPARAM const wparam,
                                       LPARAM const lparam) noexcept {
   if (message == WM_NCCREATE) {
-    auto cs = reinterpret_cast<CREATESTRUCT *>(lparam);
+    auto window_struct = reinterpret_cast<CREATESTRUCT *>(lparam);
     SetWindowLongPtr(window, GWLP_USERDATA,
-                     reinterpret_cast<LONG_PTR>(cs->lpCreateParams));
+                     reinterpret_cast<LONG_PTR>(window_struct->lpCreateParams));
 
-    auto that = static_cast<Win32Window *>(cs->lpCreateParams);
+    auto that = static_cast<Win32Window *>(window_struct->lpCreateParams);
     EnableFullDpiSupportIfAvailable(window);
     that->window_handle_ = window;
   } else if (Win32Window *that = GetThisFromHandle(window)) {
@@ -168,7 +168,7 @@ Win32Window *Win32Window::GetThisFromHandle(HWND const window) noexcept {
 
 void Win32Window::SetChildContent(HWND content) {
   child_content_ = content;
-  auto res = SetParent(content, window_handle_);
+  SetParent(content, window_handle_);
   RECT frame;
   GetClientRect(window_handle_, &frame);
 
