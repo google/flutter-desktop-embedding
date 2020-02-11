@@ -69,8 +69,8 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
   MONITORINFO info;
   info.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(monitor, &info);
-  INT dpi = FlutterDesktopGetDpiForMonitor(monitor);
-  double scale_factor = static_cast<double>(dpi) / kBaseDpi;
+  UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
+  double scale_factor = dpi / kBaseDpi;
   return EncodableValue(EncodableMap{
       {EncodableValue(kFrameKey),
        GetPlatformChannelRepresentationForRect(info.rcMonitor)},

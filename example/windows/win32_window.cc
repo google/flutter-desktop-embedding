@@ -55,7 +55,7 @@ bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
                               static_cast<LONG>(origin.y)};
   HMONITOR monitor = MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
-  double scale_factor = static_cast<double>(dpi) / kBaseDpi;
+  double scale_factor = dpi / kBaseDpi;
 
   HWND window = CreateWindow(
       window_class.lpszClassName, title.c_str(),
