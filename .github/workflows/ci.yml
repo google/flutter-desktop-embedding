@@ -16,7 +16,9 @@ jobs:
     - name: Add Flutter to path	
       run: echo "::add-path::$GITHUB_WORKSPACE/flutter/bin"	
     - name: Enable desktop support	
-      run: flutter config --enable-windows-desktop	
+      run: |
+        $Env:Path
+        flutter config --enable-windows-desktop	
     - name: Build example debug	
       run: |	
         flutter packages get	
