@@ -14,7 +14,7 @@ jobs:
         repository: flutter/flutter	
         ref: master	
     - name: Add Flutter to path	
-      run: echo "::add-path::$GITHUB_WORKSPACE/flutter/bin"	
+      run: echo "::add-path::$env:GITHUB_WORKSPACE/flutter/bin"	
     - name: Enable desktop support	
       run: |
         $Env:Path
