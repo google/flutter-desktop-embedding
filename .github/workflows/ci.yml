@@ -1,0 +1,39 @@
+name: CI	
+
+on: [push, pull_request]	
+
+jobs:	
+  build:	
+
+    runs-on: windows-2019	
+
+    steps:	
+    - uses: actions/checkout@v2	
+    - uses: actions/checkout@v2	
+      with:	
+        repository: flutter/flutter	
+        ref: master	
+    - name: Add Flutter to path	
+      run: echo "::add-path::$GITHUB_WORKSPACE/flutter/bin"	
+    - name: Enable desktop support	
+      run: flutter config --enable-windows-desktop	
+    - name: Build example debug	
+      run: |	
+        flutter packages get	
+        flutter build -v windows --debug	
+      working-directory: ${{ github.workspace }}/flutter-desktop-embedding/example	
+    - name: Build example release	
+      run: |	
+        flutter packages get	
+        flutter build -v windows --release	
+      working-directory: ${{ github.workspace }}/flutter-desktop-embedding/example	
+    - name: Build testbed debug	
+      run: |	
+        flutter packages get	
+        flutter build -v windows --debug	
+      working-directory: ${{ github.workspace }}/flutter-desktop-embedding/testbed	
+    - name: Build testbed release	
+      run: |	
+        flutter packages get	
+        flutter build -v windows --release	
+      working-directory: ${{ github.workspace }}/flutter-desktop-embedding/testbed
