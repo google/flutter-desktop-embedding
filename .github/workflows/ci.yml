@@ -9,12 +9,15 @@ jobs:
 
     steps:	
     - uses: actions/checkout@v2	
+      with:
+        path: fde
     - uses: actions/checkout@v2	
       with:	
+        path: flutter
         repository: flutter/flutter	
         ref: master	
     - name: Add Flutter to path	
-      run: echo "::add-path::$env:GITHUB_WORKSPACE/flutter/bin"	
+      run: echo "::add-path::$env:GITHUB_WORKSPACE\flutter\bin"	
     - name: Enable desktop support	
       run: |
         $Env:Path
@@ -23,19 +26,19 @@ jobs:
       run: |	
         flutter packages get	
         flutter build -v windows --debug	
-      working-directory: ${{ github.workspace }}/flutter-desktop-embedding/example	
+      working-directory: ${{ github.workspace }}/fde/example	
     - name: Build example release	
       run: |	
         flutter packages get	
         flutter build -v windows --release	
-      working-directory: ${{ github.workspace }}/flutter-desktop-embedding/example	
+      working-directory: ${{ github.workspace }}/fde/example	
     - name: Build testbed debug	
       run: |	
         flutter packages get	
         flutter build -v windows --debug	
-      working-directory: ${{ github.workspace }}/flutter-desktop-embedding/testbed	
+      working-directory: ${{ github.workspace }}/fde/testbed	
     - name: Build testbed release	
       run: |	
         flutter packages get	
         flutter build -v windows --release	
-      working-directory: ${{ github.workspace }}/flutter-desktop-embedding/testbed
+      working-directory: ${{ github.workspace }}/fde/testbed
