@@ -16,6 +16,8 @@ jobs:
         path: flutter
         repository: flutter/flutter	
         ref: master	
+        # Shallow clones don't work; see https://github.com/flutter/flutter/issues/18532
+        fetch-depth: 0
     - name: Add Flutter to path	
       run: echo "::add-path::$env:GITHUB_WORKSPACE\flutter\bin"	
     - name: Enable desktop support	
