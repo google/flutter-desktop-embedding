@@ -24,9 +24,9 @@ install:
 
 build_script:
   - set "PATH=%APPVEYOR_BUILD_FOLDER%\..\flutter\bin;%PATH%"
-  - flutter config --enable-windows-desktop
   - ps: cd "$env:APPVEYOR_BUILD_FOLDER\..\flutter"
   - git checkout symlink-windows-linux-plugins
+  - flutter config --enable-windows-desktop
   - ps: cd "$env:APPVEYOR_BUILD_FOLDER\example"
   - flutter packages get
   - flutter build -v windows --debug
