@@ -4,8 +4,17 @@ on: [push, pull_request]
 
 jobs:	
   build:	
-
-    runs-on: windows-2019	
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macOS-10.14, windows-2019, ubuntu-18.04]
+        include: 
+        - os: macOS-10.14
+          TARGET: macos  
+        - os: ubuntu-18.04
+          TARGET: linux     
+        - os: windows-2019
+          TARGET: windows
 
     steps:	
     - uses: actions/checkout@v2	
@@ -23,28 +32,36 @@ jobs:
       run: git fetch origin +refs/tags/*:refs/tags/*
       working-directory: ${{ github.workspace }}/flutter	
     - name: Add Flutter to path	
+      if: startsWith(matrix.os, 'windows')
       run: echo "::add-path::$env:GITHUB_WORKSPACE\flutter\bin"	
+    - name: Add Flutter to path	
+      if: startsWith(matrix.os, 'macOS') || startsWith(matrix.os, 'ubuntu')
+      run: echo "::add-path::$GITHUB_WORKSPACE/flutter/bin"	
+    - name: Doctor
+      # Run doctor, for ease of debugging any issues.
+      run: flutter doctor -v
     - name: Enable desktop support	
       run: |
-        $Env:Path
+        flutter config --enable-linux-desktop	
+        flutter config --enable-macos-desktop	
         flutter config --enable-windows-desktop	
     - name: Build example debug	
       run: |	
         flutter packages get	
-        flutter build -v windows --debug	
+        flutter build -v ${{matrix.TARGET}} --debug	
       working-directory: ${{ github.workspace }}/fde/example	
     - name: Build example release	
       run: |	
         flutter packages get	
-        flutter build -v windows --release	
+        flutter build -v ${{matrix.TARGET}} --release	
       working-directory: ${{ github.workspace }}/fde/example	
     - name: Build testbed debug	
       run: |	
         flutter packages get	
-        flutter build -v windows --debug	
+        flutter build -v ${{matrix.TARGET}} --debug	
       working-directory: ${{ github.workspace }}/fde/testbed	
     - name: Build testbed release	
       run: |	
         flutter packages get	
-        flutter build -v windows --release	
+        flutter build -v ${{matrix.TARGET}} --release	
       working-directory: ${{ github.workspace }}/fde/testbed
