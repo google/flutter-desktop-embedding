@@ -20,12 +20,10 @@ install:
   # Desktop support currently requires master, so clone the latest master
   # rather than doing a standard install.
   #- ps: build\ci\install_flutter.ps1 $env:APPVEYOR_BUILD_FOLDER\..
-  - git clone https://github.com/stuartmorgan/flutter.git %APPVEYOR_BUILD_FOLDER%\..\flutter
+  - git clone -b symlink-windows-linux-plugins https://github.com/stuartmorgan/flutter.git %APPVEYOR_BUILD_FOLDER%\..\flutter
 
 build_script:
   - set "PATH=%APPVEYOR_BUILD_FOLDER%\..\flutter\bin;%PATH%"
-  - ps: cd "$env:APPVEYOR_BUILD_FOLDER\..\flutter"
-  - git checkout symlink-windows-linux-plugins
   - flutter config --enable-windows-desktop
   - ps: cd "$env:APPVEYOR_BUILD_FOLDER\example"
   - flutter packages get
