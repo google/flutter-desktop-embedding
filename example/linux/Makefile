@@ -23,11 +23,10 @@ SYSTEM_LIBRARIES=
 EXTRA_CXXFLAGS=
 EXTRA_CPPFLAGS=
 EXTRA_LDFLAGS=
+# Plugins to include in the build.
+PLUGINS=
 
-# Default build type. For a release build, set BUILD=release.
-# Currently this only sets NDEBUG, which is used to control the flags passed
-# to the Flutter engine in the example shell, and not the complation settings
-# (e.g., optimization level) of the C++ code.
+# Default build type.
 BUILD=debug
 
 FLUTTER_EPHEMERAL_DIR=flutter/ephemeral
@@ -39,6 +38,7 @@ include $(FLUTTER_CONFIG_FILE)
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
+PLUGINS_DIR=$(FLUTTER_EPHEMERAL_DIR)/.plugin_symlinks
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 OBJ_DIR=$(OUT_DIR)/obj/$(BUILD)
@@ -56,6 +56,15 @@ ICU_DATA_NAME=icudtl.dat
 ICU_DATA_SOURCE=$(FLUTTER_EPHEMERAL_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
+
+# The name of each plugin library is the name of the plugin with _plugin
+# appended.
+PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGINS),$(plugin)_plugin)
+PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_LIB_NAMES),$(OUT_DIR)/lib$(plugin).so)
+EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBS)
+EXTRA_LDFLAGS+=$(patsubst %,-l%,$(PLUGIN_LIB_NAMES))
+# The plugin builds place all published headers in a top-level include/.
+EXTRA_CPPFLAGS+=-I$(OUT_DIR)/include
 
 # Bundle structure
 BUNDLE_OUT_DIR=$(OUT_DIR)/$(BUILD)
@@ -124,8 +133,24 @@ $(BIN_OUT): $(OBJ_FILES) $(ALL_LIBS_OUT)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OBJ_FILES) $(LDFLAGS) -o $@
 
-$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE): \
-	| sync
+$(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
+	$(PLUGINS): | sync
+
+# Compilation depends on plugin headers that are copied as part of the
+# plugin builds, so ensure those happen first.
+# TODO: Restructure to avoid the need for this.
+$(OBJ_FILES): | $(EXTRA_BUNDLED_LIBRARIES)
+
+.PHONY: $(PLUGINS)
+$(PLUGINS):
+	make -C $(PLUGINS_DIR)/$@/linux \
+		OUT_DIR=$(OUT_DIR) \
+		FLUTTER_EPHEMERAL_DIR="$(abspath $(FLUTTER_EPHEMERAL_DIR))"
+
+# Plugin library bundling pattern.
+$(BUNDLE_LIB_DIR)/%: $(OUT_DIR)/%
+	mkdir -p $(BUNDLE_LIB_DIR)
+	cp $< $@
 
 $(FLUTTER_LIB_OUT): $(FLUTTER_LIB)
 	mkdir -p $(@D)

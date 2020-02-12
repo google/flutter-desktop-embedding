@@ -75,14 +75,20 @@ $ sudo apt-get install libgtk-3-dev pkg-config
 The `flutter` tool will generate a plugin registrant for you, so you
 won't need to change any C++ code.
 
-Adding it to the build system is still entirely manual, and currently
-quite complicated. Run:
+Adding it to the build system is currently a manual process. To add a plugin:
+- Open your project's `Makefile`
+- Add the plugins you are using to the `PLUGINS` variable near the top
+- Add an explicit build rule for each plugin in the Targets section. For
+  instance, for the sampe plugin:
+  ```
+  $(OUT_DIR)/libsample_plugin.so: | sample
+  ```
+
+Run:
 ```
-$ diff u example/linux/Makefile testbed/linux/Makefile
+$ diff -u example/linux/Makefile testbed/linux/Makefile
 ```
-to see what kinds of changes are necessary to the Makefile, and adapt based
-on the plugins you are using. There may be change to simplify this process
-in the short-to-medium term while a full solution is decided on.
+to see an example of what the changes should look like.
 
 **Note:** The eventual implementation of plugin management for Linux will
 likely be entirely different from this approach.

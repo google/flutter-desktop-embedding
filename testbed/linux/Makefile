@@ -23,19 +23,16 @@ SYSTEM_LIBRARIES=gtk+-3.0 x11
 EXTRA_CXXFLAGS=
 EXTRA_CPPFLAGS=
 EXTRA_LDFLAGS=
+# Plugins to include in the build.
+PLUGINS=\
+	color_panel \
+	file_chooser \
+	menubar \
+	sample \
+	url_launcher_fde \
+	window_size
 
-# The location of the flutter-desktop-embedding repository.
-FDE_ROOT=$(CURDIR)/../..
-# Plugins to include from the flutter-desktop-embedding plugins/ directory.
-PLUGIN_NAMES=color_panel file_chooser menubar sample window_size
-# Additional plugins to include from the plugins/flutter_plugins subdirectory.
-# Do not include the _fde suffix.
-FLUTTER_PLUGIN_NAMES=url_launcher
-
-
-# Default build type. For a release build, set BUILD=release.
-# Currently this only sets NDEBUG, and not the complation settings
-# (e.g., optimization level) of the C++ code.
+# Default build type.
 BUILD=debug
 
 FLUTTER_EPHEMERAL_DIR=flutter/ephemeral
@@ -47,6 +44,7 @@ include $(FLUTTER_CONFIG_FILE)
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
+PLUGINS_DIR=$(FLUTTER_EPHEMERAL_DIR)/.plugin_symlinks
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 OBJ_DIR=$(OUT_DIR)/obj/$(BUILD)
@@ -65,14 +63,9 @@ ICU_DATA_SOURCE=$(FLUTTER_EPHEMERAL_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
-# Plugin-related additions
-# Currently plugins are refenced by direct source path. Eventually this should
-# be pub-based instead as on other platforms.
-PLUGINS_DIR=$(FDE_ROOT)/plugins
-FLUTTER_PLUGINS_DIR=$(PLUGINS_DIR)/flutter_plugins
-# The name of each plugin library is the name of its directory with _plugin
+# The name of each plugin library is the name of the plugin with _plugin
 # appended.
-PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGIN_NAMES) $(FLUTTER_PLUGIN_NAMES),$(plugin)_plugin)
+PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGINS),$(plugin)_plugin)
 PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_LIB_NAMES),$(OUT_DIR)/lib$(plugin).so)
 EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBS)
 EXTRA_LDFLAGS+=$(patsubst %,-l%,$(PLUGIN_LIB_NAMES))
@@ -147,30 +140,24 @@ $(BIN_OUT): $(OBJ_FILES) $(ALL_LIBS_OUT)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OBJ_FILES) $(LDFLAGS) -o $@
 
 $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
-	$(PLUGIN_NAMES) $(FLUTTER_PLUGIN_NAMES): | sync
+	$(PLUGINS): | sync
 
 # Implicit rules won't match phony targets, so list plugin builds explicitly.
-$(OUT_DIR)/libsample_plugin.so: | sample
 $(OUT_DIR)/libcolor_panel_plugin.so: | color_panel
 $(OUT_DIR)/libfile_chooser_plugin.so: | file_chooser
 $(OUT_DIR)/libmenubar_plugin.so: | menubar
+$(OUT_DIR)/libsample_plugin.so: | sample
+$(OUT_DIR)/liburl_launcher_fde_plugin.so: | url_launcher_fde
 $(OUT_DIR)/libwindow_size_plugin.so: | window_size
-$(OUT_DIR)/liburl_launcher_plugin.so: | url_launcher
 
 # Compilation depends on plugin headers that are copied as part of the
 # plugin builds, so ensure those happen first.
 # TODO: Restructure to avoid the need for this.
-$(OBJ_FILES) : | $(EXTRA_BUNDLED_LIBRARIES)
+$(OBJ_FILES): | $(EXTRA_BUNDLED_LIBRARIES)
 
-.PHONY: $(PLUGIN_NAMES)
-$(PLUGIN_NAMES):
+.PHONY: $(PLUGINS)
+$(PLUGINS):
 	make -C $(PLUGINS_DIR)/$@/linux \
-		OUT_DIR=$(OUT_DIR) \
-		FLUTTER_EPHEMERAL_DIR="$(abspath $(FLUTTER_EPHEMERAL_DIR))"
-
-.PHONY: $(FLUTTER_PLUGIN_NAMES)
-$(FLUTTER_PLUGIN_NAMES):
-	make -C $(FLUTTER_PLUGINS_DIR)/$@_fde/linux \
 		OUT_DIR=$(OUT_DIR) \
 		FLUTTER_EPHEMERAL_DIR="$(abspath $(FLUTTER_EPHEMERAL_DIR))"
 
