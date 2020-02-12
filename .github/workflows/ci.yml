@@ -58,24 +58,20 @@ jobs:
     - name: Build example debug	
       run: |	
         flutter packages get
-        flutter clean	
         flutter build -v ${{matrix.TARGET}} --debug	
       working-directory: ${{ github.workspace }}/fde/example	
     - name: Build example release	
       run: |	
         flutter packages get	
-        flutter clean	
         flutter build -v ${{matrix.TARGET}} --release	
       working-directory: ${{ github.workspace }}/fde/example	
     - name: Build testbed debug	
       run: |	
         flutter packages get
-        flutter clean		
         flutter build -v ${{matrix.TARGET}} --debug	
       working-directory: ${{ github.workspace }}/fde/testbed	
     - name: Build testbed release	
       run: |	
         flutter packages get	
-        flutter clean	
         flutter build -v ${{matrix.TARGET}} --release	
       working-directory: ${{ github.workspace }}/fde/testbed
