@@ -57,6 +57,7 @@ jobs:
       run: flutter doctor -v
     - name: Build example debug	
       run: |	
+        flutter clean
         flutter packages get	
         flutter build -v ${{matrix.TARGET}} --debug	
       working-directory: ${{ github.workspace }}/fde/example	
