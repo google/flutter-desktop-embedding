@@ -15,6 +15,8 @@ jobs:
           TARGET: linux     
         - os: windows-2019
           TARGET: windows
+      # Disable fail-fast; we want results from all OSes even if one fails.
+      fail-fast: false
 
     steps:	
     - uses: actions/checkout@v2	
@@ -37,14 +39,19 @@ jobs:
     - name: Add Flutter to path	
       if: startsWith(matrix.os, 'macOS') || startsWith(matrix.os, 'ubuntu')
       run: echo "::add-path::$GITHUB_WORKSPACE/flutter/bin"	
-    - name: Doctor
-      # Run doctor, for ease of debugging any issues.
-      run: flutter doctor -v
+    - name: Install Linux dependencies	
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-3-dev libx11-dev pkg-config
     - name: Enable desktop support	
       run: |
         flutter config --enable-linux-desktop	
         flutter config --enable-macos-desktop	
         flutter config --enable-windows-desktop	
+    - name: Doctor
+      # Run doctor, for ease of debugging any issues.
+      run: flutter doctor -v
     - name: Build example debug	
       run: |	
         flutter packages get	
