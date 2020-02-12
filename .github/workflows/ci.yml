@@ -32,10 +32,7 @@ jobs:
     - name: Add Flutter tags
       # Add tags, which are also necessary for version checks to work.
       run: git fetch origin +refs/tags/*:refs/tags/*
-      working-directory: ${{ github.workspace }}/flutter	
-    - name: Declare as a bot
-      # Bypass the failing isRunningOnAzure check by explicitly declaring as a bot.
-      run: echo "::set-env name=BOT::true"
+      working-directory: ${{ github.workspace }}/flutter
     - name: Add Flutter to path - Windows
       if: startsWith(matrix.os, 'windows')
       run: echo "::add-path::$env:GITHUB_WORKSPACE\flutter\bin"	
