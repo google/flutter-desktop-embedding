@@ -112,19 +112,16 @@ Run `make -C linux` in the directory of the plugin you want to build.
 The `flutter` tool will generate a plugin registrant for you, so you
 won't need to change any C++ code.
 
-Adding it to the build system is currently a manual process. To add a plugin:
+Adding it to the build system is partially a manual process. To add a plugin:
 - Open your application's `Runner.sln` in Visual Studio
 - Go to `File` > `Add` > `Existing Project...`
-- Add the `.vcxproj` for the plugin
+- Add the `plugin.vcxproj` for the plugin
 - Go to `Project` > `Project Dependencies...`
   - Make `Runner` depend on the plugin project
   - Make the plugin project depend on `Flutter Build`
-- Edit `FlutterPlugins.props` to list the plugin library as a dependency.
-  See [`testbed`'s copy](https://github.com/google/flutter-desktop-embedding/blob/master/testbed/windows/FlutterPlugins.props)
-  for an example.
 
-Note: The eventual implementation of plugin management for Windows will likely
-be entirely different from this approach.
+Note: Plugin management for Windows will likely change substantially
+as the project evolves.
 
 #### Building Manually
 
