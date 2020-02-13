@@ -4,16 +4,19 @@
 
 #include "win32_window.h"
 
+#include <flutter_windows.h>
+
 #include "resource.h"
-#include "shellscalingapi.h"
 
 namespace {
 
-// the Windows DPI system is based on this
+// The Windows DPI system is based on this
 // constant for machines running at 100% scaling.
 constexpr int kBaseDpi = 96;
 
 constexpr const wchar_t kClassName[] = L"CLASSNAME";
+
+using EnableNonClientDpiScaling = BOOL __stdcall(HWND hwnd);
 
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
@@ -21,16 +24,21 @@ int Scale(int source, double scale_factor) {
   return static_cast<int>(source * scale_factor);
 }
 
-// Returns the DPI for the monitor containing, or closest to, |point|.
-UINT GetDpiForMonitorAtPoint(const Win32Window::Point &point) {
-  const POINT target_point = {static_cast<LONG>(point.x),
-                              static_cast<LONG>(point.y)};
-  HMONITOR monitor = MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
-  UINT dpi_x = 0, dpi_y = 0;
-  GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpi_x, &dpi_y);
-  return dpi_x;
-}
+// Dynamically loads the |EnableNonClientDpiScaling| from the User32 module.
+// This API is only needed for PerMonitor V1 awareness mode.
+void EnableFullDpiSupportIfAvailable(HWND hwnd) {
+  HMODULE user32_module = LoadLibraryA("User32.dll");
+  if (!user32_module) {
+    return;
+  }
+  auto enable_non_client_dpi_scaling =
+      reinterpret_cast<EnableNonClientDpiScaling *>(
+          GetProcAddress(user32_module, "EnableNonClientDpiScaling"));
 
+  enable_non_client_dpi_scaling(hwnd);
+
+  FreeLibrary(user32_module);
+}
 }  // namespace
 
 Win32Window::Win32Window() {}
@@ -43,8 +51,11 @@ bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
 
   WNDCLASS window_class = RegisterWindowClass();
 
-  double scale_factor =
-      static_cast<double>(GetDpiForMonitorAtPoint(origin)) / kBaseDpi;
+  const POINT target_point = {static_cast<LONG>(origin.x),
+                              static_cast<LONG>(origin.y)};
+  HMONITOR monitor = MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
+  UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
+  double scale_factor = dpi / kBaseDpi;
 
   HWND window = CreateWindow(
       window_class.lpszClassName, title.c_str(),
@@ -81,6 +92,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window, UINT const message,
                      reinterpret_cast<LONG_PTR>(window_struct->lpCreateParams));
 
     auto that = static_cast<Win32Window *>(window_struct->lpCreateParams);
+    EnableFullDpiSupportIfAvailable(window);
     that->window_handle_ = window;
   } else if (Win32Window *that = GetThisFromHandle(window)) {
     return that->MessageHandler(window, message, wparam, lparam);
@@ -105,6 +117,16 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
       Destroy();
       return 0;
 
+    case WM_DPICHANGED: {
+      auto newRectSize = reinterpret_cast<RECT *>(lparam);
+      LONG newWidth = newRectSize->right - newRectSize->left;
+      LONG newHeight = newRectSize->bottom - newRectSize->top;
+
+      SetWindowPos(hwnd, nullptr, newRectSize->left, newRectSize->top, newWidth,
+                   newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+
+      return 0;
+    }
     case WM_SIZE:
       RECT rect;
       GetClientRect(hwnd, &rect);
