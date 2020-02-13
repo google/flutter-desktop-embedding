@@ -13,9 +13,11 @@
 # limitations under the License.
 
 # The name of the plugin.
-# The primary source file is assumed to be $(PLUGIN_NAME).cc, with
-# $(PLUGIN_NAME).h as the public header meant for inclusion by the application.
-PLUGIN_NAME=url_launcher_plugin
+PLUGIN_NAME=url_launcher_fde_plugin
+# This is changed from the stock Makefile since the class name doesn't match
+# the plugin name. This will need to be made more flexible when Linux plugin
+# structure is revisited.
+PLUGIN_SOURCE_NAME=url_launcher_plugin
 # Any files other than the plugin class files that need to be compiled.
 EXTRA_SOURCES=
 # Extra flags (e.g., for library dependencies).
@@ -62,8 +64,8 @@ WRAPPER_SOURCES= \
 
 # Use abspath for extra sources, which may also contain relative paths (see
 # note above about WRAPPER_ROOT).
-SOURCES=$(PLUGIN_NAME).cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
-PUBLIC_HEADER=$(PLUGIN_NAME).h
+SOURCES=$(PLUGIN_SOURCE_NAME).cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
+PUBLIC_HEADER=$(PLUGIN_SOURCE_NAME).h
 
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
