@@ -27,26 +27,31 @@ to each platform's runner in the corresponding platform directory.
 
 ### Dart
 
-Add local package references for the plugins you want to use to your
-pubspec.yaml. For example:
+Add dependencies for plugins to your `pubspec.yaml`. For unpublished plugins
+such as the ones in this repository, you can use a git reference. For example:
 
 ```
 dependencies:
   ...
   sample:
-    path: relative/path/to/plugins/sample
+    git:
+      url: git://github.com/google/flutter-desktop-embedding.git
+      path: plugins/sample
+      ref: INSERT_HASH_HERE
 ```
 
-(On macOS, you can use a [git
-reference](https://dart.dev/tools/pub/dependencies#git-packages)
-instead of referencing a local copy.)
+Replace `INSERT_HASH_HERE` with the hash of commit you want to pin to,
+usually the latest commit to the repository at the time you add the plugin.
+(While omitting the `ref` is possible, it is **strongly** discouraged, as
+without it any breaking change to the plugin would break your project
+without warning.)
 
 Then import it in your dart code as you would any other package:
 ```dart
 import 'package:sample/sample.dart';
 ```
 
-This step does not apply to `flutter_plugins` plugins, as the
+The import step does not apply to `flutter_plugins` plugins, as the
 Dart code for those plugins comes from the official plugin.
 
 ### macOS
