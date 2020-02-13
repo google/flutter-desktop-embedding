@@ -79,7 +79,7 @@ Adding it to the build system is currently a manual process. To add a plugin:
 - Open your project's `Makefile`
 - Add the plugins you are using to the `PLUGINS` variable near the top
 - Add an explicit build rule for each plugin in the Targets section. For
-  instance, for the sampe plugin:
+  instance, for the sample plugin:
   ```
   $(OUT_DIR)/libsample_plugin.so: | sample
   ```
