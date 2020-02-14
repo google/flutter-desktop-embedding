@@ -30,6 +30,7 @@ PLUGINS=\
 	menubar \
 	sample \
 	url_launcher_fde \
+	path_provider_fde \
 	window_size
 
 # Default build type.
@@ -144,6 +145,7 @@ $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
 
 # Implicit rules won't match phony targets, so list plugin builds explicitly.
 $(OUT_DIR)/libcolor_panel_plugin.so: | color_panel
+$(OUT_DIR)/libpath_provider_fde_plugin.so: | path_provider_fde
 $(OUT_DIR)/libfile_chooser_plugin.so: | file_chooser
 $(OUT_DIR)/libmenubar_plugin.so: | menubar
 $(OUT_DIR)/libsample_plugin.so: | sample

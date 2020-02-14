@@ -9,6 +9,8 @@ flutter:
     platforms:
       windows:
         pluginClass: PathProviderPlugin
+      linux:
+        pluginClass: PathProviderPlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
