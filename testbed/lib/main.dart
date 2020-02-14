@@ -324,7 +324,6 @@ class FileChooserTestWidget extends StatelessWidget {
             if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
               initialDirectory =
                   (await getApplicationDocumentsDirectory()).path;
-              print(initialDirectory);
             }
             final result = await showOpenPanel(
                 allowsMultipleSelection: true,
