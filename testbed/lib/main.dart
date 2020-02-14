@@ -14,7 +14,8 @@
 import 'dart:io' show Platform;
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -48,7 +49,8 @@ void main() {
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
       window_size.setWindowFrame(frame);
-      window_size.setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
+      window_size
+          .setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
 
       if (Platform.isMacOS) {
         window_size.setWindowMinSize(Size(800, 600));
@@ -87,7 +89,8 @@ class _AppState extends State<MyApp> {
   Color _primaryColor = Colors.blue;
   int _counter = 0;
 
-  static _AppState of(BuildContext context) => context.findAncestorStateOfType<_AppState>();
+  static _AppState of(BuildContext context) =>
+      context.findAncestorStateOfType<_AppState>();
 
   /// Sets the primary color of the example app.
   void setPrimaryColor(Color color) {
@@ -129,7 +132,8 @@ class _AppState extends State<MyApp> {
         MenuItem(
             label: 'Reset',
             enabled: _primaryColor != Colors.blue,
-            shortcut: LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.backspace),
+            shortcut: LogicalKeySet(
+                LogicalKeyboardKey.meta, LogicalKeyboardKey.backspace),
             onClicked: () {
               setPrimaryColor(Colors.blue);
             }),
@@ -138,21 +142,24 @@ class _AppState extends State<MyApp> {
           MenuItem(
               label: 'Red',
               enabled: _primaryColor != Colors.red,
-              shortcut: LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.shift, LogicalKeyboardKey.keyR),
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.shift, LogicalKeyboardKey.keyR),
               onClicked: () {
                 setPrimaryColor(Colors.red);
               }),
           MenuItem(
               label: 'Green',
               enabled: _primaryColor != Colors.green,
-              shortcut: LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.alt, LogicalKeyboardKey.keyG),
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.alt, LogicalKeyboardKey.keyG),
               onClicked: () {
                 setPrimaryColor(Colors.green);
               }),
           MenuItem(
               label: 'Purple',
               enabled: _primaryColor != Colors.deepPurple,
-              shortcut: LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.control, LogicalKeyboardKey.keyP),
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.control, LogicalKeyboardKey.keyP),
               onClicked: () {
                 setPrimaryColor(Colors.deepPurple);
               }),
@@ -162,12 +169,16 @@ class _AppState extends State<MyApp> {
         MenuItem(
             label: 'Reset',
             enabled: _counter != 0,
-            shortcut: LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.digit0),
+            shortcut: LogicalKeySet(
+                LogicalKeyboardKey.meta, LogicalKeyboardKey.digit0),
             onClicked: () {
               _setCounter(0);
             }),
         MenuDivider(),
-        MenuItem(label: 'Increment', shortcut: LogicalKeySet(LogicalKeyboardKey.f2), onClicked: incrementCounter),
+        MenuItem(
+            label: 'Increment',
+            shortcut: LogicalKeySet(LogicalKeyboardKey.f2),
+            onClicked: incrementCounter),
         MenuItem(
             label: 'Decrement',
             enabled: _counter > 0,
@@ -233,7 +244,8 @@ class _MyHomePage extends StatelessWidget {
         builder: (context, viewportConstraints) {
           return SingleChildScrollView(
             child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+              constraints:
+                  BoxConstraints(minHeight: viewportConstraints.maxHeight),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -251,13 +263,15 @@ class _MyHomePage extends StatelessWidget {
                     new RaisedButton(
                       child: new Text('Test raw keyboard events'),
                       onPressed: () {
-                        Navigator.of(context).push(new MaterialPageRoute(builder: (context) => KeyboardTestPage()));
+                        Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (context) => KeyboardTestPage()));
                       },
                     ),
                     Container(
                       width: 380.0,
                       height: 100.0,
-                      decoration: BoxDecoration(border: Border.all(color: Colors.grey, width: 1.0)),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 1.0)),
                       child: Scrollbar(
                         child: ListView.builder(
                           padding: EdgeInsets.all(8.0),
@@ -297,7 +311,8 @@ class FileChooserTestWidget extends StatelessWidget {
           onPressed: () {
             showSavePanel(suggestedFileName: 'save_test.txt').then((result) {
               Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(_resultTextForFileChooserOperation(_FileChooserType.save, result)),
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.save, result)),
               ));
             });
           },
@@ -307,18 +322,23 @@ class FileChooserTestWidget extends StatelessWidget {
           onPressed: () async {
             String initialDirectory;
             if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-              initialDirectory = (await getApplicationDocumentsDirectory()).path;
+              initialDirectory =
+                  (await getApplicationDocumentsDirectory()).path;
               print(initialDirectory);
             }
-            final result = await showOpenPanel(allowsMultipleSelection: true, initialDirectory: initialDirectory);
-            Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text(_resultTextForFileChooserOperation(_FileChooserType.open, result))));
+            final result = await showOpenPanel(
+                allowsMultipleSelection: true,
+                initialDirectory: initialDirectory);
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.open, result))));
           },
         ),
         new FlatButton(
           child: const Text('OPEN MEDIA'),
           onPressed: () async {
-            final result = await showOpenPanel(allowedFileTypes: <FileTypeFilterGroup>[
+            final result =
+                await showOpenPanel(allowedFileTypes: <FileTypeFilterGroup>[
               FileTypeFilterGroup(label: 'Images', fileExtensions: <String>[
                 'bmp',
                 'gif',
@@ -336,8 +356,9 @@ class FileChooserTestWidget extends StatelessWidget {
                 'webm',
               ]),
             ]);
-            Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text(_resultTextForFileChooserOperation(_FileChooserType.open, result))));
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.open, result))));
           },
         ),
       ],
@@ -355,7 +376,8 @@ class URLLauncherTestWidget extends StatelessWidget {
         new FlatButton(
           child: const Text('OPEN ON GITHUB'),
           onPressed: () {
-            url_launcher.launch('https://github.com/google/flutter-desktop-embedding');
+            url_launcher
+                .launch('https://github.com/google/flutter-desktop-embedding');
           },
         ),
       ],
@@ -398,7 +420,8 @@ class SampleTextField extends StatelessWidget {
 enum _FileChooserType { save, open }
 
 /// Returns display text reflecting the result of a file chooser operation.
-String _resultTextForFileChooserOperation(_FileChooserType type, FileChooserResult result) {
+String _resultTextForFileChooserOperation(
+    _FileChooserType type, FileChooserResult result) {
   if (result.canceled) {
     return '${type == _FileChooserType.open ? 'Open' : 'Save'} cancelled';
   }
