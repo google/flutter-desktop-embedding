@@ -113,12 +113,26 @@ The `flutter` tool will generate a plugin registrant for you, so you
 won't need to change any C++ code.
 
 Adding it to the build system is partially a manual process. To add a plugin:
-- Open your application's `Runner.sln` in Visual Studio
-- Go to `File` > `Add` > `Existing Project...`
-- Add the `plugin.vcxproj` for the plugin
-- Go to `Project` > `Project Dependencies...`
-  - Make `Runner` depend on the plugin project
-  - Make the plugin project depend on `Flutter Build`
+- Run `flutter packages get` to fetch the plugins.
+- Open your application's `Runner.sln` in Visual Studio.
+- Go to `File` > `Add` > `Existing Project...`.
+- Add the `plugin.vcxproj` for the plugin; it will be in
+  `Flutter\ephemeral\.plugin_symlinks\<plugin name>` relative to `Runner.sln`.
+- Go to `Project` > `Project Dependencies...`.
+  - Make `Runner` depend on the plugin project.
+  - Make the plugin project depend on `Flutter Build`.
+- Save your changes to the solution in Visual Studio.
+- Manually fix the path for the plugin in the solution, since Visual Studio
+  will have resolved the symlink:
+  - Open `Runner.sln` in a text editor.
+  - Find the path to the plugin's `plugin.vcxproj` in that file, which
+    will be a long relative path to your `pub` cache, and will be specific to
+    your computer.
+  - Change it to `Flutter\ephemeral\.plugin_symlinks\<plugin name>\windows\plugin.vcxproj`.
+    For instance, for the `sample` plugin the entire string would be:
+    `"Flutter\ephemeral\.plugin_symlinks\sample\windows\plugin.vcxproj"`.
+
+After saving your solution file, you will need to manually fix the
 
 Note: Plugin management for Windows will likely change substantially
 as the project evolves.
