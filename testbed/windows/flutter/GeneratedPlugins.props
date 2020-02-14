@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets"/>
+  <PropertyGroup Label="UserMacros"/>
+  <PropertyGroup/>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>flutter\ephemeral\.plugin_symlinks\file_chooser\windows;flutter\ephemeral\.plugin_symlinks\path_provider_fde\windows;flutter\ephemeral\.plugin_symlinks\sample\windows;flutter\ephemeral\.plugin_symlinks\url_launcher_fde\windows;flutter\ephemeral\.plugin_symlinks\window_size\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>file_chooser_plugin.lib;path_provider_fde_plugin.lib;sample_plugin.lib;url_launcher_fde_plugin.lib;window_size_plugin.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup/>
+</Project>
