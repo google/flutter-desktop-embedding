@@ -132,8 +132,6 @@ Adding it to the build system is partially a manual process. To add a plugin:
     For instance, for the `sample` plugin the entire string would be:
     `"Flutter\ephemeral\.plugin_symlinks\sample\windows\plugin.vcxproj"`.
 
-After saving your solution file, you will need to manually fix the
-
 Note: Plugin management for Windows will likely change substantially
 as the project evolves.
 
