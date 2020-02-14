@@ -29,7 +29,12 @@ almost certainly not work with the final Flutter Windows and Linux support.
 ### Windows
 
 - Change `sample` in all the filenames to your plugin's name.
-- Change the `ProjectName` in plugin.vcxproj to your plugin's name.
+- Change the `ProjectName` in `plugin.vcxproj` to your plugin's name.
+- Change the `ProjectGuid` in `plugin.vcxproj` to a new, randomly-generated v4
+  UUID (all upper case, to avoid issues with Visual Studio). You can use any
+  UUID generator that supports v4 for this, such as:
+    - Running `New-Guid` in PowerShell
+    - Using an online UUID generator
 - Change the `FlutterPluginName` in `PluginInfo.props` to your plugin's name.
 - Look for comments containing `***` in the `.h` and `.cpp` file, and update
   the code as described in the comment.
