@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC
+// Copyright 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -320,11 +320,8 @@ class FileChooserTestWidget extends StatelessWidget {
         new FlatButton(
           child: const Text('OPEN'),
           onPressed: () async {
-            String initialDirectory;
-            if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-              initialDirectory =
-                  (await getApplicationDocumentsDirectory()).path;
-            }
+            final initialDirectory =
+                (await getApplicationDocumentsDirectory()).path;
             final result = await showOpenPanel(
                 allowsMultipleSelection: true,
                 initialDirectory: initialDirectory);

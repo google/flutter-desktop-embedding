@@ -1,4 +1,4 @@
-# Copyright 2018 Google LLC
+# Copyright 2020 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ PLUGINS=\
 	color_panel \
 	file_chooser \
 	menubar \
+	path_provider_fde \
 	sample \
 	url_launcher_fde \
-	path_provider_fde \
 	window_size
 
 # Default build type.
