@@ -112,8 +112,7 @@ void PathProviderPlugin::HandleMethodCall(
     const flutter::MethodCall<EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
   if (method_call.method_name().compare("getTemporaryDirectory") == 0) {
-    std::string result_path = "/tmp";
-    flutter::EncodableValue response(result_path);
+    flutter::EncodableValue response("/tmp");
     result->Success(&response);
   } else if (method_call.method_name().compare(
                  "getApplicationSupportDirectory") == 0) {
