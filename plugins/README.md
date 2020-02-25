@@ -128,8 +128,7 @@ to build to your application's `.sln`. (Opening a plugin project directly
 and trying to build it **will not work** with the current structure.)
 
 The plugin builds in this project put the library at the top level of the
-Plugins directory in the application's build output, along with their public
-headers.
+Plugins directory in the application's build output.
 
 ## Writing Your Own Plugins
 
