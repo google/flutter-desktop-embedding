@@ -23,14 +23,6 @@ SYSTEM_LIBRARIES=gtk+-3.0 x11
 EXTRA_CXXFLAGS=
 EXTRA_CPPFLAGS=
 EXTRA_LDFLAGS=
-# Plugins to include in the build.
-PLUGINS=\
-	color_panel \
-	file_chooser \
-	menubar \
-	sample \
-	url_launcher_fde \
-	window_size
 
 # Default build type.
 BUILD=debug
@@ -44,7 +36,6 @@ include $(FLUTTER_CONFIG_FILE)
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
-PLUGINS_DIR=$(FLUTTER_EPHEMERAL_DIR)/.plugin_symlinks
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 OBJ_DIR=$(OUT_DIR)/obj/$(BUILD)
@@ -94,11 +85,6 @@ SOURCES=main.cc flutter/generated_plugin_registrant.cc $(WRAPPER_SOURCES) \
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
 
-include plugins.mk
-EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBRARIES)
-EXTRA_LDFLAGS+=$(PLUGIN_LDFLAGS)
-EXTRA_CPPFLAGS+=$(PLUGIN_CPPFLAGS)
-
 # Build settings
 ifneq ($(strip $(SYSTEM_LIBRARIES)),)
 EXTRA_CPPFLAGS+=$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
@@ -122,6 +108,12 @@ DEPENDENCY_FILES=$(OBJ_FILES:%.o=%.d)
 .PHONY: all
 all: $(BIN_OUT) bundle
 
+# Add the plugin targets, and their associated settings.
+include plugins.mk
+EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBRARIES)
+EXTRA_LDFLAGS+=$(PLUGIN_LDFLAGS)
+EXTRA_CPPFLAGS+=$(PLUGIN_CPPFLAGS)
+
 # This is a phony target because the flutter tool cannot describe
 # its inputs and outputs yet.
 .PHONY: sync
@@ -142,12 +134,6 @@ $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
 # plugin builds, so ensure those happen first.
 # TODO: Restructure to avoid the need for this.
 $(OBJ_FILES): | $(EXTRA_BUNDLED_LIBRARIES)
-
-.PHONY: $(PLUGINS)
-$(PLUGINS):
-	make -C $(PLUGINS_DIR)/$@/linux \
-		OUT_DIR=$(OUT_DIR) \
-		FLUTTER_EPHEMERAL_DIR="$(abspath $(FLUTTER_EPHEMERAL_DIR))"
 
 # Plugin library bundling pattern.
 $(BUNDLE_LIB_DIR)/%: $(OUT_DIR)/%
