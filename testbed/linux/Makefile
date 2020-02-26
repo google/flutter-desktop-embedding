@@ -63,14 +63,6 @@ ICU_DATA_SOURCE=$(FLUTTER_EPHEMERAL_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
 
-# The name of each plugin library is the name of the plugin with _plugin
-# appended.
-PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGINS),$(plugin)_plugin)
-PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_LIB_NAMES),$(OUT_DIR)/lib$(plugin).so)
-EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBS)
-EXTRA_LDFLAGS+=$(patsubst %,-l%,$(PLUGIN_LIB_NAMES))
-EXTRA_CPPFLAGS+=$(foreach plugin,$(PLUGINS),-I$(PLUGINS_DIR)/$(plugin)/linux)
-
 # Bundle structure
 BUNDLE_OUT_DIR=$(OUT_DIR)/$(BUILD)
 BUNDLE_DATA_DIR=$(BUNDLE_OUT_DIR)/data
@@ -103,6 +95,9 @@ WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
 
 include plugins.mk
+EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBRARIES)
+EXTRA_LDFLAGS+=$(PLUGIN_LDFLAGS)
+EXTRA_CPPFLAGS+=$(PLUGIN_CPPFLAGS)
 
 # Build settings
 ifneq ($(strip $(SYSTEM_LIBRARIES)),)
@@ -141,7 +136,7 @@ $(BIN_OUT): $(OBJ_FILES) $(ALL_LIBS_OUT)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OBJ_FILES) $(LDFLAGS) -o $@
 
 $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
-	$(PLUGINS): | sync
+	$(PLUGIN_TARGETS): | sync
 
 # Compilation depends on plugin headers that are copied as part of the
 # plugin builds, so ensure those happen first.

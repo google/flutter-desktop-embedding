@@ -6,3 +6,14 @@ $(OUT_DIR)/libmenubar_plugin.so: | menubar
 $(OUT_DIR)/libsample_plugin.so: | sample
 $(OUT_DIR)/liburl_launcher_fde_plugin.so: | url_launcher_fde
 $(OUT_DIR)/libwindow_size_plugin.so: | window_size
+
+# The name of each plugin library is the name of the plugin with _plugin
+# appended.
+FLUTTER_PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGINS),$(plugin)_plugin)
+
+# Variables for use in the enclosing Makefile. Changes to these names are
+# breaking changes.
+PLUGIN_TARGETS=$(PLUGINS)
+PLUGIN_LIBRARIES=$(foreach plugin,$(FLUTTER_PLUGIN_LIB_NAMES),$(OUT_DIR)/lib$(plugin).so)
+PLUGIN_LDFLAGS=$(patsubst %,-l%,$(FLUTTER_PLUGIN_LIB_NAMES))
+PLUGIN_CPPFLAGS=$(foreach plugin,$(PLUGINS),-I$(PLUGINS_DIR)/$(plugin)/linux)
