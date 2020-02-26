@@ -102,6 +102,8 @@ SOURCES=main.cc flutter/generated_plugin_registrant.cc $(WRAPPER_SOURCES) \
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
 
+include plugins.mk
+
 # Build settings
 ifneq ($(strip $(SYSTEM_LIBRARIES)),)
 EXTRA_CPPFLAGS+=$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
@@ -140,14 +142,6 @@ $(BIN_OUT): $(OBJ_FILES) $(ALL_LIBS_OUT)
 
 $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
 	$(PLUGINS): | sync
-
-# Implicit rules won't match phony targets, so list plugin builds explicitly.
-$(OUT_DIR)/libcolor_panel_plugin.so: | color_panel
-$(OUT_DIR)/libfile_chooser_plugin.so: | file_chooser
-$(OUT_DIR)/libmenubar_plugin.so: | menubar
-$(OUT_DIR)/libsample_plugin.so: | sample
-$(OUT_DIR)/liburl_launcher_fde_plugin.so: | url_launcher_fde
-$(OUT_DIR)/libwindow_size_plugin.so: | window_size
 
 # Compilation depends on plugin headers that are copied as part of the
 # plugin builds, so ensure those happen first.
