@@ -69,8 +69,7 @@ PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGINS),$(plugin)_plugin)
 PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_LIB_NAMES),$(OUT_DIR)/lib$(plugin).so)
 EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBS)
 EXTRA_LDFLAGS+=$(patsubst %,-l%,$(PLUGIN_LIB_NAMES))
-# The plugin builds place all published headers in a top-level include/.
-EXTRA_CPPFLAGS+=-I$(OUT_DIR)/include
+EXTRA_CPPFLAGS+=$(foreach plugin,$(PLUGINS),-I$(PLUGINS_DIR)/$(plugin)/linux)
 
 # Bundle structure
 BUNDLE_OUT_DIR=$(OUT_DIR)/$(BUILD)
