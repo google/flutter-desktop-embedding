@@ -65,7 +65,6 @@ WRAPPER_SOURCES= \
 # Use abspath for extra sources, which may also contain relative paths (see
 # note above about WRAPPER_ROOT).
 SOURCES=$(PLUGIN_SOURCE_NAME).cc $(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
-PUBLIC_HEADER=$(PLUGIN_SOURCE_NAME).h
 
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
 INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
@@ -80,7 +79,6 @@ LDFLAGS=-shared -L$(FLUTTER_EPHEMERAL_DIR) -l$(FLUTTER_LIB_NAME) $(EXTRA_LDFLAGS
 
 # Final output files that will be used by applications.
 LIBRARY_OUT=$(OUT_DIR)/lib$(PLUGIN_NAME).so
-HEADER_OUT=$(OUT_DIR)/include/$(PUBLIC_HEADER)
 
 # Intermediate files.
 OBJ_FILES=$(SOURCES:%.cc=$(OBJ_DIR)/%.o)
@@ -92,15 +90,11 @@ DEPENDENCY_FILES=$(OBJ_FILES:%.o=%.d)
 all: $(PLUGIN_NAME)
 
 .PHONY: $(PLUGIN_NAME)
-$(PLUGIN_NAME) : $(LIBRARY_OUT) $(HEADER_OUT)
+$(PLUGIN_NAME) : $(LIBRARY_OUT)
 
 $(LIBRARY_OUT): $(OBJ_FILES)
 	mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $^ $(LDFLAGS) -o $@
-
-$(HEADER_OUT): $(PUBLIC_HEADER)
-	mkdir -p $(@D)
-	cp $< $@
 
 -include $(DEPENDENCY_FILES)
 
@@ -110,5 +104,5 @@ $(OBJ_DIR)/%.o : %.cc
 
 .PHONY: clean
 clean:
-	rm -f $(LIBRARY_OUT) $(HEADER_OUT)
+	rm -f $(LIBRARY_OUT)
 	rm -rf $(PLUGINOUT_DIR)

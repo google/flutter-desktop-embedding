@@ -23,19 +23,12 @@ SYSTEM_LIBRARIES=gtk+-3.0 x11
 EXTRA_CXXFLAGS=
 EXTRA_CPPFLAGS=
 EXTRA_LDFLAGS=
-# Plugins to include in the build.
-PLUGINS=\
-	color_panel \
-	file_chooser \
-	menubar \
-	sample \
-	url_launcher_fde \
-	window_size
 
 # Default build type.
 BUILD=debug
 
-FLUTTER_EPHEMERAL_DIR=flutter/ephemeral
+FLUTTER_MANAGED_DIR=flutter
+FLUTTER_EPHEMERAL_DIR=$(FLUTTER_MANAGED_DIR)/ephemeral
 
 # Configuration provided via flutter tool.
 FLUTTER_CONFIG_FILE=$(FLUTTER_EPHEMERAL_DIR)/generated_config.mk
@@ -44,7 +37,6 @@ include $(FLUTTER_CONFIG_FILE)
 # Dependency locations
 FLUTTER_APP_DIR=$(CURDIR)/..
 FLUTTER_APP_BUILD_DIR=$(FLUTTER_APP_DIR)/build
-PLUGINS_DIR=$(FLUTTER_EPHEMERAL_DIR)/.plugin_symlinks
 
 OUT_DIR=$(FLUTTER_APP_BUILD_DIR)/linux
 OBJ_DIR=$(OUT_DIR)/obj/$(BUILD)
@@ -62,15 +54,6 @@ ICU_DATA_NAME=icudtl.dat
 ICU_DATA_SOURCE=$(FLUTTER_EPHEMERAL_DIR)/$(ICU_DATA_NAME)
 FLUTTER_ASSETS_NAME=flutter_assets
 FLUTTER_ASSETS_SOURCE=$(FLUTTER_APP_BUILD_DIR)/$(FLUTTER_ASSETS_NAME)
-
-# The name of each plugin library is the name of the plugin with _plugin
-# appended.
-PLUGIN_LIB_NAMES=$(foreach plugin,$(PLUGINS),$(plugin)_plugin)
-PLUGIN_LIBS=$(foreach plugin,$(PLUGIN_LIB_NAMES),$(OUT_DIR)/lib$(plugin).so)
-EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBS)
-EXTRA_LDFLAGS+=$(patsubst %,-l%,$(PLUGIN_LIB_NAMES))
-# The plugin builds place all published headers in a top-level include/.
-EXTRA_CPPFLAGS+=-I$(OUT_DIR)/include
 
 # Bundle structure
 BUNDLE_OUT_DIR=$(OUT_DIR)/$(BUILD)
@@ -126,6 +109,12 @@ DEPENDENCY_FILES=$(OBJ_FILES:%.o=%.d)
 .PHONY: all
 all: $(BIN_OUT) bundle
 
+# Add the plugin targets, and their associated settings.
+include $(FLUTTER_MANAGED_DIR)/generated_plugins.mk
+EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBRARIES)
+EXTRA_LDFLAGS+=$(PLUGIN_LDFLAGS)
+EXTRA_CPPFLAGS+=$(PLUGIN_CPPFLAGS)
+
 # This is a phony target because the flutter tool cannot describe
 # its inputs and outputs yet.
 .PHONY: sync
@@ -140,26 +129,12 @@ $(BIN_OUT): $(OBJ_FILES) $(ALL_LIBS_OUT)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OBJ_FILES) $(LDFLAGS) -o $@
 
 $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
-	$(PLUGINS): | sync
-
-# Implicit rules won't match phony targets, so list plugin builds explicitly.
-$(OUT_DIR)/libcolor_panel_plugin.so: | color_panel
-$(OUT_DIR)/libfile_chooser_plugin.so: | file_chooser
-$(OUT_DIR)/libmenubar_plugin.so: | menubar
-$(OUT_DIR)/libsample_plugin.so: | sample
-$(OUT_DIR)/liburl_launcher_fde_plugin.so: | url_launcher_fde
-$(OUT_DIR)/libwindow_size_plugin.so: | window_size
+	$(PLUGIN_TARGETS): | sync
 
 # Compilation depends on plugin headers that are copied as part of the
 # plugin builds, so ensure those happen first.
 # TODO: Restructure to avoid the need for this.
 $(OBJ_FILES): | $(EXTRA_BUNDLED_LIBRARIES)
-
-.PHONY: $(PLUGINS)
-$(PLUGINS):
-	make -C $(PLUGINS_DIR)/$@/linux \
-		OUT_DIR=$(OUT_DIR) \
-		FLUTTER_EPHEMERAL_DIR="$(abspath $(FLUTTER_EPHEMERAL_DIR))"
 
 # Plugin library bundling pattern.
 $(BUNDLE_LIB_DIR)/%: $(OUT_DIR)/%
