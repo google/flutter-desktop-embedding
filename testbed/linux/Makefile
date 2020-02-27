@@ -27,7 +27,8 @@ EXTRA_LDFLAGS=
 # Default build type.
 BUILD=debug
 
-FLUTTER_EPHEMERAL_DIR=flutter/ephemeral
+FLUTTER_MANAGED_DIR=flutter
+FLUTTER_EPHEMERAL_DIR=$(FLUTTER_MANAGED_DIR)/ephemeral
 
 # Configuration provided via flutter tool.
 FLUTTER_CONFIG_FILE=$(FLUTTER_EPHEMERAL_DIR)/generated_config.mk
@@ -109,7 +110,7 @@ DEPENDENCY_FILES=$(OBJ_FILES:%.o=%.d)
 all: $(BIN_OUT) bundle
 
 # Add the plugin targets, and their associated settings.
-include plugins.mk
+include $(FLUTTER_MANAGED_DIR)/generated_plugins.mk
 EXTRA_BUNDLED_LIBRARIES+=$(PLUGIN_LIBRARIES)
 EXTRA_LDFLAGS+=$(PLUGIN_LDFLAGS)
 EXTRA_CPPFLAGS+=$(PLUGIN_CPPFLAGS)
