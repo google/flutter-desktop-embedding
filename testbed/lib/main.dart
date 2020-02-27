@@ -14,8 +14,7 @@
 import 'dart:io' show Platform;
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart'
-    show debugDefaultTargetPlatformOverride;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -33,9 +32,10 @@ import 'package:window_size/window_size.dart' as window_size;
 const _prefKeyColor = 'color';
 
 void main() {
-  // Desktop platforms are not recognized as valid targets by
-  // Flutter; force a specific target to prevent exceptions.
-  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override
+  if (!kIsWeb && (Platform.isLinux || Platform.isWindows)) {
+    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  }
 
   // Try to resize and reposition the window to be half the width and height
   // of its screen, centered horizontally and shifted up from center.

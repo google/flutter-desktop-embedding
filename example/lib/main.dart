@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/foundation.dart'
-    show debugDefaultTargetPlatformOverride;
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override
-  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  if (!kIsWeb && (Platform.isLinux || Platform.isWindows)) {
+    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  }
 
   runApp(new MyApp());
 }
