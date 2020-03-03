@@ -1,28 +1,4 @@
-# Copyright 2018 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# Executable name.
-BINARY_NAME=testbed
-# Any extra source files to build.
-EXTRA_SOURCES=
-# Paths of any additional libraries to be bundled in the output directory.
-EXTRA_BUNDLED_LIBRARIES=
-# Extra flags (e.g., for library dependencies).
-SYSTEM_LIBRARIES=gtk+-3.0 x11
-EXTRA_CXXFLAGS=
-EXTRA_CPPFLAGS=
-EXTRA_LDFLAGS=
+include app_configuration.mk
 
 # Default build type.
 BUILD=debug
@@ -79,8 +55,9 @@ WRAPPER_SOURCES= \
 
 # Use abspath for extra sources, which may also contain relative paths (see
 # note above about WRAPPER_ROOT).
-SOURCES=main.cc flutter/generated_plugin_registrant.cc $(WRAPPER_SOURCES) \
-	$(abspath $(EXTRA_SOURCES))
+SOURCES=main.cc window_configuration.cc \
+	flutter/generated_plugin_registrant.cc \
+	$(WRAPPER_SOURCES) $(abspath $(EXTRA_SOURCES))
 
 # Headers
 WRAPPER_INCLUDE_DIR=$(WRAPPER_ROOT)/include
@@ -91,10 +68,14 @@ ifneq ($(strip $(SYSTEM_LIBRARIES)),)
 EXTRA_CPPFLAGS+=$(patsubst -I%,-isystem%,$(shell pkg-config --cflags $(SYSTEM_LIBRARIES)))
 EXTRA_LDFLAGS+=$(shell pkg-config --libs $(SYSTEM_LIBRARIES))
 endif
-CXX=clang++ $(EXTRA_CXXFLAGS)
-CXXFLAGS.release=-DNDEBUG
-CXXFLAGS=-std=c++14 -Wall -Werror $(CXXFLAGS.$(BUILD))
-CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) $(EXTRA_CPPFLAGS)
+CXX=clang++
+CPPFLAGS.release=-DNDEBUG
+CPPFLAGS.profile=$(CPPFLAGS.release)
+CXXFLAGS.release=-O2
+CXXFLAGS.profile=$(CXXFLAGS.release)
+CXXFLAGS=-std=c++14 -Wall -Werror $(CXXFLAGS.$(BUILD)) $(EXTRA_CXXFLAGS)
+CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) \
+	$(CPPFLAGS.$(BUILD)) $(EXTRA_CPPFLAGS)
 LDFLAGS=-L$(BUNDLE_LIB_DIR) \
 	-l$(FLUTTER_LIB_NAME) \
 	$(EXTRA_LDFLAGS) \
@@ -131,11 +112,6 @@ $(BIN_OUT): $(OBJ_FILES) $(ALL_LIBS_OUT)
 $(WRAPPER_SOURCES) $(FLUTTER_LIB) $(ICU_DATA_SOURCE) $(FLUTTER_ASSETS_SOURCE) \
 	$(PLUGIN_TARGETS): | sync
 
-# Compilation depends on plugin headers that are copied as part of the
-# plugin builds, so ensure those happen first.
-# TODO: Restructure to avoid the need for this.
-$(OBJ_FILES): | $(EXTRA_BUNDLED_LIBRARIES)
-
 # Plugin library bundling pattern.
 $(BUNDLE_LIB_DIR)/%: $(OUT_DIR)/%
 	mkdir -p $(BUNDLE_LIB_DIR)
@@ -157,8 +133,7 @@ $(OBJ_DIR)/%.o : %.cc | sync
 
 # Fully re-copy the assets directory on each build to avoid having to keep a
 # comprehensive list of all asset files here, which would be fragile to changes
-# in the Flutter example (e.g., adding a new font to pubspec.yaml would require
-# changes here).
+# in other files (e.g., adding a new font to pubspec.yaml).
 .PHONY: bundleflutterassets
 bundleflutterassets: $(FLUTTER_ASSETS_SOURCE)
 	mkdir -p $(BUNDLE_DATA_DIR)
