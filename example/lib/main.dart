@@ -12,17 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override
-  if (!kIsWeb && (Platform.isLinux || Platform.isWindows)) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
-  }
-
   runApp(new MyApp());
 }
 
@@ -42,7 +34,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
@@ -74,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.display1,
+              style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
