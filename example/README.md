@@ -23,10 +23,6 @@ The `main.dart` and `pubspec.yaml` have minor changes to support desktop:
 * The font is explicitly set to Roboto, and Roboto is bundled via
   `pubspec.yaml`, to ensure that text displays on all platforms.
 
-See the [Flutter Application Requirements section of the Flutter page on
-desktop support](https://github.com/flutter/flutter/wiki/Desktop-shells#flutter-application-requirements)
-for more information.
-
 ## Adapting for Another Project
 
 Since `flutter create` is not yet supported for Windows and Linux, the easiest
@@ -37,8 +33,7 @@ create the macOS folder (as long as you have macOS support enabled in `flutter`)
 
 Be sure to read the [Flutter page on desktop
 support](https://github.com/flutter/flutter/wiki/Desktop-shells) before trying to
-run an existing project on desktop, especially the [Flutter Application Requirements
-section](https://github.com/flutter/flutter/wiki/Desktop-shells#flutter-application-requirements).
+run an existing project on desktop.
 
 ### Copying the Desktop Runners
 
