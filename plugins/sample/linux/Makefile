@@ -1,38 +1,6 @@
-# Copyright 2019 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+include plugin_configuration.mk
 
-# ====================
-# Core variables. To modify this Makefile for a different plugin, these are
-# the values that are mostly likely to need to be changed.
-
-# The name of the plugin.
-# The primary source file is assumed to be $(PLUGIN_NAME)_plugin.cc, with
-# $(PLUGIN_NAME)_plugin.h as the public header meant for inclusion by the
-# application.
-PLUGIN_NAME=sample
-# Any files other than the plugin class files that need to be compiled.
-EXTRA_SOURCES=
-# Extra flags (e.g., for library dependencies).
-EXTRA_CXXFLAGS=
-EXTRA_CPPFLAGS=
-EXTRA_LDFLAGS=
-# ====================
-
-# Default build type. For a release build, set BUILD=release.
-# Currently this only sets NDEBUG, which is used to control the flags passed
-# to the Flutter engine in the example shell, and not the complation settings
-# (e.g., optimization level) of the C++ code.
+# Default build type.
 BUILD=debug
 
 # Plugins must be provided a populated flutter/ephemeral/ dir. Normally this
@@ -74,10 +42,14 @@ INCLUDE_DIRS=$(FLUTTER_EPHEMERAL_DIR) $(WRAPPER_INCLUDE_DIR)
 
 # Build settings
 CXX=clang++
-CXXFLAGS.release=-DNDEBUG
+CPPFLAGS.release=-DNDEBUG
+CPPFLAGS.profile=$(CPPFLAGS.release)
+CXXFLAGS.release=-O2
+CXXFLAGS.profile=$(CXXFLAGS.release)
 CXXFLAGS=-std=c++14 -Wall -Werror -fPIC -fvisibility=hidden \
-	-DFLUTTER_PLUGIN_IMPL $(CXXFLAGS.$(BUILD)) $(EXTRA_CXXFLAGS)
-CPPFLAGS=$(patsubst %,-I%,$(INCLUDE_DIRS)) $(EXTRA_CPPFLAGS)
+	$(CXXFLAGS.$(BUILD)) $(EXTRA_CXXFLAGS)
+CPPFLAGS=-DFLUTTER_PLUGIN_IMPL $(patsubst %,-I%,$(INCLUDE_DIRS)) \
+	$(CPPFLAGS.$(BUILD)) $(EXTRA_CPPFLAGS)
 LDFLAGS=-shared -L$(FLUTTER_EPHEMERAL_DIR) -l$(FLUTTER_LIB_NAME) $(EXTRA_LDFLAGS)
 
 # Final output files that will be used by applications.
