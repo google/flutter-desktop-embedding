@@ -1,16 +1,4 @@
-// Copyright 2018 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+#include <flutter/flutter_window_controller.h>
 #include <linux/limits.h>
 #include <unistd.h>
 
@@ -21,10 +9,10 @@
 
 // For plugin-compatible event handling (e.g., modal windows).
 #include <X11/Xlib.h>
-#include <flutter/flutter_window_controller.h>
 #include <gtk/gtk.h>
 
 #include "flutter/generated_plugin_registrant.h"
+#include "window_configuration.h"
 
 namespace {
 
@@ -67,9 +55,9 @@ int main(int argc, char **argv) {
 
   flutter::FlutterWindowController flutter_controller(icu_data_path);
   flutter::WindowProperties window_properties = {};
-  window_properties.title = "Testbed";
-  window_properties.width = 800;
-  window_properties.height = 600;
+  window_properties.title = kFlutterWindowTitle;
+  window_properties.width = kFlutterWindowWidth;
+  window_properties.height = kFlutterWindowHeight;
 
   // Start the engine.
   if (!flutter_controller.CreateWindow(window_properties, assets_path,

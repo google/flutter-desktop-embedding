@@ -43,15 +43,11 @@ only.**
 distributed. These instructions are intended for experimentation and feedback
 only.**
 
-Linux has not yet had any customization support added. The fact that these steps
-are non-trivial is a known issue.
-
-- **Executable Name**: Change `BINARY_NAME` in `linux/Makefile`.
-  - You will likely want to change `window_properties.title` in
-    `linux/main.cc` to match. In the future this
-    will use the application name automatically by default.
+- **Window Settings**: `linux/window_configuration.cc` allows changing the
+  window's initial title and size.
 - **Application Icon**: Prepare image data using the method of your choice
   (e.g., by loading from a file in a set location; this may require the use
   of a third-party library depending on the image format) and call `SetIcon`
   on `flutter_controller.window()`. See the `SetIcon` comment in
-  `flutter_window.h` for the required format.
+  `flutter_window.h` for the required format. In the future, this will be
+  made easier to customize.
