@@ -18,8 +18,6 @@ a standard Flutter project.
 ## Dart Differences from Flutter Template
 
 The `main.dart` and `pubspec.yaml` have minor changes to support desktop:
-* `debugDefaultTargetPlatformOverride` is set to avoid 'Unknown platform'
-  exceptions.
 * The font is explicitly set to Roboto, and Roboto is bundled via
   `pubspec.yaml`, to ensure that text displays on all platforms.
 
