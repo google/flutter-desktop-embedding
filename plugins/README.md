@@ -66,13 +66,5 @@ $ sudo apt-get install libgtk-3-dev pkg-config
 
 ## Writing Your Own Plugins
 
-You can create plugin packages following the model of the Windows and Linux
-plugins here to use in your own projects. In particular, `sample`
-is intended to serve as a starting point for new plugins; see
-[its README](sample/README.md) for details. For macOS,
-you should use `flutter create` as usual.
-
-Keep in mind the notes about API stability on the Flutter desktop page
-linked above. On platforms where the plugin API and `flutter tool` support
-is still unstable, you should expect to need to substantially change plugins
-written now as the APIs and tool evolve.
+See [the `sample` README](sample/README.md) for instructions on using
+it as a starting point for a new plugin.
