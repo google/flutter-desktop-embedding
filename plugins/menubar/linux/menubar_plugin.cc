@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "plugins/menubar/linux/menubar_plugin.h"
+#include "include/menubar_plugin.h"
 
 #include <gtk/gtk.h>
 #include <memory>

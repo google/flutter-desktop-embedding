@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "plugins/window_size/linux/window_size_plugin.h"
+#include "include/window_size_plugin.h"
 
 #include <flutter/flutter_window.h>
 #include <flutter/method_channel.h>

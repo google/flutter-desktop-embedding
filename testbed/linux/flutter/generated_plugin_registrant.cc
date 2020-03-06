@@ -6,8 +6,8 @@
 
 #include <color_panel_plugin.h>
 #include <file_chooser_plugin.h>
-#include <menubar_plugin.h>
 #include <url_launcher_plugin.h>
+#include <menubar_plugin.h>
 #include <window_size_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
@@ -15,10 +15,10 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("ColorPanelPlugin"));
   FileChooserPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FileChooserPlugin"));
-  MenubarPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("MenubarPlugin"));
   UrlLauncherPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("UrlLauncherPlugin"));
+  MenubarPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("MenubarPlugin"));
   WindowSizePluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("WindowSizePlugin"));
 }
