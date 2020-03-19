@@ -60,7 +60,7 @@ void main() {
   runApp(new MyApp());
 }
 
-/// Top level widget for the example application.
+/// Top level widget for the application.
 class MyApp extends StatefulWidget {
   /// Constructs a new app with the given [key].
   const MyApp({Key key}) : super(key: key);
@@ -86,7 +86,7 @@ class _AppState extends State<MyApp> {
   static _AppState of(BuildContext context) =>
       context.findAncestorStateOfType<_AppState>();
 
-  /// Sets the primary color of the example app.
+  /// Sets the primary color of the app.
   void setPrimaryColor(Color color) {
     setState(() {
       _primaryColor = color;
@@ -194,7 +194,7 @@ class _AppState extends State<MyApp> {
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
         // Specify a font to reduce potential issues with the
-        // example behaving differently on different platforms.
+        // application behaving differently on different platforms.
         fontFamily: 'Roboto',
       ),
       darkTheme: ThemeData.dark(),
