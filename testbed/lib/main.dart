@@ -22,7 +22,6 @@ import 'package:example_flutter/keyboard_test_page.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sample/sample.dart' as sample_plugin;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
@@ -51,10 +50,6 @@ void main() {
         window_size.setWindowMaxSize(Size(1600, 1200));
       }
     }
-  });
-
-  sample_plugin.Sample.platformVersion.then((versionInfo) {
-    print('Sample plugin returned $versionInfo');
   });
 
   runApp(new MyApp());
