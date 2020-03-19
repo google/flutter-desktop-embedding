@@ -1,7 +1,3 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 #include "win32_window.h"
 
 #include <flutter_windows.h>
@@ -10,7 +6,7 @@
 
 namespace {
 
-// the Windows DPI system is based on this
+// The Windows DPI system is based on this
 // constant for machines running at 100% scaling.
 constexpr int kBaseDpi = 96;
 
