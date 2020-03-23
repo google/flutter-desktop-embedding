@@ -17,7 +17,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{5A827760-CF8B-408A-99A3-B6C0AD2271E7}</ProjectGuid>
-    <RootNamespace>GLFWExample</RootNamespace>
+    <RootNamespace>testbed</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
