@@ -32,7 +32,7 @@ which is still common for desktop.)
 ## Feedback
 
 For bug reports and feature requests related to the plugins, you can file GitHub
-issues. Bugs and feature requests about to Flutter on desktop in general should
+issues. Bugs and feature requests about Flutter on desktop in general should
 be filed in the
 [Flutter issue tracker](https://github.com/flutter/flutter/issues).
 
