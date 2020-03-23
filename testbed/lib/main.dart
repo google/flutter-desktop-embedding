@@ -22,7 +22,6 @@ import 'package:example_flutter/keyboard_test_page.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sample/sample.dart' as sample_plugin;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
@@ -53,14 +52,10 @@ void main() {
     }
   });
 
-  sample_plugin.Sample.platformVersion.then((versionInfo) {
-    print('Sample plugin returned $versionInfo');
-  });
-
   runApp(new MyApp());
 }
 
-/// Top level widget for the example application.
+/// Top level widget for the application.
 class MyApp extends StatefulWidget {
   /// Constructs a new app with the given [key].
   const MyApp({Key key}) : super(key: key);
@@ -86,7 +81,7 @@ class _AppState extends State<MyApp> {
   static _AppState of(BuildContext context) =>
       context.findAncestorStateOfType<_AppState>();
 
-  /// Sets the primary color of the example app.
+  /// Sets the primary color of the app.
   void setPrimaryColor(Color color) {
     setState(() {
       _primaryColor = color;
@@ -194,7 +189,7 @@ class _AppState extends State<MyApp> {
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
         // Specify a font to reduce potential issues with the
-        // example behaving differently on different platforms.
+        // application behaving differently on different platforms.
         fontFamily: 'Roboto',
       ),
       darkTheme: ThemeData.dark(),

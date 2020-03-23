@@ -45,10 +45,10 @@ need to
 your application for compatibility with macOS 10.15+. This requires enabling
 the [Hardened
 Runtime](https://developer.apple.com/documentation/security/hardened_runtime_entitlements)
-option. It is not on by default in the example project because enabling it
-requires adding a valid signing certificate in order to build.
+option. Once you have enabled it, you will need a valid signing certificate in
+order to build.
 
-By default, the entitlements file in the example will allow JIT for Debug
+By default, the entitlements file will allow JIT for Debug
 builds, but as with App Sandbox you may need to manage [other
 entitlements](https://developer.apple.com/documentation/security/hardened_runtime_entitlements#3111190).
 If you have both App Sandbox and Hardened Runtime enabled, you may need to

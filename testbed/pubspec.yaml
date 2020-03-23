@@ -14,23 +14,19 @@ dependencies:
 
   cupertino_icons: ^0.1.0
 
-  # Desktop embedder plugins.
-  # Note: In an actual project, these paths would include the
-  # path from your application to the flutter_desktop_embedding
-  # checkout.
+  # FDE plugins.
+  # Note: In an actual project, these would be included via 'git:' reference,
+  # rather than 'path:', as described in the plugins README.
   color_panel:
     path: ../plugins/color_panel
   file_chooser:
     path: ../plugins/file_chooser
   menubar:
     path: ../plugins/menubar
-  sample:
-    path: ../plugins/sample
   window_size:
     path: ../plugins/window_size
   # Plugins from flutter/plugins, with local desktop implementations.
-  path_provider: ^1.5.1
-  path_provider_macos: ^0.0.2 # This can be removed once endorsed.
+  path_provider: ^1.6.5
   path_provider_fde:
     path: ../plugins/flutter_plugins/path_provider_fde
   shared_preferences: ^0.5.6

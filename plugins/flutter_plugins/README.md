@@ -15,10 +15,14 @@ normally rather than here.
 For these plugins, the Dart code comes from the official plugin, so you
 must include that in your `pubspec.yaml` as well. For instance, to use
 url\_launcher on desktop, you would include both `url_launcher` and
-`url_launcher_fde` in your pubspec.yaml.
+`url_launcher_fde` in your pubspec.yaml (see [the main plugin
+README](../README.md) for instructions on adding these plugins to your
+`pubspec.yaml`).
 
-Follow [the main plugin README](../README.md) instructions for
-adding the native implementation to your build.
+Since the Dart code for those plugins comes from the official plugin, you
+do not need to add any `import` in the Dart code other than the main
+plugin's `import`. For instance, you would just
+`import 'package:url_launcher/url_launcher.dart';` to use url\_launcher\_fde.
 
 ## Contributing
 

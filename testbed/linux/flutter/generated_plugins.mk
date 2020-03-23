@@ -3,7 +3,6 @@ GENERATED_PLUGINS=\
 	color_panel \
 	file_chooser \
 	menubar \
-	sample \
 	url_launcher_fde \
 	window_size \
 
@@ -26,7 +25,6 @@ PLUGIN_CPPFLAGS=$(foreach plugin,$(GENERATED_PLUGINS),\
 $(OUT_DIR)/libcolor_panel_plugin.so: | color_panel
 $(OUT_DIR)/libfile_chooser_plugin.so: | file_chooser
 $(OUT_DIR)/libmenubar_plugin.so: | menubar
-$(OUT_DIR)/libsample_plugin.so: | sample
 $(OUT_DIR)/liburl_launcher_fde_plugin.so: | url_launcher_fde
 $(OUT_DIR)/libwindow_size_plugin.so: | window_size
 
