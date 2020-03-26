@@ -24,6 +24,9 @@
     <ClCompile Include="runner\run_loop.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="runner\flutter_window.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="runner\win32_window.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -44,13 +47,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="runner\run_loop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="runner\flutter_window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="runner\win32_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="runner\window_configuration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="runner\run_loop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="runner\resource.h">

@@ -59,6 +59,9 @@ bool Win32Window::CreateAndShow(const std::wstring &title, const Point &origin,
       Scale(origin.y, scale_factor), Scale(size.width, scale_factor),
       Scale(size.height, scale_factor), nullptr, nullptr,
       window_class.hInstance, this);
+
+  OnCreate();
+
   return window != nullptr;
 }
 
@@ -152,6 +155,8 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
 }
 
 void Win32Window::Destroy() {
+  OnDestroy();
+
   if (window_handle_) {
     DestroyWindow(window_handle_);
     window_handle_ = nullptr;
@@ -181,4 +186,12 @@ HWND Win32Window::GetHandle() { return window_handle_; }
 
 void Win32Window::SetQuitOnClose(bool quit_on_close) {
   quit_on_close_ = quit_on_close;
+}
+
+void Win32Window::OnCreate() {
+  // No-op; provided for subclasses.
+}
+
+void Win32Window::OnDestroy() {
+  // No-op; provided for subclasses.
 }
