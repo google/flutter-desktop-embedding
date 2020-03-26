@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "flutter/generated_plugin_registrant.h"
+#include "run_loop.h"
 #include "win32_window.h"
 #include "window_configuration.h"
 
@@ -38,31 +39,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   // Parent and resize Flutter view into top-level window.
   window.SetChildContent(flutter_controller.view()->GetNativeWindow());
+  window.SetQuitOnClose(true);
 
-  // Run messageloop with a hook for flutter_controller to do work until
-  // the window is closed.
-  std::chrono::nanoseconds wait_duration(0);
-  // Run until the window is closed.
-  while (window.GetHandle() != nullptr) {
-    MsgWaitForMultipleObjects(0, nullptr, FALSE,
-                              static_cast<DWORD>(wait_duration.count() / 1000),
-                              QS_ALLINPUT);
-    MSG message;
-    // All pending Windows messages must be processed; MsgWaitForMultipleObjects
-    // won't return again for items left in the queue after PeekMessage.
-    while (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
-      if (message.message == WM_QUIT) {
-        window.Destroy();
-        break;
-      }
-      TranslateMessage(&message);
-      DispatchMessage(&message);
-    }
-    // Allow Flutter to process its messages.
-    // TODO: Consider interleaving processing on a per-message basis to avoid
-    // the possibility of one queue starving the other.
-    wait_duration = flutter_controller.ProcessMessages();
-  }
-
+  RunLoop run_loop;
+  run_loop.RegisterFlutterInstance(&flutter_controller);
+  run_loop.Run();
   return EXIT_SUCCESS;
 }

@@ -111,6 +111,9 @@ Win32Window::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam,
     case WM_DESTROY:
       window_handle_ = nullptr;
       Destroy();
+      if (quit_on_close_) {
+        PostQuitMessage(0);
+      }
       return 0;
 
     case WM_DPICHANGED: {
@@ -175,3 +178,7 @@ void Win32Window::SetChildContent(HWND content) {
 }
 
 HWND Win32Window::GetHandle() { return window_handle_; }
+
+void Win32Window::SetQuitOnClose(bool quit_on_close) {
+  quit_on_close_ = quit_on_close;
+}

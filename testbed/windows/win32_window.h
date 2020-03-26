@@ -48,6 +48,9 @@ class Win32Window {
   // window properties. Returns nullptr if the window has been destroyed.
   HWND GetHandle();
 
+  // If true, closing this window will quit the application.
+  void SetQuitOnClose(bool quit_on_close);
+
  protected:
   // Registers a window class with default style attributes, cursor and
   // icon.
@@ -70,11 +73,10 @@ class Win32Window {
                  LPARAM const lparam) noexcept;
 
  private:
-  // should message loop keep running
-  bool messageloop_running_ = true;
-
   // Retrieves a class instance pointer for |window|
   static Win32Window *GetThisFromHandle(HWND const window) noexcept;
+
+  bool quit_on_close_ = false;
 
   // window handle for top level window.
   HWND window_handle_ = nullptr;

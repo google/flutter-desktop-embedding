@@ -226,6 +226,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="flutter\generated_plugin_registrant.cc" />
+    <ClCompile Include="run_loop.cc" />
     <ClCompile Include="window_configuration.cpp" />
     <ClCompile Include="win32_window.cc" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\engine_method_result.cc" />
@@ -235,6 +236,7 @@
   <ItemGroup>
     <ClInclude Include="flutter\generated_plugin_registrant.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="run_loop.h" />
     <ClInclude Include="win32_window.h" />
     <ClInclude Include="window_configuration.h" />
   </ItemGroup>
