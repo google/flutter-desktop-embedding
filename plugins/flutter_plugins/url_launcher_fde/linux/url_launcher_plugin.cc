@@ -31,7 +31,7 @@ using flutter::EncodableValue;
 
 // utility function to compare url schemes
 bool StartsWith(const std::string& s, const std::string& prefix) {
-    return s.size() >= prefix.size() && s.compare(0, prefix.size(), prefix) == 0;
+    return s.compare(0, prefix.size(), prefix) == 0;
 }
 
 class UrlLauncherPlugin : public flutter::Plugin {
