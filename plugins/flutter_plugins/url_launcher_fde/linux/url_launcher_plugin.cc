@@ -29,6 +29,11 @@ namespace {
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
+// utility function to compare url schemes
+bool StartsWith(const std::string& s, const std::string& prefix) {
+    return s.size() >= prefix.size() && s.compare(0, prefix.size(), prefix) == 0;
+}
+
 class UrlLauncherPlugin : public flutter::Plugin {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
@@ -43,11 +48,6 @@ class UrlLauncherPlugin : public flutter::Plugin {
       const flutter::MethodCall<EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
 };
-
-// utility function to compare url schemes
-static bool startsWith(const std::string& s, const std::string& prefix) {
-    return s.size() >= prefix.size() && s.compare(0, prefix.size(), prefix) == 0;
-}
 
 // static
 void UrlLauncherPlugin::RegisterWithRegistrar(
@@ -118,9 +118,9 @@ void UrlLauncherPlugin::HandleMethodCall(
       return;
     }
 
-    flutter::EncodableValue response(startsWith(url, "https:") ||
-        startsWith(url, "http:") || startsWith(url, "ftp:") ||
-        startsWith(url, "file:"));
+    flutter::EncodableValue response(StartsWith(url, "https:") ||
+        StartsWith(url, "http:") || StartsWith(url, "ftp:") ||
+        StartsWith(url, "file:"));
     result->Success(&response);
     return;
   } else {
