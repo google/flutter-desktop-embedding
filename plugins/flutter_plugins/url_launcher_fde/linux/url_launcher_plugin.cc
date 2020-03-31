@@ -44,6 +44,11 @@ class UrlLauncherPlugin : public flutter::Plugin {
       std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
 };
 
+// utility function to compare url schemes
+static bool startsWith(const std::string& s, const std::string& prefix) {
+    return s.size() >= prefix.size() && s.compare(0, prefix.size(), prefix) == 0;
+}
+
 // static
 void UrlLauncherPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrar *registrar) {
@@ -69,6 +74,7 @@ UrlLauncherPlugin::~UrlLauncherPlugin() = default;
 void UrlLauncherPlugin::HandleMethodCall(
     const flutter::MethodCall<EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
+  // Handle launch
   if (method_call.method_name().compare("launch") == 0) {
     std::string url;
     if (method_call.arguments() && method_call.arguments()->IsMap()) {
@@ -97,6 +103,30 @@ void UrlLauncherPlugin::HandleMethodCall(
       return;
     }
     result->Success();
+  // Handle canLaunch
+  } else if (method_call.method_name().compare("canLaunch") == 0) {
+    std::string url;
+    if (method_call.arguments() && method_call.arguments()->IsMap()) {
+      const EncodableMap &arguments = method_call.arguments()->MapValue();
+      auto url_it = arguments.find(EncodableValue("url"));
+      if (url_it != arguments.end()) {
+        url = url_it->second.StringValue();
+      }
+    }
+    if (url.empty()) {
+      result->Error("argument_error", "No URL provided");
+      return;
+    }
+
+    if (startsWith(url, "https://") || (startsWith(url, "http://")) || (startsWith(url, "ftp://"))) {
+      flutter::EncodableValue response(true);
+      result->Success(&response);
+      return;
+    } else {
+      flutter::EncodableValue response(false);
+      result->Success(&response);
+      return;
+    }
   } else {
     result->NotImplemented();
   }
