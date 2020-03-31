@@ -29,9 +29,9 @@ namespace {
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-// utility function to compare url schemes
-bool StartsWith(const std::string& s, const std::string& prefix) {
-    return s.compare(0, prefix.size(), prefix) == 0;
+// Returns true if |s| starts with |prefix|.
+bool StartsWith(const std::string &s, const std::string &prefix) {
+  return s.compare(0, prefix.size(), prefix) == 0;
 }
 
 class UrlLauncherPlugin : public flutter::Plugin {
@@ -116,9 +116,9 @@ void UrlLauncherPlugin::HandleMethodCall(
       return;
     }
 
-    flutter::EncodableValue response(StartsWith(url, "https:") ||
-        StartsWith(url, "http:") || StartsWith(url, "ftp:") ||
-        StartsWith(url, "file:"));
+    flutter::EncodableValue response(
+        StartsWith(url, "https:") || StartsWith(url, "http:") ||
+        StartsWith(url, "ftp:") || StartsWith(url, "file:"));
     result->Success(&response);
     return;
   } else {
