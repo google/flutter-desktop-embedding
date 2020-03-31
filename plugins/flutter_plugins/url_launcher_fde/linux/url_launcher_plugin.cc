@@ -119,7 +119,8 @@ void UrlLauncherPlugin::HandleMethodCall(
     }
 
     flutter::EncodableValue response(startsWith(url, "https:") ||
-        startsWith(url, "http:") || startsWith(url, "ftp:"));
+        startsWith(url, "http:") || startsWith(url, "ftp:") ||
+        startsWith(url, "file:"));
     result->Success(&response);
     return;
   } else {
