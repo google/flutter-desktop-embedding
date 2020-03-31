@@ -118,15 +118,10 @@ void UrlLauncherPlugin::HandleMethodCall(
       return;
     }
 
-    if (startsWith(url, "https://") || (startsWith(url, "http://")) || (startsWith(url, "ftp://"))) {
-      flutter::EncodableValue response(true);
-      result->Success(&response);
-      return;
-    } else {
-      flutter::EncodableValue response(false);
-      result->Success(&response);
-      return;
-    }
+    flutter::EncodableValue response(startsWith(url, "https:") ||
+        startsWith(url, "http:") || startsWith(url, "ftp:"));
+    result->Success(&response);
+    return;
   } else {
     result->NotImplemented();
   }
