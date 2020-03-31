@@ -74,7 +74,6 @@ UrlLauncherPlugin::~UrlLauncherPlugin() = default;
 void UrlLauncherPlugin::HandleMethodCall(
     const flutter::MethodCall<EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
-  // Handle launch
   if (method_call.method_name().compare("launch") == 0) {
     std::string url;
     if (method_call.arguments() && method_call.arguments()->IsMap()) {
@@ -103,7 +102,6 @@ void UrlLauncherPlugin::HandleMethodCall(
       return;
     }
     result->Success();
-  // Handle canLaunch
   } else if (method_call.method_name().compare("canLaunch") == 0) {
     std::string url;
     if (method_call.arguments() && method_call.arguments()->IsMap()) {
