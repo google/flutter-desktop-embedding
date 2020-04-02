@@ -40,7 +40,7 @@ const char kEnabledKey[] = "enabled";
 const char kChildrenKey[] = "children";
 const char kDividerKey[] = "isDivider";
 
-}
+}  // namespace
 
 class MenubarPlugin : public flutter::Plugin {
  public:
@@ -227,9 +227,9 @@ void MenubarPlugin::HandleMethodCall(
 
 }  // namespace plugins_menubar
 
-void MenubarPluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
-  // The plugin registrar owns the plugin, registered callbacks, etc., so must
-  // remain valid for the life of the application.
-  static auto *plugin_registrar = new flutter::PluginRegistrar(registrar);
-  plugins_menubar::MenubarPlugin::RegisterWithRegistrar(plugin_registrar);
+void MenubarPluginRegisterWithRegistrar(
+    FlutterDesktopPluginRegistrarRef registrar) {
+  plugins_menubar::MenubarPlugin::RegisterWithRegistrar(
+      flutter::PluginRegistrarManager::GetInstance()
+          ->GetRegistrar<flutter::PluginRegistrar>(registrar));
 }

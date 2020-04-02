@@ -323,7 +323,7 @@ void FileChooserPlugin::RegisterWithRegistrar(
 FileChooserPlugin::FileChooserPlugin(flutter::PluginRegistrarWindows *registrar)
     : registrar_(registrar) {}
 
-FileChooserPlugin::~FileChooserPlugin(){};
+FileChooserPlugin::~FileChooserPlugin() {}
 
 void FileChooserPlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
@@ -349,10 +349,7 @@ void FileChooserPlugin::HandleMethodCall(
 
 void FileChooserPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
-  // The plugin registrar owns the plugin, registered callbacks, etc., so must
-  // remain valid for the life of the application.
-  static auto *plugin_registrar =
-      new flutter::PluginRegistrarWindows(registrar);
-
-  FileChooserPlugin::RegisterWithRegistrar(plugin_registrar);
+  FileChooserPlugin::RegisterWithRegistrar(
+      flutter::PluginRegistrarManager::GetInstance()
+          ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }
