@@ -29,6 +29,11 @@ namespace {
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
+// Returns true if |s| starts with |prefix|.
+bool StartsWith(const std::string &s, const std::string &prefix) {
+  return s.compare(0, prefix.size(), prefix) == 0;
+}
+
 class UrlLauncherPlugin : public flutter::Plugin {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
@@ -97,6 +102,25 @@ void UrlLauncherPlugin::HandleMethodCall(
       return;
     }
     result->Success();
+  } else if (method_call.method_name().compare("canLaunch") == 0) {
+    std::string url;
+    if (method_call.arguments() && method_call.arguments()->IsMap()) {
+      const EncodableMap &arguments = method_call.arguments()->MapValue();
+      auto url_it = arguments.find(EncodableValue("url"));
+      if (url_it != arguments.end()) {
+        url = url_it->second.StringValue();
+      }
+    }
+    if (url.empty()) {
+      result->Error("argument_error", "No URL provided");
+      return;
+    }
+
+    flutter::EncodableValue response(
+        StartsWith(url, "https:") || StartsWith(url, "http:") ||
+        StartsWith(url, "ftp:") || StartsWith(url, "file:"));
+    result->Success(&response);
+    return;
   } else {
     result->NotImplemented();
   }
