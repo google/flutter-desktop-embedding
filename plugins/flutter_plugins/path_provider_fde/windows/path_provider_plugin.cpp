@@ -15,7 +15,7 @@
 
 #include <ShlObj.h>
 #include <flutter/method_channel.h>
-#include <flutter/plugin_registrar.h>
+#include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 #include <windows.h>
 
@@ -157,8 +157,7 @@ void PathProviderPlugin::HandleMethodCall(
 
 void PathProviderPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
-  // The plugin registrar owns the plugin, registered callbacks, etc., so must
-  // remain valid for the life of the application.
-  static auto *plugin_registrar = new flutter::PluginRegistrar(registrar);
-  PathProviderPlugin::RegisterWithRegistrar(plugin_registrar);
+  PathProviderPlugin::RegisterWithRegistrar(
+      flutter::PluginRegistrarManager::GetInstance()
+          ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }

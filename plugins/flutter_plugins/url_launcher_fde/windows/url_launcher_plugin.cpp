@@ -18,7 +18,7 @@
 
 #include <VersionHelpers.h>
 #include <flutter/method_channel.h>
-#include <flutter/plugin_registrar.h>
+#include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 
 #include <memory>
@@ -110,8 +110,7 @@ void UrlLauncherPlugin::HandleMethodCall(
 
 void UrlLauncherPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
-  // The plugin registrar owns the plugin, registered callbacks, etc., so must
-  // remain valid for the life of the application.
-  static auto *plugin_registrar = new flutter::PluginRegistrar(registrar);
-  UrlLauncherPlugin::RegisterWithRegistrar(plugin_registrar);
+  UrlLauncherPlugin::RegisterWithRegistrar(
+      flutter::PluginRegistrarManager::GetInstance()
+          ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }
