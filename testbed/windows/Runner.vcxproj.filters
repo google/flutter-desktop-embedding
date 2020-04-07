@@ -21,13 +21,13 @@
     <ClCompile Include="runner\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="runner\run_loop.cc">
+    <ClCompile Include="runner\run_loop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="runner\flutter_window.cc">
+    <ClCompile Include="runner\flutter_window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="runner\win32_window.cc">
+    <ClCompile Include="runner\win32_window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="runner\window_configuration.cpp">

@@ -226,10 +226,10 @@
   <ItemGroup>
     <ClCompile Include="runner\main.cpp" />
     <ClCompile Include="flutter\generated_plugin_registrant.cc" />
-    <ClCompile Include="runner\run_loop.cc" />
+    <ClCompile Include="runner\run_loop.cpp" />
     <ClCompile Include="runner\window_configuration.cpp" />
-    <ClCompile Include="runner\win32_window.cc" />
-    <ClCompile Include="runner\flutter_window.cc" />
+    <ClCompile Include="runner\win32_window.cpp" />
+    <ClCompile Include="runner\flutter_window.cpp" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\engine_method_result.cc" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\flutter_view_controller.cc" />
     <ClCompile Include="$(FLUTTER_EPHEMERAL_DIR)\cpp_client_wrapper\plugin_registrar.cc" />

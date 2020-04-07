@@ -33,5 +33,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance,
   }
   window.SetQuitOnClose(true);
 
+  run_loop.Run();
+
   return EXIT_SUCCESS;
 }
