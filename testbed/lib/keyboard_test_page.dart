@@ -96,6 +96,12 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
         logicalKey = data.logicalKey.debugName;
         physicalKey = data.physicalKey.debugName;
         break;
+      case RawKeyEventDataWindows:
+        final RawKeyEventDataWindows data = event.data;
+        keyCode = data.keyCode;
+        logicalKey = data.logicalKey.debugName;
+        physicalKey = data.physicalKey.debugName;
+        break;
       default:
         throw new Exception('Unsupported platform ${event.data.runtimeType}');
     }
