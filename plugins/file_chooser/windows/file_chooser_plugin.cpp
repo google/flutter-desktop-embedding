@@ -349,6 +349,7 @@ void FileChooserPlugin::HandleMethodCall(
 
 void FileChooserPluginRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
+  CoInitialize(0);
   FileChooserPlugin::RegisterWithRegistrar(
       flutter::PluginRegistrarManager::GetInstance()
           ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
