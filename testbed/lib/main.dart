@@ -18,13 +18,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:color_panel/color_panel.dart';
-import 'package:example_flutter/keyboard_test_page.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
+
+import 'keyboard_test_page.dart';
 
 // The shared_preferences key for the testbed's color.
 const _prefKeyColor = 'color';
