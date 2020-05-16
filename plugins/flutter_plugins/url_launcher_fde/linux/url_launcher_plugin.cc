@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "url_launcher_plugin.h"
+#include "include/url_launcher_plugin.h"
 
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar.h>
