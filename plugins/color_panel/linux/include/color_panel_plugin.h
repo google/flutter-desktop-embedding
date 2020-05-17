@@ -16,7 +16,9 @@
 
 // A plugin for communicating with a native color picker panel.
 
-#include <flutter_plugin_registrar.h>
+#include <flutter_linux/flutter_linux.h>
+
+G_BEGIN_DECLS
 
 #ifdef FLUTTER_PLUGIN_IMPL
 #define FLUTTER_PLUGIN_EXPORT __attribute__((visibility("default")))
@@ -24,15 +26,9 @@
 #define FLUTTER_PLUGIN_EXPORT
 #endif
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+FLUTTER_PLUGIN_EXPORT void color_panel_plugin_register_with_registrar(
+    FlPluginRegistrar* registrar);
 
-FLUTTER_PLUGIN_EXPORT void ColorPanelPluginRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrarRef registrar);
-
-#if defined(__cplusplus)
-}  // extern "C"
-#endif
+G_END_DECLS
 
 #endif  // PLUGINS_COLOR_PANEL_LINUX_COLOR_PANEL_PLUGIN_H_

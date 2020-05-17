@@ -13,23 +13,8 @@
 // limitations under the License.
 #include "include/window_size_plugin.h"
 
-#include <flutter/flutter_window.h>
-#include <flutter/method_channel.h>
-#include <flutter/plugin_registrar_glfw.h>
-#include <flutter/standard_method_codec.h>
+#include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
-
-#include <iostream>
-#include <memory>
-#include <vector>
-
-namespace plugins_window_size {
-
-namespace {
-
-using flutter::EncodableList;
-using flutter::EncodableMap;
-using flutter::EncodableValue;
 
 // See window_size_channel.dart for documentation.
 const char kChannelName[] = "flutter/windowsize";
@@ -41,6 +26,76 @@ const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
 const char kScreenKey[] = "screen";
+
+G_DECLARE_FINAL_TYPE(FlWindowSizePlugin, fl_window_size_plugin, FL,
+                     WINDOW_SIZE_PLUGIN, FlPlugin)
+
+struct _FlWindowSizePlugin {
+  FlPlugin parent_instance;
+
+  FlView *view;
+  FlMethodChannel* channel;
+};
+
+G_DEFINE_TYPE(FlWindowSizePlugin, fl_window_size_plugin, fl_plugin_get_type())
+
+static void method_call_cb(FlMethodChannel* channel, const gchar* method,
+                           FlValue* args,
+                           FlMethodChannelResponseHandle* response_handle,
+                           gpointer user_data) {
+  FlWindowSizePlugin* self = FL_WINDOW_SIZE_PLUGIN(user_data);
+
+  if (strcmp(method, kGetScreenListMethod) == 0) {
+    g_autoptr(FlValue) result = fl_value_new_list();
+    //FIXME
+    fl_method_channel_respond_success(channel, response_handle, result, nullptr);
+  } else if (strcmp(method, kGetWindowInfoMethod) == 0) {
+    GtkWindow *window = GTK_WINDOW(gtk_widget_get_parent(self->view));
+    gint x, y;
+    gtk_window_get_position(window, &x, &y);
+    gint width, height;
+    gtk_window_get_size(window, &width, &height);
+
+    g_autoptr(FlValue) result = fl_value_new_map();
+    g_autoptr(FlValue) frame = fl_value_new_list();
+    fl_value_append_take(frame, fl_value_new_double(x));
+    fl_value_append_take(frame, fl_value_new_double(y));
+    fl_value_append_take(frame, fl_value_new_double(width));
+    fl_value_append_take(frame, fl_value_new_double(height));
+    fl_value_set_string(result, kFrameKey, frame);
+    fl_value_set_string_take(result, kScreenKey, ...);
+    fl_value_set_string_take(result, kScaleFactorKey, ...);
+
+    fl_method_channel_respond_success(channel, response_handle, result, nullptr);
+  } else if (strcmp(method, kSetWindowFrameMethod) == 0) {
+    if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
+        fl_value_get_length(args) != 4) {
+      fl_method_channel_respond_not_error(channel, response_handle, "Bad arguments", "Expected 4-element list", nullptr);
+      return;
+    }
+
+    GtkWindow *window = GTK_WINDOW(gtk_widget_get_parent(self->view));
+
+    double x = fl_value_get_double(fl_value_get_list_value(args, 0));
+    double y = fl_value_get_double(fl_value_get_list_value(args, 1));
+    double width = fl_value_get_double(fl_value_get_list_value(args, 2));
+    double height = fl_value_get_double(fl_value_get_list_value(args, 3));
+    gtk_window_move(window, x, y);
+    gtk_window_resize(window, width, height);
+
+    fl_method_channel_respond_success(channel, response_handle, nullptr, nullptr);
+  } else if (strcmp(method, kSetWindowTitleMethod) == 0) {
+    if (fl_value_get_type(args) != FL_VALUE_TYPE_STRING) {
+      fl_method_channel_respond_not_error(channel, response_handle, "Bad arguments", "Expected string", nullptr);
+      return;
+    }
+    gtk_window_set_title(GTK_WINDOW(gtk_widget_get_parent(self->view)), fl_value_get_string(args));
+
+    fl_method_channel_respond_success(channel, response_handle, nullptr, nullptr);
+  } else
+    fl_method_channel_respond_not_implemented(channel, response_handle,
+                                              nullptr);
+}
 
 // Returns the screen object that contains monitors.
 GdkScreen *GetScreen() {
@@ -168,26 +223,6 @@ class WindowSizePlugin : public flutter::Plugin {
   flutter::FlutterWindow *window_;
 };
 
-// static
-void WindowSizePlugin::RegisterWithRegistrar(
-    flutter::PluginRegistrarGlfw *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
-      registrar->messenger(), kChannelName,
-      &flutter::StandardMethodCodec::GetInstance());
-  auto *channel_pointer = channel.get();
-
-  // Uses new instead of make_unique due to private constructor.
-  std::unique_ptr<WindowSizePlugin> plugin(
-      new WindowSizePlugin(std::move(channel), registrar->window()));
-
-  channel_pointer->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto &call, auto result) {
-        plugin_pointer->HandleMethodCall(call, std::move(result));
-      });
-
-  registrar->AddPlugin(std::move(plugin));
-}
-
 WindowSizePlugin::WindowSizePlugin(
     std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel,
     flutter::FlutterWindow *window)
@@ -211,44 +246,38 @@ void WindowSizePlugin::HandleMethodCall(
           GetPlatformChannelRepresentationForMonitor(screen, i));
     }
     result->Success(&screens);
-  } else if (method_call.method_name().compare(kGetWindowInfoMethod) == 0) {
-    EncodableValue window_info =
-        GetPlatformChannelRepresentationForWindow(window_);
-    result->Success(&window_info);
-  } else if (method_call.method_name().compare(kSetWindowFrameMethod) == 0) {
-    if (!method_call.arguments() || !method_call.arguments()->IsList() ||
-        method_call.arguments()->ListValue().size() != 4) {
-      result->Error("Bad arguments", "Expected 4-element list");
-      return;
-    }
-    // Frame validity (e.g., non-zero size) is assumed to be checked on the Dart
-    // side of the call.
-    const auto &frame_list = method_call.arguments()->ListValue();
-    flutter::WindowFrame frame = {};
-    frame.left = static_cast<int>(frame_list[0].DoubleValue());
-    frame.top = static_cast<int>(frame_list[1].DoubleValue());
-    frame.width = static_cast<int>(frame_list[2].DoubleValue());
-    frame.height = static_cast<int>(frame_list[3].DoubleValue());
-    window_->SetFrame(frame);
-    result->Success();
-  } else if (method_call.method_name().compare(kSetWindowTitleMethod) == 0) {
-    if (!method_call.arguments() || !method_call.arguments()->IsString()) {
-      result->Error("Bad arguments", "Expected string");
-      return;
-    }
-    const auto &title = method_call.arguments()->StringValue();
-    window_->SetTitle(title);
-    result->Success();
-  } else {
-    result->NotImplemented();
-  }
 }
 
-}  // namespace plugins_window_size
+static void fl_window_size_plugin_dispose(GObject* object) {
+  FlWindowSizePlugin* self = FL_WINDOW_SIZE_PLUGIN(object);
 
-void WindowSizePluginRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrarRef registrar) {
-  plugins_window_size::WindowSizePlugin::RegisterWithRegistrar(
-      flutter::PluginRegistrarManager::GetInstance()
-          ->GetRegistrar<flutter::PluginRegistrarGlfw>(registrar));
+  g_clear_object(&self->channel);
+
+  G_OBJECT_CLASS(fl_window_size_plugin_parent_class)->dispose(object);
+}
+
+static void fl_window_size_plugin_class_init(FlWindowSizePluginClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = fl_window_size_plugin_dispose;
+}
+
+static void fl_window_size_plugin_init(FlWindowSizePlugin* self) {}
+
+static FlWindowSizePlugin* fl_window_size_plugin_new(
+    FlPluginRegistrar* registrar) {
+  FlWindowSizePlugin* self = FL_WINDOW_SIZE_PLUGIN(
+      g_object_new(fl_window_size_plugin_get_type(), nullptr));
+
+  self->view = fl_plugin_registrar_get_view(registrar);
+  self->channel =
+      fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
+                            kChannelName, fl_standard_method_codec_new());
+  fl_method_channel_set_method_call_handler(self->channel, method_call_cb,
+                                            self);
+
+  return self;
+}
+
+void window_size_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
+  g_autoptr(FlWindowSizePlugin) plugin = fl_window_size_plugin_new(registrar);
+  fl_plugin_registrar_add_plugin(registrar, FL_PLUGIN(plugin));
 }

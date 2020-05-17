@@ -16,7 +16,9 @@
 
 // A plugin to show native save/open file choosers.
 
-#include <flutter_plugin_registrar.h>
+#include <flutter_linux/flutter_linux.h>
+
+G_BEGIN_DECLS
 
 #ifdef FLUTTER_PLUGIN_IMPL
 #define FLUTTER_PLUGIN_EXPORT __attribute__((visibility("default")))
@@ -24,15 +26,9 @@
 #define FLUTTER_PLUGIN_EXPORT
 #endif
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+FLUTTER_PLUGIN_EXPORT void file_chooser_plugin_register_with_registrar(
+    FlPluginRegistrar* registrar);
 
-FLUTTER_PLUGIN_EXPORT void FileChooserPluginRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrarRef registrar);
-
-#if defined(__cplusplus)
-}  // extern "C"
-#endif
+G_END_DECLS
 
 #endif  // PLUGINS_FILE_CHOOSER_LINUX_FILE_CHOOSER_PLUGIN_H_
