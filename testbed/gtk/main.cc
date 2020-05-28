@@ -1,6 +1,7 @@
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
 
+#include "flutter/gtk_plugin_registrant.h"
 #include "window_configuration.h"
 
 int main(int argc, char** argv) {
@@ -17,6 +18,8 @@ int main(int argc, char** argv) {
   FlView* view = fl_view_new(project);
   gtk_widget_show(GTK_WIDGET(view));
   gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(view));
+
+  fl_register_plugins(FL_PLUGIN_REGISTRY(view));
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 
