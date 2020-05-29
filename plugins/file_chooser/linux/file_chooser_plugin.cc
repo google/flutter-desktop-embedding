@@ -79,7 +79,7 @@ class FileChooserPlugin : public flutter::Plugin {
 // Takes the method args and attempts to apply filters to the file chooser
 // (in the event that they exist).
 static void ProcessFilters(const EncodableMap &method_args,
-                           GtkFileChooser *chooser) {
+                           GtkFileChooserNative *chooser) {
   const EncodableValue &allowed_file_types =
       ValueOrNull(method_args, kAllowedFileTypesKey);
   if (!allowed_file_types.IsList() || allowed_file_types.ListValue().empty()) {
@@ -109,27 +109,27 @@ static void ProcessFilters(const EncodableMap &method_args,
 // would modify the file chooser: whether multiple files can be selected,
 // whether a directory is a valid target, etc.
 static void ProcessAttributes(const EncodableMap &method_args,
-                              GtkFileChooser *chooser) {
+                              GtkFileChooserNative *chooser) {
   EncodableValue allow_multiple_selection =
       ValueOrNull(method_args, kAllowsMultipleSelectionKey);
   if (!allow_multiple_selection.IsNull()) {
-    gtk_file_chooser_set_select_multiple(chooser,
+    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser),
                                          allow_multiple_selection.BoolValue());
   }
   EncodableValue choose_dirs =
       ValueOrNull(method_args, kCanChooseDirectoriesKey);
   if (!choose_dirs.IsNull() && choose_dirs.BoolValue()) {
-    gtk_file_chooser_set_action(chooser, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    gtk_file_chooser_set_action(GTK_FILE_CHOOSER(chooser), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
   }
   EncodableValue start_dir = ValueOrNull(method_args, kInitialDirectoryKey);
   if (!start_dir.IsNull()) {
-    gtk_file_chooser_set_current_folder(chooser,
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser),
                                         start_dir.StringValue().c_str());
   }
   EncodableValue initial_file_name =
       ValueOrNull(method_args, kInitialFileNameKey);
   if (!initial_file_name.IsNull()) {
-    gtk_file_chooser_set_current_name(chooser,
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser),
                                       initial_file_name.StringValue().c_str());
   }
 }
@@ -141,21 +141,21 @@ static void ProcessAttributes(const EncodableMap &method_args,
 // string, then this returns a file saver dialog.
 //
 // If the method is not recognized as one of those above, will return a nullptr.
-static GtkWidget *CreateFileChooserFromMethod(const std::string &method,
-                                              const std::string &ok_button) {
-  GtkWidget *chooser = nullptr;
+static GtkFileChooserNative *CreateFileChooserFromMethod(const std::string &method,
+                                                         const std::string &ok_button) {
+  GtkFileChooserNative *chooser = nullptr;
   if (method == kShowOpenPanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-    chooser = gtk_file_chooser_dialog_new(
+    chooser = gtk_file_chooser_native_new(
         "Open File", NULL, action,
-        ok_button.empty() ? "_Open" : ok_button.c_str(), GTK_RESPONSE_ACCEPT,
-        "_Cancel", GTK_RESPONSE_CANCEL, NULL);
+        ok_button.empty() ? "_Open" : ok_button.c_str(),
+        "_Cancel");
   } else if (method == kShowSavePanelMethod) {
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
-    chooser = gtk_file_chooser_dialog_new(
+    chooser = gtk_file_chooser_native_new(
         "Save File", NULL, action,
-        ok_button.empty() ? "_Save" : ok_button.c_str(), GTK_RESPONSE_ACCEPT,
-        "_Cancel", GTK_RESPONSE_CANCEL, NULL);
+        ok_button.empty() ? "_Save" : ok_button.c_str(),
+        "_Cancel");
   }
   return chooser;
 }
@@ -164,21 +164,21 @@ static GtkWidget *CreateFileChooserFromMethod(const std::string &method,
 //
 // The args determine the modifications to the file chooser, like filters,
 // being able to choose multiple files, etc.
-static GtkWidget *CreateFileChooser(const std::string &method,
-                                    const EncodableMap &args) {
+static GtkFileChooserNative *CreateFileChooser(const std::string &method,
+                                               const EncodableMap &args) {
   EncodableValue ok_button_value = ValueOrNull(args, kConfirmButtonTextKey);
   std::string ok_button_str;
   if (!ok_button_value.IsNull()) {
     ok_button_str = ok_button_value.StringValue();
   }
-  GtkWidget *chooser = CreateFileChooserFromMethod(method, ok_button_str);
+  GtkFileChooserNative *chooser = CreateFileChooserFromMethod(method, ok_button_str);
   if (chooser == nullptr) {
     std::cerr << "Could not determine method for file chooser from: " << method
               << std::endl;
     return chooser;
   }
-  ProcessFilters(args, GTK_FILE_CHOOSER(chooser));
-  ProcessAttributes(args, GTK_FILE_CHOOSER(chooser));
+  ProcessFilters(args, chooser);
+  ProcessAttributes(args, chooser);
   return chooser;
 }
 
@@ -238,7 +238,7 @@ void FileChooserPlugin::HandleMethodCall(
     result->NotImplemented();
     return;
   }
-  gint chooser_result = gtk_dialog_run(GTK_DIALOG(chooser));
+  gint chooser_result = gtk_native_dialog_run(GTK_NATIVE_DIALOG(chooser));
   std::vector<std::string> filenames;
   if (chooser_result == GTK_RESPONSE_ACCEPT) {
     GSList *files = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(chooser));
@@ -255,7 +255,7 @@ void FileChooserPlugin::HandleMethodCall(
     }
     g_slist_free(files);
   }
-  gtk_widget_destroy(chooser);
+  g_object_unref(chooser);
 
   EncodableValue response_object(CreateResponseObject(filenames));
   result->Success(&response_object);
