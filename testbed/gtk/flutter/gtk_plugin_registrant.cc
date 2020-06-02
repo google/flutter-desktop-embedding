@@ -3,9 +3,10 @@
 
 #include "gtk_plugin_registrant.h"
 
+#include <window_size/window_size_plugin.h>
+
 void fl_register_plugins(FlPluginRegistry* registry) {
-  // Example plugin code:
-  // g_autoptr(FlPluginRegistrar) {name}_registrar =
-  // fl_plugin_registry_get_registrar_for_plugin(registry, "{class}");
-  //{name}_panel_plugin_register_with_registrar({name}_registrar);
+  g_autoptr(FlPluginRegistrar) window_size_registrar =
+      fl_plugin_registry_get_registrar_for_plugin(registry, "WindowSizePlugin");
+  window_size_plugin_register_with_registrar(window_size_registrar);
 }
