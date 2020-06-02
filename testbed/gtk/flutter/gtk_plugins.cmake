@@ -1,6 +1,7 @@
 # Once the Flutter tooling switches to use GTK, this will be generated automatically.
 # For now, plugins must be added here manually.
 list(APPEND FLUTTER_PLUGIN_LIST
+  file_chooser
 )
 
 foreach(plugin ${FLUTTER_PLUGIN_LIST})
