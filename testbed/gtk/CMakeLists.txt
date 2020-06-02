@@ -34,8 +34,7 @@ pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
 add_executable(${BINARY_NAME}
   "main.cc"
   "window_configuration.cc"
-  # TODO: Add GTK plugin support (making this file manully for now).
-  #"${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
+  "${FLUTTER_MANAGED_DIR}/gtk_plugin_registrant.cc"
 )
 apply_standard_settings(${BINARY_NAME})
 target_link_libraries(${BINARY_NAME} PRIVATE flutter)
@@ -44,8 +43,7 @@ add_dependencies(${BINARY_NAME} flutter_assemble)
 
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
-# TODO: Add GTK plugin support (making this file manully for now).
-#include(flutter/generated_plugins.cmake)
+include(flutter/gtk_plugins.cmake)
 
 
 # === Installation ===
