@@ -188,8 +188,9 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
     response = set_window_frame(self, args);
   } else if (strcmp(method, kSetWindowTitleMethod) == 0) {
     response = set_window_title(self, args);
-  } else
+  } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+  }
 
   g_autoptr(GError) error = nullptr;
   if (!fl_method_call_respond(method_call, response, &error))
