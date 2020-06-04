@@ -155,8 +155,9 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
   } else if (strcmp(method, kShowSavePanelMethod) == 0) {
     response = show_dialog(self, GTK_FILE_CHOOSER_ACTION_SAVE, "Save File",
                            "_Save", args);
-  } else
+  } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+  }
 
   g_autoptr(GError) error = nullptr;
   if (!fl_method_call_respond(method_call, response, &error))
