@@ -77,11 +77,10 @@ static FlMethodResponse* show_dialog(FlFileChooserPlugin* self,
         "Bad Arguments", "Argument map missing or malformed", nullptr));
   }
 
+  const gchar* confirm_button_text = default_confirm_button_text;
   FlValue* value = fl_value_lookup_string(properties, kConfirmButtonTextKey);
-  const gchar* confirm_button_text =
-      fl_value_get_type(value) == FL_VALUE_TYPE_STRING
-          ? fl_value_get_string(value)
-          : default_confirm_button_text;
+  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_STRING)
+    confirm_button_text = fl_value_get_string(value);
 
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
   GtkWindow* window = GTK_WINDOW(gtk_widget_get_parent(GTK_WIDGET(view)));
@@ -90,32 +89,32 @@ static FlMethodResponse* show_dialog(FlFileChooserPlugin* self,
           title, window, action, confirm_button_text, "_Cancel"));
 
   value = fl_value_lookup_string(properties, kAllowsMultipleSelectionKey);
-  if (fl_value_get_type(value) == FL_VALUE_TYPE_BOOL) {
+  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_BOOL) {
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog),
                                          fl_value_get_bool(value));
   }
 
   value = fl_value_lookup_string(properties, kCanChooseDirectoriesKey);
-  if (fl_value_get_type(value) == FL_VALUE_TYPE_BOOL &&
+  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_BOOL &&
       fl_value_get_bool(value)) {
     gtk_file_chooser_set_action(GTK_FILE_CHOOSER(dialog),
                                 GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
   }
 
   value = fl_value_lookup_string(properties, kInitialDirectoryKey);
-  if (fl_value_get_type(value) == FL_VALUE_TYPE_STRING) {
+  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_STRING) {
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
                                         fl_value_get_string(value));
   }
 
   value = fl_value_lookup_string(properties, kInitialFileNameKey);
-  if (fl_value_get_type(value) == FL_VALUE_TYPE_STRING) {
+  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_STRING) {
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
                                       fl_value_get_string(value));
   }
 
   value = fl_value_lookup_string(properties, kAllowedFileTypesKey);
-  if (fl_value_get_type(value) == FL_VALUE_TYPE_LIST) {
+  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_LIST) {
     for (size_t i = 0; i < fl_value_get_length(value); i++) {
       FlValue* file_type = fl_value_get_list_value(value, i);
       g_autoptr(GtkFileFilter) filter = file_type_to_filter(file_type);
@@ -127,14 +126,15 @@ static FlMethodResponse* show_dialog(FlFileChooserPlugin* self,
     }
   }
 
-  gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog));
-
+  gint response = gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog));
   g_autoptr(FlValue) result = fl_value_new_list();
-  g_autoptr(GSList) filenames =
-      gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
-  for (GSList* link = filenames; link != nullptr; link = link->next) {
-    g_autofree gchar* filename = static_cast<gchar*>(link->data);
-    fl_value_append_take(result, fl_value_new_string(filename));
+  if (response == GTK_RESPONSE_ACCEPT) {
+    g_autoptr(GSList) filenames =
+        gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
+    for (GSList* link = filenames; link != nullptr; link = link->next) {
+      g_autofree gchar* filename = static_cast<gchar*>(link->data);
+      fl_value_append_take(result, fl_value_new_string(filename));
+    }
   }
 
   return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
