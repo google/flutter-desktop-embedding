@@ -126,8 +126,9 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
     response = show_color_panel(self, args);
   } else if (strcmp(method, kHideColorPanelMethod) == 0) {
     response = hide_color_panel(self);
-  } else
+  } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+  }
 
   g_autoptr(GError) error = nullptr;
   if (!fl_method_call_respond(method_call, response, &error))
