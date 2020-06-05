@@ -21,7 +21,11 @@ const char kChannelName[] = "flutter/windowsize";
 const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
+const char kSetWindowMinimumSizeMethod[] = "setWindowMinimumSize";
+const char kSetWindowMaximumSizeMethod[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
+const char kGetWindowMinimumSizeMethod[] = "getWindowMinimumSize";
+const char kGetWindowMaximumSizeMethod[] = "getWindowMaximumSize";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
@@ -34,6 +38,9 @@ struct _FlWindowSizePlugin {
 
   // Connection to Flutter engine.
   FlMethodChannel* channel;
+
+  // Requested window geometry.
+  GdkGeometry window_geometry;
 };
 
 G_DEFINE_TYPE(FlWindowSizePlugin, fl_window_size_plugin, g_object_get_type())
@@ -157,6 +164,53 @@ static FlMethodResponse* set_window_frame(FlWindowSizePlugin* self,
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
+// Send updated window geometry to GTK.
+static void update_window_geometry(FlWindowSizePlugin* self) {
+  gtk_window_set_geometry_hints(
+      get_window(self), nullptr, &self->window_geometry,
+      static_cast<GdkWindowHints>(GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE));
+}
+
+// Sets the window minimum size.
+static FlMethodResponse* set_window_minimum_size(FlWindowSizePlugin* self,
+                                                 FlValue* args) {
+  if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
+      fl_value_get_length(args) != 2) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        "Bad arguments", "Expected 2-element list", nullptr));
+  }
+  double width = fl_value_get_float(fl_value_get_list_value(args, 0));
+  double height = fl_value_get_float(fl_value_get_list_value(args, 1));
+
+  if (width >= 0 && height >= 0) {
+    self->window_geometry.min_width = static_cast<gint>(width);
+    self->window_geometry.min_height = static_cast<gint>(height);
+  }
+
+  update_window_geometry(self);
+
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+// Sets the window maximum size.
+static FlMethodResponse* set_window_maximum_size(FlWindowSizePlugin* self,
+                                                 FlValue* args) {
+  if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
+      fl_value_get_length(args) != 2) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        "Bad arguments", "Expected 2-element list", nullptr));
+  }
+  double width = fl_value_get_float(fl_value_get_list_value(args, 0));
+  double height = fl_value_get_float(fl_value_get_list_value(args, 1));
+
+  self->window_geometry.max_width = static_cast<gint>(width);
+  self->window_geometry.max_height = static_cast<gint>(height);
+
+  update_window_geometry(self);
+
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
 // Sets the window title.
 static FlMethodResponse* set_window_title(FlWindowSizePlugin* self,
                                           FlValue* args) {
@@ -169,6 +223,28 @@ static FlMethodResponse* set_window_title(FlWindowSizePlugin* self,
   gtk_window_set_title(window, fl_value_get_string(args));
 
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+// Gets the window minimum size.
+static FlMethodResponse* get_window_minimum_size(FlWindowSizePlugin* self) {
+  g_autoptr(FlValue) size = fl_value_new_list();
+  fl_value_append_take(size,
+                       fl_value_new_float(self->window_geometry.min_width));
+  fl_value_append_take(size,
+                       fl_value_new_float(self->window_geometry.min_height));
+
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(size));
+}
+
+// Gets the window maximum size.
+static FlMethodResponse* get_window_maximum_size(FlWindowSizePlugin* self) {
+  g_autoptr(FlValue) size = fl_value_new_list();
+  fl_value_append_take(size,
+                       fl_value_new_float(self->window_geometry.max_width));
+  fl_value_append_take(size,
+                       fl_value_new_float(self->window_geometry.max_height));
+
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(size));
 }
 
 // Called when a method call is received from Flutter.
@@ -186,8 +262,16 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
     response = get_window_info(self);
   } else if (strcmp(method, kSetWindowFrameMethod) == 0) {
     response = set_window_frame(self, args);
+  } else if (strcmp(method, kSetWindowMinimumSizeMethod) == 0) {
+    response = set_window_minimum_size(self, args);
+  } else if (strcmp(method, kSetWindowMaximumSizeMethod) == 0) {
+    response = set_window_maximum_size(self, args);
   } else if (strcmp(method, kSetWindowTitleMethod) == 0) {
     response = set_window_title(self, args);
+  } else if (strcmp(method, kGetWindowMinimumSizeMethod) == 0) {
+    response = get_window_minimum_size(self);
+  } else if (strcmp(method, kGetWindowMaximumSizeMethod) == 0) {
+    response = get_window_maximum_size(self);
   } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
   }
@@ -210,7 +294,12 @@ static void fl_window_size_plugin_class_init(FlWindowSizePluginClass* klass) {
   G_OBJECT_CLASS(klass)->dispose = fl_window_size_plugin_dispose;
 }
 
-static void fl_window_size_plugin_init(FlWindowSizePlugin* self) {}
+static void fl_window_size_plugin_init(FlWindowSizePlugin* self) {
+  self->window_geometry.min_width = -1;
+  self->window_geometry.min_height = -1;
+  self->window_geometry.max_width = -1;
+  self->window_geometry.max_height = -1;
+}
 
 FlWindowSizePlugin* fl_window_size_plugin_new(FlPluginRegistrar* registrar) {
   FlWindowSizePlugin* self = FL_WINDOW_SIZE_PLUGIN(
