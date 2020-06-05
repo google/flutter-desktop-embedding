@@ -127,8 +127,9 @@ static FlMethodResponse* show_dialog(FlFileChooserPlugin* self,
   }
 
   gint response = gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog));
-  g_autoptr(FlValue) result = fl_value_new_list();
+  g_autoptr(FlValue) result = nullptr;
   if (response == GTK_RESPONSE_ACCEPT) {
+    result = fl_value_new_list();
     g_autoptr(GSList) filenames =
         gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
     for (GSList* link = filenames; link != nullptr; link = link->next) {
