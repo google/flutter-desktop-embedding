@@ -9,7 +9,8 @@ this plugin is and how to use it.
 ## Supported Platforms
 
 - [x] Windows
-- [ ] [Linux](https://github.com/google/flutter-desktop-embedding/issues/105)
+
+macOS and Linux are already supported by `path_provider`.
 
 ## Caveats
 
