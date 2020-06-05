@@ -2,6 +2,7 @@
 # For now, plugins must be added here manually.
 list(APPEND FLUTTER_PLUGIN_LIST
   file_chooser
+  window_size
 )
 
 foreach(plugin ${FLUTTER_PLUGIN_LIST})
