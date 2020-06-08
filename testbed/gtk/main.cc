@@ -22,7 +22,7 @@ static void fl_application_activate(GApplication* application) {
                               kFlutterWindowHeight);
   gtk_window_set_title(window, kFlutterWindowTitle);
 
-  g_autoptr(FlDartProject) project = fl_dart_project_new("data");
+  g_autoptr(FlDartProject) project = fl_dart_project_new();
 
   FlView* view = fl_view_new(project);
   gtk_widget_show(GTK_WIDGET(view));
