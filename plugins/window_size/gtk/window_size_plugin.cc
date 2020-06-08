@@ -18,6 +18,7 @@
 
 // See window_size_channel.dart for documentation.
 const char kChannelName[] = "flutter/windowsize";
+const char kBadArgumentsError[] = "Bad Arguments";
 const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
@@ -149,7 +150,7 @@ static FlMethodResponse* set_window_frame(FlWindowSizePlugin* self,
   if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
       fl_value_get_length(args) != 4) {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        "Bad arguments", "Expected 4-element list", nullptr));
+        kBadArgumentsError, "Expected 4-element list", nullptr));
   }
   double x = fl_value_get_float(fl_value_get_list_value(args, 0));
   double y = fl_value_get_float(fl_value_get_list_value(args, 1));
@@ -177,7 +178,7 @@ static FlMethodResponse* set_window_minimum_size(FlWindowSizePlugin* self,
   if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
       fl_value_get_length(args) != 2) {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        "Bad arguments", "Expected 2-element list", nullptr));
+        kBadArgumentsError, "Expected 2-element list", nullptr));
   }
   double width = fl_value_get_float(fl_value_get_list_value(args, 0));
   double height = fl_value_get_float(fl_value_get_list_value(args, 1));
@@ -198,7 +199,7 @@ static FlMethodResponse* set_window_maximum_size(FlWindowSizePlugin* self,
   if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
       fl_value_get_length(args) != 2) {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        "Bad arguments", "Expected 2-element list", nullptr));
+        kBadArgumentsError, "Expected 2-element list", nullptr));
   }
   double width = fl_value_get_float(fl_value_get_list_value(args, 0));
   double height = fl_value_get_float(fl_value_get_list_value(args, 1));
@@ -216,7 +217,7 @@ static FlMethodResponse* set_window_title(FlWindowSizePlugin* self,
                                           FlValue* args) {
   if (fl_value_get_type(args) != FL_VALUE_TYPE_STRING) {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        "Bad arguments", "Expected string", nullptr));
+        kBadArgumentsError, "Expected string", nullptr));
   }
 
   GtkWindow* window = get_window(self);

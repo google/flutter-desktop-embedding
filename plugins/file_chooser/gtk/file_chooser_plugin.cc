@@ -18,6 +18,7 @@
 
 // See channel_controller.dart for documentation.
 const char kChannelName[] = "flutter/filechooser";
+const char kBadArgumentsError[] = "Bad Arguments";
 const char kShowOpenPanelMethod[] = "FileChooser.Show.Open";
 const char kShowSavePanelMethod[] = "FileChooser.Show.Save";
 const char kInitialDirectoryKey[] = "initialDirectory";
@@ -74,7 +75,7 @@ static FlMethodResponse* show_dialog(FlFileChooserPlugin* self,
                                      FlValue* properties) {
   if (fl_value_get_type(properties) != FL_VALUE_TYPE_MAP) {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        "Bad Arguments", "Argument map missing or malformed", nullptr));
+        kBadArgumentsError, "Argument map missing or malformed", nullptr));
   }
 
   const gchar* confirm_button_text = default_confirm_button_text;
@@ -120,7 +121,7 @@ static FlMethodResponse* show_dialog(FlFileChooserPlugin* self,
       g_autoptr(GtkFileFilter) filter = file_type_to_filter(file_type);
       if (filter == nullptr) {
         return FL_METHOD_RESPONSE(fl_method_error_response_new(
-            "Bad Arguments", "Allowed file types malformed", nullptr));
+            kBadArgumentsError, "Allowed file types malformed", nullptr));
       }
       gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
     }
