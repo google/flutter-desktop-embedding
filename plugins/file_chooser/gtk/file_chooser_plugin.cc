@@ -84,7 +84,7 @@ static FlMethodResponse* show_dialog(FlFileChooserPlugin* self,
     confirm_button_text = fl_value_get_string(value);
 
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
-  GtkWindow* window = GTK_WINDOW(gtk_widget_get_parent(GTK_WIDGET(view)));
+  GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
   g_autoptr(GtkFileChooserNative) dialog =
       GTK_FILE_CHOOSER_NATIVE(gtk_file_chooser_native_new(
           title, window, action, confirm_button_text, "_Cancel"));
