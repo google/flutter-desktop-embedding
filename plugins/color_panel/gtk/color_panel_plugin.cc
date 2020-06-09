@@ -95,7 +95,7 @@ static FlMethodResponse* show_color_panel(FlColorPanelPlugin* self,
   self->color_chooser_dialog = GTK_COLOR_CHOOSER_DIALOG(
       gtk_color_chooser_dialog_new(kWindowTitle, nullptr));
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
-  GtkWindow* window = GTK_WINDOW(gtk_widget_get_parent(GTK_WIDGET(view)));
+  GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
   gtk_window_set_transient_for(GTK_WINDOW(self->color_chooser_dialog), window);
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(self->color_chooser_dialog),
                                   use_alpha);

@@ -146,7 +146,7 @@ static FlMethodResponse* menu_set(FlMenubarPlugin* self, FlValue* args) {
 
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
   GtkApplication* app = gtk_window_get_application(
-      GTK_WINDOW(gtk_widget_get_parent(GTK_WIDGET(view))));
+      GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view))));
   if (app == nullptr) {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(
         kFailureError, "Unable to get application", nullptr));
@@ -214,7 +214,7 @@ FlMenubarPlugin* fl_menubar_plugin_new(FlPluginRegistrar* registrar) {
   // Add a GAction for the menubar to trigger.
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
   GtkApplication* app = gtk_window_get_application(
-      GTK_WINDOW(gtk_widget_get_parent(GTK_WIDGET(view))));
+      GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view))));
   if (app != nullptr) {
     g_autoptr(GSimpleAction) inactive_action =
         g_simple_action_new("flutter-menu-inactive", nullptr);

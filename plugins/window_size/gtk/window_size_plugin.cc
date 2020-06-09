@@ -49,7 +49,7 @@ G_DEFINE_TYPE(FlWindowSizePlugin, fl_window_size_plugin, g_object_get_type())
 // Gets the window being controlled.
 GtkWindow* get_window(FlWindowSizePlugin* self) {
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
-  return GTK_WINDOW(gtk_widget_get_parent(GTK_WIDGET(view)));
+  return GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
 }
 
 // Gets the display connection.
