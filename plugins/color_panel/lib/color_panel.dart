@@ -107,7 +107,7 @@ class ColorPanel {
   /// from 0-255.
   int _colorComponentFloatToInt(num value) {
     const colorMax = 255;
-    return (value * colorMax).toInt();
+    return (value * colorMax).round();
   }
 
   /// Mediates between the platform channel callback and the client callback.
