@@ -83,9 +83,14 @@ static FlMethodResponse* launch(FlUrlLauncherPlugin* self, FlValue* args) {
   }
 
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
-  GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
-
-  if (!gtk_show_uri_on_window(window, url, GDK_CURRENT_TIME, &error)) {
+  gboolean launched;
+  if (view != nullptr) {
+    GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+    launched = gtk_show_uri_on_window(window, url, GDK_CURRENT_TIME, &error);
+  } else {
+    launched = g_app_info_launch_default_for_uri(url, nullptr, &error);
+  }
+  if (!launched) {
     g_autofree gchar* message =
         g_strdup_printf("Failed to launch URL: %s", error->message);
     return FL_METHOD_RESPONSE(
