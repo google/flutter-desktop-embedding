@@ -3,7 +3,7 @@ project(runner LANGUAGES CXX)
 
 set(BINARY_NAME "testbed")
 
-set(CMAKE_INSTALL_RPATH "\$ORIGIN")
+set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 
 # Configure build options.
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -52,9 +52,8 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "${BUILD_BUNDLE_DIR}" CACHE PATH "..." FORCE)
 endif()
 
-# BundleUtilities doesn't re-copy changed files, so start with a clean build
-# bundle directory every time.
-INSTALL(CODE "
+# Start with a clean build bundle directory every time.
+install(CODE "
   file(REMOVE_RECURSE \"${BUILD_BUNDLE_DIR}/\")
   " COMPONENT Runtime)
 
@@ -64,28 +63,26 @@ set(INSTALL_BUNDLE_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
   COMPONENT Runtime)
 
-file(GLOB FLUTTER_PLUGIN_DIRS "${PROJECT_BINARY_DIR}/plugins/*")
+install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
+  COMPONENT Runtime)
 
-INSTALL(CODE "
-  include(BundleUtilities)
-  fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${BINARY_NAME}\" \"\"
-    \"${FLUTTER_PLUGIN_DIRS};${FLUTTER_LIBRARY_DIR}\")
-  " COMPONENT Runtime)
+install(FILES "${FLUTTER_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+  COMPONENT Runtime)
 
-INSTALL(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
+install(FILES "${PLUGIN_BUNDLED_LIBRARIES}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
   COMPONENT Runtime)
 
 # Fully re-copy the assets directory on each build to avoid having stale files
 # from a previous install.
 set(FLUTTER_ASSET_DIR_NAME "flutter_assets")
-INSTALL(CODE "
+install(CODE "
   file(REMOVE_RECURSE \"${INSTALL_BUNDLE_DATA_DIR}/${FLUTTER_ASSET_DIR_NAME}\")
   " COMPONENT Runtime)
-INSTALL(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
+install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
   DESTINATION "${INSTALL_BUNDLE_DATA_DIR}" COMPONENT Runtime)
 
-# Install the lib directory on non-Debug builds only.
+# Install the AOT library on non-Debug builds only.
 if (NOT CMAKE_BUILD_TYPE MATCHES "Debug")
-  INSTALL(DIRECTORY "${PROJECT_BUILD_DIR}/lib"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
+  install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+    COMPONENT Runtime)
 endif()
