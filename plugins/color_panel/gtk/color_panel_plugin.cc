@@ -18,6 +18,7 @@
 
 // See color_panel.dart for documentation.
 const char kChannelName[] = "flutter/colorpanel";
+const char kNoScreenError[] = "No Screen";
 const char kShowColorPanelMethod[] = "ColorPanel.Show";
 const char kColorPanelShowAlpha[] = "ColorPanel.ShowAlpha";
 const char kHideColorPanelMethod[] = "ColorPanel.Hide";
@@ -92,9 +93,14 @@ static FlMethodResponse* show_color_panel(FlColorPanelPlugin* self,
   gboolean use_alpha =
       use_alpha_value != nullptr ? fl_value_get_bool(use_alpha_value) : FALSE;
 
+  FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  if (view == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
   self->color_chooser_dialog = GTK_COLOR_CHOOSER_DIALOG(
       gtk_color_chooser_dialog_new(kWindowTitle, nullptr));
-  FlView* view = fl_plugin_registrar_get_view(self->registrar);
   GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
   gtk_window_set_transient_for(GTK_WINDOW(self->color_chooser_dialog), window);
   gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(self->color_chooser_dialog),

@@ -19,6 +19,7 @@
 // See channel_controller.dart for documentation.
 const char kChannelName[] = "flutter/filechooser";
 const char kBadArgumentsError[] = "Bad Arguments";
+const char kNoScreenError[] = "No Screen";
 const char kShowOpenPanelMethod[] = "FileChooser.Show.Open";
 const char kShowSavePanelMethod[] = "FileChooser.Show.Save";
 const char kInitialDirectoryKey[] = "initialDirectory";
@@ -84,6 +85,11 @@ static FlMethodResponse* show_dialog(FlFileChooserPlugin* self,
     confirm_button_text = fl_value_get_string(value);
 
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  if (view == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
   GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
   g_autoptr(GtkFileChooserNative) dialog =
       GTK_FILE_CHOOSER_NATIVE(gtk_file_chooser_native_new(

@@ -20,6 +20,7 @@
 // See menu_channel.dart for documentation.
 const char kChannelName[] = "flutter/menubar";
 const char kBadArgumentsError[] = "Bad Arguments";
+const char kNoScreenError[] = "No Screen";
 const char kFailureError[] = "Failure";
 const char kMenuSetMethod[] = "Menubar.SetMenu";
 const char kMenuItemSelectedCallbackMethod[] = "Menubar.SelectedCallback";
@@ -145,6 +146,11 @@ static FlMethodResponse* menu_set(FlMenubarPlugin* self, FlValue* args) {
   }
 
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  if (view == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
   GtkApplication* app = gtk_window_get_application(
       GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view))));
   if (app == nullptr) {
@@ -213,8 +219,10 @@ FlMenubarPlugin* fl_menubar_plugin_new(FlPluginRegistrar* registrar) {
 
   // Add a GAction for the menubar to trigger.
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
-  GtkApplication* app = gtk_window_get_application(
-      GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view))));
+  GtkApplication* app = nullptr;
+  if (view != nullptr)
+    app = gtk_window_get_application(
+        GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view))));
   if (app != nullptr) {
     g_autoptr(GSimpleAction) inactive_action =
         g_simple_action_new("flutter-menu-inactive", nullptr);
