@@ -19,7 +19,7 @@
 // See window_size_channel.dart for documentation.
 const char kChannelName[] = "flutter/windowsize";
 const char kBadArgumentsError[] = "Bad Arguments";
-const char kNoScrenError[] = "No Screen";
+const char kNoScreenError[] = "No Screen";
 const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
