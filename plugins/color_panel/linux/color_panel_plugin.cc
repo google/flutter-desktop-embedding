@@ -11,21 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "include/color_panel_plugin.h"
+#include "include/color_panel/color_panel_plugin.h"
 
+#include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
-#include <iostream>
-#include <memory>
 
-#include <flutter/method_channel.h>
-#include <flutter/plugin_registrar.h>
-#include <flutter/standard_method_codec.h>
-
-namespace plugins_color_panel {
-
-namespace {
 // See color_panel.dart for documentation.
 const char kChannelName[] = "flutter/colorpanel";
+const char kNoScreenError[] = "No Screen";
 const char kShowColorPanelMethod[] = "ColorPanel.Show";
 const char kColorPanelShowAlpha[] = "ColorPanel.ShowAlpha";
 const char kHideColorPanelMethod[] = "ColorPanel.Hide";
@@ -35,179 +28,152 @@ const char kColorComponentAlphaKey[] = "alpha";
 const char kColorComponentRedKey[] = "red";
 const char kColorComponentGreenKey[] = "green";
 const char kColorComponentBlueKey[] = "blue";
-}
 
 static constexpr char kWindowTitle[] = "Flutter Color Picker";
 
-using flutter::EncodableMap;
-using flutter::EncodableValue;
+struct _FlColorPanelPlugin {
+  GObject parent_instance;
 
-class ColorPanelPlugin : public flutter::Plugin {
- public:
-  static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
+  FlPluginRegistrar* registrar;
 
-  virtual ~ColorPanelPlugin();
+  // Connection to Flutter engine.
+  FlMethodChannel* channel;
 
- protected:
-  // The source of a request to hide the panel, either a user action or
-  // a programmatic request via the platform channel.
-  enum class CloseRequestSource { kUserAction, kPlatformChannel };
-
-  // Hides the color picker panel if it is showing.
-  void HidePanel(CloseRequestSource source);
-
- private:
-  // Creates a plugin that communicates on the given channel.
-  ColorPanelPlugin(
-      std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel);
-
-  // Called when a method is called on |channel_|;
-  void HandleMethodCall(
-      const flutter::MethodCall<EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
-
-  // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel_;
-
-  // Private implementation.
-  class ColorPanel;
-  std::unique_ptr<ColorPanel> color_panel_;
+  // Dialog currently being shown.
+  GtkColorChooserDialog* color_chooser_dialog;
 };
 
-// Private implementation class containing the color picker widget.
-//
-// This is to avoid having the user import extra GTK headers.
-class ColorPanelPlugin::ColorPanel {
- public:
-  explicit ColorPanel(ColorPanelPlugin *parent,
-                      const EncodableValue *method_args) {
-    gtk_widget_ = gtk_color_chooser_dialog_new(kWindowTitle, nullptr);
-    bool use_alpha = false;
-    if (method_args) {
-      const auto &arg_map = method_args->MapValue();
-      auto it = arg_map.find(EncodableValue(kColorPanelShowAlpha));
-      if (it != arg_map.end()) {
-        use_alpha = it->second.BoolValue();
-      }
-    }
-    gtk_color_chooser_set_use_alpha(
-        reinterpret_cast<GtkColorChooser *>(gtk_widget_), use_alpha);
-    gtk_widget_show_all(gtk_widget_);
-    g_signal_connect(gtk_widget_, "close", G_CALLBACK(CloseCallback), parent);
-    g_signal_connect(gtk_widget_, "response", G_CALLBACK(ResponseCallback),
-                     parent);
-  }
+G_DEFINE_TYPE(FlColorPanelPlugin, fl_color_panel_plugin, g_object_get_type())
 
-  virtual ~ColorPanel() {
-    if (gtk_widget_) {
-      gtk_widget_destroy(gtk_widget_);
-      gtk_widget_ = nullptr;
-    }
-  }
+// Destroys any open color chooser dialog.
+static void destroy_color_chooser_dialog(FlColorPanelPlugin* self) {
+  if (self->color_chooser_dialog == nullptr) return;
 
-  // Converts a color from ARGB to a encodable object.
-  //
-  // The format of the message is intended for platform consumption.
-  static EncodableValue GdkColorToArgs(const GdkRGBA *color) {
-    return EncodableValue(EncodableMap{
-        {EncodableValue(kColorComponentAlphaKey), EncodableValue(color->alpha)},
-        {EncodableValue(kColorComponentRedKey), EncodableValue(color->red)},
-        {EncodableValue(kColorComponentGreenKey), EncodableValue(color->green)},
-        {EncodableValue(kColorComponentBlueKey), EncodableValue(color->blue)},
-    });
-  }
-
-  // Handler for when the user closes the color chooser dialog.
-  //
-  // This is not to be conflated with hitting the cancel button. That action is
-  // handled in the ResponseCallback function.
-  static void CloseCallback(GtkDialog *dialog, gpointer data) {
-    auto plugin = reinterpret_cast<ColorPanelPlugin *>(data);
-    plugin->HidePanel(ColorPanelPlugin::CloseRequestSource::kUserAction);
-  }
-
-  // Handler for when the user chooses a button on the chooser dialog.
-  //
-  // This includes the cancel button as well as the select button.
-  static void ResponseCallback(GtkWidget *dialog, gint response_id,
-                               gpointer data) {
-    auto plugin = reinterpret_cast<ColorPanelPlugin *>(data);
-    if (response_id == GTK_RESPONSE_OK) {
-      GdkRGBA color;
-      gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dialog), &color);
-      plugin->channel_->InvokeMethod(
-          kColorSelectedCallbackMethod,
-          std::make_unique<EncodableValue>(GdkColorToArgs(&color)));
-    }
-    // Need this to close the color handler.
-    plugin->HidePanel(CloseRequestSource::kUserAction);
-  }
-
- private:
-  GtkWidget *gtk_widget_;
-};
-
-// static
-void ColorPanelPlugin::RegisterWithRegistrar(
-    flutter::PluginRegistrar *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
-      registrar->messenger(), kChannelName,
-      &flutter::StandardMethodCodec::GetInstance());
-  auto *channel_pointer = channel.get();
-
-  // Uses new instead of make_unique due to private constructor.
-  std::unique_ptr<ColorPanelPlugin> plugin(
-      new ColorPanelPlugin(std::move(channel)));
-
-  channel_pointer->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto &call, auto result) {
-        plugin_pointer->HandleMethodCall(call, std::move(result));
-      });
-
-  registrar->AddPlugin(std::move(plugin));
+  gtk_widget_destroy(GTK_WIDGET(self->color_chooser_dialog));
+  self->color_chooser_dialog = nullptr;
 }
 
-ColorPanelPlugin::ColorPanelPlugin(
-    std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel)
-    : channel_(std::move(channel)), color_panel_(nullptr) {}
+// Called when a color chooser dialog responds.
+static void color_chooser_response_cb(FlColorPanelPlugin* self,
+                                      gint response_id) {
+  if (response_id == GTK_RESPONSE_OK) {
+    GdkRGBA color;
+    gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(self->color_chooser_dialog),
+                               &color);
+    g_autoptr(FlValue) result = fl_value_new_map();
+    fl_value_set_string_take(result, kColorComponentAlphaKey,
+                             fl_value_new_float(color.alpha));
+    fl_value_set_string_take(result, kColorComponentRedKey,
+                             fl_value_new_float(color.red));
+    fl_value_set_string_take(result, kColorComponentGreenKey,
+                             fl_value_new_float(color.green));
+    fl_value_set_string_take(result, kColorComponentBlueKey,
+                             fl_value_new_float(color.blue));
+    fl_method_channel_invoke_method(self->channel, kColorSelectedCallbackMethod,
+                                    result, nullptr, nullptr, nullptr);
+  }
 
-ColorPanelPlugin::~ColorPanelPlugin() {}
+  fl_method_channel_invoke_method(self->channel, kClosedCallbackMethod, nullptr,
+                                  nullptr, nullptr, nullptr);
 
-void ColorPanelPlugin::HandleMethodCall(
-    const flutter::MethodCall<EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
-  if (method_call.method_name().compare(kShowColorPanelMethod) == 0) {
-    result->Success();
-    // There is only one color panel that can be displayed at once.
-    // There are no channels to use the color panel, so just return.
-    if (color_panel_) {
-      return;
-    }
-    color_panel_ = std::make_unique<ColorPanelPlugin::ColorPanel>(
-        this, method_call.arguments());
-  } else if (method_call.method_name().compare(kHideColorPanelMethod) == 0) {
-    result->Success();
-    if (color_panel_ == nullptr) {
-      return;
-    }
-    HidePanel(CloseRequestSource::kPlatformChannel);
+  destroy_color_chooser_dialog(self);
+}
+
+// Shows a color panel.
+static FlMethodResponse* show_color_panel(FlColorPanelPlugin* self,
+                                          FlValue* args) {
+  // There is only one color panel that can be displayed at once.
+  // There are no channels to use the color panel, so just return.
+  if (self->color_chooser_dialog != nullptr)
+    return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+
+  FlValue* use_alpha_value = nullptr;
+  if (fl_value_get_type(args) == FL_VALUE_TYPE_MAP)
+    use_alpha_value = fl_value_lookup_string(args, kColorPanelShowAlpha);
+  gboolean use_alpha =
+      use_alpha_value != nullptr ? fl_value_get_bool(use_alpha_value) : FALSE;
+
+  FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  if (view == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
+  self->color_chooser_dialog = GTK_COLOR_CHOOSER_DIALOG(
+      gtk_color_chooser_dialog_new(kWindowTitle, nullptr));
+  GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+  gtk_window_set_transient_for(GTK_WINDOW(self->color_chooser_dialog), window);
+  gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(self->color_chooser_dialog),
+                                  use_alpha);
+  g_signal_connect_object(self->color_chooser_dialog, "response",
+                          G_CALLBACK(color_chooser_response_cb), self,
+                          G_CONNECT_SWAPPED);
+  gtk_widget_show(GTK_WIDGET(self->color_chooser_dialog));
+
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+// Hides the color panel.
+static FlMethodResponse* hide_color_panel(FlColorPanelPlugin* self) {
+  destroy_color_chooser_dialog(self);
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+// Called when a method call is received from Flutter.
+static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
+                           gpointer user_data) {
+  FlColorPanelPlugin* self = FL_COLOR_PANEL_PLUGIN(user_data);
+
+  const gchar* method = fl_method_call_get_name(method_call);
+  FlValue* args = fl_method_call_get_args(method_call);
+
+  g_autoptr(FlMethodResponse) response = nullptr;
+  if (strcmp(method, kShowColorPanelMethod) == 0) {
+    response = show_color_panel(self, args);
+  } else if (strcmp(method, kHideColorPanelMethod) == 0) {
+    response = hide_color_panel(self);
   } else {
-    result->NotImplemented();
+    response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
   }
+
+  g_autoptr(GError) error = nullptr;
+  if (!fl_method_call_respond(method_call, response, &error))
+    g_warning("Failed to send method call response: %s", error->message);
 }
 
-void ColorPanelPlugin::HidePanel(CloseRequestSource source) {
-  color_panel_.reset();
-  if (source == CloseRequestSource::kUserAction) {
-    channel_->InvokeMethod(kClosedCallbackMethod, nullptr);
-  }
+static void fl_color_panel_plugin_dispose(GObject* object) {
+  FlColorPanelPlugin* self = FL_COLOR_PANEL_PLUGIN(object);
+
+  g_clear_object(&self->registrar);
+  g_clear_object(&self->channel);
+  destroy_color_chooser_dialog(self);
+
+  G_OBJECT_CLASS(fl_color_panel_plugin_parent_class)->dispose(object);
 }
 
-}  // namespace plugins_color_panel
+static void fl_color_panel_plugin_class_init(FlColorPanelPluginClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = fl_color_panel_plugin_dispose;
+}
 
-void ColorPanelPluginRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrarRef registrar) {
-  plugins_color_panel::ColorPanelPlugin::RegisterWithRegistrar(
-      flutter::PluginRegistrarManager::GetInstance()
-          ->GetRegistrar<flutter::PluginRegistrar>(registrar));
+static void fl_color_panel_plugin_init(FlColorPanelPlugin* self) {}
+
+FlColorPanelPlugin* fl_color_panel_plugin_new(FlPluginRegistrar* registrar) {
+  FlColorPanelPlugin* self = FL_COLOR_PANEL_PLUGIN(
+      g_object_new(fl_color_panel_plugin_get_type(), nullptr));
+
+  self->registrar = FL_PLUGIN_REGISTRAR(g_object_ref(registrar));
+
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  self->channel =
+      fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
+                            kChannelName, FL_METHOD_CODEC(codec));
+  fl_method_channel_set_method_call_handler(self->channel, method_call_cb,
+                                            g_object_ref(self), g_object_unref);
+
+  return self;
+}
+
+void color_panel_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
+  FlColorPanelPlugin* plugin = fl_color_panel_plugin_new(registrar);
+  g_object_unref(plugin);
 }
