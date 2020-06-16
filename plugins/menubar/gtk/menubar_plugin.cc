@@ -220,9 +220,10 @@ FlMenubarPlugin* fl_menubar_plugin_new(FlPluginRegistrar* registrar) {
   // Add a GAction for the menubar to trigger.
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
   GtkApplication* app = nullptr;
-  if (view != nullptr)
+  if (view != nullptr) {
     app = gtk_window_get_application(
         GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view))));
+  }
   if (app != nullptr) {
     g_autoptr(GSimpleAction) inactive_action =
         g_simple_action_new("flutter-menu-inactive", nullptr);
