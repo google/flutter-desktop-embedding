@@ -202,7 +202,7 @@ static FlMethodResponse* set_window_minimum_size(FlWindowSizePlugin* self,
   double width = fl_value_get_float(fl_value_get_list_value(args, 0));
   double height = fl_value_get_float(fl_value_get_list_value(args, 1));
 
-  if (get_window() == nullptr) {
+  if (get_window(self) == nullptr) {
     return FL_METHOD_RESPONSE(
         fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
   }
@@ -228,7 +228,7 @@ static FlMethodResponse* set_window_maximum_size(FlWindowSizePlugin* self,
   double width = fl_value_get_float(fl_value_get_list_value(args, 0));
   double height = fl_value_get_float(fl_value_get_list_value(args, 1));
 
-  if (get_window() == nullptr) {
+  if (get_window(self) == nullptr) {
     return FL_METHOD_RESPONSE(
         fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
   }
