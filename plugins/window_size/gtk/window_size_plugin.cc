@@ -19,6 +19,7 @@
 // See window_size_channel.dart for documentation.
 const char kChannelName[] = "flutter/windowsize";
 const char kBadArgumentsError[] = "Bad Arguments";
+const char kNoScreenError[] = "No Screen";
 const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
@@ -49,12 +50,16 @@ G_DEFINE_TYPE(FlWindowSizePlugin, fl_window_size_plugin, g_object_get_type())
 // Gets the window being controlled.
 GtkWindow* get_window(FlWindowSizePlugin* self) {
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  if (view == nullptr) return nullptr;
+
   return GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
 }
 
 // Gets the display connection.
 GdkDisplay* get_display(FlWindowSizePlugin* self) {
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  if (view == nullptr) return nullptr;
+
   return gtk_widget_get_display(GTK_WIDGET(view));
 }
 
@@ -97,6 +102,11 @@ static FlMethodResponse* get_screen_list(FlWindowSizePlugin* self) {
   g_autoptr(FlValue) screens = fl_value_new_list();
 
   GdkDisplay* display = get_display(self);
+  if (display == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
   gint n_monitors = gdk_display_get_n_monitors(display);
   for (gint i = 0; i < n_monitors; i++) {
     GdkMonitor* monitor = gdk_display_get_monitor(display, i);
@@ -109,6 +119,10 @@ static FlMethodResponse* get_screen_list(FlWindowSizePlugin* self) {
 // Gets information about the Flutter window.
 static FlMethodResponse* get_window_info(FlWindowSizePlugin* self) {
   GtkWindow* window = get_window(self);
+  if (window == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
 
   g_autoptr(FlValue) window_info = fl_value_new_map();
 
@@ -158,6 +172,11 @@ static FlMethodResponse* set_window_frame(FlWindowSizePlugin* self,
   double height = fl_value_get_float(fl_value_get_list_value(args, 3));
 
   GtkWindow* window = get_window(self);
+  if (window == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
   gtk_window_move(window, static_cast<gint>(x), static_cast<gint>(y));
   gtk_window_resize(window, static_cast<gint>(width),
                     static_cast<gint>(height));
@@ -183,6 +202,11 @@ static FlMethodResponse* set_window_minimum_size(FlWindowSizePlugin* self,
   double width = fl_value_get_float(fl_value_get_list_value(args, 0));
   double height = fl_value_get_float(fl_value_get_list_value(args, 1));
 
+  if (get_window() == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
   if (width >= 0 && height >= 0) {
     self->window_geometry.min_width = static_cast<gint>(width);
     self->window_geometry.min_height = static_cast<gint>(height);
@@ -204,6 +228,11 @@ static FlMethodResponse* set_window_maximum_size(FlWindowSizePlugin* self,
   double width = fl_value_get_float(fl_value_get_list_value(args, 0));
   double height = fl_value_get_float(fl_value_get_list_value(args, 1));
 
+  if (get_window() == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
   self->window_geometry.max_width = static_cast<gint>(width);
   self->window_geometry.max_height = static_cast<gint>(height);
 
@@ -221,6 +250,10 @@ static FlMethodResponse* set_window_title(FlWindowSizePlugin* self,
   }
 
   GtkWindow* window = get_window(self);
+  if (window == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
   gtk_window_set_title(window, fl_value_get_string(args));
 
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
