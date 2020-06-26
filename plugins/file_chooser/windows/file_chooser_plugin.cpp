@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "file_chooser_plugin.h"
+#include "include/file_chooser/file_chooser_plugin.h"
 
 #include <ShObjIdl_core.h>
 #include <flutter/flutter_view.h>
