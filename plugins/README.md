@@ -34,16 +34,3 @@ usually the latest commit to the repository at the time you add the plugin.
 While omitting the `ref` is possible, it is **strongly** discouraged, as
 without it any breaking change to the plugin would break your project
 without warning.
-
-### Linux
-
-Many of the Linux plugins in this project require the following libraries:
-
-* GTK 3
-* pkg-config
-
-Installation example for debian-based systems:
-
-```
-$ sudo apt-get install libgtk-3-dev pkg-config
-```
