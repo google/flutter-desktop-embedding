@@ -14,9 +14,3 @@ and may be removed at some point in the future.
 ## Use
 
 See [the plugin README](../README.md) for general instructions on using FDE plugins.
-
-### Linux
-
-You will need to update `main.cc` to include [the GTK initialization and runloop changes
-shown in the `testbed`
-example](https://github.com/google/flutter-desktop-embedding/blob/master/testbed/linux/main.cc#L81-L91).
