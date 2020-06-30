@@ -31,9 +31,3 @@ or read/write access:
 	<true/>
 ```
 depending on your use case.
-
-### Linux
-
-You will need to update `main.cc` to include [the GTK initialization and runloop changes
-shown in the `testbed`
-example](https://github.com/google/flutter-desktop-embedding/blob/master/testbed/linux/main.cc#L81-L91).
