@@ -148,6 +148,15 @@ void PathProviderPlugin::HandleMethodCall(
     }
     flutter::EncodableValue response(path);
     result->Success(&response);
+  } else if (method_call.method_name().compare(
+                 "getDownloadsDirectory") == 0) {
+    std::string path = GetFolderPath(FOLDERID_Downloads);
+    if (path.empty()) {
+      result->Error("Unable to get downloads path");
+      return;
+    }
+    flutter::EncodableValue response(path);
+    result->Success(&response);
   } else {
     result->NotImplemented();
   }
