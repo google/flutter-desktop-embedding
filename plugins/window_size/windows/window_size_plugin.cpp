@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "window_size_plugin.h"
+#include "include/window_size/window_size_plugin.h"
 
 // windows.h must be imported before VersionHelpers.h or it will break
 // compilation.
