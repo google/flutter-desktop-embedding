@@ -9,8 +9,6 @@ publish_to: none
 flutter:
   plugin:
     platforms:
-      linux:
-        pluginClass: UrlLauncherPlugin
       windows:
         pluginClass: UrlLauncherPlugin
 
