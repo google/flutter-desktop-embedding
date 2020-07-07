@@ -30,7 +30,7 @@ dependencies:
   path_provider_fde:
     path: ../plugins/flutter_plugins/path_provider_fde
   shared_preferences: ^0.5.6
-  url_launcher: ^5.4.0
+  url_launcher: ^5.5.0
   url_launcher_fde:
     path: ../plugins/flutter_plugins/url_launcher_fde
 
