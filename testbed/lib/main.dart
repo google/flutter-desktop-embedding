@@ -67,7 +67,7 @@ class MyApp extends StatefulWidget {
 
 class _AppState extends State<MyApp> {
   _AppState() {
-    if (Platform.isMacOS) {
+    if (Platform.isMacOS || Platform.isLinux) {
       SharedPreferences.getInstance().then((prefs) {
         if (prefs.containsKey(_prefKeyColor)) {
           setPrimaryColor(Color(prefs.getInt(_prefKeyColor)));
@@ -91,7 +91,7 @@ class _AppState extends State<MyApp> {
   }
 
   void _saveColor() async {
-    if (Platform.isMacOS) {
+    if (Platform.isMacOS || Platform.isLinux) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(_prefKeyColor, _primaryColor.value);
     }
