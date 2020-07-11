@@ -1,14 +1,14 @@
-# Windows and Linux Implementation of flutter/plugins Plugins
+# Windows Implementations of flutter/plugins Plugins
 
 Each plugin in this directory corresponds to a
 [`flutter/plugins`](https://github.com/flutter/plugins) plugin with the
 same name, minus the `_fde` suffix.
 
 These implementations exist here only as a temporary solution to use these
-plugins while the plugin APIs on Windows and Linux stabilize enough that
+plugins while the plugin APIs on Windows stabilize enough that
 they can move to the official location and be distributed as normal Flutter
-plugins. macOS plugin APIs and tooling are stable, so are already hosted
-normally rather than here.
+plugins. macOS and Linux plugin APIs and tooling are stable, so are already
+hosted normally rather than here.
 
 ## Using These Plugins
 
@@ -27,4 +27,4 @@ plugin's `import`. For instance, you would just
 ## Contributing
 
 If you are interested in implementing a flutter/plugins plugin for Windows
-and/or Linux, please open a PR!
+please open a PR!
