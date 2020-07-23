@@ -71,11 +71,11 @@ void UrlLauncherPlugin::HandleMethodCall(
     std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
   if (method_call.method_name().compare("launch") == 0) {
     std::string url;
-    if (method_call.arguments() && method_call.arguments()->IsMap()) {
-      const EncodableMap &arguments = method_call.arguments()->MapValue();
-      auto url_it = arguments.find(EncodableValue("url"));
-      if (url_it != arguments.end()) {
-        url = url_it->second.StringValue();
+    const auto *arguments = std::get_if<EncodableMap>(method_call.arguments());
+    if (arguments) {
+      auto url_it = arguments->find(EncodableValue("url"));
+      if (url_it != arguments->end()) {
+        url = std::get<std::string>(url_it->second);
       }
     }
     if (url.empty()) {

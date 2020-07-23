@@ -132,8 +132,9 @@ class DialogWrapper {
     filter_names.reserve(filters.size());
 
     for (const EncodableValue &filter_info : filters) {
-      filter_names.push_back(WideStringFromChars(
-          filter_info.ListValue()[0].StringValue().c_str()));
+      const auto &filter_name =
+          std::get<std::string>(filter_info.ListValue()[0]);
+      filter_names.push_back(WideStringFromChars(filter_name.c_str()));
       filter_extensions.push_back(L"");
       EncodableList extensions = filter_info.ListValue()[1].ListValue();
       std::wstring &spec = filter_extensions.back();
@@ -145,7 +146,7 @@ class DialogWrapper {
             spec += spec_delimiter;
           }
           spec += file_wildcard +
-                  WideStringFromChars(extension.StringValue().c_str());
+                  WideStringFromChars(std::get<std::string>(extension).c_str());
         }
       }
       filter_specs.push_back({filter_names.back().c_str(), spec.c_str()});
@@ -240,11 +241,11 @@ void ShowDialog(
   EncodableValue allow_multiple_selection =
       ValueOrNull(args, kAllowsMultipleSelectionKey);
   if (!allow_multiple_selection.IsNull() &&
-      allow_multiple_selection.BoolValue()) {
+      std::get<bool>(allow_multiple_selection)) {
     dialog_options |= FOS_ALLOWMULTISELECT;
   }
   EncodableValue choose_dirs = ValueOrNull(args, kCanChooseDirectoriesKey);
-  if (!choose_dirs.IsNull() && choose_dirs.BoolValue()) {
+  if (!choose_dirs.IsNull() && std::get<bool>(choose_dirs)) {
     dialog_options |= FOS_PICKFOLDERS;
   }
   if (dialog_options != 0) {
@@ -253,15 +254,15 @@ void ShowDialog(
 
   EncodableValue start_dir = ValueOrNull(args, kInitialDirectoryKey);
   if (!start_dir.IsNull()) {
-    dialog.SetDefaultFolder(start_dir.StringValue());
+    dialog.SetDefaultFolder(std::get<std::string>(start_dir));
   }
   EncodableValue initial_file_name = ValueOrNull(args, kInitialFileNameKey);
   if (!initial_file_name.IsNull()) {
-    dialog.SetFileName(initial_file_name.StringValue());
+    dialog.SetFileName(std::get<std::string>(initial_file_name));
   }
   EncodableValue confirm_label = ValueOrNull(args, kConfirmButtonTextKey);
   if (!confirm_label.IsNull()) {
-    dialog.SetOkButtonLabel(confirm_label.StringValue());
+    dialog.SetOkButtonLabel(std::get<std::string>(confirm_label));
   }
   EncodableValue allowed_types = ValueOrNull(args, kAllowedFileTypesKey);
   if (!allowed_types.IsNull() && !allowed_types.ListValue().empty()) {
@@ -330,7 +331,8 @@ void FileChooserPlugin::HandleMethodCall(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare(kShowOpenPanelMethod) == 0 ||
       method_call.method_name().compare(kShowSavePanelMethod) == 0) {
-    if (!method_call.arguments() || !method_call.arguments()->IsMap()) {
+    const auto *arguments = std::get_if<EncodableMap>(method_call.arguments());
+    if (!arguments) {
       result->Error("Bad Arguments", "Argument map missing or malformed");
       return;
     }
@@ -338,8 +340,8 @@ void FileChooserPlugin::HandleMethodCall(
         method_call.method_name().compare(kShowOpenPanelMethod) == 0
             ? CLSID_FileOpenDialog
             : CLSID_FileSaveDialog;
-    ShowDialog(dialog_type, GetRootWindow(registrar_->GetView()),
-               method_call.arguments()->MapValue(), std::move(result));
+    ShowDialog(dialog_type, GetRootWindow(registrar_->GetView()), *arguments,
+               std::move(result));
   } else {
     result->NotImplemented();
   }
