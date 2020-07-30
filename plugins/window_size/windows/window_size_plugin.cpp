@@ -83,7 +83,7 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
 BOOL CALLBACK MonitorRepresentationEnumProc(HMONITOR monitor, HDC hdc,
                                             LPRECT clip, LPARAM list_ref) {
   EncodableValue *monitors = reinterpret_cast<EncodableValue *>(list_ref);
-  monitors->ListValue().push_back(
+  std::get<EncodableList>(*monitors).push_back(
       GetPlatformChannelRepresentationForMonitor(monitor));
   return TRUE;
 }
