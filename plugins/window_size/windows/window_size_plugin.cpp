@@ -83,7 +83,7 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
 BOOL CALLBACK MonitorRepresentationEnumProc(HMONITOR monitor, HDC hdc,
                                             LPRECT clip, LPARAM list_ref) {
   EncodableValue *monitors = reinterpret_cast<EncodableValue *>(list_ref);
-  monitors->ListValue().push_back(
+  std::get<EncodableList>(*monitors).push_back(
       GetPlatformChannelRepresentationForMonitor(monitor));
   return TRUE;
 }
@@ -158,7 +158,7 @@ void WindowSizePlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare(kGetScreenListMethod) == 0) {
-    EncodableValue screens(EncodableValue::Type::kList);
+    EncodableValue screens(std::in_place_type<EncodableList>);
     EnumDisplayMonitors(nullptr, nullptr, MonitorRepresentationEnumProc,
                         reinterpret_cast<LPARAM>(&screens));
     result->Success(&screens);
@@ -167,30 +167,30 @@ void WindowSizePlugin::HandleMethodCall(
         GetRootWindow(registrar_->GetView()));
     result->Success(&window_info);
   } else if (method_call.method_name().compare(kSetWindowFrameMethod) == 0) {
-    if (!method_call.arguments() || !method_call.arguments()->IsList() ||
-        method_call.arguments()->ListValue().size() != 4) {
+    const auto *frame_list =
+        std::get_if<EncodableList>(method_call.arguments());
+    if (!frame_list || frame_list->size() != 4) {
       result->Error("Bad arguments", "Expected 4-element list");
       return;
     }
     // Frame validity (e.g., non-zero size) is assumed to be checked on the Dart
     // side of the call.
-    const auto &frame_list = method_call.arguments()->ListValue();
-    int x = static_cast<int>(frame_list[0].DoubleValue());
-    int y = static_cast<int>(frame_list[1].DoubleValue());
-    int width = static_cast<int>(frame_list[2].DoubleValue());
-    int height = static_cast<int>(frame_list[3].DoubleValue());
+    int x = static_cast<int>(std::get<double>((*frame_list)[0]));
+    int y = static_cast<int>(std::get<double>((*frame_list)[1]));
+    int width = static_cast<int>(std::get<double>((*frame_list)[2]));
+    int height = static_cast<int>(std::get<double>((*frame_list)[3]));
     SetWindowPos(GetRootWindow(registrar_->GetView()), nullptr, x, y, width,
                  height, SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     result->Success();
   } else if (method_call.method_name().compare(kSetWindowTitleMethod) == 0) {
-    if (!method_call.arguments() || !method_call.arguments()->IsString()) {
+    const auto *title = std::get_if<std::string>(method_call.arguments());
+    if (!title) {
       result->Error("Bad arguments", "Expected string");
       return;
     }
-    const auto &title = method_call.arguments()->StringValue();
     std::wstring wstr =
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
-            .from_bytes(title);
+            .from_bytes(*title);
     SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
     result->Success();
   } else {
