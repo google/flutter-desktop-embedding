@@ -365,9 +365,11 @@ class URLLauncherTestWidget extends StatelessWidget {
         new FlatButton(
           child: const Text('OPEN ON GITHUB'),
           onPressed: () async {
-            final result = await url_launcher
-                .launch('https://github.com/google/flutter-desktop-embedding');
-            assert(result);
+            const url = 'https://github.com/google/flutter-desktop-embedding';
+            if (await url_launcher.canLaunch(url)) {
+              final result = await url_launcher.launch(url);
+              assert(result);
+            }
           },
         ),
       ],
