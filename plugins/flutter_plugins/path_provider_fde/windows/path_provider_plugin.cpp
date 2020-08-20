@@ -120,8 +120,7 @@ void PathProviderPlugin::HandleMethodCall(
       return;
     }
     std::string result_path = StdStringFromWideChars(path_buffer);
-    flutter::EncodableValue response(result_path);
-    result->Success(&response);
+    result->Success(EncodableValue(result_path));
   } else if (method_call.method_name().compare(
                  "getApplicationSupportDirectory") == 0) {
     std::string path = GetFolderPath(FOLDERID_RoamingAppData);
@@ -137,8 +136,7 @@ void PathProviderPlugin::HandleMethodCall(
     }
     std::ostringstream response_stream;
     response_stream << path << "\\" << exe_name;
-    flutter::EncodableValue response(response_stream.str());
-    result->Success(&response);
+    result->Success(EncodableValue(response_stream.str()));
   } else if (method_call.method_name().compare(
                  "getApplicationDocumentsDirectory") == 0) {
     std::string path = GetFolderPath(FOLDERID_Documents);
@@ -146,17 +144,14 @@ void PathProviderPlugin::HandleMethodCall(
       result->Error("Unable to get documents path");
       return;
     }
-    flutter::EncodableValue response(path);
-    result->Success(&response);
-  } else if (method_call.method_name().compare(
-                 "getDownloadsDirectory") == 0) {
+    result->Success(EncodableValue(path));
+  } else if (method_call.method_name().compare("getDownloadsDirectory") == 0) {
     std::string path = GetFolderPath(FOLDERID_Downloads);
     if (path.empty()) {
       result->Error("Unable to get downloads path");
       return;
     }
-    flutter::EncodableValue response(path);
-    result->Success(&response);
+    result->Success(EncodableValue(path));
   } else {
     result->NotImplemented();
   }

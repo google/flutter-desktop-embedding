@@ -100,8 +100,7 @@ void UrlLauncherPlugin::HandleMethodCall(
       result->Error("open_error", error_message.str());
       return;
     }
-    EncodableValue response(true);
-    result->Success(&response);
+    result->Success(EncodableValue(true));
   } else {
     result->NotImplemented();
   }
