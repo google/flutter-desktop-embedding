@@ -13,11 +13,7 @@
 // limitations under the License.
 #include "include/window_size/window_size_plugin.h"
 
-// windows.h must be imported before VersionHelpers.h or it will break
-// compilation.
-#include <windows.h>
-
-#include <VersionHelpers.h>
+#include <Windows.h>
 #include <flutter/flutter_view.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
@@ -26,6 +22,7 @@
 
 #include <codecvt>
 #include <memory>
+#include <optional>
 #include <sstream>
 
 namespace {
@@ -39,6 +36,8 @@ const char kChannelName[] = "flutter/windowsize";
 const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
+const char kSetWindowMinimumSize[] = "setWindowMinimumSize";
+const char kSetWindowMaximumSize[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
@@ -46,6 +45,14 @@ const char kScaleFactorKey[] = "scaleFactor";
 const char kScreenKey[] = "screen";
 
 const double kBaseDpi = 96.0;
+
+// Returns a POINT corresponding to channel representation of a size.
+POINT GetPointForPlatformChannelRepresentationSize(const EncodableList &size) {
+  POINT point = {};
+  point.x = static_cast<LONG>(std::get<double>(size[0]));
+  point.y = static_cast<LONG>(std::get<double>(size[1]));
+  return point;
+}
 
 // Returns the serializable form of |frame| expected by the platform channel.
 EncodableValue GetPlatformChannelRepresentationForRect(const RECT &rect) {
@@ -127,8 +134,21 @@ class WindowSizePlugin : public flutter::Plugin {
       const flutter::MethodCall<flutter::EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+  // Called for top-level WindowProc delegation.
+  std::optional<LRESULT> HandleWindowProc(HWND hwnd, UINT message,
+                                          WPARAM wparam, LPARAM lparam);
+
   // The registrar for this plugin, for accessing the window.
   flutter::PluginRegistrarWindows *registrar_;
+
+  // The ID of the WindowProc delegate registration.
+  int window_proc_id_ = -1;
+
+  // The minimum size set by the platform channel.
+  POINT min_size_ = {0, 0};
+
+  // The maximum size set by the platform channel.
+  POINT max_size_ = {-1, -1};
 };
 
 // static
@@ -150,9 +170,16 @@ void WindowSizePlugin::RegisterWithRegistrar(
 }
 
 WindowSizePlugin::WindowSizePlugin(flutter::PluginRegistrarWindows *registrar)
-    : registrar_(registrar) {}
+    : registrar_(registrar) {
+  window_proc_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
+      [this](HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
+        return HandleWindowProc(hwnd, message, wparam, lparam);
+      });
+}
 
-WindowSizePlugin::~WindowSizePlugin(){};
+WindowSizePlugin::~WindowSizePlugin() {
+  registrar_->UnregisterTopLevelWindowProcDelegate(window_proc_id_);
+}
 
 void WindowSizePlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
@@ -182,6 +209,22 @@ void WindowSizePlugin::HandleMethodCall(
     SetWindowPos(GetRootWindow(registrar_->GetView()), nullptr, x, y, width,
                  height, SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     result->Success();
+  } else if (method_call.method_name().compare(kSetWindowMinimumSize) == 0) {
+    const auto *size = std::get_if<EncodableList>(method_call.arguments());
+    if (!size || size->size() != 2) {
+      result->Error("Bad arguments", "Expected 2-element list");
+      return;
+    }
+    min_size_ = GetPointForPlatformChannelRepresentationSize(*size);
+    result->Success();
+  } else if (method_call.method_name().compare(kSetWindowMaximumSize) == 0) {
+    const auto *size = std::get_if<EncodableList>(method_call.arguments());
+    if (!size || size->size() != 2) {
+      result->Error("Bad arguments", "Expected 2-element list");
+      return;
+    }
+    max_size_ = GetPointForPlatformChannelRepresentationSize(*size);
+    result->Success();
   } else if (method_call.method_name().compare(kSetWindowTitleMethod) == 0) {
     const auto *title = std::get_if<std::string>(method_call.arguments());
     if (!title) {
@@ -196,6 +239,25 @@ void WindowSizePlugin::HandleMethodCall(
   } else {
     result->NotImplemented();
   }
+}
+
+std::optional<LRESULT> WindowSizePlugin::HandleWindowProc(HWND hwnd,
+                                                          UINT message,
+                                                          WPARAM wparam,
+                                                          LPARAM lparam) {
+  std::optional<LRESULT> result;
+  switch (message) {
+    case WM_GETMINMAXINFO:
+      MINMAXINFO *info = reinterpret_cast<MINMAXINFO *>(lparam);
+      // For the special "unconstrained" values, leave the defaults.
+      if (min_size_.x != 0) info->ptMinTrackSize.x = min_size_.x;
+      if (min_size_.y != 0) info->ptMinTrackSize.y = min_size_.y;
+      if (max_size_.x != -1) info->ptMaxTrackSize.x = max_size_.x;
+      if (max_size_.y != -1) info->ptMaxTrackSize.y = max_size_.y;
+      result = 0;
+      break;
+  }
+  return result;
 }
 
 }  // namespace

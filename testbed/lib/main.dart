@@ -43,13 +43,10 @@ void main() {
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
       window_size.setWindowFrame(frame);
+      window_size.setWindowMinSize(Size(0.8 * width, 0.8 * height));
+      window_size.setWindowMaxSize(Size(1.5 * width, 1.5 * height));
       window_size
           .setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
-
-      if (Platform.isMacOS) {
-        window_size.setWindowMinSize(Size(800, 600));
-        window_size.setWindowMaxSize(Size(1600, 1200));
-      }
     }
   });
 
