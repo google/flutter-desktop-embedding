@@ -11,8 +11,3 @@ this plugin is and how to use it.
 - [x] Windows
 
 macOS and Linux are already supported by `url_launcher`.
-
-## Caveats
-
-Only `launch` is implemented, so the common pattern of calling `launch` only if
-`canLaunch` returns true will not work.
