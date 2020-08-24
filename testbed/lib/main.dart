@@ -110,10 +110,6 @@ class _AppState extends State<MyApp> {
 
   /// Rebuilds the native menu bar based on the current state.
   void updateMenubar() {
-    // Currently, the menubar plugin is only implemented on macOS and linux.
-    if (!Platform.isMacOS && !Platform.isLinux) {
-      return;
-    }
     setApplicationMenu([
       Submenu(label: 'Color', children: [
         MenuItem(
@@ -308,10 +304,7 @@ class FileChooserTestWidget extends StatelessWidget {
           child: const Text('OPEN'),
           onPressed: () async {
             String initialDirectory;
-            if (Platform.isMacOS || Platform.isWindows) {
-              initialDirectory =
-                  (await getApplicationDocumentsDirectory()).path;
-            }
+            initialDirectory = (await getApplicationDocumentsDirectory()).path;
             final result = await showOpenPanel(
                 allowsMultipleSelection: true,
                 initialDirectory: initialDirectory);
