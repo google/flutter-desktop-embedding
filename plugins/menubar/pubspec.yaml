@@ -13,6 +13,8 @@ flutter:
         pluginClass: MenubarPlugin
       macos:
         pluginClass: MenubarPlugin
+      windows:
+        pluginClass: MenubarPlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
