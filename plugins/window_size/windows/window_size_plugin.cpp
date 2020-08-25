@@ -188,11 +188,10 @@ void WindowSizePlugin::HandleMethodCall(
     EncodableValue screens(std::in_place_type<EncodableList>);
     EnumDisplayMonitors(nullptr, nullptr, MonitorRepresentationEnumProc,
                         reinterpret_cast<LPARAM>(&screens));
-    result->Success(&screens);
+    result->Success(screens);
   } else if (method_call.method_name().compare(kGetWindowInfoMethod) == 0) {
-    EncodableValue window_info = GetPlatformChannelRepresentationForWindow(
-        GetRootWindow(registrar_->GetView()));
-    result->Success(&window_info);
+    result->Success(GetPlatformChannelRepresentationForWindow(
+        GetRootWindow(registrar_->GetView())));
   } else if (method_call.method_name().compare(kSetWindowFrameMethod) == 0) {
     const auto *frame_list =
         std::get_if<EncodableList>(method_call.arguments());

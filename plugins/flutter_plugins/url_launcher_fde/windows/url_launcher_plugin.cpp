@@ -124,8 +124,7 @@ void UrlLauncherPlugin::HandleMethodCall(
       result->Error("open_error", error_message.str());
       return;
     }
-    EncodableValue response(true);
-    result->Success(&response);
+    result->Success(EncodableValue(true));
   } else if (method_call.method_name().compare("canLaunch") == 0) {
     std::string url = GetUrlArgument(method_call);
     if (url.empty()) {
@@ -145,8 +144,7 @@ void UrlLauncherPlugin::HandleMethodCall(
         ::RegCloseKey(key);
       }
     }
-    EncodableValue response(can_launch);
-    result->Success(&response);
+    result->Success(EncodableValue(can_launch));
   } else {
     result->NotImplemented();
   }

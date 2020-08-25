@@ -231,8 +231,8 @@ void ShowDialog(
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   DialogWrapper dialog(type);
   if (!SUCCEEDED(dialog.last_result())) {
-    EncodableValue error_code(dialog.last_result());
-    result->Error("System error", "Could not create dialog", &error_code);
+    result->Error("System error", "Could not create dialog",
+                  EncodableValue(dialog.last_result()));
     return;
   }
 
@@ -275,11 +275,11 @@ void ShowDialog(
   EncodableValue files = dialog.Show(parent_window);
   if (files.IsNull() &&
       dialog.last_result() != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
-    EncodableValue error_code(dialog.last_result());
-    result->Error("System error", "Could not show dialog", &error_code);
+    ;
+    result->Error("System error", "Could not show dialog",
+                  EncodableValue(dialog.last_result()));
   }
-  EncodableValue response(std::move(files));
-  result->Success(&response);
+  result->Success(EncodableValue(std::move(files)));
 }
 
 // Returns the top-level window that owns |view|.
