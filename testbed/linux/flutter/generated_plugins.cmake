@@ -3,9 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  color_panel
+  url_launcher_linux
   file_chooser
-  url_launcher_fde
   menubar
   window_size
 )

@@ -17,8 +17,6 @@ dependencies:
   # FDE plugins.
   # Note: In an actual project, these would be included via 'git:' reference,
   # rather than 'path:', as described in the plugins README.
-  color_panel:
-    path: ../plugins/color_panel
   file_chooser:
     path: ../plugins/file_chooser
   menubar:
