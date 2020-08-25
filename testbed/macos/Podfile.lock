@@ -1,6 +1,4 @@
 PODS:
-  - color_panel (0.0.2):
-    - FlutterMacOS
   - file_chooser (0.0.2):
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
@@ -19,7 +17,6 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
-  - color_panel (from `Flutter/ephemeral/.symlinks/plugins/color_panel/macos`)
   - file_chooser (from `Flutter/ephemeral/.symlinks/plugins/file_chooser/macos`)
   - FlutterMacOS (from `Flutter/ephemeral/.symlinks/flutter/darwin-x64`)
   - menubar (from `Flutter/ephemeral/.symlinks/plugins/menubar/macos`)
@@ -32,8 +29,6 @@ DEPENDENCIES:
   - window_size (from `Flutter/ephemeral/.symlinks/plugins/window_size/macos`)
 
 EXTERNAL SOURCES:
-  color_panel:
-    :path: Flutter/ephemeral/.symlinks/plugins/color_panel/macos
   file_chooser:
     :path: Flutter/ephemeral/.symlinks/plugins/file_chooser/macos
   FlutterMacOS:
@@ -56,16 +51,15 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/window_size/macos
 
 SPEC CHECKSUMS:
-  color_panel: aa0c449e8c5dc9a2c50b67c16771b203685acea0
   file_chooser: 24432cf5dc836722b05c11c2a0a30d19c3c9b996
   FlutterMacOS: 15bea8a44d2fa024068daa0140371c020b4b6ff9
   menubar: 4e3d461d62d775540277ce6639acafe2a111a231
   path_provider: e0848572d1d38b9a7dd099e79cf83f5b7e2cde9f
-  path_provider_macos: adb94ae6c253c45ef2aac146fbf1f4504d74b0f8
+  path_provider_macos: a0a3fd666cb7cd0448e936fb4abad4052961002b
   shared_preferences: 9fec34d1bd906196a4da48fcf6c3ad521cc00b8d
-  shared_preferences_macos: 5e5c2839894accb56b7d23328905b757f2bafaf6
+  shared_preferences_macos: 480ce071d0666e37cef23fe6c702293a3d21799e
   url_launcher: af78307ef9bafff91273b34f1c6c0c86a0004fd7
-  url_launcher_macos: 77182d012b6b515c0955d24ed22b38f79b82a99d
+  url_launcher_macos: 45af3d61de06997666568a7149c1be98b41c95d4
   window_size: 339dafa0b27a95a62a843042038fa6c3c48de195
 
 PODFILE CHECKSUM: 2c44d578a2acaaed0401d0d3bb20d04d4b080703
