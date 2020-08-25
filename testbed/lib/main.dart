@@ -17,7 +17,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:color_panel/color_panel.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -198,30 +197,11 @@ class _MyHomePage extends StatelessWidget {
   final String title;
   final int counter;
 
-  void _changePrimaryThemeColor(BuildContext context) {
-    final colorPanel = ColorPanel.instance;
-    if (!colorPanel.showing) {
-      colorPanel.show((color) {
-        _AppState.of(context).setPrimaryColor(color);
-        // Setting the primary color to a non-opaque color raises an exception.
-      }, showAlpha: false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.color_lens),
-            tooltip: 'Change theme color',
-            onPressed: () {
-              _changePrimaryThemeColor(context);
-            },
-          ),
-        ],
       ),
       body: LayoutBuilder(
         builder: (context, viewportConstraints) {
