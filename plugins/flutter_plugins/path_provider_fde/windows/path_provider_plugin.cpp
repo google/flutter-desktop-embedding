@@ -83,14 +83,14 @@ class PathProviderPlugin : public flutter::Plugin {
 
   // Called when a method is called on plugin channel;
   void HandleMethodCall(
-      const flutter::MethodCall<EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
+      const flutter::MethodCall<> &method_call,
+      std::unique_ptr<flutter::MethodResult<>> result);
 };
 
 // static
 void PathProviderPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrar *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
+  auto channel = std::make_unique<flutter::MethodChannel<>>(
       registrar->messenger(), "plugins.flutter.io/path_provider",
       &flutter::StandardMethodCodec::GetInstance());
 
@@ -110,8 +110,8 @@ PathProviderPlugin::PathProviderPlugin() = default;
 PathProviderPlugin::~PathProviderPlugin() = default;
 
 void PathProviderPlugin::HandleMethodCall(
-    const flutter::MethodCall<EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
+    const flutter::MethodCall<> &method_call,
+    std::unique_ptr<flutter::MethodResult<>> result) {
   if (method_call.method_name().compare("getTemporaryDirectory") == 0) {
     wchar_t path_buffer[MAX_PATH];
     DWORD length = GetTempPath(MAX_PATH, path_buffer);

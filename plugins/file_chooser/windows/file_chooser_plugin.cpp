@@ -228,7 +228,7 @@ const EncodableValue *ValueOrNull(const EncodableMap &map, const char *key) {
 // |result| is guaranteed to be resolved by this function.
 void ShowDialog(
     IID type, HWND parent_window, const EncodableMap &args,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    std::unique_ptr<flutter::MethodResult<>> result) {
   DialogWrapper dialog(type);
   if (!SUCCEEDED(dialog.last_result())) {
     result->Error("System error", "Could not create dialog",
@@ -299,8 +299,8 @@ class FileChooserPlugin : public flutter::Plugin {
  private:
   // Called when a method is called on the plugin channel;
   void HandleMethodCall(
-      const flutter::MethodCall<flutter::EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+      const flutter::MethodCall<> &method_call,
+      std::unique_ptr<flutter::MethodResult<>> result);
 
   // The registrar for this plugin, for accessing the window.
   flutter::PluginRegistrarWindows *registrar_;
@@ -310,7 +310,7 @@ class FileChooserPlugin : public flutter::Plugin {
 void FileChooserPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows *registrar) {
   auto channel =
-      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+      std::make_unique<flutter::MethodChannel<>>(
           registrar->messenger(), kChannelName,
           &flutter::StandardMethodCodec::GetInstance());
 
@@ -330,8 +330,8 @@ FileChooserPlugin::FileChooserPlugin(flutter::PluginRegistrarWindows *registrar)
 FileChooserPlugin::~FileChooserPlugin() {}
 
 void FileChooserPlugin::HandleMethodCall(
-    const flutter::MethodCall<flutter::EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    const flutter::MethodCall<> &method_call,
+    std::unique_ptr<flutter::MethodResult<>> result) {
   if (method_call.method_name().compare(kShowOpenPanelMethod) == 0 ||
       method_call.method_name().compare(kShowSavePanelMethod) == 0) {
     const auto *arguments =

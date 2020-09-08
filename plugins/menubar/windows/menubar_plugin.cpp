@@ -69,7 +69,7 @@ class MenubarPlugin : public flutter::Plugin {
 
   MenubarPlugin(
       flutter::PluginRegistrarWindows *registrar,
-      std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel);
+      std::unique_ptr<flutter::MethodChannel<>> channel);
 
   virtual ~MenubarPlugin();
 
@@ -91,8 +91,8 @@ class MenubarPlugin : public flutter::Plugin {
 
   // Called when a method is called on this plugin's channel from Dart.
   void HandleMethodCall(
-      const flutter::MethodCall<EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
+      const flutter::MethodCall<> &method_call,
+      std::unique_ptr<flutter::MethodResult<>> result);
 
   // Called for top-level WindowProc delegation.
   std::optional<LRESULT> HandleWindowProc(HWND hwnd, UINT message,
@@ -102,7 +102,7 @@ class MenubarPlugin : public flutter::Plugin {
   flutter::PluginRegistrarWindows *registrar_;
 
   // The cannel to send menu item activations on.
-  std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel_;
+  std::unique_ptr<flutter::MethodChannel<>> channel_;
 
   // The ID of the registered WindowProc handler.
   int window_proc_id_;
@@ -111,7 +111,7 @@ class MenubarPlugin : public flutter::Plugin {
 // static
 void MenubarPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
+  auto channel = std::make_unique<flutter::MethodChannel<>>(
       registrar->messenger(), kChannelName,
       &flutter::StandardMethodCodec::GetInstance());
   auto *channel_pointer = channel.get();
@@ -128,7 +128,7 @@ void MenubarPlugin::RegisterWithRegistrar(
 
 MenubarPlugin::MenubarPlugin(
     flutter::PluginRegistrarWindows *registrar,
-    std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel)
+    std::unique_ptr<flutter::MethodChannel<>> channel)
     : registrar_(registrar), channel_(std::move(channel)) {
   window_proc_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
       [this](HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
@@ -193,8 +193,8 @@ std::optional<EncodableValue> MenubarPlugin::AddMenuItem(
 }
 
 void MenubarPlugin::HandleMethodCall(
-    const flutter::MethodCall<EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
+    const flutter::MethodCall<> &method_call,
+    std::unique_ptr<flutter::MethodResult<>> result) {
   if (method_call.method_name().compare(kMenuSetMethod) == 0) {
     flutter::FlutterView *view = registrar_->GetView();
     HWND window =
