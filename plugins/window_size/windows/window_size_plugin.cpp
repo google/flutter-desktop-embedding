@@ -131,8 +131,8 @@ class WindowSizePlugin : public flutter::Plugin {
  private:
   // Called when a method is called on the plugin channel;
   void HandleMethodCall(
-      const flutter::MethodCall<flutter::EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+      const flutter::MethodCall<> &method_call,
+      std::unique_ptr<flutter::MethodResult<>> result);
 
   // Called for top-level WindowProc delegation.
   std::optional<LRESULT> HandleWindowProc(HWND hwnd, UINT message,
@@ -155,7 +155,7 @@ class WindowSizePlugin : public flutter::Plugin {
 void WindowSizePlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows *registrar) {
   auto channel =
-      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+      std::make_unique<flutter::MethodChannel<>>(
           registrar->messenger(), kChannelName,
           &flutter::StandardMethodCodec::GetInstance());
 
@@ -182,8 +182,8 @@ WindowSizePlugin::~WindowSizePlugin() {
 }
 
 void WindowSizePlugin::HandleMethodCall(
-    const flutter::MethodCall<flutter::EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    const flutter::MethodCall<> &method_call,
+    std::unique_ptr<flutter::MethodResult<>> result) {
   if (method_call.method_name().compare(kGetScreenListMethod) == 0) {
     EncodableValue screens(std::in_place_type<EncodableList>);
     EnumDisplayMonitors(nullptr, nullptr, MonitorRepresentationEnumProc,

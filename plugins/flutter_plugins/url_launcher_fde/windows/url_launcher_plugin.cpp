@@ -53,7 +53,7 @@ std::wstring Utf16FromUtf8(const std::string &utf8_string) {
 // Returns the URL argument from |method_call| if it is present, otherwise
 // returns an empty string.
 std::string GetUrlArgument(
-    const flutter::MethodCall<EncodableValue> &method_call) {
+    const flutter::MethodCall<> &method_call) {
   std::string url;
   const auto *arguments = std::get_if<EncodableMap>(method_call.arguments());
   if (arguments) {
@@ -76,14 +76,14 @@ class UrlLauncherPlugin : public flutter::Plugin {
 
   // Called when a method is called on plugin channel;
   void HandleMethodCall(
-      const flutter::MethodCall<EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
+      const flutter::MethodCall<> &method_call,
+      std::unique_ptr<flutter::MethodResult<>> result);
 };
 
 // static
 void UrlLauncherPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrar *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
+  auto channel = std::make_unique<flutter::MethodChannel<>>(
       registrar->messenger(), "plugins.flutter.io/url_launcher",
       &flutter::StandardMethodCodec::GetInstance());
 
@@ -103,8 +103,8 @@ UrlLauncherPlugin::UrlLauncherPlugin() = default;
 UrlLauncherPlugin::~UrlLauncherPlugin() = default;
 
 void UrlLauncherPlugin::HandleMethodCall(
-    const flutter::MethodCall<EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
+    const flutter::MethodCall<> &method_call,
+    std::unique_ptr<flutter::MethodResult<>> result) {
   if (method_call.method_name().compare("launch") == 0) {
     std::string url = GetUrlArgument(method_call);
     if (url.empty()) {
