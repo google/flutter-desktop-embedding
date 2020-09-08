@@ -181,9 +181,6 @@ class _AppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
-        // Specify a font to reduce potential issues with the
-        // application behaving differently on different platforms.
-        fontFamily: 'Roboto',
       ),
       darkTheme: ThemeData.dark(),
       home: _MyHomePage(title: 'Flutter Demo Home Page', counter: _counter),
