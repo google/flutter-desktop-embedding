@@ -131,11 +131,12 @@ class DialogWrapper {
     filter_extensions.reserve(filters.size());
     filter_names.reserve(filters.size());
 
-    for (const EncodableValue &filter_info : filters) {
-      filter_names.push_back(WideStringFromChars(
-          filter_info.ListValue()[0].StringValue().c_str()));
+    for (const EncodableValue &filter_info_value : filters) {
+      const auto &filter_info = std::get<EncodableList>(filter_info_value);
+      const auto &filter_name = std::get<std::string>(filter_info[0]);
+      const auto &extensions = std::get<EncodableList>(filter_info[1]);
+      filter_names.push_back(WideStringFromChars(filter_name.c_str()));
       filter_extensions.push_back(L"");
-      EncodableList extensions = filter_info.ListValue()[1].ListValue();
       std::wstring &spec = filter_extensions.back();
       if (extensions.empty()) {
         spec += L"*.*";
@@ -145,7 +146,7 @@ class DialogWrapper {
             spec += spec_delimiter;
           }
           spec += file_wildcard +
-                  WideStringFromChars(extension.StringValue().c_str());
+                  WideStringFromChars(std::get<std::string>(extension).c_str());
         }
       }
       filter_specs.push_back({filter_names.back().c_str(), spec.c_str()});
@@ -211,14 +212,13 @@ class DialogWrapper {
 };
 
 // Looks for |key| in |map|, returning the associated value if it is present, or
-// a Null EncodableValue if not.
-const EncodableValue &ValueOrNull(const EncodableMap &map, const char *key) {
-  static EncodableValue null_value;
+// a nullptr if not.
+const EncodableValue *ValueOrNull(const EncodableMap &map, const char *key) {
   auto it = map.find(EncodableValue(key));
   if (it == map.end()) {
-    return null_value;
+    return nullptr;
   }
-  return it->second;
+  return &(it->second);
 }
 
 // Displays the open or save dialog (according to |type|) and sends the
@@ -228,54 +228,58 @@ const EncodableValue &ValueOrNull(const EncodableMap &map, const char *key) {
 // |result| is guaranteed to be resolved by this function.
 void ShowDialog(
     IID type, HWND parent_window, const EncodableMap &args,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    std::unique_ptr<flutter::MethodResult<>> result) {
   DialogWrapper dialog(type);
   if (!SUCCEEDED(dialog.last_result())) {
-    EncodableValue error_code(dialog.last_result());
-    result->Error("System error", "Could not create dialog", &error_code);
+    result->Error("System error", "Could not create dialog",
+                  EncodableValue(dialog.last_result()));
     return;
   }
 
   FILEOPENDIALOGOPTIONS dialog_options = 0;
-  EncodableValue allow_multiple_selection =
-      ValueOrNull(args, kAllowsMultipleSelectionKey);
-  if (!allow_multiple_selection.IsNull() &&
-      allow_multiple_selection.BoolValue()) {
+  const auto *allow_multiple_selection =
+      std::get_if<bool>(ValueOrNull(args, kAllowsMultipleSelectionKey));
+  if (allow_multiple_selection && *allow_multiple_selection) {
     dialog_options |= FOS_ALLOWMULTISELECT;
   }
-  EncodableValue choose_dirs = ValueOrNull(args, kCanChooseDirectoriesKey);
-  if (!choose_dirs.IsNull() && choose_dirs.BoolValue()) {
+  const auto *choose_dirs =
+      std::get_if<bool>(ValueOrNull(args, kCanChooseDirectoriesKey));
+  if (choose_dirs && *choose_dirs) {
     dialog_options |= FOS_PICKFOLDERS;
   }
   if (dialog_options != 0) {
     dialog.AddOptions(dialog_options);
   }
 
-  EncodableValue start_dir = ValueOrNull(args, kInitialDirectoryKey);
-  if (!start_dir.IsNull()) {
-    dialog.SetDefaultFolder(start_dir.StringValue());
+  const auto *start_dir =
+      std::get_if<std::string>(ValueOrNull(args, kInitialDirectoryKey));
+  if (start_dir) {
+    dialog.SetDefaultFolder(*start_dir);
   }
-  EncodableValue initial_file_name = ValueOrNull(args, kInitialFileNameKey);
-  if (!initial_file_name.IsNull()) {
-    dialog.SetFileName(initial_file_name.StringValue());
+  const auto *initial_file_name =
+      std::get_if<std::string>(ValueOrNull(args, kInitialFileNameKey));
+  if (initial_file_name) {
+    dialog.SetFileName(*initial_file_name);
   }
-  EncodableValue confirm_label = ValueOrNull(args, kConfirmButtonTextKey);
-  if (!confirm_label.IsNull()) {
-    dialog.SetOkButtonLabel(confirm_label.StringValue());
+  const auto *confirm_label =
+      std::get_if<std::string>(ValueOrNull(args, kConfirmButtonTextKey));
+  if (confirm_label) {
+    dialog.SetOkButtonLabel(*confirm_label);
   }
-  EncodableValue allowed_types = ValueOrNull(args, kAllowedFileTypesKey);
-  if (!allowed_types.IsNull() && !allowed_types.ListValue().empty()) {
-    dialog.SetFileTypeFilters(allowed_types.ListValue());
+  const auto *allowed_types =
+      std::get_if<EncodableList>(ValueOrNull(args, kAllowedFileTypesKey));
+  if (allowed_types && !allowed_types->empty()) {
+    dialog.SetFileTypeFilters(*allowed_types);
   }
 
   EncodableValue files = dialog.Show(parent_window);
   if (files.IsNull() &&
       dialog.last_result() != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
-    EncodableValue error_code(dialog.last_result());
-    result->Error("System error", "Could not show dialog", &error_code);
+    ;
+    result->Error("System error", "Could not show dialog",
+                  EncodableValue(dialog.last_result()));
   }
-  EncodableValue response(std::move(files));
-  result->Success(&response);
+  result->Success(EncodableValue(std::move(files)));
 }
 
 // Returns the top-level window that owns |view|.
@@ -295,8 +299,8 @@ class FileChooserPlugin : public flutter::Plugin {
  private:
   // Called when a method is called on the plugin channel;
   void HandleMethodCall(
-      const flutter::MethodCall<flutter::EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+      const flutter::MethodCall<> &method_call,
+      std::unique_ptr<flutter::MethodResult<>> result);
 
   // The registrar for this plugin, for accessing the window.
   flutter::PluginRegistrarWindows *registrar_;
@@ -306,7 +310,7 @@ class FileChooserPlugin : public flutter::Plugin {
 void FileChooserPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows *registrar) {
   auto channel =
-      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
+      std::make_unique<flutter::MethodChannel<>>(
           registrar->messenger(), kChannelName,
           &flutter::StandardMethodCodec::GetInstance());
 
@@ -326,11 +330,13 @@ FileChooserPlugin::FileChooserPlugin(flutter::PluginRegistrarWindows *registrar)
 FileChooserPlugin::~FileChooserPlugin() {}
 
 void FileChooserPlugin::HandleMethodCall(
-    const flutter::MethodCall<flutter::EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+    const flutter::MethodCall<> &method_call,
+    std::unique_ptr<flutter::MethodResult<>> result) {
   if (method_call.method_name().compare(kShowOpenPanelMethod) == 0 ||
       method_call.method_name().compare(kShowSavePanelMethod) == 0) {
-    if (!method_call.arguments() || !method_call.arguments()->IsMap()) {
+    const auto *arguments =
+        std::get_if<flutter::EncodableMap>(method_call.arguments());
+    if (!arguments) {
       result->Error("Bad Arguments", "Argument map missing or malformed");
       return;
     }
@@ -338,8 +344,8 @@ void FileChooserPlugin::HandleMethodCall(
         method_call.method_name().compare(kShowOpenPanelMethod) == 0
             ? CLSID_FileOpenDialog
             : CLSID_FileSaveDialog;
-    ShowDialog(dialog_type, GetRootWindow(registrar_->GetView()),
-               method_call.arguments()->MapValue(), std::move(result));
+    ShowDialog(dialog_type, GetRootWindow(registrar_->GetView()), *arguments,
+               std::move(result));
   } else {
     result->NotImplemented();
   }

@@ -17,7 +17,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:color_panel/color_panel.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -43,13 +42,10 @@ void main() {
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
       window_size.setWindowFrame(frame);
+      window_size.setWindowMinSize(Size(0.8 * width, 0.8 * height));
+      window_size.setWindowMaxSize(Size(1.5 * width, 1.5 * height));
       window_size
           .setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
-
-      if (Platform.isMacOS) {
-        window_size.setWindowMinSize(Size(800, 600));
-        window_size.setWindowMaxSize(Size(1600, 1200));
-      }
     }
   });
 
@@ -113,10 +109,6 @@ class _AppState extends State<MyApp> {
 
   /// Rebuilds the native menu bar based on the current state.
   void updateMenubar() {
-    // Currently, the menubar plugin is only implemented on macOS and linux.
-    if (!Platform.isMacOS && !Platform.isLinux) {
-      return;
-    }
     setApplicationMenu([
       Submenu(label: 'Color', children: [
         MenuItem(
@@ -189,9 +181,6 @@ class _AppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
-        // Specify a font to reduce potential issues with the
-        // application behaving differently on different platforms.
-        fontFamily: 'Roboto',
       ),
       darkTheme: ThemeData.dark(),
       home: _MyHomePage(title: 'Flutter Demo Home Page', counter: _counter),
@@ -205,30 +194,11 @@ class _MyHomePage extends StatelessWidget {
   final String title;
   final int counter;
 
-  void _changePrimaryThemeColor(BuildContext context) {
-    final colorPanel = ColorPanel.instance;
-    if (!colorPanel.showing) {
-      colorPanel.show((color) {
-        _AppState.of(context).setPrimaryColor(color);
-        // Setting the primary color to a non-opaque color raises an exception.
-      }, showAlpha: false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.color_lens),
-            tooltip: 'Change theme color',
-            onPressed: () {
-              _changePrimaryThemeColor(context);
-            },
-          ),
-        ],
       ),
       body: LayoutBuilder(
         builder: (context, viewportConstraints) {
@@ -311,10 +281,7 @@ class FileChooserTestWidget extends StatelessWidget {
           child: const Text('OPEN'),
           onPressed: () async {
             String initialDirectory;
-            if (Platform.isMacOS || Platform.isWindows) {
-              initialDirectory =
-                  (await getApplicationDocumentsDirectory()).path;
-            }
+            initialDirectory = (await getApplicationDocumentsDirectory()).path;
             final result = await showOpenPanel(
                 allowsMultipleSelection: true,
                 initialDirectory: initialDirectory);
@@ -364,9 +331,12 @@ class URLLauncherTestWidget extends StatelessWidget {
       children: <Widget>[
         new FlatButton(
           child: const Text('OPEN ON GITHUB'),
-          onPressed: () {
-            url_launcher
-                .launch('https://github.com/google/flutter-desktop-embedding');
+          onPressed: () async {
+            const url = 'https://github.com/google/flutter-desktop-embedding';
+            if (await url_launcher.canLaunch(url)) {
+              final result = await url_launcher.launch(url);
+              assert(result);
+            }
           },
         ),
       ],
