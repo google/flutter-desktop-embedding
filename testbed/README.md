@@ -14,9 +14,3 @@ This application is only likely to be useful if:
 Since it serves as simple test environment for the plugins that are part of
 this project, and some desktop-specific Flutter functionality, it is a
 collection of unrelated functionality rather than a usable application.
-
-## Setting Up
-
-This application uses all of the plugins in this repository, so make sure you
-have all the dependencies for
-[building the plugins on your platform](../plugins/README.md).

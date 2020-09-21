@@ -19,15 +19,9 @@ import 'package:flutter/services.dart';
 
 import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
 
 import 'keyboard_test_page.dart';
-
-// The shared_preferences key for the testbed's color.
-const _prefKeyColor = 'color';
 
 void main() {
   // Try to resize and reposition the window to be half the width and height
@@ -62,16 +56,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _AppState extends State<MyApp> {
-  _AppState() {
-    if (Platform.isMacOS || Platform.isLinux) {
-      SharedPreferences.getInstance().then((prefs) {
-        if (prefs.containsKey(_prefKeyColor)) {
-          setPrimaryColor(Color(prefs.getInt(_prefKeyColor)));
-        }
-      });
-    }
-  }
-
   Color _primaryColor = Colors.blue;
   int _counter = 0;
 
@@ -83,14 +67,6 @@ class _AppState extends State<MyApp> {
     setState(() {
       _primaryColor = color;
     });
-    _saveColor();
-  }
-
-  void _saveColor() async {
-    if (Platform.isMacOS || Platform.isLinux) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt(_prefKeyColor, _primaryColor.value);
-    }
   }
 
   void incrementCounter() {
@@ -219,7 +195,6 @@ class _MyHomePage extends StatelessWidget {
                     ),
                     TextInputTestWidget(),
                     FileChooserTestWidget(),
-                    URLLauncherTestWidget(),
                     new RaisedButton(
                       child: new Text('Test raw keyboard events'),
                       onPressed: () {
@@ -280,11 +255,8 @@ class FileChooserTestWidget extends StatelessWidget {
         new FlatButton(
           child: const Text('OPEN'),
           onPressed: () async {
-            String initialDirectory;
-            initialDirectory = (await getApplicationDocumentsDirectory()).path;
             final result = await showOpenPanel(
-                allowsMultipleSelection: true,
-                initialDirectory: initialDirectory);
+                allowsMultipleSelection: true);
             Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
@@ -315,28 +287,6 @@ class FileChooserTestWidget extends StatelessWidget {
             Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
-          },
-        ),
-      ],
-    );
-  }
-}
-
-/// A widget containing controls to test the url launcher plugin.
-class URLLauncherTestWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        new FlatButton(
-          child: const Text('OPEN ON GITHUB'),
-          onPressed: () async {
-            const url = 'https://github.com/google/flutter-desktop-embedding';
-            if (await url_launcher.canLaunch(url)) {
-              final result = await url_launcher.launch(url);
-              assert(result);
-            }
           },
         ),
       ],

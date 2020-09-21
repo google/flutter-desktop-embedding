@@ -3,16 +3,11 @@ description: A test project for flutter-desktop-embedding.
 
 environment:
   sdk: '>=2.0.0 <3.0.0'
-  # The testbed interacts with build scripts on the Flutter side that are not
-  # yet stable, so it requires a very recent version of Flutter.
-  # This version will increase regularly as the build scripts change.
-  flutter: '>=1.10.2-pre.54'
+  flutter: '>=1.22.0-10.0.pre'
 
 dependencies:
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^0.1.0
 
   # FDE plugins.
   # Note: In an actual project, these would be included via 'git:' reference,
@@ -23,13 +18,6 @@ dependencies:
     path: ../plugins/menubar
   window_size:
     path: ../plugins/window_size
-  # Plugins that have had their implementations upstreamed.
-  shared_preferences: ^0.5.8
-  url_launcher: ^5.6.0
-  # Plugins from flutter/plugins, with local desktop implementations.
-  path_provider: ^1.6.5
-  path_provider_fde:
-    path: ../plugins/flutter_plugins/path_provider_fde
 
 dev_dependencies:
   flutter_test:
