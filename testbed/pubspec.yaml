@@ -24,12 +24,9 @@ dependencies:
   window_size:
     path: ../plugins/window_size
   # Plugins that have had their implementations upstreamed.
+  path_provider: ^1.6.16
   shared_preferences: ^0.5.8
   url_launcher: ^5.6.0
-  # Plugins from flutter/plugins, with local desktop implementations.
-  path_provider: ^1.6.5
-  path_provider_fde:
-    path: ../plugins/flutter_plugins/path_provider_fde
 
 dev_dependencies:
   flutter_test:
