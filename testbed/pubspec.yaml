@@ -24,7 +24,6 @@ dependencies:
   window_size:
     path: ../plugins/window_size
   # Plugins that have had their implementations upstreamed.
-  shared_preferences: ^0.5.8
   url_launcher: ^5.6.0
 
 dev_dependencies:
