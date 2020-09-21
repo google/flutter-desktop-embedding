@@ -19,7 +19,6 @@ import 'package:flutter/services.dart';
 
 import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
 
 import 'keyboard_test_page.dart';
@@ -196,7 +195,6 @@ class _MyHomePage extends StatelessWidget {
                     ),
                     TextInputTestWidget(),
                     FileChooserTestWidget(),
-                    URLLauncherTestWidget(),
                     new RaisedButton(
                       child: new Text('Test raw keyboard events'),
                       onPressed: () {
@@ -289,28 +287,6 @@ class FileChooserTestWidget extends StatelessWidget {
             Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
-          },
-        ),
-      ],
-    );
-  }
-}
-
-/// A widget containing controls to test the url launcher plugin.
-class URLLauncherTestWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        new FlatButton(
-          child: const Text('OPEN ON GITHUB'),
-          onPressed: () async {
-            const url = 'https://github.com/google/flutter-desktop-embedding';
-            if (await url_launcher.canLaunch(url)) {
-              final result = await url_launcher.launch(url);
-              assert(result);
-            }
           },
         ),
       ],

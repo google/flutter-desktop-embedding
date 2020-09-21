@@ -5,7 +5,6 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   file_chooser
   menubar
-  url_launcher_linux
   window_size
 )
 

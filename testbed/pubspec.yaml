@@ -23,8 +23,6 @@ dependencies:
     path: ../plugins/menubar
   window_size:
     path: ../plugins/window_size
-  # Plugins that have had their implementations upstreamed.
-  url_launcher: ^5.6.0
 
 dev_dependencies:
   flutter_test:
