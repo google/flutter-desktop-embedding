@@ -19,7 +19,6 @@ import 'package:flutter/services.dart';
 
 import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:window_size/window_size.dart' as window_size;
@@ -280,11 +279,8 @@ class FileChooserTestWidget extends StatelessWidget {
         new FlatButton(
           child: const Text('OPEN'),
           onPressed: () async {
-            String initialDirectory;
-            initialDirectory = (await getApplicationDocumentsDirectory()).path;
             final result = await showOpenPanel(
-                allowsMultipleSelection: true,
-                initialDirectory: initialDirectory);
+                allowsMultipleSelection: true);
             Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
