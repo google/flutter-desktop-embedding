@@ -3,10 +3,7 @@ description: A test project for flutter-desktop-embedding.
 
 environment:
   sdk: '>=2.0.0 <3.0.0'
-  # The testbed interacts with build scripts on the Flutter side that are not
-  # yet stable, so it requires a very recent version of Flutter.
-  # This version will increase regularly as the build scripts change.
-  flutter: '>=1.10.2-pre.54'
+  flutter: '>=1.22.0-10.0.pre'
 
 dependencies:
   flutter:
