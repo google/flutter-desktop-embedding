@@ -12,8 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^0.1.0
-
   # FDE plugins.
   # Note: In an actual project, these would be included via 'git:' reference,
   # rather than 'path:', as described in the plugins README.
