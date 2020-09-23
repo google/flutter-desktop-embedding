@@ -6,10 +6,10 @@ since become part of Flutter, and all that remains here are experimental,
 early-stage desktop
 [plugins](https://flutter.dev/docs/development/packages-and-plugins/developing-packages).
 
-If you just want to start running Flutter on desktop, the place to start is now
-[the Flutter wiki](https://github.com/flutter/flutter/wiki/Desktop-shells), rather than this project. You will already need to have followed the
-instructions there to get an application running on desktop before using any
-of the plugins here.
+If you want to get started with Flutter on desktop, the place to start is now
+[the Flutter documentation](https://flutter.dev/desktop), rather than this project.
+You will already need to have followed the instructions there to get an application
+running on desktop before using any of the plugins here.
 
 ## Feedback
 
@@ -19,7 +19,7 @@ and feature requests is now [the Flutter issue
 tracker](https://github.com/flutter/flutter/issues).
 
 For bug reports and feature requests **related to the plugins in this repository**,
-please file issues here. Before filing a bug, see Supported Versions below.
+please file issues here.
 
 ## Repository Structure
 
