@@ -1,5 +1,7 @@
 # Desktop Embedding for Flutter
 
+![CI](https://github.com/google/flutter-desktop-embedding/workflows/CI/badge.svg)
+
 This project was originally created to develop Windows, macOS, and Linux
 embeddings of [Flutter](https://github.com/flutter/flutter). That work has
 since become part of Flutter, and all that remains here are experimental,
