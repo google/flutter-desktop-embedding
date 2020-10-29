@@ -15,7 +15,7 @@
 /// The result of a file chooser operation.
 class FileChooserResult {
   /// Creates a new result object with the given state and paths.
-  const FileChooserResult({this.paths, this.canceled});
+  const FileChooserResult({required this.paths, this.canceled = false});
 
   /// Whether or not the file chooser operation was canceled by the user.
   final bool canceled;

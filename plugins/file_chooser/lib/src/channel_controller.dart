@@ -79,48 +79,41 @@ class FileChooserConfigurationOptions {
   const FileChooserConfigurationOptions(
       {this.initialDirectory,
       this.initialFileName,
-      this.allowedFileTypes,
-      this.allowsMultipleSelection,
-      this.canSelectDirectories,
+      this.allowedFileTypes = const <FileTypeFilterGroup>[],
+      this.allowsMultipleSelection = false,
+      this.canSelectDirectories = false,
       this.confirmButtonText});
 
   // See the constants above for documentation; these correspond exactly to
   // the configuration parameters defined in the channel protocol.
-  final String initialDirectory; // ignore: public_member_api_docs
-  final String initialFileName; // ignore: public_member_api_docs
+  final String? initialDirectory; // ignore: public_member_api_docs
+  final String? initialFileName; // ignore: public_member_api_docs
   final List<FileTypeFilterGroup>
       allowedFileTypes; // ignore: public_member_api_docs
   final bool allowsMultipleSelection; // ignore: public_member_api_docs
   final bool canSelectDirectories; // ignore: public_member_api_docs
-  final String confirmButtonText; // ignore: public_member_api_docs
+  final String? confirmButtonText; // ignore: public_member_api_docs
 
   /// Returns the configuration as a map that can be passed as the
   /// arguments to invokeMethod for [_kShowOpenPanelMethod] or
   /// [_kShowSavePanelMethod].
   Map<String, dynamic> asInvokeMethodArguments() {
     final args = <String, dynamic>{};
-    if (initialDirectory != null && initialDirectory.isNotEmpty) {
-      args[_kInitialDirectoryKey] = initialDirectory;
-    }
-    if (allowsMultipleSelection != null) {
-      args[_kAllowsMultipleSelectionKey] = allowsMultipleSelection;
-    }
-    if (canSelectDirectories != null) {
-      args[_kCanChooseDirectoriesKey] = canSelectDirectories;
-    }
-    if (allowedFileTypes != null && allowedFileTypes.isNotEmpty) {
+    args[_kAllowsMultipleSelectionKey] = allowsMultipleSelection;
+    args[_kCanChooseDirectoriesKey] = canSelectDirectories;
+    if (allowedFileTypes.isNotEmpty) {
       args[_kAllowedFileTypesKey] = allowedFileTypes
-          .map((filter) => [filter.label ?? '', filter.fileExtensions ?? []])
+          .map((filter) => [filter.label, filter.fileExtensions])
           .toList();
     }
-    if (confirmButtonText != null && confirmButtonText.isNotEmpty) {
-      args[_kConfirmButtonTextKey] = confirmButtonText;
+    if (initialDirectory != null && initialDirectory!.isNotEmpty) {
+      args[_kInitialDirectoryKey] = initialDirectory;
     }
-    if (confirmButtonText != null && confirmButtonText.isNotEmpty) {
-      args[_kConfirmButtonTextKey] = confirmButtonText;
-    }
-    if (initialFileName != null && initialFileName.isNotEmpty) {
+    if (initialFileName != null && initialFileName!.isNotEmpty) {
       args[_kInitialFileNameKey] = initialFileName;
+    }
+    if (confirmButtonText != null && confirmButtonText!.isNotEmpty) {
+      args[_kConfirmButtonTextKey] = confirmButtonText;
     }
     return args;
   }
