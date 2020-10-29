@@ -1,4 +1,5 @@
 .packages
 .flutter-plugins
+.flutter-plugins-dependencies
 pubspec.lock
 .dart_tool
