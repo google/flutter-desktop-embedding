@@ -30,7 +30,7 @@ Future<List<Screen>> getScreenList() async {
 ///
 /// If the window is not being displayed, returns null. If the window is being
 /// displayed on multiple screens, the platform can return any of those screens.
-Future<Screen> getCurrentScreen() async {
+Future<Screen?> getCurrentScreen() async {
   final windowInfo = await WindowSizeChannel.instance.getWindowInfo();
   return windowInfo.screen;
 }
@@ -66,7 +66,7 @@ void setWindowTitle(String title) async {
 }
 
 /// Sets the window title's represented [Uri], of the window containing this Flutter instance.
-/// 
+///
 /// Only implemented for macOS. If the URL is a file URL, the
 /// window shows an icon in its title bar.
 void setWindowTitleRepresentedUrl(Uri url) async {
