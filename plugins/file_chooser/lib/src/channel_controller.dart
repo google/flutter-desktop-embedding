@@ -77,22 +77,22 @@ enum FileChooserType {
 class FileChooserConfigurationOptions {
   /// Creates a new configuration options object with the given settings.
   const FileChooserConfigurationOptions(
-      {this.initialDirectory,
-      this.initialFileName,
+      {this.initialDirectory = '',
+      this.initialFileName = '',
       this.allowedFileTypes = const <FileTypeFilterGroup>[],
       this.allowsMultipleSelection = false,
       this.canSelectDirectories = false,
-      this.confirmButtonText});
+      this.confirmButtonText = ''});
 
   // See the constants above for documentation; these correspond exactly to
   // the configuration parameters defined in the channel protocol.
-  final String? initialDirectory; // ignore: public_member_api_docs
-  final String? initialFileName; // ignore: public_member_api_docs
+  final String initialDirectory; // ignore: public_member_api_docs
+  final String initialFileName; // ignore: public_member_api_docs
   final List<FileTypeFilterGroup>
       allowedFileTypes; // ignore: public_member_api_docs
   final bool allowsMultipleSelection; // ignore: public_member_api_docs
   final bool canSelectDirectories; // ignore: public_member_api_docs
-  final String? confirmButtonText; // ignore: public_member_api_docs
+  final String confirmButtonText; // ignore: public_member_api_docs
 
   /// Returns the configuration as a map that can be passed as the
   /// arguments to invokeMethod for [_kShowOpenPanelMethod] or
@@ -106,13 +106,13 @@ class FileChooserConfigurationOptions {
           .map((filter) => [filter.label, filter.fileExtensions])
           .toList();
     }
-    if (initialDirectory != null && initialDirectory!.isNotEmpty) {
+    if (initialDirectory.isNotEmpty) {
       args[_kInitialDirectoryKey] = initialDirectory;
     }
-    if (initialFileName != null && initialFileName!.isNotEmpty) {
+    if (initialFileName.isNotEmpty) {
       args[_kInitialFileNameKey] = initialFileName;
     }
-    if (confirmButtonText != null && confirmButtonText!.isNotEmpty) {
+    if (confirmButtonText.isNotEmpty) {
       args[_kConfirmButtonTextKey] = confirmButtonText;
     }
     return args;

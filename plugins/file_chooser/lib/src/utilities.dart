@@ -26,11 +26,11 @@ import 'result.dart';
 ///   Defaults to file selection if unset.
 /// - [confirmButtonText] overrides the button that confirms selection.
 Future<FileChooserResult> showOpenPanel({
-  String? initialDirectory,
+  String initialDirectory = '',
   List<FileTypeFilterGroup> allowedFileTypes = const <FileTypeFilterGroup>[],
   bool allowsMultipleSelection = false,
   bool canSelectDirectories = false,
-  String? confirmButtonText,
+  String confirmButtonText = '',
 }) async {
   final options = FileChooserConfigurationOptions(
       initialDirectory: initialDirectory,
@@ -50,10 +50,10 @@ Future<FileChooserResult> showOpenPanel({
 /// - [allowedFileTypes] restricts selection to the given file types.
 /// - [confirmButtonText] overrides the button that confirms selection.
 Future<FileChooserResult> showSavePanel(
-    {String? initialDirectory,
-    String? suggestedFileName,
+    {String initialDirectory = '',
+    String suggestedFileName = '',
     List<FileTypeFilterGroup> allowedFileTypes = const <FileTypeFilterGroup>[],
-    String? confirmButtonText}) async {
+    String confirmButtonText = ''}) async {
   final options = FileChooserConfigurationOptions(
       initialDirectory: initialDirectory,
       initialFileName: suggestedFileName,
