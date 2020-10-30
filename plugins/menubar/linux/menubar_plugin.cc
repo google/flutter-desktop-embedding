@@ -12,224 +12,242 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "plugins/menubar/linux/menubar_plugin.h"
+#include "include/menubar/menubar_plugin.h"
 
+#include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
-#include <memory>
-
-#include <flutter/method_channel.h>
-#include <flutter/plugin_registrar.h>
-#include <flutter/standard_method_codec.h>
-
-static constexpr char kWindowTitle[] = "Flutter Menubar";
-
-namespace plugins_menubar {
-
-namespace {
-
-using flutter::EncodableMap;
-using flutter::EncodableValue;
 
 // See menu_channel.dart for documentation.
 const char kChannelName[] = "flutter/menubar";
+const char kBadArgumentsError[] = "Bad Arguments";
+const char kNoScreenError[] = "No Screen";
+const char kFailureError[] = "Failure";
 const char kMenuSetMethod[] = "Menubar.SetMenu";
 const char kMenuItemSelectedCallbackMethod[] = "Menubar.SelectedCallback";
 const char kIdKey[] = "id";
 const char kLabelKey[] = "label";
 const char kEnabledKey[] = "enabled";
 const char kChildrenKey[] = "children";
-const char kDividerKey[] = "isDivider";
+const char kIsDividerKey[] = "isDivider";
 
-}
+struct _FlMenubarPlugin {
+  GObject parent_instance;
 
-class MenubarPlugin : public flutter::Plugin {
- public:
-  static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
+  FlPluginRegistrar* registrar;
 
-  virtual ~MenubarPlugin();
+  // Connection to Flutter engine.
+  FlMethodChannel* channel;
 
- private:
-  // Creates a plugin that communicates on the given channel.
-  MenubarPlugin(
-      std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel);
+  // Special handle used to indicate a divider.
+  GMenuItem* divider_item;
 
-  // Called when a method is called on |channel_|;
-  void HandleMethodCall(
-      const flutter::MethodCall<EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<EncodableValue>> result);
-
-  // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel_;
-
-  class Menubar;
-  std::unique_ptr<Menubar> menubar_;
+  // Menu being shown to the user.
+  GMenu* menu;
 };
 
-// static
-void MenubarPlugin::RegisterWithRegistrar(flutter::PluginRegistrar *registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<EncodableValue>>(
-      registrar->messenger(), kChannelName,
-      &flutter::StandardMethodCodec::GetInstance());
-  auto *channel_pointer = channel.get();
+G_DEFINE_TYPE(FlMenubarPlugin, fl_menubar_plugin, g_object_get_type())
 
-  // Uses new instead of make_unique due to private constructor.
-  std::unique_ptr<MenubarPlugin> plugin(new MenubarPlugin(std::move(channel)));
+static GMenu* value_to_menu(FlMenubarPlugin* self, FlValue* value,
+                            GError** error);
 
-  channel_pointer->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto &call, auto result) {
-        plugin_pointer->HandleMethodCall(call, std::move(result));
-      });
+// Convert a value received from Flutter to a GtkMenuItem.
+static GMenuItem* value_to_menu_item(FlMenubarPlugin* self, FlValue* value,
+                                     GError** error) {
+  if (fl_value_get_type(value) != FL_VALUE_TYPE_MAP) {
+    g_set_error(error, 0, 0, "Menu item map missing or malformed");
+    return nullptr;
+  }
 
-  registrar->AddPlugin(std::move(plugin));
+  FlValue* is_divider_value = fl_value_lookup_string(value, kIsDividerKey);
+  if (is_divider_value != nullptr &&
+      fl_value_get_type(is_divider_value) == FL_VALUE_TYPE_BOOL &&
+      fl_value_get_bool(is_divider_value)) {
+    return G_MENU_ITEM(g_object_ref(self->divider_item));
+  }
+
+  g_autoptr(GMenuItem) item = g_menu_item_new(nullptr, nullptr);
+
+  FlValue* id_value = fl_value_lookup_string(value, kIdKey);
+  if (id_value != nullptr && fl_value_get_type(id_value) == FL_VALUE_TYPE_INT) {
+    g_menu_item_set_action_and_target(item, "app.flutter-menu", "x",
+                                      fl_value_get_int(id_value));
+  }
+
+  FlValue* enabled_value = fl_value_lookup_string(value, kEnabledKey);
+  if (enabled_value != nullptr &&
+      fl_value_get_type(enabled_value) == FL_VALUE_TYPE_BOOL &&
+      !fl_value_get_bool(enabled_value))
+    g_menu_item_set_action_and_target(item, "app.flutter-menu-inactive",
+                                      nullptr);
+
+  FlValue* label_value = fl_value_lookup_string(value, kLabelKey);
+  if (label_value != nullptr &&
+      fl_value_get_type(label_value) == FL_VALUE_TYPE_STRING)
+    g_menu_item_set_label(item, fl_value_get_string(label_value));
+
+  FlValue* children = fl_value_lookup_string(value, kChildrenKey);
+  if (children != nullptr) {
+    g_autoptr(GMenu) sub_menu = value_to_menu(self, children, error);
+    if (sub_menu == nullptr) return nullptr;
+
+    g_menu_item_set_submenu(item, G_MENU_MODEL(sub_menu));
+  }
+
+  return G_MENU_ITEM(g_object_ref(item));
 }
 
-MenubarPlugin::MenubarPlugin(
-    std::unique_ptr<flutter::MethodChannel<EncodableValue>> channel)
-    : channel_(std::move(channel)) {}
-
-MenubarPlugin::~MenubarPlugin() {}
-
-// Class containing the implementation of the Menubar widget. This is currently
-// a floating GTK window, separate from the main app. This is not the optimal
-// solution.
-class MenubarPlugin::Menubar {
- public:
-  explicit Menubar(MenubarPlugin *parent) {
-    menubar_window_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_position(GTK_WINDOW(menubar_window_), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(menubar_window_), 300, 50);
-    gtk_window_set_title(GTK_WINDOW(menubar_window_), kWindowTitle);
-
-    GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_container_add(GTK_CONTAINER(menubar_window_), vbox);
-
-    menubar_ = gtk_menu_bar_new();
-    gtk_box_pack_start(GTK_BOX(vbox), menubar_, FALSE, FALSE, 0);
-  }
-  virtual ~Menubar() {
-    if (menubar_window_) {
-      gtk_widget_destroy(menubar_window_);
-      gtk_widget_destroy(menubar_);
-    }
+// Convert a value received from Flutter to a GtkMenuItem.
+static GMenu* value_to_menu(FlMenubarPlugin* self, FlValue* value,
+                            GError** error) {
+  if (fl_value_get_type(value) != FL_VALUE_TYPE_LIST) {
+    g_set_error(error, 0, 0, "Menu list missing or malformed");
+    return nullptr;
   }
 
-  // Gets the top level menubar widget.
-  GtkWidget *GetRootMenuBar() { return menubar_; }
+  g_autoptr(GMenu) menu = g_menu_new();
+  g_autoptr(GMenu) section = nullptr;
+  for (size_t i = 0; i < fl_value_get_length(value); i++) {
+    g_autoptr(GMenuItem) item =
+        value_to_menu_item(self, fl_value_get_list_value(value, i), error);
+    if (item == nullptr) return nullptr;
 
-  // Triggers an action once a menubar item has been selected.
-  static void MenuItemSelected(GtkWidget *menuItem, gpointer *data) {
-    auto plugin = reinterpret_cast<MenubarPlugin *>(data);
+    if (item == self->divider_item) {
+      if (section != nullptr)
+        g_menu_append_section(menu, nullptr, G_MENU_MODEL(section));
+      g_clear_object(&section);
+    } else {
+      if (section == nullptr) section = g_menu_new();
+      g_menu_append_item(section, item);
+    }
+  }
+  if (section != nullptr)
+    g_menu_append_section(menu, nullptr, G_MENU_MODEL(section));
 
-    plugin->channel_->InvokeMethod(kMenuItemSelectedCallbackMethod,
-                                   std::make_unique<EncodableValue>(std::stoi(
-                                       gtk_widget_get_name(menuItem))));
+  return G_MENU(g_object_ref(menu));
+}
+
+// Called when a menu item is activated.
+static void menu_activate_cb(FlMenubarPlugin* self, GVariant* parameter) {
+  gint64 id = g_variant_get_int64(parameter);
+
+  g_autoptr(FlValue) result = fl_value_new_int(id);
+  fl_method_channel_invoke_method(self->channel,
+                                  kMenuItemSelectedCallbackMethod, result,
+                                  nullptr, nullptr, nullptr);
+}
+
+// Sets the menu.
+static FlMethodResponse* menu_set(FlMenubarPlugin* self, FlValue* args) {
+  g_autoptr(GError) error = nullptr;
+  g_autoptr(GMenu) menu = value_to_menu(self, args, &error);
+  if (menu == nullptr) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        kBadArgumentsError, error->message, nullptr));
   }
 
-  // Creates the menu items heirarchy from a given channel representation.
-  void SetMenuItems(const EncodableValue &root, flutter::Plugin *plugin,
-                    GtkWidget *parentWidget) {
-    if (root.IsList()) {
-      // This is the base of the menu representation. It's not a menu item
-      // itself, so there's no need to create a widget.
-      for (const auto &menu : root.ListValue()) {
-        SetMenuItems(menu, plugin, parentWidget);
-      }
-      gtk_widget_show_all(menubar_window_);
-
-      return;
-    }
-
-    // Everything else is a map.
-    const EncodableMap &menu_info = root.MapValue();
-    auto label_it = menu_info.find(EncodableValue(kLabelKey));
-    if (label_it != menu_info.end()) {
-      std::string label = label_it->second.StringValue();
-
-      auto enabled_it = menu_info.find(EncodableValue(kEnabledKey));
-      bool enabled =
-          enabled_it == menu_info.end() ? true : enabled_it->second.BoolValue();
-
-      auto children_it = menu_info.find(EncodableValue(kChildrenKey));
-      if (children_it != menu_info.end()) {
-        // A parent menu item. Creates a widget with its label and then build
-        // the children.
-        const EncodableValue &children = children_it->second;
-        auto menu = gtk_menu_new();
-        auto menuItem = gtk_menu_item_new_with_label(label.c_str());
-
-        gtk_widget_set_sensitive(menuItem, enabled);
-        gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), menu);
-        gtk_menu_shell_append(GTK_MENU_SHELL(parentWidget), menuItem);
-
-        SetMenuItems(children, plugin, menu);
-      } else {
-        // A leaf menu item. Only these items will have a callback.
-        auto menuItem = gtk_menu_item_new_with_label(label.c_str());
-        gtk_widget_set_sensitive(menuItem, enabled);
-
-        auto id_it = menu_info.find(EncodableValue(kIdKey));
-        if (id_it != menu_info.end()) {
-          std::string idString = std::to_string(id_it->second.IntValue());
-          gtk_widget_set_name(menuItem, idString.c_str());
-        }
-        g_signal_connect(G_OBJECT(menuItem), "activate",
-                         G_CALLBACK(MenuItemSelected), plugin);
-        gtk_menu_shell_append(GTK_MENU_SHELL(parentWidget), menuItem);
-      }
-    }
-
-    auto divider_it = menu_info.find(EncodableValue(kDividerKey));
-    if (divider_it != menu_info.end() && divider_it->second.BoolValue()) {
-      auto separator = gtk_separator_menu_item_new();
-      gtk_menu_shell_append(GTK_MENU_SHELL(parentWidget), separator);
-    }
-    gtk_widget_show_all(menubar_window_);
+  FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  if (view == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
   }
 
-  // Removes all items from the menubar.
-  void ClearMenuItems() {
-    GList *children, *iter;
-
-    children = gtk_container_get_children(GTK_CONTAINER(menubar_));
-    for (iter = children; iter != NULL; iter = g_list_next(iter)) {
-      gtk_widget_destroy(GTK_WIDGET(iter->data));
-    }
-    g_list_free(children);
+  GtkApplication* app = gtk_window_get_application(
+      GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view))));
+  if (app == nullptr) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        kFailureError, "Unable to get application", nullptr));
   }
 
- protected:
-  GtkWidget *menubar_window_;
-  GtkWidget *menubar_;
-};
+  // Replace existing menu with this one
+  g_menu_remove_all(self->menu);
+  g_menu_append_section(self->menu, nullptr, G_MENU_MODEL(menu));
 
-void MenubarPlugin::HandleMethodCall(
-    const flutter::MethodCall<EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<EncodableValue>> result) {
-  if (method_call.method_name().compare(kMenuSetMethod) == 0) {
-    if (!method_call.arguments() || method_call.arguments()->IsNull()) {
-      result->Error("Bad Arguments", "Null menu bar arguments received");
-      return;
-    }
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
 
-    if (menubar_ == nullptr) {
-      menubar_ = std::make_unique<MenubarPlugin::Menubar>(this);
-    }
-    // The menubar will be redrawn after every interaction. Clear items to avoid
-    // duplication.
-    menubar_->ClearMenuItems();
-    menubar_->SetMenuItems(*method_call.arguments(), this,
-                           menubar_->GetRootMenuBar());
-    result->Success();
+// Called when a method call is received from Flutter.
+static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
+                           gpointer user_data) {
+  FlMenubarPlugin* self = FL_MENUBAR_PLUGIN(user_data);
+
+  const gchar* method = fl_method_call_get_name(method_call);
+  FlValue* args = fl_method_call_get_args(method_call);
+
+  g_autoptr(FlMethodResponse) response = nullptr;
+  if (strcmp(method, kMenuSetMethod) == 0) {
+    response = menu_set(self, args);
   } else {
-    result->NotImplemented();
+    response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
   }
+
+  g_autoptr(GError) error = nullptr;
+  if (!fl_method_call_respond(method_call, response, &error))
+    g_warning("Failed to send method call response: %s", error->message);
 }
 
-}  // namespace plugins_menubar
+static void fl_menubar_plugin_dispose(GObject* object) {
+  FlMenubarPlugin* self = FL_MENUBAR_PLUGIN(object);
 
-void MenubarRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
-  // The plugin registrar owns the plugin, registered callbacks, etc., so must
-  // remain valid for the life of the application.
-  static auto *plugin_registrar = new flutter::PluginRegistrar(registrar);
-  plugins_menubar::MenubarPlugin::RegisterWithRegistrar(plugin_registrar);
+  g_clear_object(&self->registrar);
+  g_clear_object(&self->channel);
+  g_clear_object(&self->menu);
+  g_clear_object(&self->divider_item);
+
+  G_OBJECT_CLASS(fl_menubar_plugin_parent_class)->dispose(object);
+}
+
+static void fl_menubar_plugin_class_init(FlMenubarPluginClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = fl_menubar_plugin_dispose;
+}
+
+static void fl_menubar_plugin_init(FlMenubarPlugin* self) {
+  self->divider_item = g_menu_item_new(nullptr, nullptr);
+}
+
+FlMenubarPlugin* fl_menubar_plugin_new(FlPluginRegistrar* registrar) {
+  FlMenubarPlugin* self =
+      FL_MENUBAR_PLUGIN(g_object_new(fl_menubar_plugin_get_type(), nullptr));
+
+  self->registrar = FL_PLUGIN_REGISTRAR(g_object_ref(registrar));
+
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  self->channel =
+      fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
+                            kChannelName, FL_METHOD_CODEC(codec));
+  fl_method_channel_set_method_call_handler(self->channel, method_call_cb,
+                                            g_object_ref(self), g_object_unref);
+
+  // Add a GAction for the menubar to trigger.
+  FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  GtkApplication* app = nullptr;
+  if (view != nullptr) {
+    app = gtk_window_get_application(
+        GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view))));
+  }
+  if (app != nullptr) {
+    g_autoptr(GSimpleAction) inactive_action =
+        g_simple_action_new("flutter-menu-inactive", nullptr);
+    g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(inactive_action));
+    g_simple_action_set_enabled(inactive_action, FALSE);
+    g_autoptr(GSimpleAction) action =
+        g_simple_action_new("flutter-menu", G_VARIANT_TYPE_INT64);
+    g_simple_action_set_enabled(action, TRUE);
+    g_signal_connect_object(action, "activate", G_CALLBACK(menu_activate_cb),
+                            self, G_CONNECT_SWAPPED);
+    g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(action));
+
+    // Set an empty menubar now, as GTK doesn't detect it being changed later
+    // on. https://gitlab.gnome.org/GNOME/gtk/-/issues/2834
+    self->menu = g_menu_new();
+    gtk_application_set_menubar(app, G_MENU_MODEL(self->menu));
+    g_object_notify(G_OBJECT(gtk_settings_get_default()),
+                    "gtk-shell-shows-menubar");
+  }
+
+  return self;
+}
+
+void menubar_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
+  FlMenubarPlugin* plugin = fl_menubar_plugin_new(registrar);
+  g_object_unref(plugin);
 }

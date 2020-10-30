@@ -1,0 +1,64 @@
+name: CI	
+
+on: [push, pull_request]	
+
+jobs:	
+  build:	
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macOS-10.14, windows-2019, ubuntu-18.04]
+        include: 
+        - os: macOS-10.14
+          TARGET: macos  
+        - os: ubuntu-18.04
+          TARGET: linux     
+        - os: windows-2019
+          TARGET: windows
+      # Disable fail-fast; we want results from all OSes even if one fails.
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2	
+      with:
+        path: fde
+    - uses: actions/checkout@v2	
+      with:	
+        path: flutter
+        repository: flutter/flutter	
+        ref: master	
+        # Shallow clones don't work; see https://github.com/flutter/flutter/issues/18532
+        fetch-depth: 0
+    - name: Add Flutter tags
+      # Add tags, which are also necessary for version checks to work.
+      run: git fetch origin +refs/tags/*:refs/tags/*
+      working-directory: ${{ github.workspace }}/flutter
+    - name: Add Flutter to path - Windows
+      if: startsWith(matrix.os, 'windows')
+      run: echo "::add-path::$env:GITHUB_WORKSPACE\flutter\bin"	
+    - name: Add Flutter to path - macOS/Linux
+      if: startsWith(matrix.os, 'macOS') || startsWith(matrix.os, 'ubuntu')
+      run: echo "::add-path::$GITHUB_WORKSPACE/flutter/bin"	
+    - name: Install Linux dependencies	
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-3-dev libx11-dev pkg-config cmake ninja-build
+    - name: Enable desktop support	
+      run: |
+        flutter config --enable-linux-desktop	
+        flutter config --enable-macos-desktop	
+        flutter config --enable-windows-desktop	
+    - name: Doctor
+      # Run doctor, for ease of debugging any issues.
+      run: flutter doctor -v
+    - name: Build testbed debug	
+      run: |	
+        flutter packages get
+        flutter build -v ${{matrix.TARGET}} --debug	
+      working-directory: ${{ github.workspace }}/fde/testbed	
+    - name: Build testbed release	
+      run: |	
+        flutter packages get	
+        flutter build -v ${{matrix.TARGET}} --release	
+      working-directory: ${{ github.workspace }}/fde/testbed

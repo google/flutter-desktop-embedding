@@ -14,47 +14,39 @@
 import 'dart:io' show Platform;
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart'
-    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-import 'package:color_panel/color_panel.dart';
-import 'package:example_flutter/keyboard_test_page.dart';
-import 'package:file_chooser/file_chooser.dart' as file_chooser;
+import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
 import 'package:window_size/window_size.dart' as window_size;
-import 'package:example_plugin/example_plugin.dart' as example_plugin;
+
+import 'keyboard_test_page.dart';
 
 void main() {
-  // Desktop platforms are not recognized as valid targets by
-  // Flutter; force a specific target to prevent exceptions.
-  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
-
   // Try to resize and reposition the window to be half the width and height
   // of its screen, centered horizontally and shifted up from center.
-  if (Platform.isMacOS || Platform.isLinux) {
-    window_size.getWindowInfo().then((window) {
-      if (window.screen != null) {
-        final screenFrame = window.screen.visibleFrame;
-        final width = math.max((screenFrame.width / 2).roundToDouble(), 800.0);
-        final height =
-            math.max((screenFrame.height / 2).roundToDouble(), 600.0);
-        final left = ((screenFrame.width - width) / 2).roundToDouble();
-        final top = ((screenFrame.height - height) / 3).roundToDouble();
-        final frame = Rect.fromLTWH(left, top, width, height);
-        window_size.setWindowFrame(frame);
-      }
-    });
-  }
-
-  example_plugin.ExamplePlugin.platformVersion.then((versionInfo) {
-    print('Example plugin returned $versionInfo');
+  WidgetsFlutterBinding.ensureInitialized();
+  window_size.getWindowInfo().then((window) {
+    if (window.screen != null) {
+      final screenFrame = window.screen.visibleFrame;
+      final width = math.max((screenFrame.width / 2).roundToDouble(), 800.0);
+      final height = math.max((screenFrame.height / 2).roundToDouble(), 600.0);
+      final left = ((screenFrame.width - width) / 2).roundToDouble();
+      final top = ((screenFrame.height - height) / 3).roundToDouble();
+      final frame = Rect.fromLTWH(left, top, width, height);
+      window_size.setWindowFrame(frame);
+      window_size.setWindowMinSize(Size(0.8 * width, 0.8 * height));
+      window_size.setWindowMaxSize(Size(1.5 * width, 1.5 * height));
+      window_size
+          .setWindowTitle('Flutter Testbed on ${Platform.operatingSystem}');
+    }
   });
 
   runApp(new MyApp());
 }
 
-/// Top level widget for the example application.
+/// Top level widget for the application.
 class MyApp extends StatefulWidget {
   /// Constructs a new app with the given [key].
   const MyApp({Key key}) : super(key: key);
@@ -68,9 +60,9 @@ class _AppState extends State<MyApp> {
   int _counter = 0;
 
   static _AppState of(BuildContext context) =>
-      context.ancestorStateOfType(const TypeMatcher<_AppState>());
+      context.findAncestorStateOfType<_AppState>();
 
-  /// Sets the primary color of the example app.
+  /// Sets the primary color of the app.
   void setPrimaryColor(Color color) {
     setState(() {
       _primaryColor = color;
@@ -93,15 +85,13 @@ class _AppState extends State<MyApp> {
 
   /// Rebuilds the native menu bar based on the current state.
   void updateMenubar() {
-    // Currently, the menubar plugin is only implemented on macOS and linux.
-    if (!Platform.isMacOS && !Platform.isLinux) {
-      return;
-    }
     setApplicationMenu([
       Submenu(label: 'Color', children: [
         MenuItem(
             label: 'Reset',
             enabled: _primaryColor != Colors.blue,
+            shortcut: LogicalKeySet(
+                LogicalKeyboardKey.meta, LogicalKeyboardKey.backspace),
             onClicked: () {
               setPrimaryColor(Colors.blue);
             }),
@@ -110,18 +100,24 @@ class _AppState extends State<MyApp> {
           MenuItem(
               label: 'Red',
               enabled: _primaryColor != Colors.red,
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.shift, LogicalKeyboardKey.keyR),
               onClicked: () {
                 setPrimaryColor(Colors.red);
               }),
           MenuItem(
               label: 'Green',
               enabled: _primaryColor != Colors.green,
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.alt, LogicalKeyboardKey.keyG),
               onClicked: () {
                 setPrimaryColor(Colors.green);
               }),
           MenuItem(
               label: 'Purple',
               enabled: _primaryColor != Colors.deepPurple,
+              shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
+                  LogicalKeyboardKey.control, LogicalKeyboardKey.keyP),
               onClicked: () {
                 setPrimaryColor(Colors.deepPurple);
               }),
@@ -131,14 +127,20 @@ class _AppState extends State<MyApp> {
         MenuItem(
             label: 'Reset',
             enabled: _counter != 0,
+            shortcut: LogicalKeySet(
+                LogicalKeyboardKey.meta, LogicalKeyboardKey.digit0),
             onClicked: () {
               _setCounter(0);
             }),
         MenuDivider(),
-        MenuItem(label: 'Increment', onClicked: incrementCounter),
+        MenuItem(
+            label: 'Increment',
+            shortcut: LogicalKeySet(LogicalKeyboardKey.f2),
+            onClicked: incrementCounter),
         MenuItem(
             label: 'Decrement',
             enabled: _counter > 0,
+            shortcut: LogicalKeySet(LogicalKeyboardKey.f1),
             onClicked: _decrementCounter),
       ]),
     ]);
@@ -155,9 +157,6 @@ class _AppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         primaryColor: _primaryColor,
         accentColor: _primaryColor,
-        // Specify a font to reduce potential issues with the
-        // example behaving differently on different platforms.
-        fontFamily: 'Roboto',
       ),
       darkTheme: ThemeData.dark(),
       home: _MyHomePage(title: 'Flutter Demo Home Page', counter: _counter),
@@ -171,52 +170,60 @@ class _MyHomePage extends StatelessWidget {
   final String title;
   final int counter;
 
-  void _changePrimaryThemeColor(BuildContext context) {
-    final colorPanel = ColorPanel.instance;
-    if (!colorPanel.showing) {
-      colorPanel.show((color) {
-        _AppState.of(context).setPrimaryColor(color);
-        // Setting the primary color to a non-opaque color raises an exception.
-      }, showAlpha: false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.color_lens),
-            tooltip: 'Change theme color',
-            onPressed: () {
-              _changePrimaryThemeColor(context);
-            },
-          ),
-        ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: LayoutBuilder(
+        builder: (context, viewportConstraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints:
+                  BoxConstraints(minHeight: viewportConstraints.maxHeight),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text(
+                      'You have pushed the button this many times:',
+                    ),
+                    new Text(
+                      '$counter',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                    TextInputTestWidget(),
+                    FileChooserTestWidget(),
+                    new RaisedButton(
+                      child: new Text('Test raw keyboard events'),
+                      onPressed: () {
+                        Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (context) => KeyboardTestPage()));
+                      },
+                    ),
+                    Container(
+                      width: 380.0,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 1.0)),
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          padding: EdgeInsets.all(8.0),
+                          itemExtent: 20.0,
+                          itemCount: 50,
+                          itemBuilder: (context, index) {
+                            return Text('entry $index');
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            new Text(
-              '$counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-            TextInputTestWidget(),
-            FileChooserTestWidget(),
-            new RaisedButton(
-                child: new Text('Test raw keyboard events'),
-                onPressed: () {
-                  Navigator.of(context).push(new MaterialPageRoute(
-                      builder: (context) => KeyboardTestPage()));
-                })
-          ],
-        ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _AppState.of(context).incrementCounter,
@@ -237,23 +244,49 @@ class FileChooserTestWidget extends StatelessWidget {
         new FlatButton(
           child: const Text('SAVE'),
           onPressed: () {
-            file_chooser.showSavePanel((result, paths) {
+            showSavePanel(suggestedFileName: 'save_test.txt').then((result) {
               Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
-                    _FileChooserType.save, result, paths)),
+                    _FileChooserType.save, result)),
               ));
-            }, suggestedFileName: 'save_test.txt');
+            });
           },
         ),
         new FlatButton(
           child: const Text('OPEN'),
-          onPressed: () {
-            file_chooser.showOpenPanel((result, paths) {
-              Scaffold.of(context).showSnackBar(SnackBar(
+          onPressed: () async {
+            final result = await showOpenPanel(
+                allowsMultipleSelection: true);
+            Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
-                    _FileChooserType.open, result, paths)),
-              ));
-            }, allowsMultipleSelection: true);
+                    _FileChooserType.open, result))));
+          },
+        ),
+        new FlatButton(
+          child: const Text('OPEN MEDIA'),
+          onPressed: () async {
+            final result =
+                await showOpenPanel(allowedFileTypes: <FileTypeFilterGroup>[
+              FileTypeFilterGroup(label: 'Images', fileExtensions: <String>[
+                'bmp',
+                'gif',
+                'jpeg',
+                'jpg',
+                'png',
+                'tiff',
+                'webp',
+              ]),
+              FileTypeFilterGroup(label: 'Video', fileExtensions: <String>[
+                'avi',
+                'mov',
+                'mpeg',
+                'mpg',
+                'webm',
+              ]),
+            ]);
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(_resultTextForFileChooserOperation(
+                    _FileChooserType.open, result))));
           },
         ),
       ],
@@ -297,11 +330,10 @@ enum _FileChooserType { save, open }
 
 /// Returns display text reflecting the result of a file chooser operation.
 String _resultTextForFileChooserOperation(
-    _FileChooserType type, file_chooser.FileChooserResult result,
-    [List<String> paths]) {
-  if (result == file_chooser.FileChooserResult.cancel) {
+    _FileChooserType type, FileChooserResult result) {
+  if (result.canceled) {
     return '${type == _FileChooserType.open ? 'Open' : 'Save'} cancelled';
   }
-  final statusText = type == _FileChooserType.open ? 'Opened' : 'Saved';
-  return '$statusText: ${paths.join('\n')}';
+  final typeString = type == _FileChooserType.open ? 'opening' : 'saving';
+  return 'Selected for $typeString: ${result.paths.join('\n')}';
 }

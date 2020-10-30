@@ -49,3 +49,36 @@ Future<PlatformWindow> getWindowInfo() async {
 void setWindowFrame(Rect frame) async {
   WindowSizeChannel.instance.setWindowFrame(frame);
 }
+
+/// Sets the minimum [Size] of the window containing this Flutter instance.
+void setWindowMinSize(Size size) async {
+  WindowSizeChannel.instance.setWindowMinSize(size);
+}
+
+/// Sets the maximum [Size] of the window containing this Flutter instance.
+void setWindowMaxSize(Size size) async {
+  WindowSizeChannel.instance.setWindowMaxSize(size);
+}
+
+/// Sets the window title, as a [String], of the window containing this Flutter instance.
+void setWindowTitle(String title) async {
+  WindowSizeChannel.instance.setWindowTitle(title);
+}
+
+/// Sets the window title's represented [Uri], of the window containing this Flutter instance.
+/// 
+/// Only implemented for macOS. If the URL is a file URL, the
+/// window shows an icon in its title bar.
+void setWindowTitleRepresentedUrl(Uri url) async {
+    WindowSizeChannel.instance.setWindowTitleRepresentedUrl(url);
+}
+
+/// Gets the minimum [Size] of the window containing this Flutter instance.
+Future<Size> getWindowMinSize() async {
+  return WindowSizeChannel.instance.getWindowMinSize();
+}
+
+/// Gets the maximum [Size] of the window containing this Flutter instance.
+Future<Size> getWindowMaxSize() async {
+  return WindowSizeChannel.instance.getWindowMaxSize();
+}

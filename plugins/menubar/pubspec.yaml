@@ -1,13 +1,20 @@
 name: menubar
 description: Provides the ability to add native menubar items with Dart callbacks.
-version: 0.0.1
-author: Flutter Desktop Embedding Developers <flutter-desktop-embedding-dev@googlegroups.com>
-homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugins/menubar
+version: 0.1.0
+
+# Do not publish this plugin. See:
+# https://github.com/google/flutter-desktop-embedding/blob/master/plugins/README.md#using-plugins
+publish_to: none
 
 flutter:
   plugin:
-    macosPrefix: FLE
-    pluginClass: MenubarPlugin
+    platforms:
+      linux:
+        pluginClass: MenubarPlugin
+      macos:
+        pluginClass: MenubarPlugin
+      windows:
+        pluginClass: MenubarPlugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

@@ -1,27 +1,17 @@
-name: example_flutter
-description: An example project for flutter-desktop-embedding.
+name: testbed
+description: A test project for flutter-desktop-embedding.
 
 environment:
   sdk: '>=2.0.0 <3.0.0'
-  # The testbed interacts with build scripts on the Flutter side that are not
-  # yet stable, so it requires a very recent version of Flutter.
-  # This version will increase regularly as the build scripts change.
-  flutter: '>=1.5.9-pre.270'
+  flutter: '>=1.22.0-10.0.pre'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^0.1.0
-
-  # Desktop embedder plugins.
-  # Note: In an actual project, these paths would include the
-  # path from your application to the flutter_desktop_embedding
-  # checkout.
-  color_panel:
-    path: ../plugins/color_panel
-  example_plugin:
-    path: ../plugins/example_plugin
+  # FDE plugins.
+  # Note: In an actual project, these would be included via 'git:' reference,
+  # rather than 'path:', as described in the plugins README.
   file_chooser:
     path: ../plugins/file_chooser
   menubar:
@@ -35,19 +25,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  fonts:
-    - family: Roboto
-      fonts:
-        - asset: fonts/Roboto/Roboto-Thin.ttf
-          weight: 100
-        - asset: fonts/Roboto/Roboto-Light.ttf
-          weight: 300
-        - asset: fonts/Roboto/Roboto-Regular.ttf
-          weight: 400
-        - asset: fonts/Roboto/Roboto-Medium.ttf
-          weight: 500
-        - asset: fonts/Roboto/Roboto-Bold.ttf
-          weight: 700
-        - asset: fonts/Roboto/Roboto-Black.ttf
-          weight: 900

@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'file_chooser'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'Displays macOS open and save panels.'
   s.description      = <<-DESC
 Displays macOS open and save panels.
@@ -13,10 +13,9 @@ Displays macOS open and save panels.
   s.author           = { 'Flutter Desktop Embedding Developers' => 'flutter-desktop-embedding-dev@googlegroups.com' }
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx
-  s.osx.deployment_target = '10.9'
+  s.osx.deployment_target = '10.11'
 end
 

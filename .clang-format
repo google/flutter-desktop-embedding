@@ -1,5 +1,3 @@
 BasedOnStyle: Google
 ---
 Language: Cpp
-DerivePointerAlignment: false
-PointerAlignment: Right
