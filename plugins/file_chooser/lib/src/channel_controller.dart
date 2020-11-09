@@ -77,12 +77,12 @@ enum FileChooserType {
 class FileChooserConfigurationOptions {
   /// Creates a new configuration options object with the given settings.
   const FileChooserConfigurationOptions(
-      {this.initialDirectory,
-      this.initialFileName,
-      this.allowedFileTypes,
-      this.allowsMultipleSelection,
-      this.canSelectDirectories,
-      this.confirmButtonText});
+      {this.initialDirectory = '',
+      this.initialFileName = '',
+      this.allowedFileTypes = const <FileTypeFilterGroup>[],
+      this.allowsMultipleSelection = false,
+      this.canSelectDirectories = false,
+      this.confirmButtonText = ''});
 
   // See the constants above for documentation; these correspond exactly to
   // the configuration parameters defined in the channel protocol.
@@ -99,28 +99,21 @@ class FileChooserConfigurationOptions {
   /// [_kShowSavePanelMethod].
   Map<String, dynamic> asInvokeMethodArguments() {
     final args = <String, dynamic>{};
-    if (initialDirectory != null && initialDirectory.isNotEmpty) {
-      args[_kInitialDirectoryKey] = initialDirectory;
-    }
-    if (allowsMultipleSelection != null) {
-      args[_kAllowsMultipleSelectionKey] = allowsMultipleSelection;
-    }
-    if (canSelectDirectories != null) {
-      args[_kCanChooseDirectoriesKey] = canSelectDirectories;
-    }
-    if (allowedFileTypes != null && allowedFileTypes.isNotEmpty) {
+    args[_kAllowsMultipleSelectionKey] = allowsMultipleSelection;
+    args[_kCanChooseDirectoriesKey] = canSelectDirectories;
+    if (allowedFileTypes.isNotEmpty) {
       args[_kAllowedFileTypesKey] = allowedFileTypes
-          .map((filter) => [filter.label ?? '', filter.fileExtensions ?? []])
+          .map((filter) => [filter.label, filter.fileExtensions])
           .toList();
     }
-    if (confirmButtonText != null && confirmButtonText.isNotEmpty) {
-      args[_kConfirmButtonTextKey] = confirmButtonText;
+    if (initialDirectory.isNotEmpty) {
+      args[_kInitialDirectoryKey] = initialDirectory;
     }
-    if (confirmButtonText != null && confirmButtonText.isNotEmpty) {
-      args[_kConfirmButtonTextKey] = confirmButtonText;
-    }
-    if (initialFileName != null && initialFileName.isNotEmpty) {
+    if (initialFileName.isNotEmpty) {
       args[_kInitialFileNameKey] = initialFileName;
+    }
+    if (confirmButtonText.isNotEmpty) {
+      args[_kConfirmButtonTextKey] = confirmButtonText;
     }
     return args;
   }

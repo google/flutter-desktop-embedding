@@ -137,8 +137,10 @@ class WindowSizeChannel {
   Future<PlatformWindow> getWindowInfo() async {
     final response = await _platformChannel.invokeMethod(_getWindowInfoMethod);
 
+    final screenInfo = response[_screenKey];
+    final screen = screenInfo == null ? null : _screenFromInfoMap(screenInfo);
     return PlatformWindow(_rectFromLTWHList(response[_frameKey].cast<double>()),
-        response[_scaleFactorKey], _screenFromInfoMap(response[_screenKey]));
+        response[_scaleFactorKey], screen);
   }
 
   /// Sets the frame of the window containing this Flutter instance, in
@@ -224,13 +226,10 @@ class WindowSizeChannel {
   }
 
   /// Given a map of information about a screen, return the corresponding
-  /// [Screen] object, or null.
+  /// [Screen] object.
   ///
   /// Used for screen deserialization in the platform channel.
   Screen _screenFromInfoMap(Map<dynamic, dynamic> map) {
-    if (map == null) {
-      return null;
-    }
     return Screen(
         _rectFromLTWHList(map[_frameKey].cast<double>()),
         _rectFromLTWHList(map[_visibleFrameKey].cast<double>()),

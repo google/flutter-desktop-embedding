@@ -123,7 +123,7 @@ class MenuChannel {
   /// This is used to drop any menu callbacks that aren't received until
   /// after a new call to setMenu, so that clients don't received unexpected
   /// stale callbacks.
-  bool _updateInProgress;
+  bool _updateInProgress = false;
 
   /// The static instance of the menu channel.
   static final MenuChannel instance = new MenuChannel._();
@@ -170,14 +170,16 @@ class MenuChannel {
         representation[_kChildrenKey] =
             _channelRepresentationForMenu(item.children);
       } else if (item is MenuItem) {
-        if (item.onClicked != null) {
-          representation[_kIdKey] = _storeMenuCallback(item.onClicked);
+        final handler = item.onClicked;
+        if (handler != null) {
+          representation[_kIdKey] = _storeMenuCallback(handler);
         }
         if (!item.enabled) {
           representation[_kEnabledKey] = false;
         }
-        if (item.shortcut != null) {
-          _addShortcutToRepresentation(item.shortcut, representation);
+        final shortcut = item.shortcut;
+        if (shortcut != null) {
+          _addShortcutToRepresentation(shortcut, representation);
         }
       } else {
         throw ArgumentError(
@@ -230,7 +232,7 @@ class MenuChannel {
               'Menu items must have exactly one non-modifier key.');
         }
 
-        if (key.keyLabel != null) {
+        if (key.keyLabel.isNotEmpty) {
           channelRepresentation[_kShortcutKeyEquivalent] = key.keyLabel;
         } else {
           final specialKey = _shortcutSpecialKeyValues[key];
@@ -265,21 +267,20 @@ class MenuChannel {
   /// Mediates between the platform channel callback and the client callback.
   Future<Null> _callbackHandler(MethodCall methodCall) async {
     if (methodCall.method == _kMenuItemSelectedCallbackMethod) {
-      try {
-        if (_updateInProgress) {
-          // Drop stale callbacks.
-          // TODO: Evaluate whether this works in practice, or if races are
-          // regular occurences that clients will need to be prepared to
-          // handle (in which case a more complex ID system will be needed).
-          print(
-              'Warning: Menu selection callback received during menu update.');
-          return;
-        }
-        final int menuItemId = methodCall.arguments;
-        _selectionCallbacks[menuItemId]();
-      } on Exception catch (e, s) {
-        print('Exception in callback handler: $e\n$s');
+      if (_updateInProgress) {
+        // Drop stale callbacks.
+        // TODO: Evaluate whether this works in practice, or if races are
+        // regular occurences that clients will need to be prepared to
+        // handle (in which case a more complex ID system will be needed).
+        print('Warning: Menu selection callback received during menu update.');
+        return;
       }
+      final int menuItemId = methodCall.arguments;
+      final callback = _selectionCallbacks[menuItemId];
+      if (callback == null) {
+        throw Exception('Unknown menu item ID $menuItemId');
+      }
+      callback();
     }
   }
 }

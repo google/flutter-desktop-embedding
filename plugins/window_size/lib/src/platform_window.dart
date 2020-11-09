@@ -17,9 +17,6 @@ import 'screen.dart';
 
 /// Represents a window, containing information about its size, position, and
 /// properties.
-///
-/// TODO: Evaluate how to reconcile this with the highly mobile-centric Window
-/// class in dart::ui
 class PlatformWindow {
   /// Create a new window.
   PlatformWindow(this.frame, this.scaleFactor, this.screen);
@@ -31,5 +28,5 @@ class PlatformWindow {
   final double scaleFactor;
 
   /// The (or a) screen containing this window, if any.
-  final Screen screen;
+  final Screen? screen;
 }

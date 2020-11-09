@@ -28,8 +28,9 @@ void main() {
   // of its screen, centered horizontally and shifted up from center.
   WidgetsFlutterBinding.ensureInitialized();
   window_size.getWindowInfo().then((window) {
-    if (window.screen != null) {
-      final screenFrame = window.screen.visibleFrame;
+    final screen = window.screen;
+    if (screen != null) {
+      final screenFrame = screen.visibleFrame;
       final width = math.max((screenFrame.width / 2).roundToDouble(), 800.0);
       final height = math.max((screenFrame.height / 2).roundToDouble(), 600.0);
       final left = ((screenFrame.width - width) / 2).roundToDouble();
@@ -49,7 +50,7 @@ void main() {
 /// Top level widget for the application.
 class MyApp extends StatefulWidget {
   /// Constructs a new app with the given [key].
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   _AppState createState() => new _AppState();
@@ -59,7 +60,7 @@ class _AppState extends State<MyApp> {
   Color _primaryColor = Colors.blue;
   int _counter = 0;
 
-  static _AppState of(BuildContext context) =>
+  static _AppState? of(BuildContext context) =>
       context.findAncestorStateOfType<_AppState>();
 
   /// Sets the primary color of the app.
@@ -165,7 +166,7 @@ class _AppState extends State<MyApp> {
 }
 
 class _MyHomePage extends StatelessWidget {
-  const _MyHomePage({this.title, this.counter = 0});
+  const _MyHomePage({required this.title, this.counter = 0});
 
   final String title;
   final int counter;
@@ -198,7 +199,7 @@ class _MyHomePage extends StatelessWidget {
                     new RaisedButton(
                       child: new Text('Test raw keyboard events'),
                       onPressed: () {
-                        Navigator.of(context).push(new MaterialPageRoute(
+                        Navigator.of(context)!.push(new MaterialPageRoute(
                             builder: (context) => KeyboardTestPage()));
                       },
                     ),
@@ -226,7 +227,7 @@ class _MyHomePage extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _AppState.of(context).incrementCounter,
+        onPressed: _AppState.of(context)!.incrementCounter,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
@@ -245,7 +246,7 @@ class FileChooserTestWidget extends StatelessWidget {
           child: const Text('SAVE'),
           onPressed: () {
             showSavePanel(suggestedFileName: 'save_test.txt').then((result) {
-              Scaffold.of(context).showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.save, result)),
               ));
@@ -257,7 +258,7 @@ class FileChooserTestWidget extends StatelessWidget {
           onPressed: () async {
             final result = await showOpenPanel(
                 allowsMultipleSelection: true);
-            Scaffold.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
           },
@@ -284,7 +285,7 @@ class FileChooserTestWidget extends StatelessWidget {
                 'webm',
               ]),
             ]);
-            Scaffold.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
           },

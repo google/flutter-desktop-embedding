@@ -43,7 +43,7 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
           leading: new IconButton(
               icon: new Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context)!.pop();
               })),
       body: new RawKeyboardListener(
         focusNode: _focusNode,
@@ -79,23 +79,23 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
     }
 
     int keyCode;
-    String logicalKey;
-    String physicalKey;
+    String? logicalKey;
+    String? physicalKey;
     switch (event.data.runtimeType) {
       case RawKeyEventDataMacOs:
-        final RawKeyEventDataMacOs data = event.data;
+        final data = event.data as RawKeyEventDataMacOs;
         keyCode = data.keyCode;
         logicalKey = data.logicalKey.debugName;
         physicalKey = data.physicalKey.debugName;
         break;
       case RawKeyEventDataLinux:
-        final RawKeyEventDataLinux data = event.data;
+        final data = event.data as RawKeyEventDataLinux;
         keyCode = data.keyCode;
         logicalKey = data.logicalKey.debugName;
         physicalKey = data.physicalKey.debugName;
         break;
       case RawKeyEventDataWindows:
-        final RawKeyEventDataWindows data = event.data;
+        final data = event.data as RawKeyEventDataWindows;
         keyCode = data.keyCode;
         logicalKey = data.logicalKey.debugName;
         physicalKey = data.physicalKey.debugName;
@@ -113,7 +113,7 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
     setState(() {
       _messages.add(message);
     });
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    SchedulerBinding.instance?.addPostFrameCallback((_) {
       _scrollController.jumpTo(
         _scrollController.position.maxScrollExtent,
       );

@@ -15,7 +15,8 @@
 /// A set of allowed file types.
 class FileTypeFilterGroup {
   /// Creates a new group with the given label and file extensions.
-  const FileTypeFilterGroup({this.label, this.fileExtensions});
+  const FileTypeFilterGroup(
+      {this.label = '', this.fileExtensions = const <String>[]});
 
   /// The label for the grouping. On platforms that support selectable groups,
   /// this will be visible to the user for selecting the group.
@@ -23,6 +24,6 @@ class FileTypeFilterGroup {
 
   /// A list of allowed file extensions. E.g., ['png', 'jpg', 'jpeg', 'gif'].
   ///
-  /// A null or empty list indicates any type is allowed.
+  /// An empty list indicates any type is allowed.
   final List<String> fileExtensions;
 }
