@@ -192,7 +192,7 @@ class _MyHomePage extends StatelessWidget {
                     ),
                     new Text(
                       '$counter',
-                      style: Theme.of(context)?.textTheme?.headline4,
+                      style: Theme.of(context).textTheme.headline4,
                     ),
                     TextInputTestWidget(),
                     FileChooserTestWidget(),
@@ -246,7 +246,7 @@ class FileChooserTestWidget extends StatelessWidget {
           child: const Text('SAVE'),
           onPressed: () {
             showSavePanel(suggestedFileName: 'save_test.txt').then((result) {
-              ScaffoldMessenger.of(context)!.showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.save, result)),
               ));
@@ -258,7 +258,7 @@ class FileChooserTestWidget extends StatelessWidget {
           onPressed: () async {
             final result = await showOpenPanel(
                 allowsMultipleSelection: true);
-            ScaffoldMessenger.of(context)!.showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
           },
@@ -285,7 +285,7 @@ class FileChooserTestWidget extends StatelessWidget {
                 'webm',
               ]),
             ]);
-            ScaffoldMessenger.of(context)!.showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(_resultTextForFileChooserOperation(
                     _FileChooserType.open, result))));
           },
