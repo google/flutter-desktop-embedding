@@ -60,8 +60,7 @@ class MenuItem extends AbstractMenuItem {
 /// The item itself can't be selected, it just displays the submenu.
 class Submenu extends AbstractMenuItem {
   /// Creates a new submenu with the given [label] and [children].
-  const Submenu({required String label, required this.children})
-      : super(label);
+  const Submenu({required String label, required this.children}) : super(label);
 
   /// The menu items contained in the submenu.
   final List<AbstractMenuItem> children;

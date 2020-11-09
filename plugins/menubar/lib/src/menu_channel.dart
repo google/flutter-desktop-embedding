@@ -272,8 +272,7 @@ class MenuChannel {
         // TODO: Evaluate whether this works in practice, or if races are
         // regular occurences that clients will need to be prepared to
         // handle (in which case a more complex ID system will be needed).
-        print(
-            'Warning: Menu selection callback received during menu update.');
+        print('Warning: Menu selection callback received during menu update.');
         return;
       }
       final int menuItemId = methodCall.arguments;
