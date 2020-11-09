@@ -2,10 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-analyzer:
-  enable-experiment:
-  - non-nullable
-
 # Root analysis options shared among all Dart code in the respository. Based
 # on the Fuchsia standard analysis options, with some changes.
 linter:
