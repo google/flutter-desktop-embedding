@@ -57,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0-nullsafety.3"
+  file_selector_macos:
+    dependency: "direct main"
+    description:
+      path: "../file_selector_macos"
+      relative: true
+    source: path
+    version: "0.0.1"
   file_selector_platform_interface:
     dependency: "direct main"
     description:

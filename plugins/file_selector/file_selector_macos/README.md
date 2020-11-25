@@ -1,33 +1,24 @@
-# file_chooser
+# file_selector_macos
 
-This plugin provides access to a native file chooser for Open and Save operations.
+The macOS implementation of [`file_selector`][1].
 
-This is a prototype, and in the long term will either be replaced by functionality
-within the Flutter framework itself, or a published plugin (likely part of
-flutter/plugins). Either way, the API may change significantly.
+## Usage
 
-## Supported Platforms
+### Import the package
 
-- [x] macOS
-- [x] Windows
-- [x] Linux
+This package has not yet been endorsed, meaning that you need to add `file_selector_macos`
+as a dependency in your `pubspec.yaml`. It will be not yet be automatically included in your app
+when you depend on `package:file_selector`.
 
-## Use
+This is what the above means to your `pubspec.yaml`:
 
-See [the plugin README](../README.md) for general instructions on using FDE plugins.
-
-### macOS
-
-You will need to [add an
-entitlement](https://github.com/google/flutter-desktop-embedding/blob/master/macOS-Security.md)
-for either read-only access:
+```yaml
+...
+dependencies:
+  ...
+  file_selector: ^0.7.0
+  file_selector_macos: ^0.0.1
+  ...
 ```
-	<key>com.apple.security.files.user-selected.read-only</key>
-	<true/>
-```
-or read/write access:
-```
-	<key>com.apple.security.files.user-selected.read-write</key>
-	<true/>
-```
-depending on your use case.
+
+[1]: https://github.com/flutter/plugins/tree/master/packages/file_selector
