@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
-set(PROJECT_NAME "file_chooser")
+set(PROJECT_NAME "file_selector_linux")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
 set(PLUGIN_NAME "${PROJECT_NAME}_plugin")
 
 add_library(${PLUGIN_NAME} SHARED
-  "${PLUGIN_NAME}.cc"
+  "file_selector_plugin.cc"
 )
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES

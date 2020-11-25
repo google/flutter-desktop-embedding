@@ -25,6 +25,8 @@ dependencies:
     sdk: flutter
 
   file_selector_platform_interface: ^1.0.1
+  file_selector_linux:
+    path: ../file_selector_linux
   file_selector_macos:
     path: ../file_selector_macos
   file_selector_windows:

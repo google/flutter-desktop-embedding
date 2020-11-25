@@ -16,7 +16,7 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 
 # List of absolute paths to libraries that should be bundled with the plugin
-set(file_chooser_bundled_libraries
+set(file_selector_bundled_libraries
   ""
   PARENT_SCOPE
 )
