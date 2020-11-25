@@ -7,9 +7,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macOS-10.14, windows-2019, ubuntu-18.04]
+        os: [macOS-10.15, windows-2019, ubuntu-18.04]
         include: 
-        - os: macOS-10.14
+        - os: macOS-10.15
           TARGET: macos  
         - os: ubuntu-18.04
           TARGET: linux     
@@ -35,10 +35,10 @@ jobs:
       working-directory: ${{ github.workspace }}/flutter
     - name: Add Flutter to path - Windows
       if: startsWith(matrix.os, 'windows')
-      run: echo "::add-path::$env:GITHUB_WORKSPACE\flutter\bin"	
+      run: echo "$env:GITHUB_WORKSPACE\flutter\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
     - name: Add Flutter to path - macOS/Linux
       if: startsWith(matrix.os, 'macOS') || startsWith(matrix.os, 'ubuntu')
-      run: echo "::add-path::$GITHUB_WORKSPACE/flutter/bin"	
+      run: echo "$GITHUB_WORKSPACE/flutter/bin" >> $GITHUB_PATH
     - name: Install Linux dependencies	
       if: startsWith(matrix.os, 'ubuntu')
       run: |
