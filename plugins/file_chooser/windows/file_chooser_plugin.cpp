@@ -13,11 +13,11 @@
 // limitations under the License.
 #include "include/file_chooser/file_chooser_plugin.h"
 
-#include <ShObjIdl_core.h>
 #include <flutter/flutter_view.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
+#include <shobjidl.h>
 #include <windows.h>
 
 #include <codecvt>
