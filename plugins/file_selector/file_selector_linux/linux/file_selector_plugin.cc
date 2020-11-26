@@ -50,16 +50,15 @@ static GtkFileFilter* type_group_to_filter(FlValue* value) {
 
   FlValue* label = fl_value_lookup_string(value, kTypeGroupLabelKey);
   if (label != nullptr && fl_value_get_type(label) == FL_VALUE_TYPE_STRING) {
-    const gchar* name = fl_value_get_string(label);
-    gtk_file_filter_set_name(filter, name);
+    gtk_file_filter_set_name(filter, fl_value_get_string(label));
   }
 
   bool has_filter = false;
   FlValue* extensions = fl_value_lookup_string(value, kTypeGroupExtensionsKey);
   if (extensions != nullptr &&
       fl_value_get_type(extensions) == FL_VALUE_TYPE_LIST) {
-    for (size_t j = 0; j < fl_value_get_length(extensions); j++) {
-      FlValue* v = fl_value_get_list_value(extensions, j);
+    for (size_t i = 0; i < fl_value_get_length(extensions); i++) {
+      FlValue* v = fl_value_get_list_value(extensions, i);
       if (fl_value_get_type(v) != FL_VALUE_TYPE_STRING) return nullptr;
 
       g_autofree gchar* pattern =
@@ -71,8 +70,8 @@ static GtkFileFilter* type_group_to_filter(FlValue* value) {
   FlValue* mime_types = fl_value_lookup_string(value, kTypeGroupMimeTypesKey);
   if (mime_types != nullptr &&
       fl_value_get_type(mime_types) == FL_VALUE_TYPE_LIST) {
-    for (size_t j = 0; j < fl_value_get_length(mime_types); j++) {
-      FlValue* v = fl_value_get_list_value(mime_types, j);
+    for (size_t i = 0; i < fl_value_get_length(mime_types); i++) {
+      FlValue* v = fl_value_get_list_value(mime_types, i);
       if (fl_value_get_type(v) != FL_VALUE_TYPE_STRING) return nullptr;
 
       const gchar* pattern = fl_value_get_string(v);
