@@ -1,0 +1,6 @@
+.dart_tool/
+flutter/
+Flutter/
+.flutter-plugins-dependencies
+
+!**/example/**/flutter
