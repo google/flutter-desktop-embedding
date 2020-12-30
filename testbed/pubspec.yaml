@@ -12,8 +12,6 @@ dependencies:
   # FDE plugins.
   # Note: In an actual project, these would be included via 'git:' reference,
   # rather than 'path:', as described in the plugins README.
-  file_chooser:
-    path: ../plugins/file_chooser
   menubar:
     path: ../plugins/menubar
   window_size:

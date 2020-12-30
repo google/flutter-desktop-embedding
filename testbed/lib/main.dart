@@ -17,7 +17,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:file_chooser/file_chooser.dart';
 import 'package:menubar/menubar.dart';
 import 'package:window_size/window_size.dart' as window_size;
 
@@ -195,7 +194,6 @@ class _MyHomePage extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     TextInputTestWidget(),
-                    FileChooserTestWidget(),
                     new RaisedButton(
                       child: new Text('Test raw keyboard events'),
                       onPressed: () {
@@ -235,66 +233,6 @@ class _MyHomePage extends StatelessWidget {
   }
 }
 
-/// A widget containing controls to test the file chooser plugin.
-class FileChooserTestWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        new FlatButton(
-          child: const Text('SAVE'),
-          onPressed: () {
-            showSavePanel(suggestedFileName: 'save_test.txt').then((result) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(_resultTextForFileChooserOperation(
-                    _FileChooserType.save, result)),
-              ));
-            });
-          },
-        ),
-        new FlatButton(
-          child: const Text('OPEN'),
-          onPressed: () async {
-            final result = await showOpenPanel(
-                allowsMultipleSelection: true);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(_resultTextForFileChooserOperation(
-                    _FileChooserType.open, result))));
-          },
-        ),
-        new FlatButton(
-          child: const Text('OPEN MEDIA'),
-          onPressed: () async {
-            final result =
-                await showOpenPanel(allowedFileTypes: <FileTypeFilterGroup>[
-              FileTypeFilterGroup(label: 'Images', fileExtensions: <String>[
-                'bmp',
-                'gif',
-                'jpeg',
-                'jpg',
-                'png',
-                'tiff',
-                'webp',
-              ]),
-              FileTypeFilterGroup(label: 'Video', fileExtensions: <String>[
-                'avi',
-                'mov',
-                'mpeg',
-                'mpg',
-                'webm',
-              ]),
-            ]);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(_resultTextForFileChooserOperation(
-                    _FileChooserType.open, result))));
-          },
-        ),
-      ],
-    );
-  }
-}
-
 /// A widget containing controls to test text input.
 class TextInputTestWidget extends StatelessWidget {
   @override
@@ -324,17 +262,4 @@ class SampleTextField extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Possible file chooser operation types.
-enum _FileChooserType { save, open }
-
-/// Returns display text reflecting the result of a file chooser operation.
-String _resultTextForFileChooserOperation(
-    _FileChooserType type, FileChooserResult result) {
-  if (result.canceled) {
-    return '${type == _FileChooserType.open ? 'Open' : 'Save'} cancelled';
-  }
-  final typeString = type == _FileChooserType.open ? 'opening' : 'saving';
-  return 'Selected for $typeString: ${result.paths.join('\n')}';
 }
