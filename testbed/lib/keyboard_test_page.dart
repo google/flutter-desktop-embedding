@@ -43,7 +43,7 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
           leading: new IconButton(
               icon: new Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.of(context)!.pop();
+                Navigator.of(context).pop();
               })),
       body: new RawKeyboardListener(
         focusNode: _focusNode,

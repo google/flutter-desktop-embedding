@@ -194,26 +194,29 @@ class _MyHomePage extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     TextInputTestWidget(),
-                    new RaisedButton(
+                    new ElevatedButton(
                       child: new Text('Test raw keyboard events'),
                       onPressed: () {
-                        Navigator.of(context)!.push(new MaterialPageRoute(
+                        Navigator.of(context).push(new MaterialPageRoute(
                             builder: (context) => KeyboardTestPage()));
                       },
                     ),
-                    Container(
-                      width: 380.0,
-                      height: 100.0,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 1.0)),
-                      child: Scrollbar(
-                        child: ListView.builder(
-                          padding: EdgeInsets.all(8.0),
-                          itemExtent: 20.0,
-                          itemCount: 50,
-                          itemBuilder: (context, index) {
-                            return Text('entry $index');
-                          },
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: 380.0,
+                        height: 100.0,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1.0)),
+                        child: Scrollbar(
+                          child: ListView.builder(
+                            padding: EdgeInsets.all(8.0),
+                            itemExtent: 20.0,
+                            itemCount: 50,
+                            itemBuilder: (context, index) {
+                              return Text('entry $index');
+                            },
+                          ),
                         ),
                       ),
                     ),
