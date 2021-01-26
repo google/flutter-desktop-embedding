@@ -39,6 +39,7 @@ const char kSetWindowFrameMethod[] = "setWindowFrame";
 const char kSetWindowMinimumSize[] = "setWindowMinimumSize";
 const char kSetWindowMaximumSize[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
+const char kSetWindowVisibleMethod[] = "setWindowVisible";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
@@ -75,7 +76,7 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
 
   MONITORINFO info;
   info.cbSize = sizeof(MONITORINFO);
-  GetMonitorInfo(monitor, &info);
+  ::GetMonitorInfo(monitor, &info);
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   double scale_factor = dpi / kBaseDpi;
   return EncodableValue(EncodableMap{
@@ -102,8 +103,8 @@ EncodableValue GetPlatformChannelRepresentationForWindow(HWND window) {
     return EncodableValue();
   }
   RECT frame;
-  GetWindowRect(window, &frame);
-  HMONITOR window_monitor = MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
+  ::GetWindowRect(window, &frame);
+  HMONITOR window_monitor = ::MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
   double scale_factor = FlutterDesktopGetDpiForHWND(window) / kBaseDpi;
 
   return EncodableValue(EncodableMap{
@@ -116,7 +117,7 @@ EncodableValue GetPlatformChannelRepresentationForWindow(HWND window) {
 }
 
 HWND GetRootWindow(flutter::FlutterView *view) {
-  return GetAncestor(view->GetNativeWindow(), GA_ROOT);
+  return ::GetAncestor(view->GetNativeWindow(), GA_ROOT);
 }
 
 class WindowSizePlugin : public flutter::Plugin {
@@ -130,9 +131,8 @@ class WindowSizePlugin : public flutter::Plugin {
 
  private:
   // Called when a method is called on the plugin channel;
-  void HandleMethodCall(
-      const flutter::MethodCall<> &method_call,
-      std::unique_ptr<flutter::MethodResult<>> result);
+  void HandleMethodCall(const flutter::MethodCall<> &method_call,
+                        std::unique_ptr<flutter::MethodResult<>> result);
 
   // Called for top-level WindowProc delegation.
   std::optional<LRESULT> HandleWindowProc(HWND hwnd, UINT message,
@@ -154,10 +154,9 @@ class WindowSizePlugin : public flutter::Plugin {
 // static
 void WindowSizePlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows *registrar) {
-  auto channel =
-      std::make_unique<flutter::MethodChannel<>>(
-          registrar->messenger(), kChannelName,
-          &flutter::StandardMethodCodec::GetInstance());
+  auto channel = std::make_unique<flutter::MethodChannel<>>(
+      registrar->messenger(), kChannelName,
+      &flutter::StandardMethodCodec::GetInstance());
 
   auto plugin = std::make_unique<WindowSizePlugin>(registrar);
 
@@ -186,7 +185,7 @@ void WindowSizePlugin::HandleMethodCall(
     std::unique_ptr<flutter::MethodResult<>> result) {
   if (method_call.method_name().compare(kGetScreenListMethod) == 0) {
     EncodableValue screens(std::in_place_type<EncodableList>);
-    EnumDisplayMonitors(nullptr, nullptr, MonitorRepresentationEnumProc,
+    ::EnumDisplayMonitors(nullptr, nullptr, MonitorRepresentationEnumProc,
                         reinterpret_cast<LPARAM>(&screens));
     result->Success(screens);
   } else if (method_call.method_name().compare(kGetWindowInfoMethod) == 0) {
@@ -205,7 +204,7 @@ void WindowSizePlugin::HandleMethodCall(
     int y = static_cast<int>(std::get<double>((*frame_list)[1]));
     int width = static_cast<int>(std::get<double>((*frame_list)[2]));
     int height = static_cast<int>(std::get<double>((*frame_list)[3]));
-    SetWindowPos(GetRootWindow(registrar_->GetView()), nullptr, x, y, width,
+    ::SetWindowPos(GetRootWindow(registrar_->GetView()), nullptr, x, y, width,
                  height, SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     result->Success();
   } else if (method_call.method_name().compare(kSetWindowMinimumSize) == 0) {
@@ -233,7 +232,16 @@ void WindowSizePlugin::HandleMethodCall(
     std::wstring wstr =
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}
             .from_bytes(*title);
-    SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
+    ::SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
+    result->Success();
+  } else if (method_call.method_name().compare(kSetWindowVisibleMethod) == 0) {
+    const bool *visible = std::get_if<bool>(method_call.arguments());
+    if (visible == nullptr) {
+      result->Error("Bad arguments", "Expected bool");
+      return;
+    }
+    ::ShowWindow(GetRootWindow(registrar_->GetView()),
+                 *visible ? SW_SHOW : SW_HIDE);
     result->Success();
   } else {
     result->NotImplemented();

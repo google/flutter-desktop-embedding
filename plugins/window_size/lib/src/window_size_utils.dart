@@ -65,6 +65,11 @@ void setWindowTitle(String title) async {
   WindowSizeChannel.instance.setWindowTitle(title);
 }
 
+/// Shows or hides the window.
+void setWindowVisible({required bool visible}) async {
+  WindowSizeChannel.instance.setWindowVisible(visible: visible);
+}
+
 /// Sets the window title's represented [Uri], of the window containing this Flutter instance.
 ///
 /// Only implemented for macOS. If the URL is a file URL, the
