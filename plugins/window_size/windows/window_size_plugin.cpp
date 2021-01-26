@@ -39,7 +39,7 @@ const char kSetWindowFrameMethod[] = "setWindowFrame";
 const char kSetWindowMinimumSize[] = "setWindowMinimumSize";
 const char kSetWindowMaximumSize[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
-const char kSetWindowVisibleMethod[] = "setWindowVisible";
+const char ksetWindowVisibilityMethod[] = "setWindowVisibility";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
@@ -104,7 +104,8 @@ EncodableValue GetPlatformChannelRepresentationForWindow(HWND window) {
   }
   RECT frame;
   ::GetWindowRect(window, &frame);
-  HMONITOR window_monitor = ::MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
+  HMONITOR window_monitor =
+      ::MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
   double scale_factor = FlutterDesktopGetDpiForHWND(window) / kBaseDpi;
 
   return EncodableValue(EncodableMap{
@@ -186,7 +187,7 @@ void WindowSizePlugin::HandleMethodCall(
   if (method_call.method_name().compare(kGetScreenListMethod) == 0) {
     EncodableValue screens(std::in_place_type<EncodableList>);
     ::EnumDisplayMonitors(nullptr, nullptr, MonitorRepresentationEnumProc,
-                        reinterpret_cast<LPARAM>(&screens));
+                          reinterpret_cast<LPARAM>(&screens));
     result->Success(screens);
   } else if (method_call.method_name().compare(kGetWindowInfoMethod) == 0) {
     result->Success(GetPlatformChannelRepresentationForWindow(
@@ -205,7 +206,7 @@ void WindowSizePlugin::HandleMethodCall(
     int width = static_cast<int>(std::get<double>((*frame_list)[2]));
     int height = static_cast<int>(std::get<double>((*frame_list)[3]));
     ::SetWindowPos(GetRootWindow(registrar_->GetView()), nullptr, x, y, width,
-                 height, SWP_NOACTIVATE | SWP_NOOWNERZORDER);
+                   height, SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     result->Success();
   } else if (method_call.method_name().compare(kSetWindowMinimumSize) == 0) {
     const auto *size = std::get_if<EncodableList>(method_call.arguments());
@@ -234,7 +235,8 @@ void WindowSizePlugin::HandleMethodCall(
             .from_bytes(*title);
     ::SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
     result->Success();
-  } else if (method_call.method_name().compare(kSetWindowVisibleMethod) == 0) {
+  } else if (method_call.method_name().compare(ksetWindowVisibilityMethod) ==
+             0) {
     const bool *visible = std::get_if<bool>(method_call.arguments());
     if (visible == nullptr) {
       result->Error("Bad arguments", "Expected bool");

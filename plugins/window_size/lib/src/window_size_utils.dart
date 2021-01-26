@@ -66,8 +66,8 @@ void setWindowTitle(String title) async {
 }
 
 /// Shows or hides the window.
-void setWindowVisible({required bool visible}) async {
-  WindowSizeChannel.instance.setWindowVisible(visible: visible);
+void setWindowVisibility({required bool visible}) async {
+  WindowSizeChannel.instance.setWindowVisibility(visible: visible);
 }
 
 /// Sets the window title's represented [Uri], of the window containing this Flutter instance.
