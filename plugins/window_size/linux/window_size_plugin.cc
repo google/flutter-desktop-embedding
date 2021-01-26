@@ -26,6 +26,7 @@ const char kSetWindowFrameMethod[] = "setWindowFrame";
 const char kSetWindowMinimumSizeMethod[] = "setWindowMinimumSize";
 const char kSetWindowMaximumSizeMethod[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
+const char ksetWindowVisibilityMethod[] = "setWindowVisibility";
 const char kGetWindowMinimumSizeMethod[] = "getWindowMinimumSize";
 const char kGetWindowMaximumSizeMethod[] = "getWindowMaximumSize";
 const char kFrameKey[] = "frame";
@@ -259,6 +260,28 @@ static FlMethodResponse* set_window_title(FlWindowSizePlugin* self,
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
+// Sets the window visibility.
+static FlMethodResponse* set_window_visible(FlWindowSizePlugin* self,
+                                          FlValue* args) {
+  if (fl_value_get_type(args) != FL_VALUE_TYPE_BOOL) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        kBadArgumentsError, "Expected bool", nullptr));
+  }
+
+  GtkWindow* window = get_window(self);
+  if (window == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+  if (fl_value_get_bool(args)) {
+    gtk_widget_show(GTK_WIDGET(window));
+  } else {
+    gtk_widget_hide(GTK_WIDGET(window));
+  }
+
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
 // Gets the window minimum size.
 static FlMethodResponse* get_window_minimum_size(FlWindowSizePlugin* self) {
   g_autoptr(FlValue) size = fl_value_new_list();
@@ -302,6 +325,8 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
     response = set_window_maximum_size(self, args);
   } else if (strcmp(method, kSetWindowTitleMethod) == 0) {
     response = set_window_title(self, args);
+  } else if (strcmp(method, ksetWindowVisibilityMethod) == 0) {
+    response = set_window_visible(self, args);
   } else if (strcmp(method, kGetWindowMinimumSizeMethod) == 0) {
     response = get_window_minimum_size(self);
   } else if (strcmp(method, kGetWindowMaximumSizeMethod) == 0) {

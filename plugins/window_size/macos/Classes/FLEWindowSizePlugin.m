@@ -25,6 +25,7 @@ static NSString *const kSetWindowMinimumSizeMethod = @"setWindowMinimumSize";
 static NSString *const kSetWindowMaximumSizeMethod = @"setWindowMaximumSize";
 static NSString *const kSetWindowTitleMethod = @"setWindowTitle";
 static NSString *const kSetWindowTitleRepresentedUrlMethod = @"setWindowTitleRepresentedUrl";
+static NSString *const kSetWindowVisibilityMethod = @"setWindowVisibility";
 static NSString *const kGetWindowMinimumSizeMethod = @"getWindowMinimumSize";
 static NSString *const kGetWindowMaximumSizeMethod = @"getWindowMaximumSize";
 static NSString *const kFrameKey = @"frame";
@@ -169,6 +170,14 @@ static double ChannelRepresentationForMaxDimension(double size) {
   } else if ([call.method isEqualToString:kSetWindowTitleRepresentedUrlMethod]) {
     NSURL *representedURL = [NSURL URLWithString:call.arguments];
     self.flutterView.window.representedURL = representedURL;
+    methodResult = nil;
+  } else if ([call.method isEqualToString:kSetWindowVisibilityMethod]) {
+    bool visible = [call.arguments boolValue];
+    if (visible) {
+      [self.flutterView.window makeKeyAndOrderFront:self];
+    } else {
+      [self.flutterView.window orderOut:self];
+    }
     methodResult = nil;
   } else {
     methodResult = FlutterMethodNotImplemented;
