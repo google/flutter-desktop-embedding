@@ -87,7 +87,7 @@ const String _getWindowMaximumSizeMethod = 'getWindowMaximumSize';
 /// The method name to set the window visibility.
 ///
 /// The argument will be a boolean controlling whether or not the window should
-/// be Visibility.
+/// be visible.
 const String _setWindowVisibilityMethod = 'setWindowVisibility';
 
 // Keys for screen and window maps returned by _getScreenListMethod.
