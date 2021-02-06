@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Fix README
+
 ## 0.0.2
 
 * Update SDK constraint to signal compatibility with null safety.
