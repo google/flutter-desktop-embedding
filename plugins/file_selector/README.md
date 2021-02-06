@@ -14,3 +14,5 @@ Unlike other FDE plugins these are published normally, since they have a
 long-term support path. As with any unundorsed plugin, you need to
 depend directly on the implementation package ([`file_selector_linux`](https://pub.dev/packages/file_selector_linux), [`file_selector_macos`](https://pub.dev/packages/file_selector_macos), and/or [`file_selector_windows`](https://pub.dev/packages/file_selector_windows))
 as well as the app-facing package (`file_selector`) in your `pubspec.yaml`.
+
+See the implementation packages' READMEs for platform-specific notes.
