@@ -17,7 +17,7 @@ This is what the above means to your `pubspec.yaml`:
 dependencies:
   ...
   file_selector: ^0.7.0
-  file_selector_macos: ^0.0.2
+  file_selector_macos: ^0.0.3
   ...
 ```
 
@@ -28,12 +28,12 @@ You will need to [add an entitlement][2] for either read-only access:
 	<key>com.apple.security.files.user-selected.read-only</key>
 	<true/>
 ```
-or read/write access:	or read/write access:
+or read/write access:
 ```
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 ```
-depending on your use case.	depending on your use case.
+depending on your use case.
 
 [1]: https://github.com/flutter/plugins/tree/master/packages/file_selector
 [2]: https://flutter.dev/desktop#entitlements-and-the-app-sandbox
