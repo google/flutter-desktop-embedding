@@ -5,6 +5,7 @@ homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugin
 
 flutter:
   plugin:
+    implements: file_selector
     platforms:
       macos:
         pluginClass: FileSelectorPlugin
