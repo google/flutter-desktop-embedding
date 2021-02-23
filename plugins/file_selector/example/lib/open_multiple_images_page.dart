@@ -6,15 +6,16 @@ import 'package:flutter/material.dart';
 /// Screen that shows an example of openFiles
 class OpenMultipleImagesPage extends StatelessWidget {
   void _openImageFile(BuildContext context) async {
-    final XTypeGroup jpgsTypeGroup = XTypeGroup(
+    final jpgsTypeGroup = XTypeGroup(
       label: 'JPEGs',
       extensions: ['jpg', 'jpeg'],
     );
-    final XTypeGroup pngTypeGroup = XTypeGroup(
+    final pngTypeGroup = XTypeGroup(
       label: 'PNGs',
       extensions: ['png'],
     );
-    final List<XFile> files = await FileSelectorPlatform.instance.openFiles(acceptedTypeGroups: [
+    final files =
+        await FileSelectorPlatform.instance.openFiles(acceptedTypeGroups: [
       jpgsTypeGroup,
       pngTypeGroup,
     ]);
@@ -28,15 +29,13 @@ class OpenMultipleImagesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Open multiple images"),
+        title: Text('Open multiple images'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            RaisedButton(
-              color: Colors.blue,
-              textColor: Colors.white,
+            ElevatedButton(
               child: Text('Press to open multiple images (png, jpg)'),
               onPressed: () => _openImageFile(context),
             ),
@@ -49,11 +48,11 @@ class OpenMultipleImagesPage extends StatelessWidget {
 
 /// Widget that displays a text file in a dialog
 class MultipleImagesDisplay extends StatelessWidget {
+  /// Default Constructor
+  const MultipleImagesDisplay(this.files);
+
   /// The files containing the images
   final List<XFile> files;
-
-  /// Default Constructor
-  MultipleImagesDisplay(this.files);
 
   @override
   Widget build(BuildContext context) {
@@ -67,14 +66,14 @@ class MultipleImagesDisplay extends StatelessWidget {
             ...files.map(
               (file) => Flexible(
                   child: kIsWeb
-                      ? Image.network(file.path)
-                      : Image.file(File(file.path))),
+                      ? Image.network(file.path!)
+                      : Image.file(File(file.path!))),
             )
           ],
         ),
       ),
       actions: [
-        FlatButton(
+        TextButton(
           child: const Text('Close'),
           onPressed: () {
             Navigator.pop(context);
