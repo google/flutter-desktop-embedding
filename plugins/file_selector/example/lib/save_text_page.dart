@@ -55,7 +55,7 @@ class SaveTextPage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             ElevatedButton(
-              child: Text('Press to save a text file'),
+              child: const Text('Press to save a text file'),
               onPressed: _saveFile,
             ),
           ],

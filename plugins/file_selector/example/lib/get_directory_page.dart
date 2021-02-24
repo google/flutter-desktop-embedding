@@ -25,7 +25,7 @@ class GetDirectoryPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              child: Text('Press to ask user to choose a directory'),
+              child: const Text('Press to ask user to choose a directory'),
               onPressed: () => _getDirectoryPath(context),
             ),
           ],

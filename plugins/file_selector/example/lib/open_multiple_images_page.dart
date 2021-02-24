@@ -36,7 +36,7 @@ class OpenMultipleImagesPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              child: Text('Press to open multiple images (png, jpg)'),
+              child: const Text('Press to open multiple images (png, jpg)'),
               onPressed: () => _openImageFile(context),
             ),
           ],
