@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 /// Screen that shows an example of getDirectoryPath
 class GetDirectoryPage extends StatelessWidget {
   void _getDirectoryPath(BuildContext context) async {
-    final String confirmButtonText = 'Choose';
-    final String directoryPath = await FileSelectorPlatform.instance.getDirectoryPath(
+    const confirmButtonText = 'Choose';
+    final directoryPath = await FileSelectorPlatform.instance.getDirectoryPath(
       confirmButtonText: confirmButtonText,
     );
     await showDialog(
       context: context,
-      builder: (context) => TextDisplay(directoryPath),
+      builder: (context) => TextDisplay(directoryPath ?? 'Unknown'),
     );
   }
 
@@ -18,16 +18,14 @@ class GetDirectoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Open a text file"),
+        title: Text('Open a text file'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            RaisedButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text('Press to ask user to choose a directory'),
+            ElevatedButton(
+              child: const Text('Press to ask user to choose a directory'),
               onPressed: () => _getDirectoryPath(context),
             ),
           ],
@@ -39,11 +37,11 @@ class GetDirectoryPage extends StatelessWidget {
 
 /// Widget that displays a text file in a dialog
 class TextDisplay extends StatelessWidget {
+  /// Default Constructor
+  const TextDisplay(this.directoryPath);
+
   /// Directory path
   final String directoryPath;
-
-  /// Default Constructor
-  TextDisplay(this.directoryPath);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +53,7 @@ class TextDisplay extends StatelessWidget {
         ),
       ),
       actions: [
-        FlatButton(
+        TextButton(
           child: const Text('Close'),
           onPressed: () => Navigator.pop(context),
         ),

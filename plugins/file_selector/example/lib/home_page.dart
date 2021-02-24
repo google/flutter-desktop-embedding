@@ -12,38 +12,28 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            RaisedButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text('Open a text file'),
+            ElevatedButton(
+              child: const Text('Open a text file'),
               onPressed: () => Navigator.pushNamed(context, '/open/text'),
             ),
             SizedBox(height: 10),
-            RaisedButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text('Open an image'),
+            ElevatedButton(
+              child: const Text('Open an image'),
               onPressed: () => Navigator.pushNamed(context, '/open/image'),
             ),
             SizedBox(height: 10),
-            RaisedButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text('Open multiple images'),
+            ElevatedButton(
+              child: const Text('Open multiple images'),
               onPressed: () => Navigator.pushNamed(context, '/open/images'),
             ),
             SizedBox(height: 10),
-            RaisedButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text('Save a file'),
+            ElevatedButton(
+              child: const Text('Save a file'),
               onPressed: () => Navigator.pushNamed(context, '/save/text'),
             ),
             SizedBox(height: 10),
-            RaisedButton(
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text('Open a get directory dialog'),
+            ElevatedButton(
+              child: const Text('Open a get directory dialog'),
               onPressed: () => Navigator.pushNamed(context, '/directory'),
             ),
           ],
