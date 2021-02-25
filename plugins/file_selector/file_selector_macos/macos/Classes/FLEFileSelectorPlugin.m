@@ -56,7 +56,7 @@ id GetNonNullValueForKey( NSDictionary<NSString *, id>* dict, NSString* key) {
     panel.directoryURL = [NSURL URLWithString:initialDirectory];
   }
   NSArray<NSDictionary<NSString*, id>*>* acceptedTypeGroups = GetNonNullValueForKey(arguments, kAcceptedTypeGroupsKey);
-  if (acceptedTypeGroups) {
+  if (acceptedTypeGroups.count > 0) {
     // macOS doesn't support filter groups, so combine all allowed types into a flat list.
     NSMutableArray<NSString *> *allowedTypes = [NSMutableArray array];
     for (NSDictionary *filter in acceptedTypeGroups) {
