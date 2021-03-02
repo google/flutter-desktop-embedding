@@ -1,9 +1,5 @@
 # Desktop Plugins
 
-See [the Flutter desktop
-page](https://github.com/flutter/flutter/wiki/Desktop-shells#plugins)
-for an overview of the current state of plugin development on desktop.
-
 This directory contains plugins that prototype functionality that will likely
 either become part of Flutter itself, or become officially supported plugins.
 
