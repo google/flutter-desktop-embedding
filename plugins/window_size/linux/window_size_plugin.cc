@@ -208,9 +208,15 @@ static FlMethodResponse* set_window_minimum_size(FlWindowSizePlugin* self,
         fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
   }
 
-  if (width >= 0 && height >= 0) {
-    self->window_geometry.min_width = static_cast<gint>(width);
-    self->window_geometry.min_height = static_cast<gint>(height);
+  self->window_geometry.min_width = static_cast<gint>(width);
+  self->window_geometry.min_height = static_cast<gint>(height);
+
+  // Zero sizes are considered unconstrained - this is -1 in GTK.
+  if (self->window_geometry.min_width <= 0) {
+    self->window_geometry.min_width = -1;
+  }
+  if (self->window_geometry.min_height <= 0) {
+    self->window_geometry.min_height = -1;
   }
 
   update_window_geometry(self);
@@ -285,10 +291,20 @@ static FlMethodResponse* set_window_visible(FlWindowSizePlugin* self,
 // Gets the window minimum size.
 static FlMethodResponse* get_window_minimum_size(FlWindowSizePlugin* self) {
   g_autoptr(FlValue) size = fl_value_new_list();
-  fl_value_append_take(size,
-                       fl_value_new_float(self->window_geometry.min_width));
-  fl_value_append_take(size,
-                       fl_value_new_float(self->window_geometry.min_height));
+
+  gint min_width = self->window_geometry.min_width;
+  gint min_height = self->window_geometry.min_height;
+
+  // GTK uses -1 for unconstrained values, Flutter uses zero.
+  if (min_width < 0) {
+    min_width = 0;
+  }
+  if (min_height < 0) {
+    min_height = 0;
+  }
+
+  fl_value_append_take(size, fl_value_new_float(min_width));
+  fl_value_append_take(size, fl_value_new_float(min_height));
 
   return FL_METHOD_RESPONSE(fl_method_success_response_new(size));
 }
