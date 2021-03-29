@@ -237,6 +237,14 @@ static FlMethodResponse* set_window_maximum_size(FlWindowSizePlugin* self,
   self->window_geometry.max_width = static_cast<gint>(width);
   self->window_geometry.max_height = static_cast<gint>(height);
 
+  // Flutter uses -1 as unconstrained, GTK doesn't have an unconstrained value.
+  if (self->window_geometry.max_width < 0) {
+    self->window_geometry.max_width = G_MAXINT;
+  }
+  if (self->window_geometry.max_height < 0) {
+    self->window_geometry.max_height = G_MAXINT;
+  }
+
   update_window_geometry(self);
 
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
@@ -296,10 +304,20 @@ static FlMethodResponse* get_window_minimum_size(FlWindowSizePlugin* self) {
 // Gets the window maximum size.
 static FlMethodResponse* get_window_maximum_size(FlWindowSizePlugin* self) {
   g_autoptr(FlValue) size = fl_value_new_list();
-  fl_value_append_take(size,
-                       fl_value_new_float(self->window_geometry.max_width));
-  fl_value_append_take(size,
-                       fl_value_new_float(self->window_geometry.max_height));
+
+  gint max_width = self->window_geometry.max_width;
+  gint max_height = self->window_geometry.max_height;
+
+  // Flutter uses -1 as unconstrained, GTK doesn't have an unconstrained value.
+  if (max_width == G_MAXINT) {
+    max_width = -1;
+  }
+  if (max_height == G_MAXINT) {
+    max_height = -1;
+  }
+
+  fl_value_append_take(size, fl_value_new_float(max_width));
+  fl_value_append_take(size, fl_value_new_float(max_height));
 
   return FL_METHOD_RESPONSE(fl_method_success_response_new(size));
 }
@@ -356,8 +374,8 @@ static void fl_window_size_plugin_class_init(FlWindowSizePluginClass* klass) {
 static void fl_window_size_plugin_init(FlWindowSizePlugin* self) {
   self->window_geometry.min_width = -1;
   self->window_geometry.min_height = -1;
-  self->window_geometry.max_width = -1;
-  self->window_geometry.max_height = -1;
+  self->window_geometry.max_width = G_MAXINT;
+  self->window_geometry.max_height = G_MAXINT;
 }
 
 FlWindowSizePlugin* fl_window_size_plugin_new(FlPluginRegistrar* registrar) {
