@@ -13,7 +13,7 @@ class OpenTextPage extends StatelessWidget {
     if (file == null) {
       return;
     }
-    final fileName = file.name!;
+    final fileName = file.name;
     final fileContent = await file.readAsString();
 
     await showDialog(
