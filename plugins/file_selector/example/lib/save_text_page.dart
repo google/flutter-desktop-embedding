@@ -8,12 +8,14 @@ class SaveTextPage extends StatelessWidget {
   final TextEditingController _contentController = TextEditingController();
 
   void _saveFile() async {
-    final path = await FileSelectorPlatform.instance.getSavePath();
+    final fileName = _nameController.text;
+    final path = await FileSelectorPlatform.instance.getSavePath(
+      suggestedName: fileName,
+    );
     if (path == null) {
       return;
     }
     final text = _contentController.text;
-    final fileName = _nameController.text;
     final fileData = Uint8List.fromList(text.codeUnits);
     const fileMimeType = 'text/plain';
     final textFile =

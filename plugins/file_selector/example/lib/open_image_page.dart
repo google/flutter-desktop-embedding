@@ -13,8 +13,8 @@ class OpenImagePage extends StatelessWidget {
     final files = await FileSelectorPlatform.instance
         .openFiles(acceptedTypeGroups: [typeGroup]);
     final file = files[0];
-    final fileName = file.name!;
-    final filePath = file.path!;
+    final fileName = file.name;
+    final filePath = file.path;
 
     await showDialog(
       context: context,
