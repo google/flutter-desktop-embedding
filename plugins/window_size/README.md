@@ -22,3 +22,7 @@ of resizing and repositioning is available for all three.
 ## Use
 
 See [the plugin README](../README.md) for general instructions on using FDE plugins.
+
+### Linux
+
+Requires GTK 3.22 or later.
