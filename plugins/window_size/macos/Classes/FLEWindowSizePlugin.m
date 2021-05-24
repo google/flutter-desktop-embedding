@@ -36,7 +36,7 @@ static NSString *const kScreenKey = @"screen";
 /**
  * Returns the max Y coordinate across all screens.
  */
-CGFloat GetMaxScreenY() {
+CGFloat GetMaxScreenY(void) {
   CGFloat maxY = 0;
   for (NSScreen *screen in [NSScreen screens]) {
     maxY = MAX(maxY, CGRectGetMaxY(screen.frame));
