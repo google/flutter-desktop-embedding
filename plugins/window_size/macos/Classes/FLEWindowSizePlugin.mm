@@ -16,22 +16,24 @@
 
 #import <AppKit/AppKit.h>
 
+namespace {
+
 // See window_size_channel.dart for documentation.
-static NSString *const kChannelName = @"flutter/windowsize";
-static NSString *const kGetScreenListMethod = @"getScreenList";
-static NSString *const kGetWindowInfoMethod = @"getWindowInfo";
-static NSString *const kSetWindowFrameMethod = @"setWindowFrame";
-static NSString *const kSetWindowMinimumSizeMethod = @"setWindowMinimumSize";
-static NSString *const kSetWindowMaximumSizeMethod = @"setWindowMaximumSize";
-static NSString *const kSetWindowTitleMethod = @"setWindowTitle";
-static NSString *const kSetWindowTitleRepresentedUrlMethod = @"setWindowTitleRepresentedUrl";
-static NSString *const kSetWindowVisibilityMethod = @"setWindowVisibility";
-static NSString *const kGetWindowMinimumSizeMethod = @"getWindowMinimumSize";
-static NSString *const kGetWindowMaximumSizeMethod = @"getWindowMaximumSize";
-static NSString *const kFrameKey = @"frame";
-static NSString *const kVisibleFrameKey = @"visibleFrame";
-static NSString *const kScaleFactorKey = @"scaleFactor";
-static NSString *const kScreenKey = @"screen";
+NSString *const kChannelName = @"flutter/windowsize";
+NSString *const kGetScreenListMethod = @"getScreenList";
+NSString *const kGetWindowInfoMethod = @"getWindowInfo";
+NSString *const kSetWindowFrameMethod = @"setWindowFrame";
+NSString *const kSetWindowMinimumSizeMethod = @"setWindowMinimumSize";
+NSString *const kSetWindowMaximumSizeMethod = @"setWindowMaximumSize";
+NSString *const kSetWindowTitleMethod = @"setWindowTitle";
+NSString *const kSetWindowTitleRepresentedUrlMethod = @"setWindowTitleRepresentedUrl";
+NSString *const kSetWindowVisibilityMethod = @"setWindowVisibility";
+NSString *const kGetWindowMinimumSizeMethod = @"getWindowMinimumSize";
+NSString *const kGetWindowMaximumSizeMethod = @"getWindowMaximumSize";
+NSString *const kFrameKey = @"frame";
+NSString *const kVisibleFrameKey = @"visibleFrame";
+NSString *const kScaleFactorKey = @"scaleFactor";
+NSString *const kScreenKey = @"screen";
 
 /**
  * Returns the max Y coordinate across all screens.
@@ -53,6 +55,20 @@ NSRect GetFlippedRect(NSRect frame) {
   return NSMakeRect(frame.origin.x, maxY - frame.origin.y - frame.size.height, frame.size.width,
                     frame.size.height);
 }
+
+/**
+ * Converts the channel representation for unconstrained maximum size `-1` to Cocoa's specific
+ * maximum size of `FLT_MAX`.
+ */
+double MaxDimensionFromChannelRepresentation(double size) { return size == -1.0 ? FLT_MAX : size; }
+
+/**
+ * Converts Cocoa's specific maximum size of `FLT_MAX` to channel representation for unconstrained
+ * maximum size `-1`.
+ */
+double ChannelRepresentationForMaxDimension(double size) { return size == FLT_MAX ? -1 : size; }
+
+}  // namespace
 
 @interface FLEWindowSizePlugin ()
 
@@ -77,20 +93,6 @@ NSRect GetFlippedRect(NSRect frame) {
 - (NSArray *)platformChannelRepresentationForFrame:(NSRect)frame;
 
 @end
-
-/**
- * Converts the channel representation for unconstrained maximum size `-1` to Cocoa's specific maximum size of `FLT_MAX`.
- */
-static double MaxDimensionFromChannelRepresentation(double size) {
-    return size == -1.0 ? FLT_MAX : size;
-}
-
-/**
- * Converts Cocoa's specific maximum size of `FLT_MAX` to channel representation for unconstrained maximum size `-1`.
- */
-static double ChannelRepresentationForMaxDimension(double size) {
-    return size == FLT_MAX ? -1 : size;
-}
 
 @implementation FLEWindowSizePlugin {
   // The channel used to communicate with Flutter.
@@ -147,22 +149,23 @@ static double ChannelRepresentationForMaxDimension(double size) {
   } else if ([call.method isEqualToString:kSetWindowMinimumSizeMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
     self.flutterView.window.minSize =
-      NSMakeSize(arguments[0].doubleValue, arguments[1].doubleValue);
+        NSMakeSize(arguments[0].doubleValue, arguments[1].doubleValue);
     methodResult = nil;
   } else if ([call.method isEqualToString:kSetWindowMaximumSizeMethod]) {
     NSArray<NSNumber *> *arguments = call.arguments;
     self.flutterView.window.maxSize =
-      NSMakeSize(MaxDimensionFromChannelRepresentation(arguments[0].doubleValue),
-                 MaxDimensionFromChannelRepresentation(arguments[1].doubleValue));
+        NSMakeSize(MaxDimensionFromChannelRepresentation(arguments[0].doubleValue),
+                   MaxDimensionFromChannelRepresentation(arguments[1].doubleValue));
     methodResult = nil;
   } else if ([call.method isEqualToString:kGetWindowMinimumSizeMethod]) {
     NSSize size = self.flutterView.window.minSize;
     methodResult = @[ @(size.width), @(size.height) ];
   } else if ([call.method isEqualToString:kGetWindowMaximumSizeMethod]) {
     NSSize size = self.flutterView.window.maxSize;
-    methodResult =  @[
-                              @(ChannelRepresentationForMaxDimension(size.width)),
-                              @(ChannelRepresentationForMaxDimension(size.height)) ];
+    methodResult = @[
+      @(ChannelRepresentationForMaxDimension(size.width)),
+      @(ChannelRepresentationForMaxDimension(size.height))
+    ];
   } else if ([call.method isEqualToString:kSetWindowTitleMethod]) {
     NSString *title = call.arguments;
     self.flutterView.window.title = title;
