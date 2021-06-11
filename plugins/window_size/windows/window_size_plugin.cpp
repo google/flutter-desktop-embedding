@@ -39,7 +39,9 @@ const char kSetWindowFrameMethod[] = "setWindowFrame";
 const char kSetWindowMinimumSize[] = "setWindowMinimumSize";
 const char kSetWindowMaximumSize[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
-const char ksetWindowVisibilityMethod[] = "setWindowVisibility";
+const char kSetWindowVisibilityMethod[] = "setWindowVisibility";
+const char kEnterFullScreenMethod[] = "enterFullscreen";
+const char kExitFullScreenMethod[] = "exitFullscreen";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
@@ -235,7 +237,7 @@ void WindowSizePlugin::HandleMethodCall(
             .from_bytes(*title);
     ::SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
     result->Success();
-  } else if (method_call.method_name().compare(ksetWindowVisibilityMethod) ==
+  } else if (method_call.method_name().compare(kSetWindowVisibilityMethod) ==
              0) {
     const bool *visible = std::get_if<bool>(method_call.arguments());
     if (visible == nullptr) {
@@ -245,6 +247,46 @@ void WindowSizePlugin::HandleMethodCall(
     ::ShowWindow(GetRootWindow(registrar_->GetView()),
                  *visible ? SW_SHOW : SW_HIDE);
     result->Success();
+  } else if (method_call.method_name().compare(kEnterFullScreenMethod) == 0) {
+    HWND hwnd = GetRootWindow(registrar_->GetView());
+    HDC hdc = GetDC(hwnd);
+    DEVMODE fullscreenSettings;
+    bool isChangeSuccessful;
+    EnumDisplaySettings(NULL, 0, &fullscreenSettings);
+    fullscreenSettings.dmPelsWidth = GetDeviceCaps(hdc, DESKTOPHORZRES);
+    fullscreenSettings.dmPelsHeight = GetDeviceCaps(hdc, DESKTOPVERTRES);
+    fullscreenSettings.dmBitsPerPel = GetDeviceCaps(hdc, BITSPIXEL);
+    fullscreenSettings.dmDisplayFrequency = GetDeviceCaps(hdc, VREFRESH);
+    fullscreenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
+    SetWindowLongPtr(GetRootWindow(registrar_->GetView()), GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
+    SetWindowLongPtr(GetRootWindow(registrar_->GetView()), GWL_STYLE, WS_POPUP | WS_VISIBLE);
+    SetWindowPos(GetRootWindow(registrar_->GetView()), HWND_TOPMOST, 0, 0, GetDeviceCaps(hdc, DESKTOPHORZRES), GetDeviceCaps(hdc, DESKTOPVERTRES), SWP_SHOWWINDOW);
+    isChangeSuccessful = ChangeDisplaySettings(&fullscreenSettings, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
+    ShowWindow(GetRootWindow(registrar_->GetView()), SW_MAXIMIZE);
+    result->Success(
+      flutter::EncodableValue(isChangeSuccessful)
+    );
+  } else if (method_call.method_name().compare(kExitFullScreenMethod) == 0) {
+    const auto *frame_list =
+        std::get_if<EncodableList>(method_call.arguments());
+    if (!frame_list || frame_list->size() != 4) {
+      result->Error("Bad arguments", "Expected 4-element list");
+      return;
+    }
+    int x = static_cast<int>(std::get<double>((*frame_list)[0]));
+    int y = static_cast<int>(std::get<double>((*frame_list)[1]));
+    int width = static_cast<int>(std::get<double>((*frame_list)[2]));
+    int height = static_cast<int>(std::get<double>((*frame_list)[3]));
+    bool isChangeSuccessful;
+    HWND hwnd = GetRootWindow(registrar_->GetView());
+    SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_LEFT);
+    SetWindowLongPtr(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+    isChangeSuccessful = ChangeDisplaySettings(NULL, CDS_RESET) == DISP_CHANGE_SUCCESSFUL;
+    SetWindowPos(hwnd, HWND_NOTOPMOST, x, y, width, height, SWP_SHOWWINDOW);
+    ShowWindow(hwnd, SW_RESTORE);
+    result->Success(
+      flutter::EncodableValue(isChangeSuccessful)
+    );
   } else {
     result->NotImplemented();
   }
