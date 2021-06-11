@@ -29,6 +29,8 @@ const char kSetWindowTitleMethod[] = "setWindowTitle";
 const char ksetWindowVisibilityMethod[] = "setWindowVisibility";
 const char kGetWindowMinimumSizeMethod[] = "getWindowMinimumSize";
 const char kGetWindowMaximumSizeMethod[] = "getWindowMaximumSize";
+const char kEnterFullscreenMethod[] = "enterFullscreen";
+const char kExitFullscreenMethod[] = "exitFullscreen";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
@@ -333,6 +335,41 @@ static FlMethodResponse* get_window_maximum_size(FlWindowSizePlugin* self) {
   return FL_METHOD_RESPONSE(fl_method_success_response_new(size));
 }
 
+// Makes window containing Flutter instance fullscreen.
+static FlMethodResponse* enter_fullscreen(FlWindowSizePlugin* self) {
+  GtkWindow* window = get_window(self);
+  // NOTE: Having maximum window size prevents GTK window from being fullscreen.
+  gtk_window_fullscreen(GTK_WINDOW(window));
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
+// Exits the window containing Flutter instance from fullscreen mode.
+static FlMethodResponse* exit_fullscreen(FlWindowSizePlugin* self,
+                                          FlValue* args) {
+  if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
+      fl_value_get_length(args) != 4) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        kBadArgumentsError, "Expected 4-element list", nullptr));
+  }
+  double x = fl_value_get_float(fl_value_get_list_value(args, 0));
+  double y = fl_value_get_float(fl_value_get_list_value(args, 1));
+  double width = fl_value_get_float(fl_value_get_list_value(args, 2));
+  double height = fl_value_get_float(fl_value_get_list_value(args, 3));
+
+  GtkWindow* window = get_window(self);
+  gtk_window_unfullscreen(GTK_WINDOW(window));
+  if (window == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
+  gtk_window_move(window, static_cast<gint>(x), static_cast<gint>(y));
+  gtk_window_resize(window, static_cast<gint>(width),
+                    static_cast<gint>(height));
+
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
 // Called when a method call is received from Flutter.
 static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
                            gpointer user_data) {
@@ -360,6 +397,10 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
     response = get_window_minimum_size(self);
   } else if (strcmp(method, kGetWindowMaximumSizeMethod) == 0) {
     response = get_window_maximum_size(self);
+  } else if (strcmp(method, kEnterFullscreenMethod) == 0) {
+    response = enter_fullscreen(self);
+  } else if (strcmp(method, kExitFullscreenMethod) == 0) {
+    response = exit_fullscreen(self, args);
   } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
   }
