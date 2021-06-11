@@ -9,37 +9,10 @@ RunLoop::RunLoop() {}
 RunLoop::~RunLoop() {}
 
 void RunLoop::Run() {
-  bool keep_running = true;
-  TimePoint next_flutter_event_time = TimePoint::clock::now();
-  while (keep_running) {
-    std::chrono::nanoseconds wait_duration =
-        std::max(std::chrono::nanoseconds(0),
-                 next_flutter_event_time - TimePoint::clock::now());
-    ::MsgWaitForMultipleObjects(
-        0, nullptr, FALSE, static_cast<DWORD>(wait_duration.count() / 1000),
-        QS_ALLINPUT);
-    bool processed_events = false;
-    MSG message;
-    // All pending Windows messages must be processed; MsgWaitForMultipleObjects
-    // won't return again for items left in the queue after PeekMessage.
-    while (::PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
-      processed_events = true;
-      if (message.message == WM_QUIT) {
-        keep_running = false;
-        break;
-      }
-      ::TranslateMessage(&message);
-      ::DispatchMessage(&message);
-      // Allow Flutter to process messages each time a Windows message is
-      // processed, to prevent starvation.
-      next_flutter_event_time =
-          std::min(next_flutter_event_time, ProcessFlutterMessages());
-    }
-    // If the PeekMessage loop didn't run, process Flutter messages.
-    if (!processed_events) {
-      next_flutter_event_time =
-          std::min(next_flutter_event_time, ProcessFlutterMessages());
-    }
+  MSG msg;
+  while (GetMessage(&msg, nullptr, 0, 0)) {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
   }
 }
 
