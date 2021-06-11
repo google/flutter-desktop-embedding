@@ -13,6 +13,7 @@
 // limitations under the License.
 import 'dart:io' show Platform;
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -200,6 +201,37 @@ class _MyHomePage extends StatelessWidget {
                         Navigator.of(context).push(new MaterialPageRoute(
                             builder: (context) => KeyboardTestPage()));
                       },
+                    ),
+                    Divider(
+                      color: Colors.transparent,
+                      height: 8.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        new ElevatedButton(
+                          child: new Text('Enter fullscreen'),
+                          onPressed: window_size.enterFullscreen,
+                        ),
+                        SizedBox(width: 8.0),
+                        new ElevatedButton(
+                          child: new Text('Exit fullscreen'),
+                          onPressed: () {
+                            window_size.getWindowInfo().then((window) {
+                              final screen = window.screen;
+                              if (screen != null) {
+                                final screenFrame = screen.visibleFrame;
+                                final width = math.max((screenFrame.width / 2).roundToDouble(), 800.0);
+                                final height = math.max((screenFrame.height / 2).roundToDouble(), 600.0);
+                                final left = ((screenFrame.width - width) / 2).roundToDouble();
+                                final top = ((screenFrame.height - height) / 3).roundToDouble();
+                                final frame = Rect.fromLTWH(left, top, width, height);
+                                window_size.exitFullscreen(frame);
+                              }
+                            });
+                          }
+                        ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
