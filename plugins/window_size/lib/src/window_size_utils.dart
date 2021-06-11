@@ -87,3 +87,19 @@ Future<Size> getWindowMinSize() async {
 Future<Size> getWindowMaxSize() async {
   return WindowSizeChannel.instance.getWindowMaxSize();
 }
+
+/// Enters the window containing this Flutter instance fullscreen into fullscreen mode.
+void enterFullscreen() async {
+  WindowSizeChannel.instance.enterFullscreen();
+}
+
+/// Exits the window containing this Flutter instance fullscreen from fullscreen mode.
+/// 
+/// Requires final window dimensions as a [Rect].
+/// 
+/// The platform may adjust the frame as necessary if the provided frame would
+/// cause significant usability issues (e.g., a window with no visible portion
+/// that can be used to move the window).
+void exitFullscreen(Rect frame) async {
+  WindowSizeChannel.instance.exitFullscreen(frame);
+}
