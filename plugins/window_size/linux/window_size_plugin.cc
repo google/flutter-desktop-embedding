@@ -36,6 +36,8 @@ const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
 const char kScreenKey[] = "screen";
 
+static bool g_is_window_fullscreen = false;
+
 struct _FlWindowSizePlugin {
   GObject parent_instance;
 
@@ -272,7 +274,7 @@ static FlMethodResponse* set_window_title(FlWindowSizePlugin* self,
 
 // Sets the window visibility.
 static FlMethodResponse* set_window_visible(FlWindowSizePlugin* self,
-                                          FlValue* args) {
+                                            FlValue* args) {
   if (fl_value_get_type(args) != FL_VALUE_TYPE_BOOL) {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(
         kBadArgumentsError, "Expected bool", nullptr));
@@ -300,7 +302,8 @@ static FlMethodResponse* get_window_minimum_size(FlWindowSizePlugin* self) {
   gint min_height = self->window_geometry.min_height;
 
   // GTK uses -1 for the requisition size (the size GTK has calculated).
-  // Report this as zero (smallest possible) so this doesn't look like Size(-1, -1).
+  // Report this as zero (smallest possible) so this doesn't look like Size(-1,
+  // -1).
   if (min_width < 0) {
     min_width = 0;
   }
@@ -337,36 +340,21 @@ static FlMethodResponse* get_window_maximum_size(FlWindowSizePlugin* self) {
 
 // Makes window containing Flutter instance fullscreen.
 static FlMethodResponse* enter_fullscreen(FlWindowSizePlugin* self) {
-  GtkWindow* window = get_window(self);
-  // NOTE: Having maximum window size prevents GTK window from being fullscreen.
-  gtk_window_fullscreen(GTK_WINDOW(window));
+  if (!g_is_window_fullscreen) {
+    g_is_window_fullscreen = true;
+    GtkWindow* window = get_window(self);
+    gtk_window_fullscreen(GTK_WINDOW(window));
+  }
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
 // Exits the window containing Flutter instance from fullscreen mode.
-static FlMethodResponse* exit_fullscreen(FlWindowSizePlugin* self,
-                                          FlValue* args) {
-  if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
-      fl_value_get_length(args) != 4) {
-    return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        kBadArgumentsError, "Expected 4-element list", nullptr));
+static FlMethodResponse* exit_fullscreen(FlWindowSizePlugin* self) {
+  if (g_is_window_fullscreen) {
+    g_is_window_fullscreen = false;
+    GtkWindow* window = get_window(self);
+    gtk_window_unfullscreen(GTK_WINDOW(window));
   }
-  double x = fl_value_get_float(fl_value_get_list_value(args, 0));
-  double y = fl_value_get_float(fl_value_get_list_value(args, 1));
-  double width = fl_value_get_float(fl_value_get_list_value(args, 2));
-  double height = fl_value_get_float(fl_value_get_list_value(args, 3));
-
-  GtkWindow* window = get_window(self);
-  gtk_window_unfullscreen(GTK_WINDOW(window));
-  if (window == nullptr) {
-    return FL_METHOD_RESPONSE(
-        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
-  }
-
-  gtk_window_move(window, static_cast<gint>(x), static_cast<gint>(y));
-  gtk_window_resize(window, static_cast<gint>(width),
-                    static_cast<gint>(height));
-
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
@@ -400,7 +388,7 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
   } else if (strcmp(method, kEnterFullscreenMethod) == 0) {
     response = enter_fullscreen(self);
   } else if (strcmp(method, kExitFullscreenMethod) == 0) {
-    response = exit_fullscreen(self, args);
+    response = exit_fullscreen(self);
   } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
   }
