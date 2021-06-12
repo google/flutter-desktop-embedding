@@ -39,13 +39,20 @@ const char kSetWindowFrameMethod[] = "setWindowFrame";
 const char kSetWindowMinimumSize[] = "setWindowMinimumSize";
 const char kSetWindowMaximumSize[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
-const char ksetWindowVisibilityMethod[] = "setWindowVisibility";
+const char kSetWindowVisibilityMethod[] = "setWindowVisibility";
+const char kEnterFullscreenMethod[] = "enterFullscreen";
+const char kExitFullscreenMethod[] = "exitFullscreen";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
 const char kScreenKey[] = "screen";
 
 const double kBaseDpi = 96.0;
+
+static bool g_is_window_fullscreen = false;
+// Initial window frame before going fullscreen & used for restoring window to
+// initial frame upon exiting fullscreen.
+static RECT g_frame_before_fullscreen;
 
 // Returns a POINT corresponding to channel representation of a size.
 POINT GetPointForPlatformChannelRepresentationSize(const EncodableList &size) {
@@ -91,8 +98,8 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
 BOOL CALLBACK MonitorRepresentationEnumProc(HMONITOR monitor, HDC hdc,
                                             LPRECT clip, LPARAM list_ref) {
   EncodableValue *monitors = reinterpret_cast<EncodableValue *>(list_ref);
-  std::get<EncodableList>(*monitors).push_back(
-      GetPlatformChannelRepresentationForMonitor(monitor));
+  std::get<EncodableList>(*monitors)
+      .push_back(GetPlatformChannelRepresentationForMonitor(monitor));
   return TRUE;
 }
 
@@ -161,10 +168,10 @@ void WindowSizePlugin::RegisterWithRegistrar(
 
   auto plugin = std::make_unique<WindowSizePlugin>(registrar);
 
-  channel->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto &call, auto result) {
-        plugin_pointer->HandleMethodCall(call, std::move(result));
-      });
+  channel->SetMethodCallHandler([plugin_pointer = plugin.get()](
+      const auto &call, auto result) {
+    plugin_pointer->HandleMethodCall(call, std::move(result));
+  });
 
   registrar->AddPlugin(std::move(plugin));
 }
@@ -235,7 +242,7 @@ void WindowSizePlugin::HandleMethodCall(
             .from_bytes(*title);
     ::SetWindowText(GetRootWindow(registrar_->GetView()), wstr.c_str());
     result->Success();
-  } else if (method_call.method_name().compare(ksetWindowVisibilityMethod) ==
+  } else if (method_call.method_name().compare(kSetWindowVisibilityMethod) ==
              0) {
     const bool *visible = std::get_if<bool>(method_call.arguments());
     if (visible == nullptr) {
@@ -244,6 +251,37 @@ void WindowSizePlugin::HandleMethodCall(
     }
     ::ShowWindow(GetRootWindow(registrar_->GetView()),
                  *visible ? SW_SHOW : SW_HIDE);
+    result->Success();
+  } else if (method_call.method_name().compare(kEnterFullscreenMethod) == 0) {
+    if (!g_is_window_fullscreen) {
+      g_is_window_fullscreen = true;
+      HWND window = GetRootWindow(registrar_->GetView());
+      HMONITOR monitor = ::MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
+      MONITORINFO info;
+      info.cbSize = sizeof(MONITORINFO);
+      ::GetMonitorInfo(monitor, &info);
+      ::SetWindowLongPtr(window, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+      ::GetWindowRect(window, &g_frame_before_fullscreen);
+      ::SetWindowPos(
+          window, HWND_TOPMOST, info.rcMonitor.left, info.rcMonitor.top,
+          info.rcMonitor.right - info.rcMonitor.left,
+          info.rcMonitor.bottom - info.rcMonitor.top, SWP_SHOWWINDOW);
+      ::ShowWindow(window, SW_MAXIMIZE);
+    }
+    result->Success();
+  } else if (method_call.method_name().compare(kExitFullscreenMethod) == 0) {
+    if (g_is_window_fullscreen) {
+      g_is_window_fullscreen = false;
+      HWND window = GetRootWindow(registrar_->GetView());
+      ::SetWindowLongPtr(window, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+      ::SetWindowPos(
+          window, HWND_NOTOPMOST, g_frame_before_fullscreen.left,
+          g_frame_before_fullscreen.top,
+          g_frame_before_fullscreen.right - g_frame_before_fullscreen.left,
+          g_frame_before_fullscreen.bottom - g_frame_before_fullscreen.top,
+          SWP_SHOWWINDOW);
+      ::ShowWindow(window, SW_RESTORE);
+    }
     result->Success();
   } else {
     result->NotImplemented();

@@ -90,6 +90,14 @@ const String _getWindowMaximumSizeMethod = 'getWindowMaximumSize';
 /// be visible.
 const String _setWindowVisibilityMethod = 'setWindowVisibility';
 
+/// The method name to enter window into fullscreen mode.
+///
+const String _enterFullscreen = 'enterFullscreen';
+
+/// The method name to exit window from fullscreen mode.
+///
+const String _exitFullscreen = 'exitFullscreen';
+
 // Keys for screen and window maps returned by _getScreenListMethod.
 
 /// The frame of a screen or window. The value is a list of four doubles:
@@ -218,6 +226,16 @@ class WindowSizeChannel {
         response.cast<double>().map(_maxDimensionFromChannelRepresentation),
       ),
     );
+  }
+
+  /// Enters the window containing this Flutter instance into fullscreen mode.
+  void enterFullscreen() async {
+    await _platformChannel.invokeMethod(_enterFullscreen);
+  }
+
+  /// Exits the window containing this Flutter instance from fullscreen mode.
+  void exitFullscreen() async {
+    await _platformChannel.invokeMethod(_exitFullscreen);
   }
 
   /// Given an array of the form [left, top, width, height], return the
