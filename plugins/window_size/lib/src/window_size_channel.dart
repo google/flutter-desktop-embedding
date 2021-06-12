@@ -235,17 +235,8 @@ class WindowSizeChannel {
   }
 
   /// Exits the window containing this Flutter instance from fullscreen mode.
-  ///
-  /// Requires final window dimensions as a [Rect].
-  ///
-  /// The platform may adjust the frame as necessary if the provided frame would
-  /// cause significant usability issues (e.g., a window with no visible portion
-  /// that can be used to move the window).
-  void exitFullscreen(Rect frame) async {
-    assert(!frame.isEmpty, 'Cannot set window frame to an empty rect.');
-    assert(frame.isFinite, 'Cannot set window frame to a non-finite rect.');
-    await _platformChannel.invokeMethod(_exitFullscreen,
-        [frame.left, frame.top, frame.width, frame.height]);
+  void exitFullscreen() async {
+    await _platformChannel.invokeMethod(_exitFullscreen);
   }
 
   /// Given an array of the form [left, top, width, height], return the

@@ -94,12 +94,6 @@ void enterFullscreen() async {
 }
 
 /// Exits the window containing this Flutter instance from fullscreen mode.
-/// 
-/// Requires final window dimensions as a [Rect].
-/// 
-/// The platform may adjust the frame as necessary if the provided frame would
-/// cause significant usability issues (e.g., a window with no visible portion
-/// that can be used to move the window).
-void exitFullscreen(Rect frame) async {
-  WindowSizeChannel.instance.exitFullscreen(frame);
+void exitFullscreen() async {
+  WindowSizeChannel.instance.exitFullscreen();
 }
