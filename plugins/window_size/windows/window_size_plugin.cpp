@@ -40,14 +40,19 @@ const char kSetWindowMinimumSize[] = "setWindowMinimumSize";
 const char kSetWindowMaximumSize[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
 const char kSetWindowVisibilityMethod[] = "setWindowVisibility";
-const char kEnterFullScreenMethod[] = "enterFullscreen";
-const char kExitFullScreenMethod[] = "exitFullscreen";
+const char kEnterFullscreenMethod[] = "enterFullscreen";
+const char kExitFullscreenMethod[] = "exitFullscreen";
 const char kFrameKey[] = "frame";
 const char kVisibleFrameKey[] = "visibleFrame";
 const char kScaleFactorKey[] = "scaleFactor";
 const char kScreenKey[] = "screen";
 
 const double kBaseDpi = 96.0;
+
+static bool g_is_window_fullscreen = false;
+// Initial window frame before going fullscreen & used for restoring window to
+// initial frame upon exiting fullscreen.
+static RECT g_frame_before_fullscreen;
 
 // Returns a POINT corresponding to channel representation of a size.
 POINT GetPointForPlatformChannelRepresentationSize(const EncodableList &size) {
@@ -93,8 +98,8 @@ EncodableValue GetPlatformChannelRepresentationForMonitor(HMONITOR monitor) {
 BOOL CALLBACK MonitorRepresentationEnumProc(HMONITOR monitor, HDC hdc,
                                             LPRECT clip, LPARAM list_ref) {
   EncodableValue *monitors = reinterpret_cast<EncodableValue *>(list_ref);
-  std::get<EncodableList>(*monitors).push_back(
-      GetPlatformChannelRepresentationForMonitor(monitor));
+  std::get<EncodableList>(*monitors)
+      .push_back(GetPlatformChannelRepresentationForMonitor(monitor));
   return TRUE;
 }
 
@@ -163,10 +168,10 @@ void WindowSizePlugin::RegisterWithRegistrar(
 
   auto plugin = std::make_unique<WindowSizePlugin>(registrar);
 
-  channel->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto &call, auto result) {
-        plugin_pointer->HandleMethodCall(call, std::move(result));
-      });
+  channel->SetMethodCallHandler([plugin_pointer = plugin.get()](
+      const auto &call, auto result) {
+    plugin_pointer->HandleMethodCall(call, std::move(result));
+  });
 
   registrar->AddPlugin(std::move(plugin));
 }
@@ -247,46 +252,37 @@ void WindowSizePlugin::HandleMethodCall(
     ::ShowWindow(GetRootWindow(registrar_->GetView()),
                  *visible ? SW_SHOW : SW_HIDE);
     result->Success();
-  } else if (method_call.method_name().compare(kEnterFullScreenMethod) == 0) {
-    HWND hwnd = GetRootWindow(registrar_->GetView());
-    HDC hdc = GetDC(hwnd);
-    DEVMODE fullscreenSettings;
-    bool isChangeSuccessful;
-    EnumDisplaySettings(NULL, 0, &fullscreenSettings);
-    fullscreenSettings.dmPelsWidth = GetDeviceCaps(hdc, DESKTOPHORZRES);
-    fullscreenSettings.dmPelsHeight = GetDeviceCaps(hdc, DESKTOPVERTRES);
-    fullscreenSettings.dmBitsPerPel = GetDeviceCaps(hdc, BITSPIXEL);
-    fullscreenSettings.dmDisplayFrequency = GetDeviceCaps(hdc, VREFRESH);
-    fullscreenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
-    SetWindowLongPtr(GetRootWindow(registrar_->GetView()), GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
-    SetWindowLongPtr(GetRootWindow(registrar_->GetView()), GWL_STYLE, WS_POPUP | WS_VISIBLE);
-    SetWindowPos(GetRootWindow(registrar_->GetView()), HWND_TOPMOST, 0, 0, GetDeviceCaps(hdc, DESKTOPHORZRES), GetDeviceCaps(hdc, DESKTOPVERTRES), SWP_SHOWWINDOW);
-    isChangeSuccessful = ChangeDisplaySettings(&fullscreenSettings, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
-    ShowWindow(GetRootWindow(registrar_->GetView()), SW_MAXIMIZE);
-    result->Success(
-      flutter::EncodableValue(isChangeSuccessful)
-    );
-  } else if (method_call.method_name().compare(kExitFullScreenMethod) == 0) {
-    const auto *frame_list =
-        std::get_if<EncodableList>(method_call.arguments());
-    if (!frame_list || frame_list->size() != 4) {
-      result->Error("Bad arguments", "Expected 4-element list");
-      return;
+  } else if (method_call.method_name().compare(kEnterFullscreenMethod) == 0) {
+    if (!g_is_window_fullscreen) {
+      g_is_window_fullscreen = true;
+      HWND window = GetRootWindow(registrar_->GetView());
+      HMONITOR monitor = ::MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
+      MONITORINFO info;
+      info.cbSize = sizeof(MONITORINFO);
+      ::GetMonitorInfo(monitor, &info);
+      ::SetWindowLongPtr(window, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+      ::GetWindowRect(window, &g_frame_before_fullscreen);
+      ::SetWindowPos(
+          window, HWND_TOPMOST, info.rcMonitor.left, info.rcMonitor.top,
+          info.rcMonitor.right - info.rcMonitor.left,
+          info.rcMonitor.bottom - info.rcMonitor.top, SWP_SHOWWINDOW);
+      ::ShowWindow(window, SW_MAXIMIZE);
     }
-    int x = static_cast<int>(std::get<double>((*frame_list)[0]));
-    int y = static_cast<int>(std::get<double>((*frame_list)[1]));
-    int width = static_cast<int>(std::get<double>((*frame_list)[2]));
-    int height = static_cast<int>(std::get<double>((*frame_list)[3]));
-    bool isChangeSuccessful;
-    HWND hwnd = GetRootWindow(registrar_->GetView());
-    SetWindowLongPtr(hwnd, GWL_EXSTYLE, WS_EX_LEFT);
-    SetWindowLongPtr(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
-    isChangeSuccessful = ChangeDisplaySettings(NULL, CDS_RESET) == DISP_CHANGE_SUCCESSFUL;
-    SetWindowPos(hwnd, HWND_NOTOPMOST, x, y, width, height, SWP_SHOWWINDOW);
-    ShowWindow(hwnd, SW_RESTORE);
-    result->Success(
-      flutter::EncodableValue(isChangeSuccessful)
-    );
+    result->Success();
+  } else if (method_call.method_name().compare(kExitFullscreenMethod) == 0) {
+    if (g_is_window_fullscreen) {
+      g_is_window_fullscreen = false;
+      HWND window = GetRootWindow(registrar_->GetView());
+      ::SetWindowLongPtr(window, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
+      ::SetWindowPos(
+          window, HWND_NOTOPMOST, g_frame_before_fullscreen.left,
+          g_frame_before_fullscreen.top,
+          g_frame_before_fullscreen.right - g_frame_before_fullscreen.left,
+          g_frame_before_fullscreen.bottom - g_frame_before_fullscreen.top,
+          SWP_SHOWWINDOW);
+      ::ShowWindow(window, SW_RESTORE);
+    }
+    result->Success();
   } else {
     result->NotImplemented();
   }
