@@ -96,7 +96,6 @@ const String _enterFullscreen = 'enterFullscreen';
 
 /// The method name to exit window from fullscreen mode.
 ///
-/// Takes a frame array, as documented for the value of _frameKey.
 const String _exitFullscreen = 'exitFullscreen';
 
 // Keys for screen and window maps returned by _getScreenListMethod.
