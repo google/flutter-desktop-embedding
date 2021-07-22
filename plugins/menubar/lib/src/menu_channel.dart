@@ -233,7 +233,7 @@ class MenuChannel {
         }
 
         if (key.keyLabel.isNotEmpty) {
-          channelRepresentation[_kShortcutKeyEquivalent] = key.keyLabel;
+          channelRepresentation[_kShortcutKeyEquivalent] = key.keyLabel.toLowerCase();
         } else {
           final specialKey = _shortcutSpecialKeyValues[key];
           if (specialKey == null) {
