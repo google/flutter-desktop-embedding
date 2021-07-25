@@ -16,8 +16,8 @@ This is what the above means to your `pubspec.yaml`:
 ...
 dependencies:
   ...
-  file_selector: ^0.7.0
-  file_selector_macos: ^0.0.3
+  file_selector: ^0.8.2
+  file_selector_macos: ^0.0.4
   ...
 ```
 
