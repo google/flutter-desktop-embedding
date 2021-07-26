@@ -1,3 +1,7 @@
+## 0.0.4+1
+
+* Update README
+
 ## 0.0.4
 
 * Treat empty filter lists the same as null.

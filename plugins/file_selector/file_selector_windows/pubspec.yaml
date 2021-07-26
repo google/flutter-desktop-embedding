@@ -1,6 +1,6 @@
 name: file_selector_windows
 description: Windows implementation of the file_selector plugin.
-version: 0.0.2
+version: 0.0.2+1
 homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugins/file_selector/file_selector_windows
 
 flutter:

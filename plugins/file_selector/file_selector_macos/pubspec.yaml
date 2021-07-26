@@ -1,6 +1,6 @@
 name: file_selector_macos
 description: macOS implementation of the file_selector plugin.
-version: 0.0.4
+version: 0.0.4+1
 homepage: https://github.com/google/flutter-desktop-embedding/tree/master/plugins/file_selector/file_selector_macos
 
 flutter:
