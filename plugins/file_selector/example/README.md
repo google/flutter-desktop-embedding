@@ -1,8 +1,4 @@
-# file_selector_example
+# file\_selector\_example
 
-Demonstrates how to use the file_selector plugin.
-
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.dev/).
+Demonstrates unendorsed desktop implementations of the
+[`file_selector` plugin](https://pub.dev/packages/file_selector).
