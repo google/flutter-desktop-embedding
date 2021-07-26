@@ -65,8 +65,6 @@ target_link_libraries(flutter INTERFACE
   PkgConfig::GTK
   PkgConfig::GLIB
   PkgConfig::GIO
-  PkgConfig::BLKID
-  PkgConfig::LZMA
 )
 add_dependencies(flutter flutter_assemble)
 
