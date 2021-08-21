@@ -1,0 +1,32 @@
+name: Other
+description: Request a feature, or provide other feedback that is not about a bug
+
+body:
+- type: checkboxes
+  id: confirmation
+  attributes:
+    label: Is this request within the scope of this project?
+    description: If not, use [the Flutter issue tracker](https://github.com/flutter/flutter/issues).
+    options:
+      - label: I have read [the README section about feedback](https://github.com/google/flutter-desktop-embedding/blob/master/README.md#feedback).
+        required: true
+      - label: My request is specifically related to this repository, not Flutter's desktop support.
+        required: true
+- type: dropdown
+  id: plugin
+  attributes:
+    label: Which plugin is this request about?
+    options:
+      - file_selector
+      - menubar
+      - window_size
+      - A proposal for a new experimental plugin
+      - Other feedback
+  validations:
+    required: true
+- type: textarea
+  id: request
+  attributes:
+    label: Describe the request
+  validations:
+    required: true
