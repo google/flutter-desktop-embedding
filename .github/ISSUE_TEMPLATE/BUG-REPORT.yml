@@ -6,11 +6,11 @@ body:
   id: confirmation
   attributes:
     label: Is this a bug in one of the plugins in this project?
-    description: If not, use [the Flutter issue tracker](https://github.com/flutter/flutter/issues)
+    description: If not, use [the Flutter issue tracker](https://github.com/flutter/flutter/issues).
     options:
-      - label: I have read [the README section about feedback](https://github.com/google/flutter-desktop-embedding/blob/master/README.md#feedback)
+      - label: I have read [the README section about feedback](https://github.com/google/flutter-desktop-embedding/blob/master/README.md#feedback).
         required: true
-      - label: My issue is about one of the plugins in this repository
+      - label: My issue is about one of the plugins in this repository.
         required: true
 - type: dropdown
   id: plugin
@@ -26,14 +26,14 @@ body:
   id: repro
   attributes:
     label: Describe the bug
-    description: "Please provide a clear and concise description of the bug, including steps to reproduce, and, if relevant, screenshots."
+    description: "Please provide a clear and concise description of the bug, including steps to reproduce, and, if relevant, screenshots:"
   validations:
     required: true
 - type: textarea
   id: doctor
   attributes:
     label: Flutter doctor
-    description: "Provide the output of `flutter doctor -v`"
+    description: "Provide the output of `flutter doctor -v`:"
     render: bash
   validations:
     required: true
