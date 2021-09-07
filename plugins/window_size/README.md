@@ -7,7 +7,9 @@ This is a prototype, and in the long term is expected to be replaced by
 [functionality within the Flutter
 framework](https://flutter.dev/go/desktop-multi-window-support).
 
-**Note**: There are currently no plans to add new functionality, such as window
+## Scope
+
+There are currently no plans to add new functionality, such as window
 minimization and maximization, to this plugin. The goals of this plugin were to:
 - unblock certain core use cases among very early adopters, and
 - validate plugin APIs in Flutter itself during early development of the desktop
