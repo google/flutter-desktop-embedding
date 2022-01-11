@@ -14,7 +14,7 @@ dependencies:
   ...
   file_chooser:
     git:
-      url: git://github.com/google/flutter-desktop-embedding.git
+      url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/file_chooser
       ref: INSERT_HASH_HERE
 ```
