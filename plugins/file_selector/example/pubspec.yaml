@@ -15,8 +15,6 @@ dependencies:
     path: ../file_selector_linux
   file_selector_macos:
     path: ../file_selector_macos
-  file_selector_windows:
-    path: ../file_selector_windows
 
 dev_dependencies:
   flutter_test:
