@@ -15,6 +15,7 @@
 
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
+
 #include <cstring>
 
 // See window_size_channel.dart for documentation.
