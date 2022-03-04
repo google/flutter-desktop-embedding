@@ -63,13 +63,13 @@ jobs:
         flutter build -v ${{matrix.TARGET}} --release	
       working-directory: ${{ github.workspace }}/fde/testbed
     - name: Build file_selector implementations debug	
-      if: startsWith(matrix.os, 'macOS') || startsWith(matrix.os, 'ubuntu')
+      if: startsWith(matrix.os, 'ubuntu')
       run: |	
         flutter packages get
         flutter build -v ${{matrix.TARGET}} --debug	
       working-directory: ${{ github.workspace }}/fde/plugins/file_selector/example	
     - name: Build file_selector implementations release	
-      if: startsWith(matrix.os, 'macOS') || startsWith(matrix.os, 'ubuntu')
+      if: startsWith(matrix.os, 'ubuntu')
       run: |	
         flutter packages get	
         flutter build -v ${{matrix.TARGET}} --release	
