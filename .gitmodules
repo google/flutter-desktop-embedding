@@ -1,0 +1,3 @@
+[submodule "plugins/audio_mod"]
+	path = plugins/audio_mod
+	url = https://github.com/fermat28/flutter_audio_desktop_fermat.git
