@@ -6,7 +6,7 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 set(PLUGIN_NAME "menubar_plugin")
 
 add_library(${PLUGIN_NAME} SHARED
-  "menubar_plugin.cc"
+  "${PLUGIN_NAME}.cc"
   "gtk_keymaps.cc"
   "gtk_keymaps.h"
 )
