@@ -11,8 +11,6 @@ flutter:
     platforms:
       linux:
         pluginClass: MenubarPlugin
-      macos:
-        pluginClass: MenubarPlugin
       windows:
         pluginClass: MenubarPlugin
 

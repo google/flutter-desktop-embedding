@@ -6,6 +6,8 @@ set(PLUGIN_NAME "${PROJECT_NAME}_plugin")
 
 add_library(${PLUGIN_NAME} SHARED
   "${PLUGIN_NAME}.cc"
+  "gtk_keymaps.cc"
+  "gtk_keymaps.h"
 )
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES

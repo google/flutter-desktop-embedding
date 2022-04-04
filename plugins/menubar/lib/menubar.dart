@@ -11,5 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-export 'src/native_menu_item.dart';
-export 'src/set_application_menu.dart';
+
+// There's nothing to import here, since the Dart side of the code is all part
+// of the Flutter distribution.
