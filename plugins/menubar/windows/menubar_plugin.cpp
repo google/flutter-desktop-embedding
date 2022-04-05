@@ -162,8 +162,84 @@ void MenubarPlugin::HandleMethodCall(
     }
     result->Success();
   } else {
-    result->NotImplemented();
+<<<<<<< HEAD
+=======
+      const auto *menu_id =
+          std::get_if<int32_t>(ValueOrNull(representation, kIdKey));
+>>>>>>> 71a4fe1 (Start adding Windows)
+      item_id = menu_id ? (kFirstMenuId + *menu_id) : 0;
+    }
+    if (!::AppendMenu(menu, flags, item_id, wide_label.c_str())) {
+      return EncodableValue(static_cast<int64_t>(::GetLastError()));
+    }
   }
+  return std::nullopt;
+}
+
+std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
+                                                       WPARAM wparam,
+                                                       LPARAM lparam) {
+<<<<<<< HEAD
+  // Normally, on Windows you would use an ACCEL table and TranslateAccelerator
+  // to handle shortcuts, converting them to WM_COMMANDs, but unfortunately,
+  // that doesn't handle any shortcuts containing the Windows (meta) key, so we
+  // must handle it ourselves.
+  if (shortcuts_.size() != 0) {
+    if (message == WM_KEYDOWN || message == WM_SYSKEYDOWN) {
+      const std::set<BYTE> modifiers = {
+          VK_LSHIFT, VK_RSHIFT, VK_SHIFT, VK_LCONTROL, VK_RCONTROL, VK_CONTROL,
+          VK_LMENU,  VK_RMENU,  VK_MENU,  VK_LWIN,     VK_RWIN,
+      };
+      // Check for the virtual key and modifier state in lookups.
+      // This only handles trigger-based shortcuts. Character based shortcuts
+      // are handled by WM_CHAR and WM_SYSCHAR below.
+      int64_t target = wparam | (GetCurrentModifiers() << 32);
+      auto match = shortcut_trigger_lookup_.find(target);
+      if (match != shortcut_trigger_lookup_.end()) {
+        // Look to see if any other keys are IsPressed. If so, then this is not
+        // the event we're looking for.
+        BYTE key_state[256];
+        ::GetKeyboardState(key_state);
+        for (int i = 0; i < 256; ++i) {
+          bool keyIsDown = key_state[i] & 0x8000;
+          if (keyIsDown && modifiers.find(static_cast<BYTE>(i)) == modifiers.end() && i != static_cast<int>(wparam)) {
+            return std::nullopt;
+          }
+        }
+        channel_->InvokeMethod(kMenuSelectedCallbackMethod,
+                               std::make_unique<EncodableValue>(match->second));
+        return 0;
+      }
+    }
+
+    if (message == WM_CHAR || message == WM_SYSCHAR) {
+      std::wstring character;
+      character.push_back(static_cast<wchar_t>(wparam));
+      auto match = shortcut_character_lookup_.find(character);
+      if (match != shortcut_character_lookup_.end()) {
+        channel_->InvokeMethod(kMenuSelectedCallbackMethod,
+                               std::make_unique<EncodableValue>(match->second));
+        return 0;
+      }
+    }
+  }
+
+=======
+>>>>>>> 71a4fe1 (Start adding Windows)
+  if (message == WM_COMMAND) {
+    DWORD menu_id = LOWORD(wparam);
+    if (menu_id >= kFirstMenuId) {
+      int32_t flutter_id = menu_id - kFirstMenuId;
+<<<<<<< HEAD
+      channel_->InvokeMethod(kMenuSelectedCallbackMethod,
+=======
+      channel_->InvokeMethod(kMenuItemSelectedCallbackMethod,
+>>>>>>> 71a4fe1 (Start adding Windows)
+                             std::make_unique<EncodableValue>(flutter_id));
+      return 0;
+    }
+  }
+  return std::nullopt;
 }
 
 std::optional<EncodableValue> MenubarPlugin::SetMenus(
