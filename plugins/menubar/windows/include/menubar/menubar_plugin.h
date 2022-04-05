@@ -31,14 +31,42 @@ class MenubarPlugin : public flutter::Plugin {
   virtual ~MenubarPlugin();
 
   // Disallow copy and assign.
-  MenubarPlugin(const MenubarPlugin&) = delete;
-  MenubarPlugin& operator=(const MenubarPlugin&) = delete;
+  MenubarPlugin(const MenubarPlugin &) = delete;
+  MenubarPlugin &operator=(const MenubarPlugin &) = delete;
 
  private:
   // Called when a method is called on this plugin's channel from Dart.
   void HandleMethodCall(
       const flutter::MethodCall<flutter::EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+  // Fills |menu| with items constructed from the given method channel
+  // representation of a menu.
+  //
+  // On failure, returns an EncodableValue with error details.
+  static std::optional<EncodableValue> PopulateMenu(
+      HMENU menu, const EncodableList &representation);
+
+  // Constructs a menu item corresponding to the item in |representation|,
+  // including recursively creating children if it has a submenu, and adds it to
+  // |menu|.
+  //
+  // On failure, returns an EncodableValue with error details.
+  static std::optional<EncodableValue> AddMenuItem(
+      HMENU menu, const EncodableMap &representation);
+
+  // Called for top-level WindowProc delegation.
+  std::optional<LRESULT> HandleWindowProc(HWND hwnd, UINT message,
+                                          WPARAM wparam, LPARAM lparam);
+
+  // The registrar for this plugin.
+  flutter::PluginRegistrarWindows *registrar_;
+
+  // The cannel to send menu item activations on.
+  std::unique_ptr<flutter::MethodChannel<>> channel_;
+
+  // The ID of the registered WindowProc handler.
+  int window_proc_id_;
 };
 
 }  // namespace menubar

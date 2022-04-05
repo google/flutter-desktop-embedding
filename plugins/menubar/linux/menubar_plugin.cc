@@ -32,7 +32,7 @@
 #include "gtk_keymaps.h"
 
 namespace {
-// See menu_channel.dart for documentation.
+// See flutte/flutter's packages/flutter/lib/src/widgets/platform_menu_bar.dart for documentation.
 constexpr char kChannelName[] = "flutter/menu";
 constexpr char kBadArgumentsError[] = "Bad Arguments";
 constexpr char kNoScreenError[] = "No Screen";
