@@ -36,7 +36,8 @@ namespace {
 constexpr char kChannelName[] = "flutter/menu";
 constexpr char kBadArgumentsError[] = "Bad Arguments";
 constexpr char kNoScreenError[] = "No Screen";
-constexpr char kMenuSetMethod[] = "Menu.setMenu";
+constexpr char kGetPlatformVersionMethod[] = "getPlatformVersion";
+constexpr char kMenuSetMethod[] = "Menu.setMenus";
 constexpr char kMenuItemOpenedMethod[] = "Menu.opened";
 constexpr char kMenuItemClosedMethod[] = "Menu.closed";
 constexpr char kMenuItemSelectedCallbackMethod[] = "Menu.selectedCallback";
@@ -46,7 +47,7 @@ constexpr char kLabelKey[] = "label";
 constexpr char kEnabledKey[] = "enabled";
 constexpr char kChildrenKey[] = "children";
 constexpr char kIsDividerKey[] = "isDivider";
-constexpr char kShortcutCharacterKey[] = "shortcutEquivalent";
+constexpr char kShortcutCharacterKey[] = "shortcutCharacter";
 constexpr char kShortcutTriggerKey[] = "shortcutTrigger";
 constexpr char kShortcutModifiersKey[] = "shortcutModifiers";
 
@@ -469,7 +470,7 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
   FlValue* args = fl_method_call_get_args(method_call);
   std::cerr << "Received method call for " << method << " with "
             << fl_value_get_type(args) << " args." << std::endl;
-  if (strcmp(method, "getPlatformVersion") == 0) {
+  if (strcmp(method, kGetPlatformVersionMethod) == 0) {
     struct utsname uname_data = {};
     uname(&uname_data);
     g_autofree gchar* version = g_strdup_printf("Linux %s", uname_data.version);
