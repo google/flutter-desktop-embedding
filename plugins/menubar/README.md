@@ -1,19 +1,15 @@
 # menubar
 
-This plugin provides access to a native menubar.
+A new Flutter plugin project.
 
-This is a prototype, and in the long term will either be replaced by functionality
-within the Flutter framework itself, or a published plugin (likely part of
-flutter/plugins). Either way, the API will change significantly.
+## Getting Started
 
-## Supported Platforms
+This project is a starting point for a Flutter
+[plug-in package](https://flutter.dev/developing-packages/),
+a specialized package that includes platform-specific implementation code for
+Android and/or iOS.
 
-- [x] Windows
-- [x] Linux
+For help getting started with Flutter development, view the
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
 
-macOS is no longer supported, since macOS menus are now supported by the Flutter
-package now. See [PlatformMenuBar](https://master-api.flutter.dev/flutter/widgets/PlatformMenuBar-class.html) for more details.
-
-## Use
-
-See [the plugin README](../README.md) for general instructions on using FDE plugins.

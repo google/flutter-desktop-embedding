@@ -1,27 +1,35 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2018 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "include/menubar/menubar_plugin.h"
 
+#include <assert.h>
 #include <flutter_linux/flutter_linux.h>
-#include <gtk/gtk.h>
-
 #include <gio/gmenu.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
+#include <sys/utsname.h>
+
 #include <cstdint>
 #include <cstring>
 #include <functional>
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <string>
 
-#include "flutter/shell/platform/common/platform_provided_menu.h"
-#include "flutter/shell/platform/linux/fl_gtk_keymaps.h"
-#include "flutter/shell/platform/linux/key_mapping.h"
-#include "flutter/shell/platform/linux/public/flutter_linux/fl_method_channel.h"
-#include "flutter/shell/platform/linux/public/flutter_linux/fl_standard_method_codec.h"
+#include "gtk_keymaps.h"
 
 namespace {
 // See menu_channel.dart for documentation.
@@ -38,10 +46,9 @@ constexpr char kLabelKey[] = "label";
 constexpr char kEnabledKey[] = "enabled";
 constexpr char kChildrenKey[] = "children";
 constexpr char kIsDividerKey[] = "isDivider";
-constexpr char kShortcutEquivalentKey[] = "shortcutEquivalent";
+constexpr char kShortcutCharacterKey[] = "shortcutEquivalent";
 constexpr char kShortcutTriggerKey[] = "shortcutTrigger";
 constexpr char kShortcutModifiersKey[] = "shortcutModifiers";
-constexpr char kPlatformProvidedMenuKey[] = "platformProvidedMenu";
 
 // Key shortcut constants
 constexpr int kFlutterShortcutModifierMeta = 1 << 0;
@@ -49,32 +56,15 @@ constexpr int kFlutterShortcutModifierShift = 1 << 1;
 constexpr int kFlutterShortcutModifierAlt = 1 << 2;
 constexpr int kFlutterShortcutModifierControl = 1 << 3;
 
-namespace {
-void quit_app() {
-  exit(0);
-}
-
-void about_app() {
-  std::cerr << "about: test app" << std::endl;
-}
-}  // namespace
-
-static const std::map<flutter::PlatformProvidedMenu, std::function<void()>> kLinuxDefaultMenus = {
-    {flutter::PlatformProvidedMenu::kAbout, about_app},
-    {flutter::PlatformProvidedMenu::kQuit, quit_app},
-};
-
-static const std::map<int, std::string> kLinuxDefaultMenuLabels = {
-    {flutter::PlatformProvidedMenu::kAbout, "About"},
-    {flutter::PlatformProvidedMenu::kQuit, "Quit"},
-};
+#define MENUBAR_PLUGIN(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj), menubar_plugin_get_type(), MenubarPlugin))
 
 std::map<uint64_t, uint64_t> logical_key_map_to_gtk_keyval;
 std::map<uint64_t, uint64_t> unicode_to_gtk_keyval;
 
 }  // namespace
 
-struct _FlMenubarPlugin {
+struct _MenubarPlugin {
   GObject parent_instance;
 
   FlView* view;
@@ -89,9 +79,9 @@ struct _FlMenubarPlugin {
   GMenu* menu;
 };
 
-G_DEFINE_TYPE(FlMenubarPlugin, fl_menubar_plugin, g_object_get_type())
+G_DEFINE_TYPE(MenubarPlugin, menubar_plugin, g_object_get_type())
 
-static GtkApplication* get_gtk_app(FlMenubarPlugin* self) {
+static GtkApplication* get_gtk_app(MenubarPlugin* self) {
   GtkApplication* gtk_app = gtk_window_get_application(
       GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(self->view))));
   if (gtk_app == nullptr) {
@@ -100,56 +90,82 @@ static GtkApplication* get_gtk_app(FlMenubarPlugin* self) {
   return gtk_app;
 }
 
-static void add_menu_accelerator(FlMenubarPlugin* self,
-                                 GMenuItem* menu_item,
-                                 FlValue* value,
-                                 const gchar* action_name) {
-  FlValue* shortcut_equivalent_value =
-      fl_value_lookup_string(value, kShortcutEquivalentKey);
+static gint get_keyval_for_logical_accelerator(
+    FlValue* shortcut_trigger_value, FlValue* shortcut_modifiers_value) {
+  if (shortcut_trigger_value != nullptr &&
+      fl_value_get_type(shortcut_trigger_value) != FL_VALUE_TYPE_INT) {
+    g_warning("Invalid type for shortcut trigger: %d",
+              fl_value_get_type(shortcut_trigger_value));
+    return -1;
+  }
+  if (shortcut_modifiers_value != nullptr &&
+      fl_value_get_type(shortcut_modifiers_value) != FL_VALUE_TYPE_INT) {
+    g_warning("Invalid type for shortcut modifier: %d",
+              fl_value_get_type(shortcut_modifiers_value));
+    return -1;
+  }
+  // Attempt to look up a non-printable key
+  int64_t key_id = fl_value_get_int(shortcut_trigger_value);
+  auto logical_entry = logical_key_map_to_gtk_keyval.find(key_id);
+  gint gtk_keyval = logical_entry != logical_key_map_to_gtk_keyval.end()
+                   ? logical_entry->second
+                   : -1;
+
+  // If that failed, attempt to look up a Unicode key's keyval.
+  if (gtk_keyval == -1) {
+    constexpr int64_t valueMask = 0x000ffffffff;
+    int64_t unicode_value = key_id & valueMask;
+    auto unicode_entry = unicode_to_gtk_keyval.find(unicode_value);
+    gtk_keyval = unicode_entry != unicode_to_gtk_keyval.end()
+                     ? unicode_entry->second
+                     : -1;
+  }
+  // Unable to find a matching keycode.
+  if (gtk_keyval == -1) {
+    g_warning("Unable to find a keyval for logical key %ld", key_id);
+    return -1;
+  }
+  return gtk_keyval;
+}
+
+static gint get_keyval_for_character_accelerator(FlValue* accelerator) {
+  if (fl_value_get_type(accelerator) != FL_VALUE_TYPE_STRING) {
+    g_warning("Invalid type for shortcut character: %d",
+              fl_value_get_type(accelerator));
+    return -1;
+  }
+  const gchar* character = fl_value_get_string(accelerator);
+  gunichar unichar = g_utf8_get_char(character);
+  auto unichar_entry = unicode_to_gtk_keyval.find(unichar);
+  if (unichar_entry != unicode_to_gtk_keyval.end()) {
+    return unichar_entry->second;
+  } else {
+    g_warning("Unable to find a keyval for shortcut character %d (%s)", unichar,
+              character);
+    return -1;
+  }
+}
+
+static void add_menu_accelerator(MenubarPlugin* self, GMenuItem* menu_item,
+                                 FlValue* value, const gchar* action_name) {
   FlValue* shortcut_trigger_value =
       fl_value_lookup_string(value, kShortcutTriggerKey);
   FlValue* shortcut_modifiers_value =
       fl_value_lookup_string(value, kShortcutModifiersKey);
-  if (shortcut_equivalent_value != nullptr) {
-    // Map the given character to a known key. Yeah, right.
-  }
-  if (shortcut_trigger_value == nullptr ||
-      shortcut_modifiers_value == nullptr) {
-    return;
-  }
-  if (fl_value_get_type(shortcut_trigger_value) != FL_VALUE_TYPE_INT) {
-    g_warning("Invalid type for trigger: %d",
-              fl_value_get_type(shortcut_trigger_value));
-    return;
-  }
-  if (fl_value_get_type(shortcut_modifiers_value) != FL_VALUE_TYPE_INT) {
-    g_warning("Invalid type for modifier: %d",
-              fl_value_get_type(shortcut_modifiers_value));
-    return;
-  }
+  FlValue* shortcut_character_value =
+      fl_value_lookup_string(value, kShortcutCharacterKey);
 
   gint gtk_keyval = -1;
 
-  // Attempt to look up a non-printable key
-  int64_t key_id = fl_value_get_int(shortcut_trigger_value);
-  gtk_keyval = logical_key_map_to_gtk_keyval.find(key_id) !=
-                       logical_key_map_to_gtk_keyval.end()
-                   ? logical_key_map_to_gtk_keyval[key_id]
-                   : -1;
-
-  // Attempt to look up a Unicode key
-  if (gtk_keyval == -1) {
-    constexpr int64_t valueMask = 0x000ffffffff;
-    int64_t unicode_value = key_id & valueMask;
-    gtk_keyval =
-        unicode_to_gtk_keyval.find(unicode_value) != unicode_to_gtk_keyval.end()
-            ? unicode_to_gtk_keyval[unicode_value]
-            : -1;
+  if (shortcut_character_value != nullptr) {
+    gtk_keyval = get_keyval_for_character_accelerator(shortcut_character_value);
+  } else if (shortcut_trigger_value != nullptr &&
+             shortcut_modifiers_value != nullptr) {
+    gtk_keyval = get_keyval_for_logical_accelerator(shortcut_trigger_value,
+                                                    shortcut_modifiers_value);
   }
-
-  // Unable to find a matching keycode.
   if (gtk_keyval == -1) {
-    g_warning("Unable to find a keyval for logical key %ld", key_id);
+    // Unable to find a match. Warnings would already have been printed.
     return;
   }
 
@@ -180,13 +196,13 @@ static void add_menu_accelerator(FlMenubarPlugin* self,
   gtk_application_set_accels_for_action(gtk_app, action_name, accelerators);
 }
 
-static GMenu* value_to_menu(FlMenubarPlugin* self, FlValue* value, GError** error);
+static GMenu* value_to_menu(MenubarPlugin* self, FlValue* value,
+                            GError** error);
 
 // Called when a menu item is selected.
-static void menu_select_cb(GSimpleAction* action,
-                           GVariant* parameter,
+static void menu_select_cb(GSimpleAction* action, GVariant* parameter,
                            gpointer user_data) {
-  FlMenubarPlugin* self = FL_MENUBAR_PLUGIN(user_data);
+  MenubarPlugin* self = MENUBAR_PLUGIN(user_data);
 
   // Parse the action ID out of the action name, since accelerators
   // can't have targets to pass as the parameter.
@@ -212,10 +228,9 @@ static void menu_select_cb(GSimpleAction* action,
 }
 
 // Called when a submenu is opened or closed.
-static void submenu_click_cb(GSimpleAction* action,
-                             GVariant* parameter,
+static void submenu_click_cb(GSimpleAction* action, GVariant* parameter,
                              gpointer user_data) {
-  FlMenubarPlugin* self = FL_MENUBAR_PLUGIN(user_data);
+  MenubarPlugin* self = MENUBAR_PLUGIN(user_data);
 
   // Parse the action ID out of the action name, since accelerators
   // can't have targets to pass as the parameter.
@@ -241,76 +256,8 @@ static void submenu_click_cb(GSimpleAction* action,
       result, nullptr, nullptr, nullptr);
 }
 
-// Called when a default menu item is selected.
-static void default_menu_select_cb(GSimpleAction* action,
-                                   GVariant* parameter,
-                                   gpointer user_data) {
-  // Parse the default menu ID out of the action name, since accelerators
-  // can't have targets to pass as the parameter.
-  std::string action_name = g_action_get_name(G_ACTION(action));
-  assert(action_name.substr(0, strlen(kMenuActionPrefix)) ==
-             kMenuActionPrefix &&
-         "Menu action has the wrong prefix.");
-  int last_dash = action_name.find_last_of('-');
-  if (last_dash < 0) {
-    g_warning("Unable to determine action ID for action %s",
-              action_name.c_str());
-    return;
-  }
-  action_name = action_name.substr(last_dash + 1);
-  // It's potentially a 64-bit number, so parse accordingly.
-  std::istringstream atoi_convert_stream(action_name);
-  int64_t id = 0;
-  atoi_convert_stream >> id;
-  auto action_callback = kLinuxDefaultMenus.find(id);
-  if (action_callback != kLinuxDefaultMenus.end()) {
-    action_callback->second();
-  }
-}
-
-static void add_default_menu(FlMenubarPlugin* self,
-                             GMenuItem* item,
-                             FlValue* value,
-                             bool is_enabled) {
-  FlValue* default_menu_value =
-      fl_value_lookup_string(value, kPlatformProvidedMenuKey);
-  g_autoptr(GString) default_activate_action_name =
-      g_string_new(kMenuActionPrefix);
-  int64_t default_menu = fl_value_get_int(default_menu_value);
-  auto label_iter = kLinuxDefaultMenuLabels.find(default_menu);
-  std::string label = label_iter == kLinuxDefaultMenuLabels.end()
-                          ? "<unknown>"
-                          : label_iter->second;
-  g_menu_item_set_label(item, label.c_str());
-  g_string_append_printf(default_activate_action_name, "default-%ld",
-                         default_menu);
-  g_autoptr(GSimpleAction) action = g_simple_action_new(
-      default_activate_action_name->str, G_VARIANT_TYPE_INT64);
-  g_simple_action_set_enabled(action, is_enabled);
-  g_signal_connect_object(action, "activate",
-                          G_CALLBACK(default_menu_select_cb), self,
-                          G_CONNECT_SWAPPED);
-  g_autoptr(GString) default_menu_id = g_string_new("");
-  g_string_append_printf(default_menu_id, "%ld", default_menu);
-  const GActionEntry entries[] = {
-      {
-          .name = default_activate_action_name->str,
-          .activate = default_menu_select_cb,
-          .parameter_type = nullptr,
-      },
-  };
-  g_action_map_add_action_entries(G_ACTION_MAP(g_application_get_default()),
-                                  entries, G_N_ELEMENTS(entries), self);
-  g_string_prepend(default_activate_action_name, "app.");
-  g_menu_item_set_detailed_action(item, default_activate_action_name->str);
-  add_menu_accelerator(self, item, value, default_activate_action_name->str);
-}
-
-static void add_menu_item(FlMenubarPlugin* self,
-                          GMenuItem* item,
-                          FlValue* value,
-                          bool is_enabled,
-                          GError** error) {
+static void add_menu_item(MenubarPlugin* self, GMenuItem* item, FlValue* value,
+                          bool is_enabled, GError** error) {
   FlValue* label_value = fl_value_lookup_string(value, kLabelKey);
   if (label_value != nullptr &&
       fl_value_get_type(label_value) == FL_VALUE_TYPE_STRING) {
@@ -347,8 +294,7 @@ static void add_menu_item(FlMenubarPlugin* self,
 }
 
 // Convert a value received from Flutter to a GtkMenuItem.
-static GMenuItem* value_to_menu_item(FlMenubarPlugin* self,
-                                     FlValue* value,
+static GMenuItem* value_to_menu_item(MenubarPlugin* self, FlValue* value,
                                      GError** error) {
   if (fl_value_get_type(value) != FL_VALUE_TYPE_MAP) {
     g_set_error(error, 0, 0, "Menu item map missing or malformed");
@@ -371,13 +317,8 @@ static GMenuItem* value_to_menu_item(FlMenubarPlugin* self,
   FlValue* children = fl_value_lookup_string(value, kChildrenKey);
   bool has_children = children != nullptr && fl_value_get_length(children) > 0;
 
-  FlValue* default_menu_value =
-      fl_value_lookup_string(value, kPlatformProvidedMenuKey);
-  if (default_menu_value != nullptr) {
-    add_default_menu(self, item, value, is_enabled);
-  } else {
-    add_menu_item(self, item, value, is_enabled, error);
-  }
+  add_menu_item(self, item, value, is_enabled, error);
+
   if (has_children) {
     g_autoptr(GMenu) sub_menu = value_to_menu(self, children, error);
     if (sub_menu == nullptr) {
@@ -416,14 +357,12 @@ static GMenuItem* value_to_menu_item(FlMenubarPlugin* self,
 }
 
 // Convert a value received from Flutter to a GtkMenuItem.
-static GMenu* value_to_menu(FlMenubarPlugin* self,
-                            FlValue* value,
+static GMenu* value_to_menu(MenubarPlugin* self, FlValue* value,
                             GError** error) {
   if (fl_value_get_type(value) != FL_VALUE_TYPE_LIST) {
     g_set_error(error, 0, 0, "Menu list missing or malformed");
     return nullptr;
   }
-
   g_autoptr(GMenu) menu = g_menu_new();
   g_autoptr(GMenu) section = nullptr;
   for (size_t i = 0; i < fl_value_get_length(value); i++) {
@@ -487,11 +426,20 @@ static void clear_actions(GtkApplication* app) {
 }
 
 // Sets the menu.
-static FlMethodResponse* menu_set(FlMenubarPlugin* self, FlValue* args) {
+static FlMethodResponse* menu_set(MenubarPlugin* self, FlValue* args) {
   g_autoptr(GError) error = nullptr;
   GtkApplication* app = get_gtk_app(self);
   clear_actions(app);
-  g_autoptr(GMenu) menu = value_to_menu(self, args, &error);
+
+  if (fl_value_get_type(args) != FL_VALUE_TYPE_MAP) {
+    g_error("Menu window map missing or malformed");
+    return nullptr;
+  }
+
+  // For now, there's only one window, so there's only one menu list, mapped to
+  // "0".
+  g_autoptr(GMenu) menu =
+      value_to_menu(self, fl_value_lookup_string(args, "0"), &error);
   if (menu == nullptr) {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(
         kBadArgumentsError, error ? error->message : nullptr, nullptr));
@@ -512,16 +460,22 @@ static FlMethodResponse* menu_set(FlMenubarPlugin* self, FlValue* args) {
 }
 
 // Called when a method call is received from Flutter.
-static void method_call_cb(FlMethodChannel* channel,
-                           FlMethodCall* method_call,
+static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
                            gpointer user_data) {
-  FlMenubarPlugin* self = FL_MENUBAR_PLUGIN(user_data);
+  g_autoptr(FlMethodResponse) response = nullptr;
+  MenubarPlugin* self = MENUBAR_PLUGIN(user_data);
 
   const gchar* method = fl_method_call_get_name(method_call);
   FlValue* args = fl_method_call_get_args(method_call);
-
-  g_autoptr(FlMethodResponse) response = nullptr;
-  if (strcmp(method, kMenuSetMethod) == 0) {
+  std::cerr << "Received method call for " << method << " with "
+            << fl_value_get_type(args) << " args." << std::endl;
+  if (strcmp(method, "getPlatformVersion") == 0) {
+    struct utsname uname_data = {};
+    uname(&uname_data);
+    g_autofree gchar* version = g_strdup_printf("Linux %s", uname_data.version);
+    g_autoptr(FlValue) result = fl_value_new_string(version);
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+  } else if (strcmp(method, kMenuSetMethod) == 0) {
     response = menu_set(self, args);
   } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
@@ -533,30 +487,29 @@ static void method_call_cb(FlMethodChannel* channel,
   }
 }
 
-static void fl_menubar_plugin_dispose(GObject* object) {
-  FlMenubarPlugin* self = FL_MENUBAR_PLUGIN(object);
+static void menubar_plugin_dispose(GObject* object) {
+  MenubarPlugin* self = MENUBAR_PLUGIN(object);
 
   g_clear_object(&self->view);
   g_clear_object(&self->channel);
   g_clear_object(&self->menu);
   g_clear_object(&self->divider_item);
 
-  G_OBJECT_CLASS(fl_menubar_plugin_parent_class)->dispose(object);
+  G_OBJECT_CLASS(menubar_plugin_parent_class)->dispose(object);
 }
 
-static void fl_menubar_plugin_class_init(FlMenubarPluginClass* klass) {
-  G_OBJECT_CLASS(klass)->dispose = fl_menubar_plugin_dispose;
+static void menubar_plugin_class_init(MenubarPluginClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = menubar_plugin_dispose;
 }
 
-static void fl_menubar_plugin_init(FlMenubarPlugin* self) {
+static void menubar_plugin_init(MenubarPlugin* self) {
   self->divider_item = g_menu_item_new(nullptr, nullptr);
 }
 
-FlMenubarPlugin* fl_menubar_plugin_new(FlPluginRegistrar* registrar) {
-  FlMenubarPlugin* self =
-      FL_MENUBAR_PLUGIN(g_object_new(fl_menubar_plugin_get_type(), nullptr));
-	std::cerr << "Registering Menubar plugin" << std::endl;
-  FlView* view = registrar->get_view();
+MenubarPlugin* menubar_plugin_new(FlPluginRegistrar* registrar) {
+  MenubarPlugin* self =
+      MENUBAR_PLUGIN(g_object_new(menubar_plugin_get_type(), nullptr));
+  FlView* view = fl_plugin_registrar_get_view(registrar);
   self->view = view;
   if (view != nullptr) {
     g_object_add_weak_pointer(G_OBJECT(view),
@@ -565,7 +518,8 @@ FlMenubarPlugin* fl_menubar_plugin_new(FlPluginRegistrar* registrar) {
 
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
   self->channel =
-      fl_method_channel_new(registrar->get_messenger(), kChannelName, FL_METHOD_CODEC(codec));
+      fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
+                            kChannelName, FL_METHOD_CODEC(codec));
   fl_method_channel_set_method_call_handler(self->channel, method_call_cb, self,
                                             nullptr);
 
@@ -592,8 +546,8 @@ FlMenubarPlugin* fl_menubar_plugin_new(FlPluginRegistrar* registrar) {
   // map only contains non-printable keys (Unicode capped keys are handled
   // separately).
   logical_key_map_to_gtk_keyval.clear();
-  for (const auto& [key, value] : gtk_keyval_to_logical_key_map) {
-    logical_key_map_to_gtk_keyval[value] = key;
+  for (const auto& entry : gtk_keyval_to_logical_key_map) {
+    logical_key_map_to_gtk_keyval[entry.second] = entry.first;
   }
 
   // TODO(gspencergoog): register to listen for changes in the keymap so that
@@ -609,9 +563,7 @@ FlMenubarPlugin* fl_menubar_plugin_new(FlPluginRegistrar* registrar) {
   return self;
 }
 
-void fl_menubar_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
-	std::cerr << "Registering Menubar plugin" << std::endl;
-  FlMenubarPlugin* plugin = fl_menubar_plugin_new(registrar);
-  *nullptr;
+void menubar_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
+  MenubarPlugin* plugin = menubar_plugin_new(registrar);
   g_object_unref(plugin);
 }

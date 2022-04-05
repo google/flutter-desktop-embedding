@@ -11,10 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef PLUGINS_MENUBAR_LINUX_MENUBAR_PLUGIN_H_
-#define PLUGINS_MENUBAR_LINUX_MENUBAR_PLUGIN_H_
 
-// A plugin to control a native menubar.
+#ifndef FLUTTER_PLUGIN_MENUBAR_PLUGIN_H_
+#define FLUTTER_PLUGIN_MENUBAR_PLUGIN_H_
 
 #include <flutter_linux/flutter_linux.h>
 
@@ -26,15 +25,16 @@ G_BEGIN_DECLS
 #define FLUTTER_PLUGIN_EXPORT
 #endif
 
-G_DECLARE_FINAL_TYPE(FlMenubarPlugin, fl_menubar_plugin, FL, MENUBAR_PLUGIN,
-                     GObject)
+typedef struct _MenubarPlugin MenubarPlugin;
+typedef struct {
+  GObjectClass parent_class;
+} MenubarPluginClass;
 
-FLUTTER_PLUGIN_EXPORT FlMenubarPlugin* fl_menubar_plugin_new(
-    FlPluginRegistrar* registrar);
+FLUTTER_PLUGIN_EXPORT GType menubar_plugin_get_type();
 
 FLUTTER_PLUGIN_EXPORT void menubar_plugin_register_with_registrar(
     FlPluginRegistrar* registrar);
 
 G_END_DECLS
 
-#endif  // PLUGINS_MENUBAR_LINUX_MENUBAR_PLUGIN_H_
+#endif  // FLUTTER_PLUGIN_MENUBAR_PLUGIN_H_
