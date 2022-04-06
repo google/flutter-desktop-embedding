@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "include/menubar/menubar_plugin.h"
+#include "menubar_plugin.h"
 
 // This must be included before many other Windows headers.
 #include <windows.h>
@@ -37,14 +37,12 @@ using flutter::EncodableValue;
 // See flutte/flutter's packages/flutter/lib/src/widgets/platform_menu_bar.dart
 // for documentation.
 constexpr char kChannelName[] = "flutter/menu";
-constexpr char kBadArgumentsError[] = "Bad Arguments";
 constexpr char kMenuConstructionError[] = "Menu Construction Error";
-constexpr char kNoScreenError[] = "No Screen";
 constexpr char kGetPlatformVersionMethod[] = "getPlatformVersion";
-constexpr char kMenuSetMethod[] = "Menu.setMenus";
-constexpr char kMenuItemOpenedMethod[] = "Menu.opened";
-constexpr char kMenuItemClosedMethod[] = "Menu.closed";
-constexpr char kMenuItemSelectedCallbackMethod[] = "Menu.selectedCallback";
+constexpr char kMenuSetMenusMethod[] = "Menu.setMenus";
+constexpr char kMenuOpenedMethod[] = "Menu.opened";
+constexpr char kMenuClosedMethod[] = "Menu.closed";
+constexpr char kMenuSelectedCallbackMethod[] = "Menu.selectedCallback";
 constexpr char kMenuActionPrefix[] = "flutter-menu-";
 constexpr char kIdKey[] = "id";
 constexpr char kLabelKey[] = "label";
@@ -66,7 +64,7 @@ const unsigned int kFirstMenuId = 1000;
 
 // Looks for |key| in |map|, returning the associated value if it is present, or
 // a nullptr if not.
-const EncodableValue *ValueOrNull(const EncodableMap &map, const char *key) {
+const EncodableValue* ValueOrNull(const EncodableMap &map, const char *key) {
   auto it = map.find(EncodableValue(key));
   if (it == map.end()) {
     return nullptr;
@@ -136,49 +134,53 @@ MenubarPlugin::~MenubarPlugin() {
 void MenubarPlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  if (method_call.method_name().compare(kMenuSetMethod) == 0) {
-    flutter::FlutterView *view = registrar_->GetView();
-    HWND window =
-        view ? GetAncestor(view->GetNativeWindow(), GA_ROOT) : nullptr;
-    if (!window) {
-      result->Error(kMenuConstructionError,
-                    "Cannot add a menu to a headless engine.");
-      return;
-    }
-    const auto *menu_map = std::get_if<EncodableMap>(method_call.arguments());
-    if (!menu_map) {
-      result->Error(kBadArgumentsError, "Expected a map of menus.");
-      return;
-    }
-    // Currently there is only ever one window, the "0" window.
-    const auto *menu_list =
-        std::get_if<EncodableList>(ValueOrNull(*menu_map, "0"));
-    if (!menu_list) {
-      result->Error(kBadArgumentsError,
-                    "Expected a list of menus for the window's menu bar.");
-      return;
-    }
-    HMENU menu = ::CreateMenu();
-    HMENU previous_menu = ::GetMenu(window);
-    std::optional<EncodableValue> optional_error =
-        PopulateMenu(menu, *menu_list);
+  if (method_call.method_name().compare(kMenuSetMenusMethod) == 0) {
+    flutter::FlutterView* view = registrar_->GetView();
+    std::optional<EncodableValue> optional_error = SetMenus(view, method_call.arguments());
     if (optional_error) {
-      result->Error(kMenuConstructionError, "Unable to construct menu",
-                    *optional_error);
+      result->Error(kMenuConstructionError, "Unable to set menu configuration", *optional_error);
       return;
-    }
-    if (!::SetMenu(window, menu)) {
-      result->Error(kMenuConstructionError, "Unable to set menu",
-                    EncodableValue(static_cast<int64_t>(::GetLastError())));
-      return;
-    }
-    if (previous_menu) {
-      ::DestroyMenu(previous_menu);
     }
     result->Success();
   } else {
     result->NotImplemented();
   }
+}
+
+// static
+std::optional<EncodableValue> MenubarPlugin::SetMenus(
+  flutter::FlutterView *view,
+  const flutter::EncodableValue *arguments) {
+  HWND window =
+      view ? GetAncestor(view->GetNativeWindow(), GA_ROOT) : nullptr;
+  if (!window) {
+    return EncodableValue("Bad State: Cannot add a menu to a headless engine.");
+  }
+  const auto *menu_map = std::get_if<EncodableMap>(arguments);
+  if (!menu_map) {
+    return EncodableValue("Bad Arguments: Expected a map of menus.");
+  }
+  // Currently there is only ever one window, the "0" window.
+  const auto *menu_list =
+      std::get_if<EncodableList>(ValueOrNull(*menu_map, "0"));
+  if (!menu_list) {
+    return EncodableValue(
+                  "Bad Arguments: Expected a list of menus for the window's menu bar.");
+  }
+  HMENU menu = ::CreateMenu();
+  HMENU previous_menu = ::GetMenu(window);
+  std::optional<EncodableValue> optional_error =
+      PopulateMenu(menu, *menu_list);
+  if (optional_error) {
+    return optional_error;
+  }
+  if (!::SetMenu(window, menu)) {
+    return EncodableValue(static_cast<int64_t>(::GetLastError()));
+  }
+  if (previous_menu) {
+    ::DestroyMenu(previous_menu);
+  }
+  return std::nullopt;
 }
 
 // static
@@ -240,7 +242,7 @@ std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
     DWORD menu_id = LOWORD(wparam);
     if (menu_id >= kFirstMenuId) {
       int32_t flutter_id = menu_id - kFirstMenuId;
-      channel_->InvokeMethod(kMenuItemSelectedCallbackMethod,
+      channel_->InvokeMethod(kMenuSelectedCallbackMethod,
                              std::make_unique<EncodableValue>(flutter_id));
       return 0;
     }

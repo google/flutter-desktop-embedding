@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include "include/menubar/menubar_plugin_c_api.h"
-#include "include/menubar/menubar_plugin.h"
+#include "menubar_plugin.h"
 
 #include <flutter/plugin_registrar_windows.h>
 
