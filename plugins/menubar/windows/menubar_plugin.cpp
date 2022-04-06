@@ -22,6 +22,7 @@
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
+#include <flutter_windows.h>
 
 #include <map>
 #include <memory>
@@ -37,6 +38,7 @@ using flutter::EncodableValue;
 // for documentation.
 constexpr char kChannelName[] = "flutter/menu";
 constexpr char kBadArgumentsError[] = "Bad Arguments";
+constexpr char kMenuConstructionError[] = "Menu Construction Error";
 constexpr char kNoScreenError[] = "No Screen";
 constexpr char kGetPlatformVersionMethod[] = "getPlatformVersion";
 constexpr char kMenuSetMethod[] = "Menu.setMenus";
@@ -143,9 +145,17 @@ void MenubarPlugin::HandleMethodCall(
                     "Cannot add a menu to a headless engine.");
       return;
     }
-    const auto *menu_list = std::get_if<EncodableList>(method_call.arguments());
+    const auto *menu_map = std::get_if<EncodableMap>(method_call.arguments());
+    if (!menu_map) {
+      result->Error(kBadArgumentsError, "Expected a map of menus.");
+      return;
+    }
+    // Currently there is only ever one window, the "0" window.
+    const auto *menu_list =
+        std::get_if<EncodableList>(ValueOrNull(*menu_map, "0"));
     if (!menu_list) {
-      result->Error(kBadArgumentsError, "Expected a list of menus.");
+      result->Error(kBadArgumentsError,
+                    "Expected a list of menus for the window's menu bar.");
       return;
     }
     HMENU menu = ::CreateMenu();
@@ -154,7 +164,7 @@ void MenubarPlugin::HandleMethodCall(
         PopulateMenu(menu, *menu_list);
     if (optional_error) {
       result->Error(kMenuConstructionError, "Unable to construct menu",
-                    EncodableValue(static_cast<int64_t>(::GetLastError())));
+                    *optional_error);
       return;
     }
     if (!::SetMenu(window, menu)) {

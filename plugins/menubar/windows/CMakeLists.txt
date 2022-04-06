@@ -14,8 +14,8 @@ set(PLUGIN_NAME "menubar_plugin")
 
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES
+  "include/menubar/menubar_plugin.h"
   "menubar_plugin.cpp"
-  "menubar_plugin.h"
 )
 
 # Define the plugin library target. Its name must not be changed (see comment

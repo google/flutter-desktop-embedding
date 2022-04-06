@@ -17,6 +17,7 @@
 
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
+#include <flutter/standard_method_codec.h>
 
 #include <memory>
 
@@ -26,7 +27,9 @@ class MenubarPlugin : public flutter::Plugin {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
 
-  MenubarPlugin();
+  MenubarPlugin::MenubarPlugin(
+      flutter::PluginRegistrarWindows *registrar,
+      std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel);
 
   virtual ~MenubarPlugin();
 
@@ -44,16 +47,16 @@ class MenubarPlugin : public flutter::Plugin {
   // representation of a menu.
   //
   // On failure, returns an EncodableValue with error details.
-  static std::optional<EncodableValue> PopulateMenu(
-      HMENU menu, const EncodableList &representation);
+  static std::optional<flutter::EncodableValue> PopulateMenu(
+      HMENU menu, const flutter::EncodableList &representation);
 
   // Constructs a menu item corresponding to the item in |representation|,
   // including recursively creating children if it has a submenu, and adds it to
   // |menu|.
   //
   // On failure, returns an EncodableValue with error details.
-  static std::optional<EncodableValue> AddMenuItem(
-      HMENU menu, const EncodableMap &representation);
+  static std::optional<flutter::EncodableValue> AddMenuItem(
+      HMENU menu, const flutter::EncodableMap &representation);
 
   // Called for top-level WindowProc delegation.
   std::optional<LRESULT> HandleWindowProc(HWND hwnd, UINT message,
@@ -62,7 +65,7 @@ class MenubarPlugin : public flutter::Plugin {
   // The registrar for this plugin.
   flutter::PluginRegistrarWindows *registrar_;
 
-  // The cannel to send menu item activations on.
+  // The channel to send menu item activations on.
   std::unique_ptr<flutter::MethodChannel<>> channel_;
 
   // The ID of the registered WindowProc handler.
