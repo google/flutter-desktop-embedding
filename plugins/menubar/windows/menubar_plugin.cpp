@@ -64,7 +64,7 @@ const unsigned int kFirstMenuId = 1000;
 
 // Looks for |key| in |map|, returning the associated value if it is present, or
 // a nullptr if not.
-const EncodableValue* ValueOrNull(const EncodableMap &map, const char *key) {
+const EncodableValue *ValueOrNull(const EncodableMap &map, const char *key) {
   auto it = map.find(EncodableValue(key));
   if (it == map.end()) {
     return nullptr;
@@ -95,9 +95,7 @@ std::wstring Utf16FromUtf8(const std::string &utf8_string) {
   return utf16_string;
 }
 
-bool pressed(DWORD virtual_key) {
-  return ::GetKeyState(virtual_key) & 0x8000;
-}
+bool IsPressed(DWORD virtual_key) { return ::GetKeyState(virtual_key) & 0x8000; }
 
 int64_t GetModifiers(bool shift, bool control, bool alt, bool meta) {
   int64_t result = shift ? kFlutterShortcutModifierShift : 0;
@@ -108,10 +106,10 @@ int64_t GetModifiers(bool shift, bool control, bool alt, bool meta) {
 }
 
 int64_t GetCurrentModifiers() {
-  bool shift = pressed(VK_SHIFT);
-  bool alt = pressed(VK_MENU);
-  bool control = pressed(VK_CONTROL);
-  bool meta = pressed(VK_LWIN) || pressed(VK_RWIN);
+  bool shift = IsPressed(VK_SHIFT);
+  bool alt = IsPressed(VK_MENU);
+  bool control = IsPressed(VK_CONTROL);
+  bool meta = IsPressed(VK_LWIN) || IsPressed(VK_RWIN);
   return GetModifiers(shift, control, alt, meta);
 }
 }  // namespace
@@ -155,9 +153,11 @@ void MenubarPlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare(kMenuSetMenusMethod) == 0) {
-    std::optional<EncodableValue> optional_error = SetMenus(method_call.arguments());
+    std::optional<EncodableValue> optional_error =
+        SetMenus(method_call.arguments());
     if (optional_error) {
-      result->Error(kMenuConstructionError, "Unable to set menu configuration", *optional_error);
+      result->Error(kMenuConstructionError, "Unable to set menu configuration",
+                    *optional_error);
       return;
     }
     result->Success();
@@ -166,10 +166,10 @@ void MenubarPlugin::HandleMethodCall(
   }
 }
 
-std::optional<EncodableValue> MenubarPlugin::SetMenus(const flutter::EncodableValue *arguments) {
+std::optional<EncodableValue> MenubarPlugin::SetMenus(
+    const flutter::EncodableValue *arguments) {
   flutter::FlutterView *view = registrar_->GetView();
-  HWND window =
-      view ? GetAncestor(view->GetNativeWindow(), GA_ROOT) : nullptr;
+  HWND window = view ? GetAncestor(view->GetNativeWindow(), GA_ROOT) : nullptr;
   if (!window) {
     return EncodableValue("Bad State: Cannot add a menu to a headless engine.");
   }
@@ -182,20 +182,16 @@ std::optional<EncodableValue> MenubarPlugin::SetMenus(const flutter::EncodableVa
       std::get_if<EncodableList>(ValueOrNull(*menu_map, "0"));
   if (!menu_list) {
     return EncodableValue(
-                  "Bad Arguments: Expected a list of menus for the window's menu bar.");
+        "Bad Arguments: Expected a list of menus for the window's menu bar.");
   }
   HMENU menu = ::CreateMenu();
   HMENU previous_menu = ::GetMenu(window);
   shortcuts_.clear();
-  std::optional<EncodableValue> optional_error =
-      PopulateMenu(menu, *menu_list);
+  std::optional<EncodableValue> optional_error = PopulateMenu(menu, *menu_list);
   if (optional_error) {
     return optional_error;
   }
-  optional_error =`CreateAccelerators();
-  if (optional_error) {
-    return optional_error;
-  }
+  CreateAccelerators();
   if (!::SetMenu(window, menu)) {
     return EncodableValue(static_cast<int64_t>(::GetLastError()));
   }
@@ -205,13 +201,13 @@ std::optional<EncodableValue> MenubarPlugin::SetMenus(const flutter::EncodableVa
   return std::nullopt;
 }
 
-std::optional<EncodableValue> MenubarPlugin::CreateAccelerators() {
+void MenubarPlugin::CreateAccelerators() {
   shortcut_character_lookup_.clear();
   shortcut_trigger_lookup_.clear();
-  for (const auto& shortcut : shortcuts_) {
-    const ShortcutEntry& entry = shortcut.second;
+  for (const auto &shortcut : shortcuts_) {
+    const ShortcutEntry &entry = shortcut.second;
     const int64_t id = shortcut.first;
-    if (shortcut.character.length() == 0) {
+    if (entry.character.length() == 0) {
       // TODO: Look up the matching virtual key from the logical key id.
       int64_t virtual_key = 42;
       int64_t target = virtual_key | (entry.modifiers << 32);
@@ -255,17 +251,16 @@ std::optional<EncodableValue> MenubarPlugin::AddMenuItem(
     const auto *menu_id =
         std::get_if<int32_t>(ValueOrNull(representation, kIdKey));
 
-    const auto *shortcut_character =
-      std::get_if<std::string>(ValueOrNull(representation, kShortcutCharacterKey));
+    const auto *shortcut_character = std::get_if<std::string>(
+        ValueOrNull(representation, kShortcutCharacterKey));
     const auto *shortcut_trigger =
-      std::get_if<int64_t>(ValueOrNull(representation, kShortcutTriggerKey));
-    const auto *shortcut_modifiers =
-      std::get_if<int64_t>(ValueOrNull(representation, kShortcutModifiersKey));
-    if (shortcut_characters || (shortcut_modifiers && shortcut_trigger)) {
+        std::get_if<int64_t>(ValueOrNull(representation, kShortcutTriggerKey));
+    const auto *shortcut_modifiers = std::get_if<int64_t>(
+        ValueOrNull(representation, kShortcutModifiersKey));
+    if (shortcut_character || (shortcut_modifiers && shortcut_trigger)) {
       ShortcutEntry entry;
       if (shortcut_character) {
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-        entry.character = convert.from_bytes(*shortcut_character);
+        entry.character = Utf16FromUtf8(*shortcut_character);
       }
       if (shortcut_trigger) {
         entry.trigger = *shortcut_trigger;
@@ -285,8 +280,6 @@ std::optional<EncodableValue> MenubarPlugin::AddMenuItem(
       PopulateMenu(submenu, *children);
       item_id = reinterpret_cast<UINT_PTR>(submenu);
     } else {
-      const auto *menu_id =
-          std::get_if<int32_t>(ValueOrNull(representation, kIdKey));
       item_id = menu_id ? (kFirstMenuId + *menu_id) : 0;
     }
     if (!::AppendMenu(menu, flags, item_id, wide_label.c_str())) {
@@ -303,27 +296,41 @@ std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
   // to handle shortcuts, converting them to WM_COMMANDs, but unfortunately,
   // that doesn't handle any shortcuts containing the Windows (meta) key, so we
   // must handle it ourselves.
-  if (shortcuts_.length() != 0) {
+  if (shortcuts_.size() != 0) {
     if (message == WM_KEYDOWN || message == WM_SYSKEYDOWN) {
+      const std::set<BYTE> modifiers = {
+          VK_LSHIFT, VK_RSHIFT, VK_SHIFT, VK_LCONTROL, VK_RCONTROL, VK_CONTROL,
+          VK_LMENU,  VK_RMENU,  VK_MENU,  VK_LWIN,     VK_RWIN,
+      };
       // Check for the virtual key and modifier state in lookups.
       // This only handles trigger-based shortcuts. Character based shortcuts
-      // are handled by WM_CHAR and WM_SYSCHAR.
+      // are handled by WM_CHAR and WM_SYSCHAR below.
       int64_t target = wparam | (GetCurrentModifiers() << 32);
       auto match = shortcut_trigger_lookup_.find(target);
       if (match != shortcut_trigger_lookup_.end()) {
+        // Look to see if any other keys are IsPressed. If so, then this is not
+        // the event we're looking for.
+        BYTE key_state[256];
+        ::GetKeyboardState(key_state);
+        for (int i = 0; i < 256; ++i) {
+          bool keyIsDown = key_state[i] & 0x8000;
+          if (keyIsDown && modifiers.find(static_cast<BYTE>(i)) == modifiers.end() && i != static_cast<int>(wparam)) {
+            return std::nullopt;
+          }
+        }
         channel_->InvokeMethod(kMenuSelectedCallbackMethod,
-                              std::make_unique<EncodableValue>(match->second));
+                               std::make_unique<EncodableValue>(match->second));
         return 0;
       }
     }
 
     if (message == WM_CHAR || message == WM_SYSCHAR) {
-      std::u16string character;
-      character.push_back(wparam);
+      std::wstring character;
+      character.push_back(static_cast<wchar_t>(wparam));
       auto match = shortcut_character_lookup_.find(character);
       if (match != shortcut_character_lookup_.end()) {
         channel_->InvokeMethod(kMenuSelectedCallbackMethod,
-                          std::make_unique<EncodableValue>(match->second));
+                               std::make_unique<EncodableValue>(match->second));
         return 0;
       }
     }
