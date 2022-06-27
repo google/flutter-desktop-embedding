@@ -14,7 +14,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' hide MenuItem;
 
 import 'menu_item.dart';
 
