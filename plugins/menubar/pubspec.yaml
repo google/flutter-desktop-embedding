@@ -1,7 +1,6 @@
 name: menubar
-description: A new Flutter plugin project.
+description: Provides the ability to add native menubar items with Dart callbacks.
 version: 0.2.0
-homepage:
 
 environment:
   sdk: ">=2.17.0-265.0.dev <3.0.0"
