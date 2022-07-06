@@ -11,5 +11,5 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-export 'src/menu_item.dart';
+export 'src/native_menu_item.dart';
 export 'src/set_application_menu.dart';

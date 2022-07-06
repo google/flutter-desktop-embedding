@@ -14,12 +14,12 @@
 import 'dart:async';
 
 import 'menu_channel.dart';
-import 'menu_item.dart';
+import 'native_menu_item.dart';
 
 /// Sets the application menu for the app based on the [menuSpec].
 ///
-/// Adjacent [MenuDivider]s will be coalesced, leading and/or trailing
-/// [MenuDivider]s will be removed.
-Future<Null> setApplicationMenu(List<Submenu> menuSpec) async {
+/// Adjacent [NativeMenuDivider]s will be coalesced, leading and/or trailing
+/// [NativeMenuDivider]s will be removed.
+Future<Null> setApplicationMenu(List<NativeSubmenu> menuSpec) async {
   await MenuChannel.instance.setMenu(menuSpec);
 }

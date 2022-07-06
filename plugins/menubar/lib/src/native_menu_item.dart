@@ -13,36 +13,28 @@
 // limitations under the License.
 import 'package:flutter/widgets.dart';
 
-/// A callback provided to [MenuItem] to handle menu selection.
-typedef MenuSelectedCallback = void Function();
-
 /// The base type for an individual menu item that can be shown in a menu.
-abstract class AbstractMenuItem {
+abstract class AbstractNativeMenuItem {
   /// Creates a new menu item with the give label.
-  const AbstractMenuItem(this.label);
+  const AbstractNativeMenuItem(this.label);
 
   /// The displayed label for the menu item.
   final String label;
 }
 
 /// A standard menu item, with no submenus.
-class MenuItem extends AbstractMenuItem {
+class NativeMenuItem extends AbstractNativeMenuItem {
   /// Creates a new menu item with the given [label] and options.
-  ///
-  /// Note that onClicked should generally be set unless [enabled] is false,
-  /// or the menu item will be selectable but not do anything.
-  const MenuItem({
+  const NativeMenuItem({
     required String label,
     this.shortcut,
-    this.enabled = true,
-    this.onClicked,
+    this.onSelected,
   }) : super(label);
 
   /// The callback to call whenever the menu item is selected.
-  final MenuSelectedCallback? onClicked;
-
-  /// Whether or not the menu item is enabled.
-  final bool enabled;
+  ///
+  /// If null, the menu item is disabled.
+  final VoidCallback? onSelected;
 
   /// The shortcut/accelerator for the menu item, if any.
   ///
@@ -58,16 +50,17 @@ class MenuItem extends AbstractMenuItem {
 /// A menu item continaing a submenu.
 ///
 /// The item itself can't be selected, it just displays the submenu.
-class Submenu extends AbstractMenuItem {
+class NativeSubmenu extends AbstractNativeMenuItem {
   /// Creates a new submenu with the given [label] and [children].
-  const Submenu({required String label, required this.children}) : super(label);
+  const NativeSubmenu({required String label, required this.children})
+      : super(label);
 
   /// The menu items contained in the submenu.
-  final List<AbstractMenuItem> children;
+  final List<AbstractNativeMenuItem> children;
 }
 
 /// A menu item that serves as a divider, generally drawn as a line.
-class MenuDivider extends AbstractMenuItem {
+class NativeMenuDivider extends AbstractNativeMenuItem {
   /// Creates a new divider item.
-  const MenuDivider() : super('');
+  const NativeMenuDivider() : super('');
 }

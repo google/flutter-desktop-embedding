@@ -3,7 +3,7 @@ description: A test project for flutter-desktop-embedding.
 
 environment:
   sdk: '>=2.12.0-0 <3.0.0'
-  flutter: '>=1.22.0-10.0.pre'
+  flutter: '>=3.0.0'
 
 dependencies:
   flutter:

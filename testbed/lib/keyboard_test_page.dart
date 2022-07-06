@@ -113,7 +113,7 @@ class _KeyboardTestPageState extends State<KeyboardTestPage> {
     setState(() {
       _messages.add(message);
     });
-    SchedulerBinding.instance?.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(
         _scrollController.position.maxScrollExtent,
       );
