@@ -86,62 +86,66 @@ class _AppState extends State<MyApp> {
   /// Rebuilds the native menu bar based on the current state.
   void updateMenubar() {
     setApplicationMenu([
-      Submenu(label: 'Color', children: [
-        MenuItem(
+      NativeSubmenu(label: 'Color', children: [
+        NativeMenuItem(
             label: 'Reset',
-            enabled: _primaryColor != Colors.blue,
             shortcut: LogicalKeySet(
                 LogicalKeyboardKey.meta, LogicalKeyboardKey.backspace),
-            onClicked: () {
-              setPrimaryColor(Colors.blue);
-            }),
-        MenuDivider(),
-        Submenu(label: 'Presets', children: [
-          MenuItem(
+            onSelected: _primaryColor == Colors.blue
+                ? null
+                : () {
+                    setPrimaryColor(Colors.blue);
+                  }),
+        NativeMenuDivider(),
+        NativeSubmenu(label: 'Presets', children: [
+          NativeMenuItem(
               label: 'Red',
-              enabled: _primaryColor != Colors.red,
               shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
                   LogicalKeyboardKey.shift, LogicalKeyboardKey.keyR),
-              onClicked: () {
-                setPrimaryColor(Colors.red);
-              }),
-          MenuItem(
+              onSelected: _primaryColor == Colors.red
+                  ? null
+                  : () {
+                      setPrimaryColor(Colors.red);
+                    }),
+          NativeMenuItem(
               label: 'Green',
-              enabled: _primaryColor != Colors.green,
               shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
                   LogicalKeyboardKey.alt, LogicalKeyboardKey.keyG),
-              onClicked: () {
-                setPrimaryColor(Colors.green);
-              }),
-          MenuItem(
+              onSelected: _primaryColor == Colors.green
+                  ? null
+                  : () {
+                      setPrimaryColor(Colors.green);
+                    }),
+          NativeMenuItem(
               label: 'Purple',
-              enabled: _primaryColor != Colors.deepPurple,
               shortcut: LogicalKeySet(LogicalKeyboardKey.meta,
                   LogicalKeyboardKey.control, LogicalKeyboardKey.keyP),
-              onClicked: () {
-                setPrimaryColor(Colors.deepPurple);
-              }),
+              onSelected: _primaryColor == Colors.deepPurple
+                  ? null
+                  : () {
+                      setPrimaryColor(Colors.deepPurple);
+                    }),
         ])
       ]),
-      Submenu(label: 'Counter', children: [
-        MenuItem(
+      NativeSubmenu(label: 'Counter', children: [
+        NativeMenuItem(
             label: 'Reset',
-            enabled: _counter != 0,
             shortcut: LogicalKeySet(
                 LogicalKeyboardKey.meta, LogicalKeyboardKey.digit0),
-            onClicked: () {
-              _setCounter(0);
-            }),
-        MenuDivider(),
-        MenuItem(
+            onSelected: _counter == 0
+                ? null
+                : () {
+                    _setCounter(0);
+                  }),
+        NativeMenuDivider(),
+        NativeMenuItem(
             label: 'Increment',
             shortcut: LogicalKeySet(LogicalKeyboardKey.f2),
-            onClicked: incrementCounter),
-        MenuItem(
+            onSelected: incrementCounter),
+        NativeMenuItem(
             label: 'Decrement',
-            enabled: _counter > 0,
             shortcut: LogicalKeySet(LogicalKeyboardKey.f1),
-            onClicked: _decrementCounter),
+            onSelected: _counter == 0 ? null : _decrementCounter),
       ]),
     ]);
   }
@@ -151,12 +155,12 @@ class _AppState extends State<MyApp> {
     // Any time the state changes, the menu needs to be rebuilt.
     updateMenubar();
 
+    final theme = ThemeData();
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        primaryColor: _primaryColor,
-        accentColor: _primaryColor,
+      theme: theme.copyWith(
+        colorScheme: theme.colorScheme
+            .copyWith(primary: _primaryColor, secondary: _primaryColor),
       ),
       darkTheme: ThemeData.dark(),
       home: _MyHomePage(title: 'Flutter Demo Home Page', counter: _counter),

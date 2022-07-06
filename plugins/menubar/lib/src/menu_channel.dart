@@ -16,7 +16,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'menu_item.dart';
+import 'native_menu_item.dart';
 
 /// Whether or not the menu item is a divider, as a boolean. If true, no other
 /// The name of the plugin's platform channel.
@@ -113,7 +113,7 @@ class MenuChannel {
 
   /// Map from unique identifiers assigned by this class to the callbacks for
   /// those menu items.
-  final Map<int, MenuSelectedCallback> _selectionCallbacks = {};
+  final Map<int, VoidCallback> _selectionCallbacks = {};
 
   /// The ID to use the next time a menu item needs an ID assigned.
   int _nextMenuItemId = 1;
@@ -133,7 +133,7 @@ class MenuChannel {
   /// How exactly this is handled is subject to platform interpretation.
   /// For instance, special menus that are handled entirely on the native
   /// side might be added to the provided menus.
-  Future<Null> setMenu(List<Submenu> menus) async {
+  Future<Null> setMenu(List<NativeSubmenu> menus) async {
     try {
       _updateInProgress = true;
       await _platformChannel.invokeMethod(
@@ -150,7 +150,7 @@ class MenuChannel {
   /// As a side-effect, repopulates _selectionCallbacks with a mapping from
   /// the IDs assigned to any menu item with a selection handler to the
   /// callback that should be triggered.
-  List<dynamic> _channelRepresentationForMenus(List<Submenu> menus) {
+  List<dynamic> _channelRepresentationForMenus(List<NativeSubmenu> menus) {
     _selectionCallbacks.clear();
     _nextMenuItemId = 1;
 
@@ -160,22 +160,21 @@ class MenuChannel {
   /// Returns a representation of [item] suitable for passing over the
   /// platform channel to the native plugin.
   Map<String, dynamic> _channelRepresentationForMenuItem(
-      AbstractMenuItem item) {
+      AbstractNativeMenuItem item) {
     final representation = <String, dynamic>{};
-    if (item is MenuDivider) {
+    if (item is NativeMenuDivider) {
       representation[_kDividerKey] = true;
     } else {
       representation[_kLabelKey] = item.label;
-      if (item is Submenu) {
+      if (item is NativeSubmenu) {
         representation[_kChildrenKey] =
             _channelRepresentationForMenu(item.children);
-      } else if (item is MenuItem) {
-        final handler = item.onClicked;
-        if (handler != null) {
-          representation[_kIdKey] = _storeMenuCallback(handler);
-        }
-        if (!item.enabled) {
+      } else if (item is NativeMenuItem) {
+        final handler = item.onSelected;
+        if (handler == null) {
           representation[_kEnabledKey] = false;
+        } else {
+          representation[_kIdKey] = _storeMenuCallback(handler);
         }
         final shortcut = item.shortcut;
         if (shortcut != null) {
@@ -183,7 +182,7 @@ class MenuChannel {
         }
       } else {
         throw ArgumentError(
-            'Unknown AbstractMenuItem type: $item (${item.runtimeType})');
+            'Unknown AbstractNativeMenuItem type: $item (${item.runtimeType})');
       }
     }
     return representation;
@@ -191,12 +190,13 @@ class MenuChannel {
 
   /// Returns the representation of [menu] suitable for passing over the
   /// platform channel to the native plugin.
-  List<dynamic> _channelRepresentationForMenu(List<AbstractMenuItem> menu) {
+  List<dynamic> _channelRepresentationForMenu(
+      List<AbstractNativeMenuItem> menu) {
     final menuItemRepresentations = [];
     // Dividers are only allowed after non-divider items (see ApplicationMenu).
     var skipNextDivider = true;
     for (final menuItem in menu) {
-      final isDivider = menuItem is MenuDivider;
+      final isDivider = menuItem is NativeMenuDivider;
       if (isDivider && skipNextDivider) {
         continue;
       }
@@ -233,7 +233,8 @@ class MenuChannel {
         }
 
         if (key.keyLabel.isNotEmpty) {
-          channelRepresentation[_kShortcutKeyEquivalent] = key.keyLabel.toLowerCase();
+          channelRepresentation[_kShortcutKeyEquivalent] =
+              key.keyLabel.toLowerCase();
         } else {
           final specialKey = _shortcutSpecialKeyValues[key];
           if (specialKey == null) {
@@ -258,7 +259,7 @@ class MenuChannel {
   ///
   /// The returned ID should be attached to the menu so that the native plugin
   /// can identify the menu item selected in the callback.
-  int _storeMenuCallback(MenuSelectedCallback callback) {
+  int _storeMenuCallback(VoidCallback callback) {
     final id = _nextMenuItemId++;
     _selectionCallbacks[id] = callback;
     return id;
