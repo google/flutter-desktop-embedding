@@ -55,7 +55,7 @@ set_target_properties(${BINARY_NAME}
 )
 
 # Enable the test target.
-set(include_url_launcher_linux_tests TRUE)
+set(include_file_selector_linux_tests TRUE)
 # Provide an alias for the test target using the name expected by repo tooling.
 add_custom_target(unit_tests DEPENDS file_selector_linux_test)
 

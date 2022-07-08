@@ -4,7 +4,7 @@
 
 #include <flutter_linux/flutter_linux.h>
 
-#include "include/file_selector_plugin/file_selector_plugin.h"
+#include "include/file_selector_linux/file_selector_plugin.h"
 
 // TODO(stuartmorgan): Remove this private header and change the below back to
 // a static function once https://github.com/flutter/flutter/issues/88724

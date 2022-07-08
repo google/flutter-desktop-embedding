@@ -7,6 +7,8 @@
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
 
+#include "file_selector_plugin_private.h"
+
 // From method_channel_file_selector.dart
 const char kChannelName[] = "plugins.flutter.io/file_selector";
 
