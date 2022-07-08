@@ -4,10 +4,8 @@
 #include "include/file_selector_linux/file_selector_plugin.h"
 
 #include <flutter_linux/flutter_linux.h>
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <memory>
-#include <string>
+#include "file_selector_plugin_private.h"
 
 TEST(FileSelectorPlugin, Placeholder) { EXPECT_TRUE(true); }

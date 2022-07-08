@@ -86,29 +86,17 @@ static GtkFileFilter* type_group_to_filter(FlValue* value) {
   return GTK_FILE_FILTER(g_object_ref(filter));
 }
 
-// Shows the requested dialog type.
-static FlMethodResponse* show_dialog(FlFileSelectorPlugin* self,
-                                     GtkFileChooserAction action,
-                                     bool choose_directory, const gchar* title,
-                                     const gchar* default_confirm_button_text,
-                                     FlValue* properties) {
-  if (fl_value_get_type(properties) != FL_VALUE_TYPE_MAP) {
-    return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        kBadArgumentsError, "Argument map missing or malformed", nullptr));
-  }
-
+// Creates a GtkFileChooserNative for the given method call details.
+GtkFileChooserNative* create_dialog(GtkWindow* window,
+                                    GtkFileChooserAction action,
+                                    bool choose_directory, const gchar* title,
+                                    const gchar* default_confirm_button_text,
+                                    FlValue* properties) {
   const gchar* confirm_button_text = default_confirm_button_text;
   FlValue* value = fl_value_lookup_string(properties, kConfirmButtonTextKey);
   if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_STRING)
     confirm_button_text = fl_value_get_string(value);
 
-  FlView* view = fl_plugin_registrar_get_view(self->registrar);
-  if (view == nullptr) {
-    return FL_METHOD_RESPONSE(
-        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
-  }
-
-  GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
   g_autoptr(GtkFileChooserNative) dialog =
       GTK_FILE_CHOOSER_NATIVE(gtk_file_chooser_native_new(
           title, window, action, confirm_button_text, "_Cancel"));
@@ -142,11 +130,40 @@ static FlMethodResponse* show_dialog(FlFileSelectorPlugin* self,
       FlValue* type_group = fl_value_get_list_value(value, i);
       GtkFileFilter* filter = type_group_to_filter(type_group);
       if (filter == nullptr) {
-        return FL_METHOD_RESPONSE(fl_method_error_response_new(
-            kBadArgumentsError, "Allowed file types malformed", nullptr));
+        return nullptr;
       }
       gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
     }
+  }
+
+  return GTK_FILE_CHOOSER_NATIVE(g_object_ref(dialog));
+}
+
+// Shows the requested dialog type.
+static FlMethodResponse* show_dialog(FlFileSelectorPlugin* self,
+                                     GtkFileChooserAction action,
+                                     bool choose_directory, const gchar* title,
+                                     const gchar* default_confirm_button_text,
+                                     FlValue* properties) {
+  if (fl_value_get_type(properties) != FL_VALUE_TYPE_MAP) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        kBadArgumentsError, "Argument map missing or malformed", nullptr));
+  }
+
+  FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  if (view == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+  GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+
+  g_autoptr(GtkFileChooserNative) dialog =
+      create_dialog(window, action, choose_directory, title,
+                    default_confirm_button_text, properties);
+
+  if (dialog == nullptr) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        kBadArgumentsError, "Unable to create dialog from arguments", nullptr));
   }
 
   gint response = gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog));
