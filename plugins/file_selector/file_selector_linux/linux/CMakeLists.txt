@@ -58,6 +58,10 @@ target_link_libraries(${TEST_RUNNER} PRIVATE PkgConfig::GTK)
 target_link_libraries(${TEST_RUNNER} PRIVATE gtest_main gmock)
 
 include(GoogleTest)
-gtest_discover_tests(${TEST_RUNNER})
+# TODO(stuartmorgan): Switch back to gtest_discover_tests when moving to
+# flutter/plugins; it doesn't work in the FDE CI because it requires actually
+# running a GTK app, which it hasn't been set up for.
+gtest_add_tests(TARGET ${TEST_RUNNER})
+#gtest_discover_tests(${TEST_RUNNER})
 endif()  # CMake version check
 endif()  # include_${PROJECT_NAME}_tests
