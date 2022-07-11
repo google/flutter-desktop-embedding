@@ -13,6 +13,9 @@
 // the dialog, so that the tests can mock out that callback with something
 // that changes the selection so that the return value path can be tested
 // as well.
+// TODO(stuartmorgan): Add an injectable wrapper around
+// gtk_file_chooser_native_new to allow for testing values that are given as
+// construction paramaters and can't be queried later.
 
 TEST(FileSelectorPlugin, TestOpenSimple) {
   g_autoptr(FlValue) args = fl_value_new_map();
@@ -113,8 +116,52 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
   EXPECT_TRUE(gtk_file_filter_filter(any_filter, &text_file_info));
 }
 
-TEST(FileSelectorPlugin, TestSaveSimple) { EXPECT_TRUE(true); }
+TEST(FileSelectorPlugin, TestSaveSimple) {
+  g_autoptr(FlValue) args = fl_value_new_map();
 
-TEST(FileSelectorPlugin, TestSaveWithArguments) { EXPECT_TRUE(true); }
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog(
+      nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, false, "Save File", "_Save", args);
 
-TEST(FileSelectorPlugin, TestGetDirectory) { EXPECT_TRUE(true); }
+  ASSERT_NE(dialog, nullptr);
+  EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
+            GTK_FILE_CHOOSER_ACTION_SAVE);
+  EXPECT_EQ(gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog)),
+            false);
+}
+
+TEST(FileSelectorPlugin, TestSaveWithArguments) {
+  g_autoptr(FlValue) args = fl_value_new_map();
+  fl_value_set_string_take(args, "initialDirectory",
+                           fl_value_new_string("/tmp"));
+  fl_value_set_string_take(args, "suggestedName",
+                           fl_value_new_string("foo.txt"));
+
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog(
+      nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, false, "Save File", "_Save", args);
+
+  ASSERT_NE(dialog, nullptr);
+  EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
+            GTK_FILE_CHOOSER_ACTION_SAVE);
+  EXPECT_EQ(gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog)),
+            false);
+  g_autofree gchar* current_name =
+      gtk_file_chooser_get_current_name(GTK_FILE_CHOOSER(dialog));
+  EXPECT_STREQ(current_name, "foo.txt");
+  // TODO(stuartmorgan): gtk_file_chooser_get_current_folder doesn't seem to
+  // return a value set by gtk_file_chooser_set_current_folder, or at least
+  // doesn't in a test context, so that's not currently validated.
+}
+
+TEST(FileSelectorPlugin, TestGetDirectory) {
+  g_autoptr(FlValue) args = fl_value_new_map();
+
+  g_autoptr(GtkFileChooserNative) dialog =
+      create_dialog(nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, true,
+                    "Open Directory", "_Open", args);
+
+  ASSERT_NE(dialog, nullptr);
+  EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
+            GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+  EXPECT_EQ(gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog)),
+            false);
+}
