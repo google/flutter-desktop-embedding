@@ -20,8 +20,8 @@
 TEST(FileSelectorPlugin, TestOpenSimple) {
   g_autoptr(FlValue) args = fl_value_new_map();
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog(
-      nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, false, "Open File", "_Open", args);
+  g_autoptr(GtkFileChooserNative) dialog =
+      create_dialog_for_method(nullptr, "openFile", args);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -34,8 +34,8 @@ TEST(FileSelectorPlugin, TestOpenMultiple) {
   g_autoptr(FlValue) args = fl_value_new_map();
   fl_value_set_string_take(args, "multiple", fl_value_new_bool(true));
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog(
-      nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, false, "Open File", "_Open", args);
+  g_autoptr(GtkFileChooserNative) dialog =
+      create_dialog_for_method(nullptr, "openFile", args);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -78,8 +78,8 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
   g_autoptr(FlValue) args = fl_value_new_map();
   fl_value_set_string(args, "acceptedTypeGroups", type_groups);
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog(
-      nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, false, "Open File", "_Open", args);
+  g_autoptr(GtkFileChooserNative) dialog =
+      create_dialog_for_method(nullptr, "openFile", args);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -119,8 +119,8 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
 TEST(FileSelectorPlugin, TestSaveSimple) {
   g_autoptr(FlValue) args = fl_value_new_map();
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog(
-      nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, false, "Save File", "_Save", args);
+  g_autoptr(GtkFileChooserNative) dialog =
+      create_dialog_for_method(nullptr, "getSavePath", args);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -136,8 +136,8 @@ TEST(FileSelectorPlugin, TestSaveWithArguments) {
   fl_value_set_string_take(args, "suggestedName",
                            fl_value_new_string("foo.txt"));
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog(
-      nullptr, GTK_FILE_CHOOSER_ACTION_SAVE, false, "Save File", "_Save", args);
+  g_autoptr(GtkFileChooserNative) dialog =
+      create_dialog_for_method(nullptr, "getSavePath", args);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -156,8 +156,7 @@ TEST(FileSelectorPlugin, TestGetDirectory) {
   g_autoptr(FlValue) args = fl_value_new_map();
 
   g_autoptr(GtkFileChooserNative) dialog =
-      create_dialog(nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, true,
-                    "Open Directory", "_Open", args);
+      create_dialog_for_method(nullptr, "getDirectoryPath", args);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),

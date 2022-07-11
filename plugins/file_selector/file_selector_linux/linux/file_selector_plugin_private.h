@@ -6,13 +6,7 @@
 
 #include "include/file_selector_linux/file_selector_plugin.h"
 
-// TODO(stuartmorgan): Remove this private header and change the below back to
-// a static function once https://github.com/flutter/flutter/issues/88724
-// is fixed, and test through the public API instead.
-
-// Creates a GtkFileChooserNative for the given method call details.
-GtkFileChooserNative* create_dialog(GtkWindow* window,
-                                    GtkFileChooserAction action,
-                                    bool choose_directory, const gchar* title,
-                                    const gchar* default_confirm_button_text,
-                                    FlValue* properties);
+// Creates a GtkFileChooserNative for the given method call.
+GtkFileChooserNative* create_dialog_for_method(GtkWindow* window,
+                                               const gchar* method,
+                                               FlValue* properties);
