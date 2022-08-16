@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'get_directory_page.dart';
 import 'home_page.dart';
-import 'open_text_page.dart';
 import 'open_image_page.dart';
 import 'open_multiple_images_page.dart';
+import 'open_text_page.dart';
 import 'save_text_page.dart';
 
 void main() {
