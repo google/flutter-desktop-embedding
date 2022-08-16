@@ -54,6 +54,11 @@ set_target_properties(${BINARY_NAME}
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/intermediates_do_not_run"
 )
 
+# Enable the test target.
+set(include_file_selector_linux_tests TRUE)
+# Provide an alias for the test target using the name expected by repo tooling.
+add_custom_target(unit_tests DEPENDS file_selector_linux_test)
+
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
 include(flutter/generated_plugins.cmake)

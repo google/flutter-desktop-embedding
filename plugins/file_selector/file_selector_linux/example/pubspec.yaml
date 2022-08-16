@@ -1,5 +1,5 @@
-name: example
-description: Local testbed for desktop file_selector implementations.
+name: file_selector_linux_example
+description: Local testbed for Linux file_selector implementation.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
@@ -12,7 +12,7 @@ dependencies:
 
   file_selector_platform_interface: ^2.0.0
   file_selector_linux:
-    path: ../file_selector_linux
+    path: ../
 
 dev_dependencies:
   flutter_test:
