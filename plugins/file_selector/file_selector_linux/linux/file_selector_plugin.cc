@@ -10,7 +10,7 @@
 #include "file_selector_plugin_private.h"
 
 // From method_channel_file_selector.dart
-const char kChannelName[] = "plugins.flutter.io/file_selector";
+const char kChannelName[] = "plugins.flutter.dev/file_selector_linux";
 
 const char kOpenFileMethod[] = "openFile";
 const char kGetSavePathMethod[] = "getSavePath";

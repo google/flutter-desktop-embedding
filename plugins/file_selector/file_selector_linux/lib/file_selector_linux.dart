@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 
 const MethodChannel _channel =
-    MethodChannel('plugins.flutter.io/file_selector');
+    MethodChannel('plugins.flutter.dev/file_selector_linux');
 
 /// An implementation of [FileSelectorPlatform] for Linux.
 class FileSelectorLinux extends FileSelectorPlatform {
