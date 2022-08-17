@@ -99,6 +99,41 @@ void main() {
         ],
       );
     });
+
+    test('throws for a type group that does not support Linux', () async {
+      final XTypeGroup group = XTypeGroup(
+        label: 'images',
+        webWildCards: <String>['images/*'],
+      );
+
+      await expectLater(
+          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+          throwsArgumentError);
+    });
+
+    test('passes a wildcard group correctly', () async {
+      final XTypeGroup group = XTypeGroup(
+        label: 'any',
+      );
+
+      await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]);
+
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall('openFile', arguments: <String, dynamic>{
+            'acceptedTypeGroups': <Map<String, dynamic>>[
+              <String, Object>{
+                'label': 'any',
+              },
+            ],
+            'initialDirectory': null,
+            'confirmButtonText': null,
+            'multiple': false,
+          }),
+        ],
+      );
+    });
   });
 
   group('#openFiles', () {
@@ -169,6 +204,41 @@ void main() {
             'initialDirectory': null,
             'confirmButtonText': 'Open File',
             'multiple': true,
+          }),
+        ],
+      );
+    });
+
+    test('throws for a type group that does not support Linux', () async {
+      final XTypeGroup group = XTypeGroup(
+        label: 'images',
+        webWildCards: <String>['images/*'],
+      );
+
+      await expectLater(
+          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+          throwsArgumentError);
+    });
+
+    test('passes a wildcard group correctly', () async {
+      final XTypeGroup group = XTypeGroup(
+        label: 'any',
+      );
+
+      await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]);
+
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall('openFile', arguments: <String, dynamic>{
+            'acceptedTypeGroups': <Map<String, dynamic>>[
+              <String, Object>{
+                'label': 'any',
+              },
+            ],
+            'initialDirectory': null,
+            'confirmButtonText': null,
+            'multiple': false,
           }),
         ],
       );
@@ -244,6 +314,41 @@ void main() {
             'initialDirectory': null,
             'suggestedName': null,
             'confirmButtonText': 'Open File',
+          }),
+        ],
+      );
+    });
+
+    test('throws for a type group that does not support Linux', () async {
+      final XTypeGroup group = XTypeGroup(
+        label: 'images',
+        webWildCards: <String>['images/*'],
+      );
+
+      await expectLater(
+          plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
+          throwsArgumentError);
+    });
+
+    test('passes a wildcard group correctly', () async {
+      final XTypeGroup group = XTypeGroup(
+        label: 'any',
+      );
+
+      await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]);
+
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall('openFile', arguments: <String, dynamic>{
+            'acceptedTypeGroups': <Map<String, dynamic>>[
+              <String, Object>{
+                'label': 'any',
+              },
+            ],
+            'initialDirectory': null,
+            'confirmButtonText': null,
+            'multiple': false,
           }),
         ],
       );
