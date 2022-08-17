@@ -9,7 +9,7 @@
 
 #include "file_selector_plugin_private.h"
 
-// From method_channel_file_selector.dart
+// From file_selector_linux.dart
 const char kChannelName[] = "plugins.flutter.dev/file_selector_linux";
 
 const char kOpenFileMethod[] = "openFile";
@@ -22,7 +22,6 @@ const char kInitialDirectoryKey[] = "initialDirectory";
 const char kMultipleKey[] = "multiple";
 const char kSuggestedNameKey[] = "suggestedName";
 
-// From x_type_group.dart
 const char kTypeGroupLabelKey[] = "label";
 const char kTypeGroupExtensionsKey[] = "extensions";
 const char kTypeGroupMimeTypesKey[] = "mimeTypes";

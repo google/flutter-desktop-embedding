@@ -9,6 +9,20 @@ import 'package:flutter/services.dart';
 const MethodChannel _channel =
     MethodChannel('plugins.flutter.dev/file_selector_linux');
 
+const String _typeGroupLabelKey = 'label';
+const String _typeGroupExtensionsKey = 'extensions';
+const String _typeGroupMimeTypesKey = 'mimeTypes';
+
+const String _openFileMethod = 'openFile';
+const String _getSavePathMethod = 'getSavePath';
+const String _getDirectoryPathMethod = 'getDirectoryPath';
+
+const String _acceptedTypeGroupsKey = 'acceptedTypeGroups';
+const String _confirmButtonTextKey = 'confirmButtonText';
+const String _initialDirectoryKey = 'initialDirectory';
+const String _multipleKey = 'multiple';
+const String _suggestedNameKey = 'suggestedName';
+
 /// An implementation of [FileSelectorPlatform] for Linux.
 class FileSelectorLinux extends FileSelectorPlatform {
   /// The MethodChannel that is being used by this implementation of the plugin.
@@ -27,14 +41,14 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     final List<String>? path = await _channel.invokeListMethod<String>(
-      'openFile',
+      _openFileMethod,
       <String, dynamic>{
-        'acceptedTypeGroups': acceptedTypeGroups
+        _acceptedTypeGroupsKey: acceptedTypeGroups
             ?.map((XTypeGroup group) => group.toJSON())
             .toList(),
         'initialDirectory': initialDirectory,
-        'confirmButtonText': confirmButtonText,
-        'multiple': false,
+        _confirmButtonTextKey: confirmButtonText,
+        _multipleKey: false,
       },
     );
     return path == null ? null : XFile(path.first);
@@ -47,14 +61,14 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     final List<String>? pathList = await _channel.invokeListMethod<String>(
-      'openFile',
+      _openFileMethod,
       <String, dynamic>{
-        'acceptedTypeGroups': acceptedTypeGroups
+        _acceptedTypeGroupsKey: acceptedTypeGroups
             ?.map((XTypeGroup group) => group.toJSON())
             .toList(),
-        'initialDirectory': initialDirectory,
-        'confirmButtonText': confirmButtonText,
-        'multiple': true,
+        _initialDirectoryKey: initialDirectory,
+        _confirmButtonTextKey: confirmButtonText,
+        _multipleKey: true,
       },
     );
     return pathList?.map((String path) => XFile(path)).toList() ?? <XFile>[];
@@ -68,14 +82,14 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     return _channel.invokeMethod<String>(
-      'getSavePath',
+      _getSavePathMethod,
       <String, dynamic>{
-        'acceptedTypeGroups': acceptedTypeGroups
+        _acceptedTypeGroupsKey: acceptedTypeGroups
             ?.map((XTypeGroup group) => group.toJSON())
             .toList(),
-        'initialDirectory': initialDirectory,
-        'suggestedName': suggestedName,
-        'confirmButtonText': confirmButtonText,
+        _initialDirectoryKey: initialDirectory,
+        _suggestedNameKey: suggestedName,
+        _confirmButtonTextKey: confirmButtonText,
       },
     );
   }
@@ -86,10 +100,10 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     return _channel.invokeMethod<String>(
-      'getDirectoryPath',
+      _getDirectoryPathMethod,
       <String, dynamic>{
-        'initialDirectory': initialDirectory,
-        'confirmButtonText': confirmButtonText,
+        _initialDirectoryKey: initialDirectory,
+        _confirmButtonTextKey: confirmButtonText,
       },
     );
   }
