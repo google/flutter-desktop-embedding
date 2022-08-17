@@ -53,12 +53,12 @@ void main() {
             'acceptedTypeGroups': <Map<String, dynamic>>[
               <String, Object>{
                 'label': 'text',
-                'extensions': <String>['txt'],
+                'extensions': <String>['*.txt'],
                 'mimeTypes': <String>['text/plain'],
               },
               <String, Object>{
                 'label': 'image',
-                'extensions': <String>['jpg'],
+                'extensions': <String>['*.jpg'],
                 'mimeTypes': <String>['image/jpg'],
               },
             ],
@@ -125,6 +125,7 @@ void main() {
             'acceptedTypeGroups': <Map<String, dynamic>>[
               <String, Object>{
                 'label': 'any',
+                'extensions': <String>['*'],
               },
             ],
             'initialDirectory': null,
@@ -162,12 +163,12 @@ void main() {
             'acceptedTypeGroups': <Map<String, dynamic>>[
               <String, Object>{
                 'label': 'text',
-                'extensions': <String>['txt'],
+                'extensions': <String>['*.txt'],
                 'mimeTypes': <String>['text/plain'],
               },
               <String, Object>{
                 'label': 'image',
-                'extensions': <String>['jpg'],
+                'extensions': <String>['*.jpg'],
                 'mimeTypes': <String>['image/jpg'],
               },
             ],
@@ -234,6 +235,7 @@ void main() {
             'acceptedTypeGroups': <Map<String, dynamic>>[
               <String, Object>{
                 'label': 'any',
+                'extensions': <String>['*'],
               },
             ],
             'initialDirectory': null,
@@ -272,12 +274,12 @@ void main() {
             'acceptedTypeGroups': <Map<String, dynamic>>[
               <String, Object>{
                 'label': 'text',
-                'extensions': <String>['txt'],
+                'extensions': <String>['*.txt'],
                 'mimeTypes': <String>['text/plain'],
               },
               <String, Object>{
                 'label': 'image',
-                'extensions': <String>['jpg'],
+                'extensions': <String>['*.jpg'],
                 'mimeTypes': <String>['image/jpg'],
               },
             ],
@@ -344,6 +346,7 @@ void main() {
             'acceptedTypeGroups': <Map<String, dynamic>>[
               <String, Object>{
                 'label': 'any',
+                'extensions': <String>['*'],
               },
             ],
             'initialDirectory': null,

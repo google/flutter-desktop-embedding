@@ -123,6 +123,7 @@ Map<String, Object> _serializeTypeGroup(XTypeGroup group) {
     _typeGroupLabelKey: group.label ?? '',
   };
   if (group.allowsAny) {
+    serialization[_typeGroupExtensionsKey] = <String>['*'];
   } else {
     if ((group.extensions?.isEmpty ?? true) &&
         (group.mimeTypes?.isEmpty ?? true)) {
@@ -132,7 +133,10 @@ Map<String, Object> _serializeTypeGroup(XTypeGroup group) {
           'if anything is non-empty.');
     }
     if (group.extensions?.isNotEmpty ?? false) {
-      serialization[_typeGroupExtensionsKey] = group.extensions ?? <String>[];
+      serialization[_typeGroupExtensionsKey] = group.extensions
+              ?.map((String extension) => '*.$extension')
+              .toList() ??
+          <String>[];
     }
     if (group.mimeTypes?.isNotEmpty ?? false) {
       serialization[_typeGroupMimeTypesKey] = group.mimeTypes ?? <String>[];
