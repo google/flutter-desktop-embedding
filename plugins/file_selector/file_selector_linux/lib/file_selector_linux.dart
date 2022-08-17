@@ -40,12 +40,13 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    final List<Map<String, Object>> serializedTypeGroups =
+        _serializeTypeGroups(acceptedTypeGroups);
     final List<String>? path = await _channel.invokeListMethod<String>(
       _openFileMethod,
       <String, dynamic>{
-        _acceptedTypeGroupsKey: acceptedTypeGroups
-            ?.map((XTypeGroup group) => group.toJSON())
-            .toList(),
+        if (serializedTypeGroups.isNotEmpty)
+          _acceptedTypeGroupsKey: serializedTypeGroups,
         'initialDirectory': initialDirectory,
         _confirmButtonTextKey: confirmButtonText,
         _multipleKey: false,
@@ -60,12 +61,13 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    final List<Map<String, Object>> serializedTypeGroups =
+        _serializeTypeGroups(acceptedTypeGroups);
     final List<String>? pathList = await _channel.invokeListMethod<String>(
       _openFileMethod,
       <String, dynamic>{
-        _acceptedTypeGroupsKey: acceptedTypeGroups
-            ?.map((XTypeGroup group) => group.toJSON())
-            .toList(),
+        if (serializedTypeGroups.isNotEmpty)
+          _acceptedTypeGroupsKey: serializedTypeGroups,
         _initialDirectoryKey: initialDirectory,
         _confirmButtonTextKey: confirmButtonText,
         _multipleKey: true,
@@ -81,12 +83,13 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? suggestedName,
     String? confirmButtonText,
   }) async {
+    final List<Map<String, Object>> serializedTypeGroups =
+        _serializeTypeGroups(acceptedTypeGroups);
     return _channel.invokeMethod<String>(
       _getSavePathMethod,
       <String, dynamic>{
-        _acceptedTypeGroupsKey: acceptedTypeGroups
-            ?.map((XTypeGroup group) => group.toJSON())
-            .toList(),
+        if (serializedTypeGroups.isNotEmpty)
+          _acceptedTypeGroupsKey: serializedTypeGroups,
         _initialDirectoryKey: initialDirectory,
         _suggestedNameKey: suggestedName,
         _confirmButtonTextKey: confirmButtonText,
@@ -107,4 +110,33 @@ class FileSelectorLinux extends FileSelectorPlatform {
       },
     );
   }
+}
+
+List<Map<String, Object>> _serializeTypeGroups(List<XTypeGroup>? groups) {
+  return (groups ?? <XTypeGroup>[])
+      .map((XTypeGroup group) => _serializeTypeGroup(group))
+      .toList();
+}
+
+Map<String, Object> _serializeTypeGroup(XTypeGroup group) {
+  final Map<String, Object> serialization = <String, Object>{
+    _typeGroupLabelKey: group.label ?? '',
+  };
+  if (group.allowsAny) {
+  } else {
+    if ((group.extensions?.isEmpty ?? true) &&
+        (group.mimeTypes?.isEmpty ?? true)) {
+      throw ArgumentError('Provided type group $group does not allow '
+          'all files, but does not set any of the Linux-supported filter '
+          'categories. "extensions" or "mimeTypes" must be non-empty for Linux '
+          'if anything is non-empty.');
+    }
+    if (group.extensions?.isNotEmpty ?? false) {
+      serialization[_typeGroupExtensionsKey] = group.extensions ?? <String>[];
+    }
+    if (group.mimeTypes?.isNotEmpty ?? false) {
+      serialization[_typeGroupMimeTypesKey] = group.mimeTypes ?? <String>[];
+    }
+  }
+  return serialization;
 }

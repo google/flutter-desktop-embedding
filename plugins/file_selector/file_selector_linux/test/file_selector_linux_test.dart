@@ -37,11 +37,12 @@ void main() {
       );
 
       final XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        macUTIs: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -50,8 +51,16 @@ void main() {
         <Matcher>[
           isMethodCall('openFile', arguments: <String, dynamic>{
             'acceptedTypeGroups': <Map<String, dynamic>>[
-              group.toJSON(),
-              groupTwo.toJSON()
+              <String, Object>{
+                'label': 'text',
+                'extensions': <String>['txt'],
+                'mimeTypes': <String>['text/plain'],
+              },
+              <String, Object>{
+                'label': 'image',
+                'extensions': <String>['jpg'],
+                'mimeTypes': <String>['image/jpg'],
+              },
             ],
             'initialDirectory': null,
             'confirmButtonText': null,
@@ -68,7 +77,6 @@ void main() {
         log,
         <Matcher>[
           isMethodCall('openFile', arguments: <String, dynamic>{
-            'acceptedTypeGroups': null,
             'initialDirectory': '/example/directory',
             'confirmButtonText': null,
             'multiple': false,
@@ -84,7 +92,6 @@ void main() {
         log,
         <Matcher>[
           isMethodCall('openFile', arguments: <String, dynamic>{
-            'acceptedTypeGroups': null,
             'initialDirectory': null,
             'confirmButtonText': 'Open File',
             'multiple': false,
@@ -104,11 +111,12 @@ void main() {
       );
 
       final XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        macUTIs: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
@@ -117,8 +125,16 @@ void main() {
         <Matcher>[
           isMethodCall('openFile', arguments: <String, dynamic>{
             'acceptedTypeGroups': <Map<String, dynamic>>[
-              group.toJSON(),
-              groupTwo.toJSON()
+              <String, Object>{
+                'label': 'text',
+                'extensions': <String>['txt'],
+                'mimeTypes': <String>['text/plain'],
+              },
+              <String, Object>{
+                'label': 'image',
+                'extensions': <String>['jpg'],
+                'mimeTypes': <String>['image/jpg'],
+              },
             ],
             'initialDirectory': null,
             'confirmButtonText': null,
@@ -135,7 +151,6 @@ void main() {
         log,
         <Matcher>[
           isMethodCall('openFile', arguments: <String, dynamic>{
-            'acceptedTypeGroups': null,
             'initialDirectory': '/example/directory',
             'confirmButtonText': null,
             'multiple': true,
@@ -151,7 +166,6 @@ void main() {
         log,
         <Matcher>[
           isMethodCall('openFile', arguments: <String, dynamic>{
-            'acceptedTypeGroups': null,
             'initialDirectory': null,
             'confirmButtonText': 'Open File',
             'multiple': true,
@@ -171,11 +185,12 @@ void main() {
       );
 
       final XTypeGroup groupTwo = XTypeGroup(
-          label: 'image',
-          extensions: <String>['jpg'],
-          mimeTypes: <String>['image/jpg'],
-          macUTIs: <String>['public.image'],
-          webWildCards: <String>['image/*']);
+        label: 'image',
+        extensions: <String>['jpg'],
+        mimeTypes: <String>['image/jpg'],
+        macUTIs: <String>['public.image'],
+        webWildCards: <String>['image/*'],
+      );
 
       await plugin
           .getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
@@ -185,8 +200,16 @@ void main() {
         <Matcher>[
           isMethodCall('getSavePath', arguments: <String, dynamic>{
             'acceptedTypeGroups': <Map<String, dynamic>>[
-              group.toJSON(),
-              groupTwo.toJSON()
+              <String, Object>{
+                'label': 'text',
+                'extensions': <String>['txt'],
+                'mimeTypes': <String>['text/plain'],
+              },
+              <String, Object>{
+                'label': 'image',
+                'extensions': <String>['jpg'],
+                'mimeTypes': <String>['image/jpg'],
+              },
             ],
             'initialDirectory': null,
             'suggestedName': null,
@@ -203,7 +226,6 @@ void main() {
         log,
         <Matcher>[
           isMethodCall('getSavePath', arguments: <String, dynamic>{
-            'acceptedTypeGroups': null,
             'initialDirectory': '/example/directory',
             'suggestedName': null,
             'confirmButtonText': null,
@@ -219,7 +241,6 @@ void main() {
         log,
         <Matcher>[
           isMethodCall('getSavePath', arguments: <String, dynamic>{
-            'acceptedTypeGroups': null,
             'initialDirectory': null,
             'suggestedName': null,
             'confirmButtonText': 'Open File',
