@@ -62,15 +62,3 @@ jobs:
         flutter packages get	
         flutter build -v ${{matrix.TARGET}} --release	
       working-directory: ${{ github.workspace }}/fde/testbed
-    - name: Build file_selector implementations debug	
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |	
-        flutter packages get
-        flutter build -v ${{matrix.TARGET}} --debug	
-      working-directory: ${{ github.workspace }}/fde/plugins/file_selector/file_selector_linux/example	
-    - name: Build file_selector implementations release	
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |	
-        flutter packages get	
-        flutter build -v ${{matrix.TARGET}} --release	
-      working-directory: ${{ github.workspace }}/fde/plugins/file_selector/file_selector_linux/example

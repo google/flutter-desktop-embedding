@@ -12,10 +12,10 @@ you should include them directly from this repository:
 ```
 dependencies:
   ...
-  file_chooser:
+  menubar:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
-      path: plugins/file_chooser
+      path: plugins/menubar
       ref: INSERT_HASH_HERE
 ```
 

@@ -17,7 +17,6 @@ body:
   attributes:
     label: Which plugin is this request about?
     options:
-      - file_selector
       - menubar
       - window_size
       - A proposal for a new experimental plugin
