@@ -1,24 +1,33 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that shows an example of openFile
+/// Screen that allows the user to select a text file using `openFile`, then
+/// displays its contents in a dialog.
 class OpenTextPage extends StatelessWidget {
-  void _openTextFile(BuildContext context) async {
-    final typeGroup = XTypeGroup(
+  /// Default Constructor
+  const OpenTextPage({Key? key}) : super(key: key);
+
+  Future<void> _openTextFile(BuildContext context) async {
+    final XTypeGroup typeGroup = XTypeGroup(
       label: 'text',
-      extensions: ['txt', 'json'],
+      extensions: <String>['txt', 'json'],
     );
-    final file = await FileSelectorPlatform.instance
-        .openFile(acceptedTypeGroups: [typeGroup]);
+    final XFile? file = await FileSelectorPlatform.instance
+        .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     if (file == null) {
+      // Operation was canceled by the user.
       return;
     }
-    final fileName = file.name;
-    final fileContent = await file.readAsString();
+    final String fileName = file.name;
+    final String fileContent = await file.readAsString();
 
-    await showDialog(
+    await showDialog<void>(
       context: context,
-      builder: (context) => TextDisplay(fileName, fileContent),
+      builder: (BuildContext context) => TextDisplay(fileName, fileContent),
     );
   }
 
@@ -26,13 +35,20 @@ class OpenTextPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Open a text file'),
+        title: const Text('Open a text file'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
+                // ignore: deprecated_member_use
+                primary: Colors.blue,
+                // ignore: deprecated_member_use
+                onPrimary: Colors.white,
+              ),
               child: const Text('Press to open a text file (json, txt)'),
               onPressed: () => _openTextFile(context),
             ),
@@ -43,15 +59,16 @@ class OpenTextPage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog
+/// Widget that displays a text file in a dialog.
 class TextDisplay extends StatelessWidget {
-  /// Default Constructor
-  const TextDisplay(this.fileName, this.fileContent);
+  /// Default Constructor.
+  const TextDisplay(this.fileName, this.fileContent, {Key? key})
+      : super(key: key);
 
-  /// File's name
+  /// The name of the selected file.
   final String fileName;
 
-  /// File to display
+  /// The contents of the text file.
   final String fileContent;
 
   @override
@@ -63,7 +80,7 @@ class TextDisplay extends StatelessWidget {
           child: Text(fileContent),
         ),
       ),
-      actions: [
+      actions: <Widget>[
         TextButton(
           child: const Text('Close'),
           onPressed: () => Navigator.pop(context),

@@ -1,24 +1,36 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that shows an example of openFiles
+/// Screen that allows the user to select an image file using
+/// `openFiles`, then displays the selected images in a gallery dialog.
 class OpenImagePage extends StatelessWidget {
-  void _openImageFile(BuildContext context) async {
-    final typeGroup = XTypeGroup(
-      label: 'images',
-      extensions: ['jpg', 'png'],
-    );
-    final files = await FileSelectorPlatform.instance
-        .openFiles(acceptedTypeGroups: [typeGroup]);
-    final file = files[0];
-    final fileName = file.name;
-    final filePath = file.path;
+  /// Default Constructor
+  const OpenImagePage({Key? key}) : super(key: key);
 
-    await showDialog(
+  Future<void> _openImageFile(BuildContext context) async {
+    final XTypeGroup typeGroup = XTypeGroup(
+      label: 'images',
+      extensions: <String>['jpg', 'png'],
+    );
+    final XFile? file = await FileSelectorPlatform.instance
+        .openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    if (file == null) {
+      // Operation was canceled by the user.
+      return;
+    }
+    final String fileName = file.name;
+    final String filePath = file.path;
+
+    await showDialog<void>(
       context: context,
-      builder: (context) => ImageDisplay(fileName, filePath),
+      builder: (BuildContext context) => ImageDisplay(fileName, filePath),
     );
   }
 
@@ -26,13 +38,20 @@ class OpenImagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Open an image'),
+        title: const Text('Open an image'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
+                // ignore: deprecated_member_use
+                primary: Colors.blue,
+                // ignore: deprecated_member_use
+                onPrimary: Colors.white,
+              ),
               child: const Text('Press to open an image file(png, jpg)'),
               onPressed: () => _openImageFile(context),
             ),
@@ -43,15 +62,16 @@ class OpenImagePage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog
+/// Widget that displays an image in a dialog.
 class ImageDisplay extends StatelessWidget {
-  /// Default Constructor
-  const ImageDisplay(this.fileName, this.filePath);
+  /// Default Constructor.
+  const ImageDisplay(this.fileName, this.filePath, {Key? key})
+      : super(key: key);
 
-  /// Image's name
+  /// The name of the selected file.
   final String fileName;
 
-  /// Image's path
+  /// The path to the selected file.
   final String filePath;
 
   @override
@@ -61,7 +81,7 @@ class ImageDisplay extends StatelessWidget {
       // On web the filePath is a blob url
       // while on other platforms it is a system path.
       content: kIsWeb ? Image.network(filePath) : Image.file(File(filePath)),
-      actions: [
+      actions: <Widget>[
         TextButton(
           child: const Text('Close'),
           onPressed: () {

@@ -9,8 +9,8 @@
 
 #include "file_selector_plugin_private.h"
 
-// From method_channel_file_selector.dart
-const char kChannelName[] = "plugins.flutter.io/file_selector";
+// From file_selector_linux.dart
+const char kChannelName[] = "plugins.flutter.dev/file_selector_linux";
 
 const char kOpenFileMethod[] = "openFile";
 const char kGetSavePathMethod[] = "getSavePath";
@@ -22,7 +22,6 @@ const char kInitialDirectoryKey[] = "initialDirectory";
 const char kMultipleKey[] = "multiple";
 const char kSuggestedNameKey[] = "suggestedName";
 
-// From x_type_group.dart
 const char kTypeGroupLabelKey[] = "label";
 const char kTypeGroupExtensionsKey[] = "extensions";
 const char kTypeGroupMimeTypesKey[] = "mimeTypes";
@@ -44,10 +43,6 @@ G_DEFINE_TYPE(FlFileSelectorPlugin, fl_file_selector_plugin, G_TYPE_OBJECT)
 
 // Converts a type group received from Flutter into a GTK file filter.
 static GtkFileFilter* type_group_to_filter(FlValue* value) {
-  if (fl_value_get_type(value) != FL_VALUE_TYPE_MAP) {
-    return nullptr;
-  }
-
   g_autoptr(GtkFileFilter) filter = gtk_file_filter_new();
 
   FlValue* label = fl_value_lookup_string(value, kTypeGroupLabelKey);
@@ -55,18 +50,13 @@ static GtkFileFilter* type_group_to_filter(FlValue* value) {
     gtk_file_filter_set_name(filter, fl_value_get_string(label));
   }
 
-  bool has_filter = false;
   FlValue* extensions = fl_value_lookup_string(value, kTypeGroupExtensionsKey);
   if (extensions != nullptr &&
       fl_value_get_type(extensions) == FL_VALUE_TYPE_LIST) {
     for (size_t i = 0; i < fl_value_get_length(extensions); i++) {
       FlValue* v = fl_value_get_list_value(extensions, i);
-      if (fl_value_get_type(v) != FL_VALUE_TYPE_STRING) return nullptr;
-
-      g_autofree gchar* pattern =
-          g_strdup_printf("*.%s", fl_value_get_string(v));
+      const gchar* pattern = fl_value_get_string(v);
       gtk_file_filter_add_pattern(filter, pattern);
-      has_filter = true;
     }
   }
   FlValue* mime_types = fl_value_lookup_string(value, kTypeGroupMimeTypesKey);
@@ -74,15 +64,9 @@ static GtkFileFilter* type_group_to_filter(FlValue* value) {
       fl_value_get_type(mime_types) == FL_VALUE_TYPE_LIST) {
     for (size_t i = 0; i < fl_value_get_length(mime_types); i++) {
       FlValue* v = fl_value_get_list_value(mime_types, i);
-      if (fl_value_get_type(v) != FL_VALUE_TYPE_STRING) return nullptr;
-
       const gchar* pattern = fl_value_get_string(v);
       gtk_file_filter_add_mime_type(filter, pattern);
-      has_filter = true;
     }
-  }
-  if (!has_filter) {
-    gtk_file_filter_add_pattern(filter, "*");
   }
 
   return GTK_FILE_FILTER(g_object_ref(filter));
