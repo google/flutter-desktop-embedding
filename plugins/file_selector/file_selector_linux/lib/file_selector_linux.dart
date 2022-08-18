@@ -113,9 +113,7 @@ class FileSelectorLinux extends FileSelectorPlatform {
 }
 
 List<Map<String, Object>> _serializeTypeGroups(List<XTypeGroup>? groups) {
-  return (groups ?? <XTypeGroup>[])
-      .map((XTypeGroup group) => _serializeTypeGroup(group))
-      .toList();
+  return (groups ?? <XTypeGroup>[]).map(_serializeTypeGroup).toList();
 }
 
 Map<String, Object> _serializeTypeGroup(XTypeGroup group) {
