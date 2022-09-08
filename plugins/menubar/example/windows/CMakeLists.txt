@@ -1,6 +1,7 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
 project(menubar_example LANGUAGES CXX)
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
