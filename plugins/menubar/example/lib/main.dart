@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Flutter code sample for PlatformMenuBar
+/// Flutter code sample for [PlatformMenuBar].
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
