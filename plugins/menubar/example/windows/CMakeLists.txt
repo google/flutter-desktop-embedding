@@ -3,9 +3,12 @@ cmake_minimum_required(VERSION 3.14)
 project(menubar_example LANGUAGES CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
+# The project name for the plugin.
+set(PROJECT_NAME "menubar")
+
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "menubar_example")
+set(BINARY_NAME "${PROJECT_NAME}_example")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

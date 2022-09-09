@@ -2,12 +2,19 @@
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
+# The project name for the plugin.
+set(PROJECT_NAME "menubar")
+
+# The organization name for the plugin
+set(ORGANIZATION_NAME "dev.flutter")
+
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "menubar_example")
+set(BINARY_NAME "${PROJECT_NAME}_example")
+
 # The unique GTK application identifier for this application. See:
 # https://wiki.gnome.org/HowDoI/ChooseApplicationID
-set(APPLICATION_ID "dev.flutter.menubar")
+set(APPLICATION_ID "${ORGANIZATION_NAME}.${PROJECT_NAME}")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

@@ -3,20 +3,20 @@ cmake_minimum_required(VERSION 3.14)
 set(PROJECT_NAME "menubar")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
-set(PLUGIN_NAME "menubar_plugin")
+set(PLUGIN_NAME "${PROJECT_NAME}_plugin")
 
 list(APPEND PLUGIN_SOURCES
-  "menubar_plugin.cpp"
-  "menubar_plugin.h"
+  "${PROJECT_NAME}_plugin.cpp"
+  "${PROJECT_NAME}_plugin.h"
 )
 
 add_library(${PLUGIN_NAME} SHARED
-  "include/menubar/menubar_plugin_c_api.h"
-  "menubar_plugin_c_api.cpp"
+  "include/${PROJECT_NAME}/${PROJECT_NAME}_plugin_c_api.h"
+  "${PROJECT_NAME}_plugin_c_api.cpp"
   ${PLUGIN_SOURCES}
 )
 
-apply_standard_settings(${PLUGIN_NAME})
+#apply_standard_settings(${PLUGIN_NAME})
 
 set_target_properties(${PLUGIN_NAME} PROPERTIES
   CXX_VISIBILITY_PRESET hidden)
