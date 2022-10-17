@@ -34,7 +34,7 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
-// See flutte/flutter's packages/flutter/lib/src/widgets/platform_menu_bar.dart
+// See flutter/flutter's packages/flutter/lib/src/widgets/platform_menu_bar.dart
 // for documentation.
 constexpr char kChannelName[] = "flutter/menu";
 constexpr char kMenuConstructionError[] = "Menu Construction Error";
@@ -162,13 +162,9 @@ void MenubarPlugin::HandleMethodCall(
     }
     result->Success();
   } else {
-<<<<<<< HEAD
-=======
-      const auto *menu_id =
-          std::get_if<int32_t>(ValueOrNull(representation, kIdKey));
->>>>>>> 71a4fe1 (Start adding Windows)
-      item_id = menu_id ? (kFirstMenuId + *menu_id) : 0;
-    }
+    const auto *menu_id =
+        std::get_if<int32_t>(ValueOrNull(representation, kIdKey));
+    item_id = menu_id ? (kFirstMenuId + *menu_id) : 0;
     if (!::AppendMenu(menu, flags, item_id, wide_label.c_str())) {
       return EncodableValue(static_cast<int64_t>(::GetLastError()));
     }
@@ -179,7 +175,6 @@ void MenubarPlugin::HandleMethodCall(
 std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
                                                        WPARAM wparam,
                                                        LPARAM lparam) {
-<<<<<<< HEAD
   // Normally, on Windows you would use an ACCEL table and TranslateAccelerator
   // to handle shortcuts, converting them to WM_COMMANDs, but unfortunately,
   // that doesn't handle any shortcuts containing the Windows (meta) key, so we
@@ -224,17 +219,11 @@ std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
     }
   }
 
-=======
->>>>>>> 71a4fe1 (Start adding Windows)
   if (message == WM_COMMAND) {
     DWORD menu_id = LOWORD(wparam);
     if (menu_id >= kFirstMenuId) {
       int32_t flutter_id = menu_id - kFirstMenuId;
-<<<<<<< HEAD
       channel_->InvokeMethod(kMenuSelectedCallbackMethod,
-=======
-      channel_->InvokeMethod(kMenuItemSelectedCallbackMethod,
->>>>>>> 71a4fe1 (Start adding Windows)
                              std::make_unique<EncodableValue>(flutter_id));
       return 0;
     }
@@ -430,4 +419,5 @@ void MenubarPluginRegisterWithRegistrar(
       flutter::PluginRegistrarManager::GetInstance()
           ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }
+
 }  // namespace menubar

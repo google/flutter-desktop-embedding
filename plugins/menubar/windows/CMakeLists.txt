@@ -12,7 +12,8 @@ list(APPEND PLUGIN_SOURCES
 
 add_library(${PLUGIN_NAME} SHARED
   "include/${PROJECT_NAME}/${PROJECT_NAME}_plugin_c_api.h"
-  "${PROJECT_NAME}_plugin_c_api.cpp"
+  "menubar_plugin_c_api.cpp"
+  #"${PROJECT_NAME}_plugin_c_api.cpp"
   ${PLUGIN_SOURCES}
 )
 

@@ -28,8 +28,9 @@ class MenubarPlugin : public flutter::Plugin {
       const flutter::MethodCall<flutter::EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
-    flutter::PluginRegistrarWindows *registrar;
-    std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel;
+    flutter::PluginRegistrarWindows *registrar_;
+    std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
+    uint32_t window_proc_id_;
 };
 
 }  // namespace menubar
