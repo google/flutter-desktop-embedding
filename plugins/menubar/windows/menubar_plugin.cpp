@@ -117,9 +117,6 @@ int64_t GetCurrentModifiers() {
   bool meta = IsPressed(VK_LWIN) || IsPressed(VK_RWIN);
   return GetModifiers(shift, control, alt, meta);
 }
-
-static MenubarPlugin *plugin_singleton_ = NULL;
-
 }  // namespace
 
 struct MenubarPlugin::ShortcutEntry {
@@ -151,31 +148,14 @@ MenubarPlugin::MenubarPlugin(
     flutter::PluginRegistrarWindows *registrar,
     std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel)
     : registrar_(registrar), channel_(std::move(channel)) {
-  plugin_singleton_ = this;
-  windows_hook_handle_ = SetWindowsHookEx(
-      WH_CALLWNDPROC,
-      [](int message, WPARAM wparam, LPARAM lparam) {
-        if (message < 0 || plugin_singleton_ == NULL) {
-          return CallNextHookEx(0, message, wparam, lparam);
-        }
-
-        LRESULT result =
-            plugin_singleton_->HandleWindowProc(message, wparam, lparam)
-                .value_or(CallNextHookEx(0, message, wparam, lparam));
-        return result;
-      },
-      NULL, GetCurrentThreadId());
-
-  // window_proc_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
-  //     [this](HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
-  //       return HandleWindowProc(hwnd, message, wparam, lparam);
-  //     });
+  window_proc_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
+      [this](HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
+        return HandleWindowProc(hwnd, message, wparam, lparam);
+      });
 }
 
 MenubarPlugin::~MenubarPlugin() {
-  // registrar_->UnregisterTopLevelWindowProcDelegate(window_proc_id_);
-  UnhookWindowsHookEx(windows_hook_handle_);
-  plugin_singleton_ = NULL;
+  registrar_->UnregisterTopLevelWindowProcDelegate(window_proc_id_);
 }
 
 void MenubarPlugin::HandleMethodCall(
@@ -319,7 +299,7 @@ std::optional<EncodableValue> MenubarPlugin::AddMenuItem(
   return std::nullopt;
 }
 
-std::optional<LRESULT> MenubarPlugin::HandleWindowProc(UINT message,
+std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
                                                        WPARAM wparam,
                                                        LPARAM lparam) {
   // Normally, on Windows you would use an ACCEL table and TranslateAccelerator
