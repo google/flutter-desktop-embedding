@@ -83,6 +83,7 @@ class _MyMenuBarAppState extends State<MyMenuBarApp> {
               members: <PlatformMenuItem>[
                 PlatformMenuItem(
                   label: 'About',
+                  shortcut: const SingleActivator(LogicalKeyboardKey.keyA),
                   onSelected: () {
                     _handleMenuSelection(MenuSelection.about);
                   },

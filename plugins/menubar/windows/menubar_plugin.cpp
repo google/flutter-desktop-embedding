@@ -98,7 +98,9 @@ std::wstring Utf16FromUtf8(const std::string &utf8_string) {
   return utf16_string;
 }
 
-bool IsPressed(DWORD virtual_key) { return ::GetKeyState(virtual_key) & 0x8000; }
+bool IsPressed(DWORD virtual_key) {
+  return ::GetKeyState(virtual_key) & 0x8000;
+}
 
 int64_t GetModifiers(bool shift, bool control, bool alt, bool meta) {
   int64_t result = shift ? kFlutterShortcutModifierShift : 0;
@@ -115,6 +117,9 @@ int64_t GetCurrentModifiers() {
   bool meta = IsPressed(VK_LWIN) || IsPressed(VK_RWIN);
   return GetModifiers(shift, control, alt, meta);
 }
+
+static MenubarPlugin *plugin_singleton_ = NULL;
+
 }  // namespace
 
 struct MenubarPlugin::ShortcutEntry {
@@ -146,14 +151,31 @@ MenubarPlugin::MenubarPlugin(
     flutter::PluginRegistrarWindows *registrar,
     std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel)
     : registrar_(registrar), channel_(std::move(channel)) {
-  window_proc_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
-      [this](HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
-        return HandleWindowProc(hwnd, message, wparam, lparam);
-      });
+  plugin_singleton_ = this;
+  windows_hook_handle_ = SetWindowsHookEx(
+      WH_CALLWNDPROC,
+      [](int message, WPARAM wparam, LPARAM lparam) {
+        if (message < 0 || plugin_singleton_ == NULL) {
+          return CallNextHookEx(0, message, wparam, lparam);
+        }
+
+        LRESULT result =
+            plugin_singleton_->HandleWindowProc(message, wparam, lparam)
+                .value_or(CallNextHookEx(0, message, wparam, lparam));
+        return result;
+      },
+      NULL, GetCurrentThreadId());
+
+  // window_proc_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
+  //     [this](HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
+  //       return HandleWindowProc(hwnd, message, wparam, lparam);
+  //     });
 }
 
 MenubarPlugin::~MenubarPlugin() {
-  registrar_->UnregisterTopLevelWindowProcDelegate(window_proc_id_);
+  // registrar_->UnregisterTopLevelWindowProcDelegate(window_proc_id_);
+  UnhookWindowsHookEx(windows_hook_handle_);
+  plugin_singleton_ = NULL;
 }
 
 void MenubarPlugin::HandleMethodCall(
@@ -217,8 +239,11 @@ void MenubarPlugin::CreateAccelerators() {
       int64_t virtual_key = 42;
       int64_t target = virtual_key | (entry.modifiers << 32);
       shortcut_trigger_lookup_[target] = id;
+      std::cerr << "Added " << target << ": " << id << std::endl;
     } else {
       shortcut_character_lookup_[entry.character] = id;
+      std::wcerr << L"Added char \"" << entry.character << L"\": " << id
+                 << std::endl;
     }
   }
 }
@@ -294,15 +319,20 @@ std::optional<EncodableValue> MenubarPlugin::AddMenuItem(
   return std::nullopt;
 }
 
-std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
+std::optional<LRESULT> MenubarPlugin::HandleWindowProc(UINT message,
                                                        WPARAM wparam,
                                                        LPARAM lparam) {
   // Normally, on Windows you would use an ACCEL table and TranslateAccelerator
   // to handle shortcuts, converting them to WM_COMMANDs, but unfortunately,
   // that doesn't handle any shortcuts containing the Windows (meta) key, so we
   // must handle it ourselves.
-  if (shortcuts_.size() != 0) {
-    if (message == WM_KEYDOWN || message == WM_SYSKEYDOWN) {
+  switch (message) {
+    case WM_KEYDOWN:
+    case WM_SYSKEYDOWN: {
+      if (shortcuts_.size() == 0) {
+        break;
+      }
+      std::cerr << "Plugin handling WM_KEYDOWN message " << wparam << std::endl;
       const std::set<BYTE> modifiers = {
           VK_LSHIFT, VK_RSHIFT, VK_SHIFT, VK_LCONTROL, VK_RCONTROL, VK_CONTROL,
           VK_LMENU,  VK_RMENU,  VK_MENU,  VK_LWIN,     VK_RWIN,
@@ -319,7 +349,9 @@ std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
         ::GetKeyboardState(key_state);
         for (int i = 0; i < 256; ++i) {
           bool keyIsDown = key_state[i] & 0x8000;
-          if (keyIsDown && modifiers.find(static_cast<BYTE>(i)) == modifiers.end() && i != static_cast<int>(wparam)) {
+          if (keyIsDown &&
+              modifiers.find(static_cast<BYTE>(i)) == modifiers.end() &&
+              i != static_cast<int>(wparam)) {
             return std::nullopt;
           }
         }
@@ -327,9 +359,15 @@ std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
                                std::make_unique<EncodableValue>(match->second));
         return 0;
       }
-    }
 
-    if (message == WM_CHAR || message == WM_SYSCHAR) {
+    } break;
+    case WM_CHAR:
+    case WM_SYSCHAR: {
+      std::cerr << "Plugin handling WM_CHAR message " << wparam << std::endl;
+      if (shortcuts_.size() == 0) {
+        break;
+      }
+
       std::wstring character;
       character.push_back(static_cast<wchar_t>(wparam));
       auto match = shortcut_character_lookup_.find(character);
@@ -338,17 +376,16 @@ std::optional<LRESULT> MenubarPlugin::HandleWindowProc(HWND hwnd, UINT message,
                                std::make_unique<EncodableValue>(match->second));
         return 0;
       }
-    }
-  }
-
-  if (message == WM_COMMAND) {
-    DWORD menu_id = LOWORD(wparam);
-    if (menu_id >= kFirstMenuId) {
-      int32_t flutter_id = menu_id - kFirstMenuId;
-      channel_->InvokeMethod(kMenuSelectedCallbackMethod,
-                             std::make_unique<EncodableValue>(flutter_id));
-      return 0;
-    }
+    } break;
+    case WM_COMMAND: {
+      DWORD menu_id = LOWORD(wparam);
+      if (menu_id >= kFirstMenuId) {
+        int32_t flutter_id = menu_id - kFirstMenuId;
+        channel_->InvokeMethod(kMenuSelectedCallbackMethod,
+                               std::make_unique<EncodableValue>(flutter_id));
+        return 0;
+      }
+    } break;
   }
   return std::nullopt;
 }
