@@ -1,5 +1,8 @@
 # Adjusting Window Size
 <pre>
+  // git clone this repo and rename the folder to 'plugins'
+  
+  // main.dart
   import "package:cvenom/window_size.dart";
   
   void main(){
@@ -10,6 +13,14 @@
     
 	  runApp(MaterialApp(home:App()));
   }
+  // Copy window_size.dart and src/ from plugins to lib/
+  // then your pubspec.yaml should look like this
+  // ------------------------------------------------
+  
+  // pubspec.yaml
+  dependencies:
+  	window_size:
+		path: plugins/window_size
 </pre>
 
 # Desktop Embedding for Flutter
