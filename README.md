@@ -3,8 +3,8 @@
   import "package:cvenom/window_size.dart";
   
   void main(){
-  	WidgetsFlutterBinding.ensureInitialized(); // Initialization
-  	setWindowTitle("Title");            // Window Title
+  	  WidgetsFlutterBinding.ensureInitialized(); // Initialization
+  	  setWindowTitle("Title");            // Window Title
 	  setWindowMinSize(Size(1000, 1000)); // Minimum Window Size
 	  setWindowMaxSize(Size(1000, 1000)); // Maximum Window Size
     
