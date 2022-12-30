@@ -1,3 +1,17 @@
+# Adjusting Window Size
+<pre>
+  import "package:cvenom/window_size.dart";
+  
+  void main(){
+  	WidgetsFlutterBinding.ensureInitialized(); // Initialization
+  	setWindowTitle("Title");            // Window Title
+	  setWindowMinSize(Size(1000, 1000)); // Minimum Window Size
+	  setWindowMaxSize(Size(1000, 1000)); // Maximum Window Size
+    
+	  runApp(MaterialApp(home:App()));
+  }
+</pre>
+
 # Desktop Embedding for Flutter
 
 This project was originally created to develop Windows, macOS, and Linux
