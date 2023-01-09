@@ -7,11 +7,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macOS-10.15, windows-2019, ubuntu-18.04]
+        os: [macOS-12, windows-2019, ubuntu-22.04]
         include: 
-        - os: macOS-10.15
+        - os: macOS-12
           TARGET: macos  
-        - os: ubuntu-18.04
+        - os: ubuntu-22.04
           TARGET: linux     
         - os: windows-2019
           TARGET: windows
@@ -52,13 +52,23 @@ jobs:
     - name: Doctor
       # Run doctor, for ease of debugging any issues.
       run: flutter doctor -v
-    - name: Build testbed debug	
+    - name: Build menubar debug	
       run: |	
         flutter packages get
         flutter build -v ${{matrix.TARGET}} --debug	
-      working-directory: ${{ github.workspace }}/fde/testbed	
-    - name: Build testbed release	
+      working-directory: ${{ github.workspace }}/fde/plugins/menubar/example
+    - name: Build menubar release	
       run: |	
         flutter packages get	
         flutter build -v ${{matrix.TARGET}} --release	
-      working-directory: ${{ github.workspace }}/fde/testbed
+      working-directory: ${{ github.workspace }}/fde/plugins/menubar/example
+    - name: Build window_size debug	
+      run: |	
+        flutter packages get
+        flutter build -v ${{matrix.TARGET}} --debug	
+      working-directory: ${{ github.workspace }}/fde/plugins/window_size/example
+    - name: Build window_size release	
+      run: |	
+        flutter packages get	
+        flutter build -v ${{matrix.TARGET}} --release	
+      working-directory: ${{ github.workspace }}/fde/plugins/window_size/example
