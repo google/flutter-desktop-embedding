@@ -26,8 +26,6 @@ please file issues here.
 The `plugins` directory contains all the plugins. See
 [its README](plugins/README.md) to get started.
 
-`testbed` is a a simple test application for the plugins above.
-
 ## Caveats
 
 * This is not an officially supported Google product.
