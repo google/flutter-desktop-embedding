@@ -36,6 +36,7 @@ const char kChannelName[] = "flutter/windowsize";
 const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
+const char kSetWindowDefaultSize[] = "setWindowDefaultSize";
 const char kSetWindowMinimumSize[] = "setWindowMinimumSize";
 const char kSetWindowMaximumSize[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
@@ -216,7 +217,25 @@ void WindowSizePlugin::HandleMethodCall(
     }
     min_size_ = GetPointForPlatformChannelRepresentationSize(*size);
     result->Success();
-  } else if (method_call.method_name().compare(kSetWindowMaximumSize) == 0) {
+  } else if (method_call.method_name().compare(kSetWindowDefaultSize) == 0) {
+    const auto *size = std::get_if<EncodableList>(method_call.arguments());
+    if (!size || size->size() != 2) {
+      result->Error("Bad arguments", "Expected 2-element list");
+      return;
+    }
+
+    int width = std::get<int>((*size)[0]);
+    int height = std::get<int>((*size)[1]);
+
+    HWND handle = GetActiveWindow();
+
+    int iWidth = int(width + 0.5);
+    int iHeight = int(height + 0.5);
+    SetWindowPos(handle, HWND_TOP, 0, 0, iWidth, iHeight, SWP_NOMOVE);
+
+    result->Success(flutter::EncodableValue(true));
+  }
+  else if (method_call.method_name().compare(kSetWindowMaximumSize) == 0) {
     const auto *size = std::get_if<EncodableList>(method_call.arguments());
     if (!size || size->size() != 2) {
       result->Error("Bad arguments", "Expected 2-element list");
