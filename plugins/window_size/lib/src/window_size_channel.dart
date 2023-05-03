@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/services.dart';
 
@@ -37,6 +36,15 @@ const String _getWindowInfoMethod = 'getWindowInfo';
 ///
 /// Takes a frame array, as documented for the value of _frameKey.
 const String _setWindowFrameMethod = 'setWindowFrame';
+
+/// The method name to set the default size of a window.
+///
+/// Takes a window size array, with the value is a list of two doubles:
+///   [width, height].
+///
+/// A value of zero for width or height is to be interpreted as
+/// unconstrained in that dimension.
+const String _setWindowDefaultSizeMethod = 'setWindowDefaultSize';
 
 /// The method name to set the minimum size of a window.
 ///
@@ -160,6 +168,12 @@ class WindowSizeChannel {
     assert(frame.isFinite, 'Cannot set window frame to a non-finite rect.');
     await _platformChannel.invokeMethod(_setWindowFrameMethod,
         [frame.left, frame.top, frame.width, frame.height]);
+  }
+
+  /// Sets the default size of the window containing this Flutter instance.
+  void setWindowDefaultSize(Size size) async {
+    await _platformChannel
+        .invokeMethod(_setWindowDefaultSizeMethod, [size.width, size.height]);
   }
 
   /// Sets the minimum size of the window containing this Flutter instance.

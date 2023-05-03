@@ -36,6 +36,7 @@ void main() {
       final frame = Rect.fromLTWH(left, top, width, height);
       window_size.setWindowFrame(frame);
       window_size.setWindowMinSize(Size(0.8 * width, 0.8 * height));
+      window_size.setWindowDefaultSize(Size(width, height));
       window_size.setWindowMaxSize(Size(1.5 * width, 1.5 * height));
       window_size
           .setWindowTitle('window_size Example on ${Platform.operatingSystem}');

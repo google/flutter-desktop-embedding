@@ -50,6 +50,11 @@ void setWindowFrame(Rect frame) async {
   WindowSizeChannel.instance.setWindowFrame(frame);
 }
 
+/// Sets the default [Size] of the window containing this Flutter instance.
+void setWindowDefaultSize(Size size) async {
+  WindowSizeChannel.instance.setWindowDefaultSize(size);
+}
+
 /// Sets the minimum [Size] of the window containing this Flutter instance.
 void setWindowMinSize(Size size) async {
   WindowSizeChannel.instance.setWindowMinSize(size);
