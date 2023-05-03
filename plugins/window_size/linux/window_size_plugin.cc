@@ -25,6 +25,7 @@ const char kNoScreenError[] = "No Screen";
 const char kGetScreenListMethod[] = "getScreenList";
 const char kGetWindowInfoMethod[] = "getWindowInfo";
 const char kSetWindowFrameMethod[] = "setWindowFrame";
+const char kSetWindowDefaultSizeMethod[] = "setWindowDefaultSize";
 const char kSetWindowMinimumSizeMethod[] = "setWindowMinimumSize";
 const char kSetWindowMaximumSizeMethod[] = "setWindowMaximumSize";
 const char kSetWindowTitleMethod[] = "setWindowTitle";
@@ -220,6 +221,31 @@ static FlMethodResponse* set_window_minimum_size(FlWindowSizePlugin* self,
   return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
 }
 
+// Set the window default size.
+static FlMethodResponse* set_window_default_size(FlWindowSizePlugin* self,
+                                                 FlValue* args) {
+  if (fl_value_get_type(args) != FL_VALUE_TYPE_LIST ||
+      fl_value_get_length(args) != 2) {
+    return FL_METHOD_RESPONSE(fl_method_error_response_new(
+        kBadArgumentsError, "Expected 2-element list", nullptr));
+  }
+  double width = fl_value_get_float(fl_value_get_list_value(args, 0));
+  double height = fl_value_get_float(fl_value_get_list_value(args, 1));
+
+  if (get_window(self) == nullptr) {
+    return FL_METHOD_RESPONSE(
+        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+  }
+
+  if (width >= 0 && height >= 0) {
+    gtk_window_resize((GtkWindow *)self->widget, (int)width, (int)height);
+  }
+
+  update_window_geometry(self);
+
+  return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+}
+
 // Sets the window maximum size.
 static FlMethodResponse* set_window_maximum_size(FlWindowSizePlugin* self,
                                                  FlValue* args) {
@@ -350,6 +376,8 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
     response = get_window_info(self);
   } else if (strcmp(method, kSetWindowFrameMethod) == 0) {
     response = set_window_frame(self, args);
+  } else if (strcmp(method, kSetWindowDefaultSizeMethod) == 0) {
+    response = set_window_default_size(self, args);
   } else if (strcmp(method, kSetWindowMinimumSizeMethod) == 0) {
     response = set_window_minimum_size(self, args);
   } else if (strcmp(method, kSetWindowMaximumSizeMethod) == 0) {
